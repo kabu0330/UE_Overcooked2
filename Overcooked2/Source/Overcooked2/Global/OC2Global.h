@@ -15,7 +15,7 @@ class OVERCOOKED2_API UOC2Global : public UBlueprintFunctionLibrary
 	GENERATED_BODY()
 
 	UFUNCTION(BlueprintCallable)
-	static TArray<FAssetData> GetAssetPackageName(UClass* Class, const FString& AssetName, FString& Path);
+	static void GetAssetPackageName(UClass* Class, const FString& AssetName, FString& Path);
 
 	UFUNCTION(BlueprintCallable)
 	static TArray<FAssetData> GetAssetDataArray(UClass* Class);
