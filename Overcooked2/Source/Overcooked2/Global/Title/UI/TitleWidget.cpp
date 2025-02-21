@@ -7,7 +7,7 @@
 void UTitleWidget::StartServer()
 {
 	FString OpenLevel;
-	FString LevelPath = TEXT("/Game/Level/PlayLevel");
+	FString LevelPath = TEXT("/Game/Levels/DevLevel/GlobalDevLevel");
 	OpenLevel = FString::Printf(TEXT(":%s%s"), *Port, *LevelPath);
 
 	UGameplayStatics::OpenLevel(GetWorld(), *OpenLevel, true, TEXT("listen"));

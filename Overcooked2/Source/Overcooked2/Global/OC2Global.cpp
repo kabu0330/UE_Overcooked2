@@ -4,7 +4,7 @@
 #include "Global/OC2Global.h"
 #include "AssetRegistry/AssetRegistryModule.h"
 
-TArray<FAssetData> UOC2Global::GetAssetPackageName(UClass* Class, const FString& AssetName, FString& Path)
+void UOC2Global::GetAssetPackageName(UClass* Class, const FString& AssetName, FString& Path)
 {
 	TArray<FAssetData> AllAssetData = GetAssetDataArray(Class);
 
@@ -12,13 +12,12 @@ TArray<FAssetData> UOC2Global::GetAssetPackageName(UClass* Class, const FString&
 
 	for (const FAssetData& AssetData : AllAssetData)
 	{
-		if (CheckAssetName == AssetData.AssetName)
+		if (AssetData.AssetName == CheckAssetName)
 		{
 			Path = AssetData.PackageName.ToString();
+			return;
 		}
 	}
-
-	return TArray<FAssetData>();
 }
 
 TArray<FAssetData> UOC2Global::GetAssetDataArray(UClass* Class)
@@ -36,7 +35,12 @@ TArray<FAssetData> UOC2Global::GetAssetDataArray(UClass* Class)
 	// Asset 상황에 대해서 아직 로드를 하지 않았는지 조건.
 	if (true == AssetRegistry.IsLoadingAssets())
 	{
-		 
+		return MapList;
+	}
+
+	if (AssetRegistry.GetAssetsByClass(Class->GetClassPathName(), MapList))
+	{
+		return MapList;
 	}
 
 	return MapList;
