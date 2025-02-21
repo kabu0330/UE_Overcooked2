@@ -14,6 +14,8 @@ class OVERCOOKED2_API UOC2Global : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 
+public:
+
 	UFUNCTION(BlueprintCallable)
 	static void GetAssetPackageName(UClass* Class, const FString& AssetName, FString& Path);
 

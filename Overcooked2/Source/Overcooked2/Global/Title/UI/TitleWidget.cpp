@@ -3,11 +3,14 @@
 
 #include "Global/Title/UI/TitleWidget.h"
 #include "Kismet/GameplayStatics.h"
+#include "Global/OC2Global.h"
 
 void UTitleWidget::StartServer()
 {
 	FString OpenLevel;
-	FString LevelPath = TEXT("/Game/Levels/DevLevel/GlobalDevLevel");
+	FString LevelPath = TEXT("");
+
+	UOC2Global::GetAssetPackageName(UWorld::StaticClass(), TEXT("GlobalDevLevel"), LevelPath);
 	OpenLevel = FString::Printf(TEXT(":%s%s"), *Port, *LevelPath);
 
 	UGameplayStatics::OpenLevel(GetWorld(), *OpenLevel, true, TEXT("listen"));
