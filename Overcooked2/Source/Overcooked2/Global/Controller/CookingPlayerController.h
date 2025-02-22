@@ -4,16 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
-#include "GlobalDevPlayerController.generated.h"
+#include "CookingPlayerController.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class OVERCOOKED2_API AGlobalDevPlayerController : public APlayerController
+class OVERCOOKED2_API ACookingPlayerController : public APlayerController
 {
 	GENERATED_BODY()
-
-	virtual void BeginPlay() override;
 	
 };
