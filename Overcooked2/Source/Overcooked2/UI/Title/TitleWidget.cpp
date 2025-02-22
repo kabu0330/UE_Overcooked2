@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Global/Title/UI/TitleWidget.h"
+#include "UI/Title/TitleWidget.h"
 #include "Kismet/GameplayStatics.h"
 #include "Global/OC2Global.h"
 
@@ -22,5 +22,4 @@ void UTitleWidget::Connect()
 
 	UGameplayStatics::OpenLevel(GetWorld(), FName(*ConnectLevelName));
 }
-
 

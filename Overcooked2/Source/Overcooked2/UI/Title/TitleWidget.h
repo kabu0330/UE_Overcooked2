@@ -7,7 +7,7 @@
 #include "TitleWidget.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class OVERCOOKED2_API UTitleWidget : public UUserWidget
