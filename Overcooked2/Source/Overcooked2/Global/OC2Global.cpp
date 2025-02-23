@@ -3,6 +3,7 @@
 
 #include "Global/OC2Global.h"
 #include "AssetRegistry/AssetRegistryModule.h"
+#include "Kismet/GameplayStatics.h"
 
 void UOC2Global::GetAssetPackageName(UClass* Class, const FString& AssetName, FString& Path)
 {
@@ -44,4 +45,21 @@ TArray<FAssetData> UOC2Global::GetAssetDataArray(UClass* Class)
 	}
 
 	return MapList;
+}
+
+void UOC2Global::StartServer(const UWorld* World, const FString& Port, const FString& LevelName)
+{
+	FString OpenLevel;
+	FString LevelPath = TEXT("");
+
+	UOC2Global::GetAssetPackageName(UWorld::StaticClass(), LevelName, LevelPath);
+	OpenLevel = FString::Printf(TEXT(":%s%s"), *Port, *LevelPath);
+
+	UGameplayStatics::OpenLevel(World, *OpenLevel, true, TEXT("listen"));
+}
+
+void UOC2Global::ConnectServer(const UWorld* World, const FString& IP, const FString& Port)
+{
+	FString ConnectLevelName = FString::Printf(TEXT("%s:%s"), *IP, *Port);
+	UGameplayStatics::OpenLevel(World, FName(*ConnectLevelName));
 }
