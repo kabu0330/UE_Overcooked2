@@ -7,19 +7,11 @@
 
 void UTitleWidget::StartServer()
 {
-	FString OpenLevel;
-	FString LevelPath = TEXT("");
-
-	UOC2Global::GetAssetPackageName(UWorld::StaticClass(), TEXT("GlobalDevLevel"), LevelPath);
-	OpenLevel = FString::Printf(TEXT(":%s%s"), *Port, *LevelPath);
-
-	UGameplayStatics::OpenLevel(GetWorld(), *OpenLevel, true, TEXT("listen"));
+	UOC2Global::StartServer(GetWorld(), Port, TEXT("GlobalDevLevel"));
 }
 
 void UTitleWidget::Connect()
 {
-	FString ConnectLevelName = FString::Printf(TEXT("%s:%s"), *IP, *Port);
-
-	UGameplayStatics::OpenLevel(GetWorld(), FName(*ConnectLevelName));
+	UOC2Global::ConnectServer(GetWorld(), IP, Port);
 }
 
