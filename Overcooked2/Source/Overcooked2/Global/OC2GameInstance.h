@@ -4,9 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
+#include "Engine/DataTable.h"
 #include "OC2GameInstance.generated.h"
-
-class UDataTable;
 
 /**
  * 
@@ -22,11 +21,8 @@ public:
 	UOC2GameInstance();
 	~UOC2GameInstance();
 
-private:
-	UPROPERTY(VisibleAnywhere, Category = "Global|Data")
-	UDataTable* DataTables = nullptr;
-	
-	UPROPERTY(VisibleAnywhere, Category = "Global|Data")
-	UDataTable* ActorDataTable = nullptr;
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
+	UDataTable* FoodDataTable = nullptr;
 	
 };
