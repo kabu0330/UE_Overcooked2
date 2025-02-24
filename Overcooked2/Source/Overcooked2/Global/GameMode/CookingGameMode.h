@@ -6,6 +6,8 @@
 #include "GameFramework/GameMode.h"
 #include "CookingGameMode.generated.h"
 
+class UOrderManageComponent;
+
 /**
  * 
  */
@@ -14,4 +16,14 @@ class OVERCOOKED2_API ACookingGameMode : public AGameMode
 {
 	GENERATED_BODY()
 	
+public:
+	ACookingGameMode();
+
+protected:
+	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
+
+private:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Component", meta = (AllowPrivateAccess = "true"))
+	UOrderManageComponent* OrderManager = nullptr;
 };
