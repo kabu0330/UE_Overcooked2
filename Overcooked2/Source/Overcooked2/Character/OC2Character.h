@@ -17,7 +17,7 @@ public:
 	AOC2Character();
 
 	UFUNCTION(BlueprintCallable)
-	void MoveCharacter(const FVector& Value);
+	void MoveCharacter(const FInputActionValue& Value);
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -30,6 +30,16 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 private :
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterInputAction", meta = (AllowPrivateAccess = "true"))
+	void InitMesh();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UserInput", meta = (AllowPrivateAccess = "true"))
+	float Alpha;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UserInput", meta = (AllowPrivateAccess = "true"))
 	UInputAction* MoveAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UserInput", meta = (AllowPrivateAccess = "true"))
+	UMaterial* TransparentMat;
+
+
 };
