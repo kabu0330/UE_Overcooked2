@@ -7,12 +7,13 @@
 #include "Global/Data/FoodDataTable.h"
 #include "OrderManageComponent.generated.h"
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct OVERCOOKED2_API FOrder
 {
 	GENERATED_BODY()
 
-	std::vector<FFoodDataRow> RequiredFoods;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Order")
+	TArray<FFoodDataRow> RequiredFoods;
 };
 
 
@@ -32,5 +33,7 @@ protected:
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-		
+
+private:
+	TArray<FOrder> OrderList;
 };
