@@ -4,16 +4,20 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "Global/Data/FoodDataTable.h"
 #include "OrderManageComponent.generated.h"
 
+//class AIngredient;
+
 USTRUCT(BlueprintType)
-struct OVERCOOKED2_API FOrder
+struct OVERCOOKED2_API FRecipe
 {
 	GENERATED_BODY()
 
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Order")
+	//TArray<TObjectPtr<AIngredient>> RequiredIngredients;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Order")
-	TArray<FFoodDataRow> RequiredFoods;
+	float TimeLimit = 0.0f;
 };
 
 
@@ -35,5 +39,5 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 private:
-	TArray<FOrder> OrderList;
+	TArray<FRecipe> OrderList;
 };

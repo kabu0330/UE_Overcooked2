@@ -7,6 +7,23 @@
 #include "InputAction.h"
 #include "OC2Character.generated.h"
 
+USTRUCT(BlueprintType)
+struct FCharacterData
+{
+	GENERATED_BODY()
+
+	FCharacterData() {}
+	FCharacterData(UMaterialInterface* InMaterial, int32 Index)
+	: Material(InMaterial), MaterialIndex(Index){}
+	~FCharacterData() {}
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character")
+	UMaterialInterface* Material;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character")
+	int32 MaterialIndex;
+};
+
 UCLASS()
 class OVERCOOKED2_API AOC2Character : public ACharacter
 {
@@ -29,17 +46,25 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-private :
+	UFUNCTION(BlueprintCallable)
+	void SetCharacterHead(FString Name);
+
+	UFUNCTION(BlueprintCallable)
 	void InitMesh();
+private :
+	// 이 함수는 캐릭터의 머리를 설정하는 함수읾
+	
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UserInput", meta = (AllowPrivateAccess = "true"))
-	float Alpha;
+	float Alpha = 0.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UserInput", meta = (AllowPrivateAccess = "true"))
-	UInputAction* MoveAction;
+	UInputAction* MoveAction = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UserInput", meta = (AllowPrivateAccess = "true"))
-	UMaterial* TransparentMat;
+	UMaterial* TransparentMat = nullptr;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UserInput", meta = (AllowPrivateAccess = "true"))
+	TMap<FString, FCharacterData> CharacterHeadMap;
 
 };

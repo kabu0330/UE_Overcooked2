@@ -22,8 +22,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	static TArray<FAssetData> GetAssetDataArray(UClass* Class);
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(Server, BlueprintCallable)
 	static void StartServer(const UWorld* World, const FString& Port, const FString& LevelName);
+	static void StartServer_Implementation(const UWorld* World, const FString& Port, const FString& LevelName);
 
 	UFUNCTION(BlueprintCallable)
 	static void ConnectServer(const UWorld* World, const FString& IP, const FString& Port);

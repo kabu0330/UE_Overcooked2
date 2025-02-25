@@ -3,6 +3,7 @@
 
 #include "Character/OC2Character.h"
 #include "EnhancedInputComponent.h"
+#include "OC2CharacterDataTable.h"
 #include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
@@ -34,7 +35,9 @@ void AOC2Character::BeginPlay()
 {
 	Super::BeginPlay();
 
-	//InitMesh();
+	InitMesh();
+	// юс╫ц :
+	//SetCharacterHead("Alien_Green");
 }
 
 // Called every frame
@@ -57,8 +60,16 @@ void AOC2Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 void AOC2Character::InitMesh()
 {
 	TArray<UMaterialInterface*> Materials = GetMesh()->GetMaterials();
-	for (int i = 0; i < Materials.Num(); i++)
+	//0 is ChefBody
+	for (int32 i = 1; i < Materials.Num(); i++)
 	{
+		FString Name = Materials[i]->GetName();
+		if (Name.Contains("ChefHead"))
+		{
+			FString Key = Name.RightChop(15);
+			CharacterHeadMap.Add(Key, FCharacterData(Materials[i], i));
+		}
+		if (i == 36) continue;
 		GetMesh()->SetMaterial(i, TransparentMat);
 	}
 
@@ -72,5 +83,17 @@ void AOC2Character::InitMesh()
 			UE_LOG(LogTemp, Log, TEXT("Filtered Material Slot: %s"), *SlotNameStr);
 		}
 	}
+
+	//SetHeadMaterial(FMath::RandRange(0, HeadMaterials.Num() - 1));
 }
+
+void AOC2Character::SetCharacterHead(FString Name)
+{
+	if (CharacterHeadMap.Contains(Name))
+	{
+		FCharacterData Data = CharacterHeadMap[Name];
+		GetMesh()->SetMaterial(Data.MaterialIndex, Data.Material);
+	}
+}
+
 
