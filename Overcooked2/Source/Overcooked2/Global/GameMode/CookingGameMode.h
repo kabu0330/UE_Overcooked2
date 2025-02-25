@@ -35,14 +35,13 @@ public:
 
 	void EntryStay();
 	void Stay(float DeltaTime);
-
 	void EntryStage();
 	void Stage(float DeltaTime);
-
 	void EntryScore();
 	void Score(float DeltaTime);
 
 	void ChangeState(ECookingGameModeState State);
+	void PrintDebugMessage();
 
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Component", meta = (AllowPrivateAccess = "true"))
