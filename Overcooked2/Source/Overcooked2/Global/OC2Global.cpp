@@ -58,6 +58,12 @@ void UOC2Global::StartServer(const UWorld* World, const FString& Port, const FSt
 	UGameplayStatics::OpenLevel(World, *OpenLevel, true, TEXT("listen"));
 }
 
+void UOC2Global::StartServer_Implementation(const UWorld* World, const FString& Port, const FString& LevelName)
+{
+	StartServer(World, Port, LevelName);
+
+}
+
 void UOC2Global::ConnectServer(const UWorld* World, const FString& IP, const FString& Port)
 {
 	FString ConnectLevelName = FString::Printf(TEXT("%s:%s"), *IP, *Port);
