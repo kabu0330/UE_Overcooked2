@@ -4,3 +4,4 @@
 
 #include "CoreMinimal.h"
 
+DECLARE_LOG_CATEGORY_EXTERN(OVERCOOKED_LOG, Log, All);

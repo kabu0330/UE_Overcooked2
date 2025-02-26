@@ -5,4 +5,4 @@
 
 IMPLEMENT_PRIMARY_GAME_MODULE( FDefaultGameModuleImpl, Overcooked2, "Overcooked2" );
 
-#define TEST
+DEFINE_LOG_CATEGORY(OVERCOOKED_LOG);
