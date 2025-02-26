@@ -2,7 +2,7 @@
 
 
 #include "LevelContent/Cook/Cooking.h"
-//#include <Global/Component/TimeEventActorComponent.h>
+#include <Global/Component/TimeEventComponent.h>
 
 // Sets default values
 ACooking::ACooking()
@@ -11,7 +11,7 @@ ACooking::ACooking()
 	PrimaryActorTick.bCanEverTick = true;
 
 
-//	TimeEvent = CreateDefaultSubobject<UTimeEventActorComponent>(TEXT("TimeEvent"));
+	TimeEvent = CreateDefaultSubobject<UTimeEventComponent>(TEXT("TimeEvent"));
 }
 
 // Called when the game starts or when spawned
