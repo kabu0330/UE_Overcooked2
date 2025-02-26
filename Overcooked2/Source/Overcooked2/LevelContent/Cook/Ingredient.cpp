@@ -9,6 +9,8 @@ AIngredient::AIngredient()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	// Spawn되는 녀석의 기본 크기를 지정해줘야 한다면?
+	//SetActorScale3D(FVector(100.0f, 100.0f, 100.0f));
 }
 
 // Called when the game starts or when spawned

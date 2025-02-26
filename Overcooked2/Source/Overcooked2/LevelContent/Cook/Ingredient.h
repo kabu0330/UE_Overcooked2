@@ -3,13 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include <LevelContent/Cook/Cooking.h>
+#include <Global/OC2Enum.h>
 //#include <Global/Interface/InterActable.h>
 #include "Ingredient.generated.h"
 
 // 요리 재료
 UCLASS()
-class OVERCOOKED2_API AIngredient : public AActor/*, public UInterActable*/
+class OVERCOOKED2_API AIngredient : public ACooking/*, public UInterActable*/
 {
 	GENERATED_BODY()
 	
@@ -17,40 +18,47 @@ public:
 	// Sets default values for this actor's properties
 	AIngredient();
 
-	// 생성자에서 기본적인 데이터를 입력하게 해야하나?
+	// 생성자에서 기본적인 데이터를 입력하게 해야하나? 아마도?
+	AIngredient(const FString& Name, EIngredientType Type, EIngredientState State, float CookingDuration, float OverCookDuration = 0.0f)
+	{
+		IngredientName = Name;
+		IngredientType = Type;
+		IngredientState = State;
+		CookingTime = CookingDuration; 
+		if (0.0f < OverCookDuration)
+		{
+			bCanOvercook = true;
+			OvercookTime = OverCookDuration;
+		}
+	}
 	
 	// 조리가 끝난 재료야?
 	UFUNCTION(BlueprintCallable)
 	bool IsCooked() const 
 	{
-		//return IngredientState == EIngredientState::COOKED;
-		return false;
+		return IngredientState == EIngredientState::EFS_COOKED;
 	}
 
 	// 도마에서 썰어야 하는 재료야?
 	UFUNCTION(BlueprintCallable)
 	bool IsChoppable() const
 	{
-		//return IngredientState == EIngredientState::CHOPPABLE;
-		return false;
+		return IngredientState == EIngredientState::EFS_CHOPPABLE;
 	}
 
 	// 프라이팬에 구워야 하는 재료야?
 	UFUNCTION(BlueprintCallable)
 	bool IsGrillable() const
 	{
-		//return IngredientState == EIngredientState::GRILLABLE;
-		return false;
+		return IngredientState == EIngredientState::EFS_GRILLABLE;
 	}
 
 	// 솥에서 밥을 지을 수 있어?
 	UFUNCTION(BlueprintCallable)
 	bool IsBoilable() const
 	{
-		//return IngredientState == EIngredientState::BOILABLE;
-		return false;
+		return IngredientState == EIngredientState::EFS_BOILABLE;
 	}
-
 
 protected:
 	// Called when the game starts or when spawned
@@ -59,19 +67,22 @@ protected:
 	virtual void Tick(float DeltaTime) override;
 
 private:	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cook", meta = (AllowPrivateAccess = "true"))
-	FString Name = TEXT("");
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	FString IngredientName = TEXT("");
 
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cook", meta = (AllowPrivateAccess = "true"))
-	//EIngredientState IngredientState = EIngredientState::NONE;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	EIngredientType IngredientType = EIngredientType::EFD_NONE;
 
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cook", meta = (AllowPrivateAccess = "true"))
-	//EIngredientType IngredientType = EIngredientType::NONE;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	EIngredientState IngredientState = EIngredientState::EFS_NONE;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cook", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	float CookingTime = 0.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cook", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	float OvercookTime = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	bool bCanOvercook = false;
 
 };
