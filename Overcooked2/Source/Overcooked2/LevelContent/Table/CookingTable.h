@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include <LevelContent/Cook/Ingredient.h>
 #include <LevelContent/Cook/Plate.h>
+#include <Global/OC2GameInstance.h>
+#include "Overcooked2.h"
 #include "CookingTable.generated.h"
 
 UCLASS()

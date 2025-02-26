@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include <Global/OC2Enum.h>
 #include <Global/Data/IngredientDataTable.h>
+#include <Global/OC2GameInstance.h>
 #include "Cooking.generated.h"
 
 // Ingredient(요리 재료)와 Plate(요리)의 최상위 클래스 

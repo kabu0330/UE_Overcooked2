@@ -17,11 +17,9 @@ class OVERCOOKED2_API ASpawnTable : public ACookingTable
 	
 public:
 	ASpawnTable();
-	
-	void Init(EIngredientType);
 
 	UFUNCTION(BlueprintCallable)
-	class AIngredient* SpawnIngredient(EIngredientType Ingredient);
+	class AIngredient* SpawnIngredient(FName IngredientName);
 
 protected:
 
