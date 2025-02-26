@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "InputAction.h"
+#include "Character/OC2CharacterTestTable.h"
 #include "OC2Character.generated.h"
 
 USTRUCT(BlueprintType)
@@ -51,6 +52,10 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void InitMesh();
+
+	UFUNCTION(BlueprintCallable)
+	void CheckInteract();
+	void Dash();
 private :
 	// 이 함수는 캐릭터의 머리를 설정하는 함수읾
 	
@@ -62,9 +67,28 @@ private :
 	UInputAction* MoveAction = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UserInput", meta = (AllowPrivateAccess = "true"))
+	UInputAction* GrabAction = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UserInput", meta = (AllowPrivateAccess = "true"))
+	UInputAction* DashAction = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UserInput", meta = (AllowPrivateAccess = "true"))
 	UMaterial* TransparentMat = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UserInput", meta = (AllowPrivateAccess = "true"))
+	float TraceRadius = 100.0f; // 트레이스 반지름
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UserInput", meta = (AllowPrivateAccess = "true"))
 	TMap<FString, FCharacterData> CharacterHeadMap;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Grab", meta = (AllowPrivateAccess = "true"))
+	USceneComponent* GrabComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Grab", meta = (AllowPrivateAccess = "true"))
+	AOC2CharacterTestTable* CurHighlightedTable = nullptr;
+
+	bool bIsDash = false;
+	float DashDuration = 0.5f;
+
 
 };
