@@ -3,13 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include <LevelContent/Cook/Cooking.h>
+#include <Global/OC2Enum.h>
 //#include <Global/Interface/InterActable.h>
 #include "Plate.generated.h"
 
 // 접시 ~ 접시에 올라간 조리된 요리 ~ 요리들의 조합 ~ 완성된 요리
 UCLASS()
-class OVERCOOKED2_API APlate : public AActor/*, public UInterActable*/
+class OVERCOOKED2_API APlate : public ACooking/*, public UInterActable*/
 {
 	GENERATED_BODY()
 	
@@ -20,7 +21,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void CleanPlate()
 	{
-
 		bCanPlaceIngredient = true;
 	}
 
@@ -44,11 +44,9 @@ protected:
 	virtual void Tick(float DeltaTime) override;
 
 private:
-
 	// TArray가 있어야 할 듯?
 	// FCookableIngredient CookedIngredient;
 
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cook", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	bool bCanPlaceIngredient = true;
 };
