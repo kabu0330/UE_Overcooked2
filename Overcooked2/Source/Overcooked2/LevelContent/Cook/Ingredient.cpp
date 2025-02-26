@@ -17,29 +17,29 @@ void AIngredient::Init(FName Name)
 {
 	//DataTable = UGlobalDataTable::GetActorClass(Name);
 
-	StaticMeshComponent->SetStaticMesh(DataTable->BaseMesh);
+	StaticMeshComponent->SetStaticMesh(DataTable.BaseMesh);
 	CurIngredientState = EIngredientState::EIS_NONE;
 }
 
-const FIngredientCookDataRow* AIngredient::CheckState(EIngredientState State)
+const FIngredientCookDataRow& AIngredient::CheckState(EIngredientState State)
 {
 	const FIngredientCookDataRow* Result = nullptr;
 
-	for (size_t i = 0; i < DataTable->StateRows.Num(); i++)
+	for (size_t i = 0; i < DataTable.StateRows.Num(); i++)
 	{
-		if (DataTable->StateRows[i].IngredientState == State)
+		if (DataTable.StateRows[i].IngredientState == State)
 		{
-			Result = &DataTable->StateRows[i];
+			Result = &DataTable.StateRows[i];
 			break;
 		}
 	}
 
-	return Result;
+	return *Result;
 }
 
 void AIngredient::ChageState(EIngredientState State)
 {
-	const FIngredientCookDataRow* Data = CheckState(State);
+	const FIngredientCookDataRow* Data = &CheckState(State);
 
 	if (nullptr == Data)
 	{

@@ -37,6 +37,7 @@ bool APlate::Add(AIngredient* Ingredient)
 	Ingredients.Add(Ingredient);
 
 	CookCheck();
+	return true;
 }
 
 void APlate::CookCheck()

@@ -21,7 +21,7 @@ public:
 	void Init(FName Name);
 	
 	UFUNCTION(BlueprintCallable)
-	const FIngredientCookDataRow* CheckState(EIngredientState State);
+	const FIngredientCookDataRow& CheckState(EIngredientState State);
 
 	UFUNCTION(BlueprintCallable)
 	void ChageState(EIngredientState State);
@@ -61,7 +61,7 @@ public:
 	}
 
 	UFUNCTION(BlueprintCallable)
-	const FIngredientDataRow* const GetDataTable() const
+	const FIngredientDataRow&  GetDataTable() const
 	{
 		return DataTable;
 	}
@@ -80,7 +80,7 @@ protected:
 
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
-	const FIngredientDataRow* DataTable;
+	FIngredientDataRow DataTable;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* StaticMeshComponent;
