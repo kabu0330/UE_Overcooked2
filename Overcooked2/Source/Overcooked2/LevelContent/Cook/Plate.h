@@ -19,22 +19,15 @@ public:
 	APlate();
 
 	UFUNCTION(BlueprintCallable)
-	void CleanPlate()
-	{
-		bCanPlaceIngredient = true;
-	}
+	void CleanPlate();
 
-	bool Add(class AIngredient* Ingredient)
-	{
-		// 예외처리 로직 필요
-		//if (nullptr == Ingredient || Ingredient.GetIngredientState() != EIngredientState::COOKED)
-		//{
-		//	return false;
-		//}
 
-		// TArray에 Add
-		return true;
-	}
+	// 접시 위에 재료를 쌓는 모든 과정
+	bool Add(class AIngredient* Ingredient);
+
+
+	void CookCheck();
+
 	
 protected:
 	// Called when the game starts or when spawned
@@ -44,9 +37,17 @@ protected:
 	virtual void Tick(float DeltaTime) override;
 
 private:
-	// TArray가 있어야 할 듯?
-	// FCookableIngredient CookedIngredient;
+	const FStageCookingDataRow* Data;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
-	bool bCanPlaceIngredient = true;
+	TArray<class AIngredient*> Ingredients;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	UStaticMeshComponent* IngredientMesh = nullptr; // 재료
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	UStaticMeshComponent* PlateMesh = nullptr; // 접시
+
+	
+
 };
