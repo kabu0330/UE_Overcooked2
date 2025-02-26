@@ -9,7 +9,7 @@
 
 // 접시 ~ 접시에 올라간 조리된 요리 ~ 요리들의 조합 ~ 완성된 요리
 UCLASS()
-class OVERCOOKED2_API APlate : public AActor, /*public UInterActable*/
+class OVERCOOKED2_API APlate : public AActor/*, public UInterActable*/
 {
 	GENERATED_BODY()
 	
@@ -49,6 +49,6 @@ private:
 	// FCookableIngredient CookedIngredient;
 
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Cook")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cook", meta = (AllowPrivateAccess = "true"))
 	bool bCanPlaceIngredient = true;
 };

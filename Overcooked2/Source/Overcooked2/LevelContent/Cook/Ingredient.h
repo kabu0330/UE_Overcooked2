@@ -9,7 +9,7 @@
 
 // 요리 재료
 UCLASS()
-class OVERCOOKED2_API AIngredient : public AActor, /*public UInterActable*/
+class OVERCOOKED2_API AIngredient : public AActor/*, public UInterActable*/
 {
 	GENERATED_BODY()
 	
