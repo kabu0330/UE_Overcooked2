@@ -8,6 +8,22 @@
 #include "IngredientDataTable.generated.h"
 
 USTRUCT(BlueprintType)
+struct FIngredientCookDataRow 
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
+	EIngredientState PrevIngredientState = EIngredientState::EIS_NONE;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
+	EIngredientState IngredientState = EIngredientState::EIS_NONE;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
+	UStaticMesh* CookMesh = nullptr;
+};
+
+USTRUCT(BlueprintType)
 struct FIngredientDataRow : public FTableRowBase
 {
 	GENERATED_BODY()
@@ -16,13 +32,40 @@ struct FIngredientDataRow : public FTableRowBase
 	~FIngredientDataRow() {}
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
-	EIngredientType IngredientType = EIngredientType::EFD_NONE;
+	EIngredientType IngredientType = EIngredientType::EIT_NONE;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
-	EIngredientState IngredientState = EIngredientState::EFS_NONE;
+	UStaticMesh* BaseMesh = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
-	bool bCooked = false;
+	TArray<FIngredientCookDataRow> Rows;
+};
+
+USTRUCT(BlueprintType)
+struct FCookableIngredient 
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
+	EIngredientType IngredientType = EIngredientType::EIT_NONE;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
+	EIngredientState IngredientState = EIngredientState::EIS_NONE;
+
+};
+
+USTRUCT(BlueprintType)
+struct FRecipeDataRow : public FTableRowBase
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
+	FString Name;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
+	TArray<FCookableIngredient> CookableIngredients;
 };
 
 /**
