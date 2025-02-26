@@ -17,6 +17,9 @@ struct OVERCOOKED2_API FRecipe
 	//TArray<TObjectPtr<AIngredient>> RequiredIngredients;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Order")
+	TArray<UClass*> RequiredActor;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Order")
 	float TimeLimit = 0.0f;
 };
 
