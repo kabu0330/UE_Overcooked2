@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
 #include "Engine/DataTable.h"
+#include "Global/Data/IngredientDataTable.h"
 #include "OC2GameInstance.generated.h"
 
 /**
@@ -21,8 +22,14 @@ public:
 	UOC2GameInstance();
 	~UOC2GameInstance();
 
+	UFUNCTION(BlueprintCallable)
+	EIngredientType GetIngredientType(const FString& RowName);
+
+	UFUNCTION(BlueprintCallable)
+	const TArray<FIngredientCookDataRow>& GetIngredientCookDataRows(const FString& RowName);
+
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
-	UDataTable* FoodDataTable = nullptr;
+	UDataTable* IngredientDataTable = nullptr;
 	
 };
