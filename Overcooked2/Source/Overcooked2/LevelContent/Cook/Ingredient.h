@@ -18,20 +18,17 @@ public:
 	// Sets default values for this actor's properties
 	AIngredient();
 
-	// 생성자에서 기본적인 데이터를 입력하게 해야하나? 아마도?
-	AIngredient(const FString& Name, EIngredientType Type, EIngredientState State, float CookingDuration, float OverCookDuration = 0.0f)
-	{
-		IngredientName = Name;
-		IngredientType = Type;
-		IngredientState = State;
-		CookingTime = CookingDuration; 
-		if (0.0f < OverCookDuration)
-		{
-			bCanOvercook = true;
-			OvercookTime = OverCookDuration;
-		}
-	}
+	// 상자에서 꺼냈을 때
+	UFUNCTION(BlueprintCallable)
+	void Init(FName Name);
 	
+	//UFUNCTION(BlueprintCallable)
+	//const FIngredientCookDataRow* CheckState(EIngredientState IngredientState);
+
+	UFUNCTION(BlueprintCallable)
+	void ChageState(EIngredientState State);
+
+
 	// 조리가 끝난 재료야?
 	UFUNCTION(BlueprintCallable)
 	bool IsCooked() const 
@@ -60,29 +57,44 @@ public:
 		return IngredientState == EIngredientState::EFS_BOILABLE;
 	}
 
+	UFUNCTION(BlueprintCallable)
+	EIngredientType GetIngredientType() const 
+	{
+		return IngredientType;
+	}
+
+	UFUNCTION(BlueprintCallable)
+	EIngredientState GetIngredientState() const
+	{
+		return IngredientState;
+	}
+
+	//FIngredientDataRow* const GetDataTable() const
+	//{
+	//	return DataTable;
+	//}
+
+	UStaticMeshComponent* const GetStaticMeshComponent() const
+	{
+		return StaticMeshComponent;
+	}
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-private:	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
-	FString IngredientName = TEXT("");
+private:
+	//UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	//const FIngredientDataRow* DataTable;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	UStaticMeshComponent* StaticMeshComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	EIngredientType IngredientType = EIngredientType::EFD_NONE;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	EIngredientState IngredientState = EIngredientState::EFS_NONE;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
-	float CookingTime = 0.0f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
-	float OvercookTime = 0.0f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
-	bool bCanOvercook = false;
-
 };

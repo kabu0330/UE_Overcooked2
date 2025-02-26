@@ -21,7 +21,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void CleanPlate()
 	{
-
 		bCanPlaceIngredient = true;
 	}
 
@@ -45,10 +44,8 @@ protected:
 	virtual void Tick(float DeltaTime) override;
 
 private:
-
 	// TArray가 있어야 할 듯?
 	// FCookableIngredient CookedIngredient;
-
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	bool bCanPlaceIngredient = true;

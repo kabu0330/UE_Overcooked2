@@ -13,6 +13,15 @@ AIngredient::AIngredient()
 	//SetActorScale3D(FVector(100.0f, 100.0f, 100.0f));
 }
 
+void AIngredient::Init(FName Name)
+{
+	//StaticMeshComponent->SetStaticMesh()
+}
+
+void AIngredient::ChageState(EIngredientState State)
+{
+}
+
 // Called when the game starts or when spawned
 void AIngredient::BeginPlay()
 {
