@@ -11,7 +11,7 @@ AOC2Character::AOC2Character()
 	PrimaryActorTick.bCanEverTick = true;
 
 	bReplicates = true;
-	bUseControllerRotationYaw = false;
+	//bUseControllerRotationYaw = false;
 
 	GrabComponent = CreateDefaultSubobject<USceneComponent>("GrabPosition");
 	GrabComponent->SetupAttachment(RootComponent);
@@ -21,14 +21,16 @@ void AOC2Character::MoveCharacter(const FInputActionValue& Value)
 {
 	FVector MovementInput = Value.Get<FVector>();
 
+	AddControllerYawInput(MovementInput.X);
 	MovementInput.Normalize();
 
 	AddMovementInput(MovementInput);
 	
-	FQuat ActorRot =  GetActorForwardVector().Rotation().Quaternion();
-	FQuat TargetRot = FRotationMatrix::MakeFromX(MovementInput).Rotator().Quaternion();
 
-	SetActorRotation(FQuat::Slerp(ActorRot, TargetRot, Alpha).Rotator());
+	//FQuat ActorRot =  GetActorForwardVector().Rotation().Quaternion();
+	//FQuat TargetRot = FRotationMatrix::MakeFromX(MovementInput).Rotator().Quaternion();
+
+	//SetActorRotation(FQuat::Slerp(ActorRot, TargetRot, Alpha).Rotator());
 }
 
 // Called when the game starts or when spawned
