@@ -9,8 +9,12 @@ ASpawnTable::ASpawnTable()
 {
 }
 
+void ASpawnTable::Init(FName Name)
+{
+	IngredientName = Name;
+}
 
-AIngredient* ASpawnTable::SpawnIngredient(FName IngredientName)
+AIngredient* ASpawnTable::SpawnIngredient(AActor* ChefActor)
 {
 	//UDataTable* DataTable = LoadObject<UDataTable>(nullptr, TEXT("/Script/Engine.DataTable'/Game/Blueprints/Global/Data/DT_IngredientDataTable.DT_IngredientDataTable'_C"));
 
@@ -31,12 +35,22 @@ AIngredient* ASpawnTable::SpawnIngredient(FName IngredientName)
 	//}
 
 	FActorSpawnParameters SpawnParameters; // 적절한 오버로딩 함수 호출을 위해(회전값 추가), FActorSpawnParameters 사용
-	FVector Location = GetActorLocation() + FVector(0.0f, 0.0f, 100.0f); 
+	FVector Location = FVector();
+	if (nullptr != ChefActor)
+	{
+		Location = GetActorLocation() + FVector(0.0f, 0.0f, 100.0f);
+	}
 	FRotator Rotator = FRotator(90.0f, 90.0f, 90.0f);
 
 	// 1. 재료를 월드에 스폰한다.
 	// Transform은 있지만 메시도 없는 빈 껍데기 상태
 	AIngredient* NewIngredient = GetWorld()->SpawnActor<AIngredient>(AIngredient::StaticClass(), Location, Rotator, SpawnParameters);
+
+	// 액터에 부착
+	if (nullptr != ChefActor)
+	{
+		NewIngredient->Interact(ChefActor);
+	}
 
 	if (nullptr == NewIngredient)
 	{
@@ -48,4 +62,9 @@ AIngredient* ASpawnTable::SpawnIngredient(FName IngredientName)
 	NewIngredient->Init(IngredientName);
 
 	return NewIngredient;
+}
+
+void ASpawnTable::Interact(AActor* ChefActor)
+{
+	SpawnIngredient(ChefActor);
 }

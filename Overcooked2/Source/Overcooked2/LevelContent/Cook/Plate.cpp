@@ -12,6 +12,21 @@ APlate::APlate()
 
 }
 
+// Called when the game starts or when spawned
+void APlate::BeginPlay()
+{
+	Super::BeginPlay();
+	
+}
+
+// Called every frame
+void APlate::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+}
+
+
 void APlate::CleanPlate()
 {
 	{
@@ -43,18 +58,3 @@ bool APlate::Add(AIngredient* Ingredient)
 void APlate::CookCheck()
 {
 }
-
-// Called when the game starts or when spawned
-void APlate::BeginPlay()
-{
-	Super::BeginPlay();
-	
-}
-
-// Called every frame
-void APlate::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-

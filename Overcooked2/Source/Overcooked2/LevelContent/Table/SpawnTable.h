@@ -17,12 +17,18 @@ class OVERCOOKED2_API ASpawnTable : public ACookingTable
 	
 public:
 	ASpawnTable();
+	
+	UFUNCTION(BlueprintCallable)
+	void Init(FName Name);
 
 	UFUNCTION(BlueprintCallable)
-	class AIngredient* SpawnIngredient(FName IngredientName);
+	class AIngredient* SpawnIngredient(AActor* ChefActor);
+
+	UFUNCTION(BlueprintCallable)
+	virtual void Interact(AActor* ChefActor) override;
 
 protected:
 
 private:
-
+	FName IngredientName = FName();
 };

@@ -8,7 +8,7 @@
 
 // 요리 재료
 UCLASS()
-class OVERCOOKED2_API AIngredient : public ACooking/*, public UInterActable*/
+class OVERCOOKED2_API AIngredient : public ACooking
 {
 	GENERATED_BODY()
 	
@@ -25,6 +25,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void ChageState(EIngredientState State);
+
 
 
 	// 도마에서 썰어야 하는 재료야?

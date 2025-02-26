@@ -17,6 +17,20 @@ AIngredient::AIngredient()
 	//SetActorScale3D(FVector(100.0f, 100.0f, 100.0f));
 }
 
+// Called when the game starts or when spawned
+void AIngredient::BeginPlay()
+{
+	Super::BeginPlay();
+
+}
+
+// Called every frame
+void AIngredient::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+}
+
 // 데이터 테이블에서 적절한 메시를 찾고, 재료의 상태를 초기화하는 함수
 void AIngredient::Init(FName Name)
 {
@@ -29,7 +43,7 @@ void AIngredient::Init(FName Name)
 	{
 		int a = 0;
 	}
-	
+
 	// 2. 행 이름(Fish)을 기준으로 데이터 열("생선", 메시경로, State)을 가져온다.
 	FIngredientDataRow* IngredientData = IngredientDataTable->FindRow<FIngredientDataRow>(Name, TEXT(""));
 	if (nullptr == IngredientData)
@@ -76,17 +90,5 @@ void AIngredient::ChageState(EIngredientState State)
 	StaticMeshComponent->SetStaticMesh(Data->CookMesh);
 }
 
-// Called when the game starts or when spawned
-void AIngredient::BeginPlay()
-{
-	Super::BeginPlay();
-	
-}
 
-// Called every frame
-void AIngredient::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
 

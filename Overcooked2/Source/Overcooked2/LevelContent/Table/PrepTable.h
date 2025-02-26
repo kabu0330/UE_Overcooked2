@@ -13,5 +13,9 @@ UCLASS()
 class OVERCOOKED2_API APrepTable : public ACookingTable
 {
 	GENERATED_BODY()
-	
+
+public:
+	UFUNCTION(BlueprintCallable)
+	virtual void Interact(AActor* ChefActor) override;
+
 };

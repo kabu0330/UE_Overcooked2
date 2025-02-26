@@ -3,3 +3,6 @@
 
 #include "LevelContent/Table/PrepTable.h"
 
+void APrepTable::Interact(AActor* ChefActor)
+{
+}

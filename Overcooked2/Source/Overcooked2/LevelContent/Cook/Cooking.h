@@ -7,17 +7,28 @@
 #include <Global/OC2Enum.h>
 #include <Global/Data/IngredientDataTable.h>
 #include <Global/OC2GameInstance.h>
+#include <Global/Interface/InteractableObject.h>
 #include "Cooking.generated.h"
 
 // Ingredient(요리 재료)와 Plate(요리)의 최상위 클래스 
 UCLASS()
-class OVERCOOKED2_API ACooking : public AActor
+class OVERCOOKED2_API ACooking : public AActor, public IInteractableObject
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
 	ACooking();
+
+	// 캐릭터와 상호작용할 함수
+	// 반드시 Ingredient와 Plate에서 재정의해야 함
+	virtual void Interact(AActor* ChefActor) override;
+
+	UFUNCTION(BlueprintCallable)
+	bool IsInteracting() const
+	{
+		return bIsInteracting;
+	}
 
 protected:
 	// Called when the game starts or when spawned
@@ -27,6 +38,9 @@ protected:
 	virtual void Tick(float DeltaTime) override;
 
 	class UTimeEventComponent* TimeEvent = nullptr;
+
+	// 상호작용 중인가?
+	bool bIsInteracting = false; 
 
 private:	
 	ECookingType CookingType = ECookingType::ECT_NONE;
