@@ -30,10 +30,13 @@ AIngredient* ASpawnTable::SpawnIngredient(FName IngredientName)
 	//	return nullptr;
 	//}
 
-	FActorSpawnParameters SpawnParameters;
-	FVector Location = GetActorLocation(); 
-	// 적절한 오버로딩 함수 호출을 위해(회전값), FActorSpawnParameters 사용
-	AIngredient* NewIngredient = GetWorld()->SpawnActor<AIngredient>(AIngredient::StaticClass(), Location, FRotator::ZeroRotator, SpawnParameters); 
+	FActorSpawnParameters SpawnParameters; // 적절한 오버로딩 함수 호출을 위해(회전값 추가), FActorSpawnParameters 사용
+	FVector Location = GetActorLocation() + FVector(0.0f, 0.0f, 100.0f); 
+	FRotator Rotator = FRotator(90.0f, 90.0f, 90.0f);
+
+	// 1. 재료를 월드에 스폰한다.
+	// Transform은 있지만 메시도 없는 빈 껍데기 상태
+	AIngredient* NewIngredient = GetWorld()->SpawnActor<AIngredient>(AIngredient::StaticClass(), Location, Rotator, SpawnParameters);
 
 	if (nullptr == NewIngredient)
 	{
@@ -41,6 +44,7 @@ AIngredient* ASpawnTable::SpawnIngredient(FName IngredientName)
 		return nullptr;
 	}
 	
+	// 2. 메시를 찾아서
 	NewIngredient->Init(IngredientName);
 
 	return NewIngredient;

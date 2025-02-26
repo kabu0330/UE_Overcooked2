@@ -17,9 +17,10 @@ AIngredient::AIngredient()
 	//SetActorScale3D(FVector(100.0f, 100.0f, 100.0f));
 }
 
+// 데이터 테이블에서 적절한 메시를 찾고, 재료의 상태를 초기화하는 함수
 void AIngredient::Init(FName Name)
 {
-	UOC2GameInstance* GameInst = Cast<UOC2GameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	//UOC2GameInstance* GameInst = Cast<UOC2GameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 
 	// 1. 데이터 테이블을 가져온다.
 	UDataTable* IngredientDataTable = LoadObject<UDataTable>(nullptr, TEXT("/Game/Blueprints/Global/Data/DT_IngredientDataTable.DT_IngredientDataTable"));
@@ -29,6 +30,7 @@ void AIngredient::Init(FName Name)
 		int a = 0;
 	}
 	
+	// 2. 행 이름(Fish)을 기준으로 데이터 열("생선", 메시경로, State)을 가져온다.
 	FIngredientDataRow* IngredientData = IngredientDataTable->FindRow<FIngredientDataRow>(Name, TEXT(""));
 	if (nullptr == IngredientData)
 	{
@@ -38,8 +40,11 @@ void AIngredient::Init(FName Name)
 	//DataTable = UGlobalDataTable::GetActorClass(Name);
 	//DataTable = 
 	//StaticMeshComponent->SetStaticMesh(DataTable.BaseMesh);
+
+	// 3. 추출한 데이터 열 값을 넣어준다.
 	StaticMeshComponent->SetStaticMesh(IngredientData->BaseMesh);
-	CurIngredientState = EIngredientState::EIS_NONE;
+	IngredientType = IngredientData->IngredientType;
+	CurIngredientState = IngredientData->StateRows[0].PrevIngredientState; // 이게 맞나???
 }
 
 const FIngredientCookDataRow& AIngredient::CheckState(EIngredientState State)
