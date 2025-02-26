@@ -29,32 +29,25 @@ public:
 	void ChageState(EIngredientState State);
 
 
-	// 조리가 끝난 재료야?
-	UFUNCTION(BlueprintCallable)
-	bool IsCooked() const 
-	{
-		return IngredientState == EIngredientState::EFS_COOKED;
-	}
-
 	// 도마에서 썰어야 하는 재료야?
 	UFUNCTION(BlueprintCallable)
 	bool IsChoppable() const
 	{
-		return IngredientState == EIngredientState::EFS_CHOPPABLE;
+		return IngredientState == EIngredientState::EIS_CHOPPABLE;
 	}
 
 	// 프라이팬에 구워야 하는 재료야?
 	UFUNCTION(BlueprintCallable)
 	bool IsGrillable() const
 	{
-		return IngredientState == EIngredientState::EFS_GRILLABLE;
+		return IngredientState == EIngredientState::EIS_GRILLABLE;
 	}
 
 	// 솥에서 밥을 지을 수 있어?
 	UFUNCTION(BlueprintCallable)
 	bool IsBoilable() const
 	{
-		return IngredientState == EIngredientState::EFS_BOILABLE;
+		return IngredientState == EIngredientState::EIS_BOILABLE;
 	}
 
 	UFUNCTION(BlueprintCallable)
@@ -93,8 +86,8 @@ private:
 	UStaticMeshComponent* StaticMeshComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
-	EIngredientType IngredientType = EIngredientType::EFD_NONE;
+	EIngredientType IngredientType = EIngredientType::EIT_NONE;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
-	EIngredientState IngredientState = EIngredientState::EFS_NONE;
+	EIngredientState IngredientState = EIngredientState::EIS_NONE;
 };
