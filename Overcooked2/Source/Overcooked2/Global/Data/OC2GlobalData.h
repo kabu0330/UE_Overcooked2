@@ -54,6 +54,6 @@ public:
 	 * @param World 게임 월드 객체입니다.
 	 * @return FIngredientDataRow 해당 재료의 데이터 테이블 행 데이터입니다.
 	 */
-	const FIngredientDataRow* GetIngredientDataRow(UWorld* World, const FName& RowName);
+	const FIngredientDataRow& GetIngredientDataRow(UWorld* World, const FName& RowName);
 	
 };

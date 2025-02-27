@@ -57,8 +57,10 @@ FName UOC2GlobalData::GetIngredientDataTableRowName(UWorld* World, EIngredientTy
 	return TEXT("");
 }
 
-const FIngredientDataRow* UOC2GlobalData::GetIngredientDataRow(UWorld* World, const FName& RowName)
+const FIngredientDataRow& UOC2GlobalData::GetIngredientDataRow(UWorld* World, const FName& RowName)
 {
+	static FIngredientDataRow EmptyData;
+
 	UOC2GameInstance* GameInstance = UOC2Global::GetOC2GameInstance(World);
 
 	if (nullptr != GameInstance)
@@ -66,5 +68,5 @@ const FIngredientDataRow* UOC2GlobalData::GetIngredientDataRow(UWorld* World, co
 		return GameInstance->GetIngredientDataRow(RowName);
 	}
 
-	return nullptr;
+	return EmptyData;
 }

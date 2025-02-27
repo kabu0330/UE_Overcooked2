@@ -61,14 +61,8 @@ public:
 	 * @return FIngredientDataRow 해당 재료의 데이터 테이블 행 데이터입니다.
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Global|Data")
-	const FIngredientDataRow& GetIngredientDataRowRef(const FName& RowName);
-	/**
-	 * 특정 재료의 데이터 테이블 행 데이터의 주소값을 가져옵니다.
-	 *
-	 * @param World 게임 월드 객체입니다.
-	 * @return FIngredientDataRow 해당 재료의 데이터 테이블 행 데이터입니다.
-	 */
-	const FIngredientDataRow* GetIngredientDataRow(const FName& RowName);
+	const FIngredientDataRow& GetIngredientDataRow(const FName& RowName);
+
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
