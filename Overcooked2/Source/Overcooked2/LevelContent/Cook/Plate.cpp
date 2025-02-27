@@ -10,13 +10,22 @@ APlate::APlate()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	CookingType = ECookingType::ECT_PLATE;
+
+	IngredientMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("IngredientMesh"));
+	PlateMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PlateMesh"));
+	RootComponent = PlateMesh;
+
+	FVector Offset = GetActorLocation() + FVector(0.0f, 0.0f, 30.0f);
+	IngredientMesh->AddRelativeLocation(Offset);
+
 }
 
 // Called when the game starts or when spawned
 void APlate::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	LoadDataTable();
 }
 
 // Called every frame
@@ -26,30 +35,42 @@ void APlate::Tick(float DeltaTime)
 
 }
 
-
-void APlate::CleanPlate()
+void APlate::LoadDataTable()
 {
+	CookingDataTable;
+	IngredientDataTable;
+}
+
+bool APlate::IsDirtyPlate()
+{
+	return PlateState == EPlateState::DIRTY;
+}
+
+void APlate::WashPlate()
+{
+	if (true == IsDirtyPlate())
 	{
-		if (nullptr != IngredientMesh)
-		{
-			return;
-		}
+		PlateState = EPlateState::EMPTY;
 	}
 }
 
 bool APlate::Add(AIngredient* Ingredient)
 {
-	if (Ingredient->GetCurIngredientState() == EIngredientState::EIS_NONE)
+	if (EIngredientState::EIS_NONE == Ingredient->GetCurIngredientState())
 	{
 		return false;
 	}
-
+	if (nullptr == PlateMesh)
+	{
+		return false;
+	}
 
 	Ingredient->GetStaticMeshComponent()->SetStaticMesh(nullptr);
 	Ingredient->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
 	Ingredient->SetActorLocation(FVector(0.0f, 0.0f, 0.0f));
 
 	Ingredients.Add(Ingredient);
+	//IngredientMesh->SetStaticMesh();
 
 	CookCheck();
 	return true;
@@ -57,4 +78,5 @@ bool APlate::Add(AIngredient* Ingredient)
 
 void APlate::CookCheck()
 {
+
 }

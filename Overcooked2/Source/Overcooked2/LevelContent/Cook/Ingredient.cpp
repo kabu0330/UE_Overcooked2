@@ -10,6 +10,8 @@ AIngredient::AIngredient()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	CookingType = ECookingType::ECT_INGREDIENT;
+
 	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
 	RootComponent = StaticMeshComponent; // 설정 안해주면 nullptr 나와서 터짐
 
@@ -37,16 +39,16 @@ void AIngredient::Init(FName Name)
 	UOC2GameInstance* GameInst = Cast<UOC2GameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 
 	// 1. 데이터 테이블을 가져온다.
-	UDataTable* IngredientDataTable = LoadObject<UDataTable>(nullptr, TEXT("/Game/Blueprints/Global/Data/DT_IngredientDataTable.DT_IngredientDataTable"));
+	UDataTable* DataTable = LoadObject<UDataTable>(nullptr, TEXT("/Game/Blueprints/Global/Data/DT_IngredientDataTable.DT_IngredientDataTable"));
 
-	if (nullptr == IngredientDataTable)
+	if (nullptr == DataTable)
 	{
 		int a = 0;
 	}
 
 	// 2. 행 이름(Fish)을 기준으로 데이터 열("생선", 메시경로, State)을 가져온다.
-	FIngredientDataRow* IngredientData = IngredientDataTable->FindRow<FIngredientDataRow>(Name, TEXT(""));
-	DataTable = *IngredientData;
+	FIngredientDataRow* IngredientData = DataTable->FindRow<FIngredientDataRow>(Name, TEXT(""));
+	IngredientDataTable = *IngredientData;
 	if (nullptr == IngredientData)
 	{
 		int a = 0;
@@ -98,11 +100,11 @@ const FIngredientCookDataRow& AIngredient::CheckState(EIngredientState State)
 {
 	const FIngredientCookDataRow* Result = nullptr;
 
-	for (size_t i = 0; i < DataTable.StateRows.Num(); i++)
+	for (size_t i = 0; i < IngredientDataTable.StateRows.Num(); i++)
 	{
-		if (DataTable.StateRows[i].IngredientState == State)
+		if (IngredientDataTable.StateRows[i].IngredientState == State)
 		{
-			Result = &DataTable.StateRows[i];
+			Result = &IngredientDataTable.StateRows[i];
 			break;
 		}
 	}
@@ -110,7 +112,7 @@ const FIngredientCookDataRow& AIngredient::CheckState(EIngredientState State)
 	return *Result;
 }
 
-void AIngredient::ChageState(EIngredientState State)
+void AIngredient::ChangeState(EIngredientState State)
 {
 	const FIngredientCookDataRow* Data = &CheckState(State);
 
