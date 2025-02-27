@@ -15,11 +15,11 @@ class OVERCOOKED2_API AOC2Actor : public AActor, public IInteractable
 public:	
 	AOC2Actor();
 
+	virtual void Interact(AActor* ChefActor) override;
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
-
-	virtual void Interact(AActor* ChefActor) override;
 
 public:	
 
