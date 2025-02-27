@@ -25,7 +25,7 @@ public:
 	class AIngredient* SpawnIngredient(AActor* ChefActor);
 
 	UFUNCTION(BlueprintCallable)
-	virtual void Interact(AActor* ChefActor) override;
+	virtual ACooking* Interact(AActor* ChefActor) override;
 
 protected:
 
