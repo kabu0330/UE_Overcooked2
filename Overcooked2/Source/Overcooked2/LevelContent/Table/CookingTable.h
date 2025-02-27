@@ -4,10 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Overcooked2.h"
+#include <LevelContent/Cook/Ingredient.h>
+#include <LevelContent/Cook/Plate.h>
+#include <Global/OC2GameInstance.h>
+#include <Global/Interface/InteractableObject.h>
 #include "CookingTable.generated.h"
 
 UCLASS()
-class OVERCOOKED2_API ACookingTable : public AActor
+class OVERCOOKED2_API ACookingTable : public AActor, public IInteractableObject
 {
 	GENERATED_BODY()
 	
@@ -15,12 +20,25 @@ public:
 	// Sets default values for this actor's properties
 	ACookingTable();
 
+	virtual void Interact(AActor* ChefActor) override {}
+
+	UFUNCTION(BlueprintCallable)
+	bool IsInteracting() const
+	{
+		return bIsInteracting;
+	}
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	class UTimeEventComponent* TimeEvent = nullptr;
+
+	// 상호작용 중인가?
+	bool bIsInteracting = false;
 
 
 private:	
