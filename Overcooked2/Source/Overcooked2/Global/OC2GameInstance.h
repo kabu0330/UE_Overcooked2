@@ -30,7 +30,6 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable)
 	EIngredientType GetIngredientType(const FString& RowName);
-
 	/**
 	 * 특정 재료의 조리 데이터를 가져옵니다.
 	 * 
@@ -39,7 +38,6 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable)
 	const TArray<FIngredientCookDataRow>& GetIngredientCookDataRows(const FString& RowName);
-
 	/**
 	 * 특정 재료의 스태틱 메시를 가져옵니다.
 	 * 
@@ -48,7 +46,14 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable)
 	UStaticMesh* GetIngredientStaticMesh(const FString& RowName);
-
+	/**
+	 * @brief 주어진 재료 타입(EIngredientType)에 해당하는 데이터 테이블 행 이름을 반환합니다.
+	 *
+	 * @param IngredientType 조회할 재료의 타입입니다.
+	 * @return FName 해당 재료의 데이터 테이블 행 이름을 반환합니다. 유효하지 않은 타입일 경우 빈 FName("")을 반환합니다.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Ingredients")
+	FName GetIngredientDataTableRowName(EIngredientType IngredientType);
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
