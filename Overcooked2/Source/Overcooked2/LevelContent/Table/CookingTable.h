@@ -21,12 +21,19 @@ public:
 	// Sets default values for this actor's properties
 	ACookingTable();
 
-	virtual void Interact(AActor* ChefActor) {}
+	virtual ACooking* Interact(AActor* ChefActor) { return nullptr; };
+	
 
 	UFUNCTION(BlueprintCallable)
 	bool IsInteracting() const
 	{
 		return bIsInteracting;
+	}
+
+	UFUNCTION(BlueprintCallable)
+	bool IsOccupied() const
+	{
+		return bOccupied;
 	}
 
 protected:
@@ -51,5 +58,9 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	bool bCanOvercook = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	bool bOccupied = false;
+	// 테이블이 사용 가능한가?
 
 };
