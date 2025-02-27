@@ -8,11 +8,12 @@
 #include <LevelContent/Cook/Ingredient.h>
 #include <LevelContent/Cook/Plate.h>
 #include <Global/OC2GameInstance.h>
+#include <Global/GameFramework/OC2Actor.h>
 #include <Global/Interface/Interactable.h>
 #include "CookingTable.generated.h"
 
 UCLASS()
-class OVERCOOKED2_API ACookingTable : public AActor, public IInteractable
+class OVERCOOKED2_API ACookingTable : public AOC2Actor
 {
 	GENERATED_BODY()
 	
