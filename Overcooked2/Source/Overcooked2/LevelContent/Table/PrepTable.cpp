@@ -3,6 +3,7 @@
 
 #include "LevelContent/Table/PrepTable.h"
 
-void APrepTable::Interact(AActor* ChefActor)
+ACooking* APrepTable::Interact(AActor* ChefActor)
 {
+	return nullptr;
 }

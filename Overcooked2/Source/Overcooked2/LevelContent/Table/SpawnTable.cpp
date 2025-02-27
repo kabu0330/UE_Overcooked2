@@ -64,7 +64,7 @@ AIngredient* ASpawnTable::SpawnIngredient(AActor* ChefActor)
 	return NewIngredient;
 }
 
-void ASpawnTable::Interact(AActor* ChefActor)
+ACooking* ASpawnTable::Interact(AActor* ChefActor)
 {
-	SpawnIngredient(ChefActor);
+	return SpawnIngredient(ChefActor);
 }
