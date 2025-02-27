@@ -66,5 +66,10 @@ AIngredient* ASpawnTable::SpawnIngredient(AActor* ChefActor)
 
 ACooking* ASpawnTable::Interact(AActor* ChefActor)
 {
-	return SpawnIngredient(ChefActor);
+	if (false == bOccupied)
+	{
+		return SpawnIngredient(ChefActor);
+	}
+
+	return nullptr;
 }
