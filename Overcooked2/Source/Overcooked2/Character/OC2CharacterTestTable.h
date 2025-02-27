@@ -4,10 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "LevelContent/Table/CookingTable.h"
 #include "OC2CharacterTestTable.generated.h"
 
 UCLASS()
-class OVERCOOKED2_API AOC2CharacterTestTable : public AActor
+class OVERCOOKED2_API AOC2CharacterTestTable : public ACookingTable
 {
 	GENERATED_BODY()
 	
