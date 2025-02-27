@@ -40,6 +40,9 @@ struct FIngredientDataRow : public FTableRowBase
 	UStaticMesh* BaseMesh = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
+	FRotator Rotation = FRotator(0.0f, 0.0f, 0.0f);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
 	TArray<FIngredientCookDataRow> StateRows;
 };
 
