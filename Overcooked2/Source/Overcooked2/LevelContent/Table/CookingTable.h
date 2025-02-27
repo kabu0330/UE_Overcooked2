@@ -20,7 +20,7 @@ public:
 	// Sets default values for this actor's properties
 	ACookingTable();
 
-	virtual void Interact(AActor* ChefActor) override {}
+	virtual void Interact(AActor* ChefActor) {}
 
 	UFUNCTION(BlueprintCallable)
 	bool IsInteracting() const
