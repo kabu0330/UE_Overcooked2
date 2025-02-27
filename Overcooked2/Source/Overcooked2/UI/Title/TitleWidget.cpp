@@ -7,11 +7,12 @@
 
 void UTitleWidget::StartServer()
 {
-	UOC2Global::StartServer(GetWorld(), Port, TEXT("GlobalDevLevel"));
+	UOC2Global::StartServer(GetWorld(), Port, TEXT("LobbyLevel"));
 }
 
 void UTitleWidget::Connect()
 {
-	UOC2Global::ConnectServer(GetWorld(), IP, Port);
+	APlayerController* Controller = GetOwningLocalPlayer()->GetPlayerController(GetWorld());
+	UOC2Global::ConnectServer(GetWorld(), Controller, IP, Port);
 }
 
