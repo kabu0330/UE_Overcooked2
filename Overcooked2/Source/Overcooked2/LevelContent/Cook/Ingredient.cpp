@@ -46,6 +46,7 @@ void AIngredient::Init(FName Name)
 
 	// 2. 행 이름(Fish)을 기준으로 데이터 열("생선", 메시경로, State)을 가져온다.
 	FIngredientDataRow* IngredientData = IngredientDataTable->FindRow<FIngredientDataRow>(Name, TEXT(""));
+	DataTable = *IngredientData;
 	if (nullptr == IngredientData)
 	{
 		int a = 0;
