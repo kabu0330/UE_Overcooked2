@@ -2,7 +2,7 @@
 
 
 #include "LevelContent/Cook/Cooking.h"
-//#include <Global/Component/TimeEventActorComponent.h>
+#include <Global/Component/TimeEventComponent.h>
 
 // Sets default values
 ACooking::ACooking()
@@ -11,7 +11,21 @@ ACooking::ACooking()
 	PrimaryActorTick.bCanEverTick = true;
 
 
-//	TimeEvent = CreateDefaultSubobject<UTimeEventActorComponent>(TEXT("TimeEvent"));
+	TimeEvent = CreateDefaultSubobject<UTimeEventComponent>(TEXT("TimeEvent"));
+}
+
+void ACooking::Interact(AActor* ChefActor)
+{
+	if (false == bIsInteracting)
+	{
+		AttachToActor(ChefActor, FAttachmentTransformRules::SnapToTargetIncludingScale);
+		FVector Offset = FVector(100.0f, 0.0f, 0.0f);
+		SetActorRelativeLocation(Offset);
+	}
+	else
+	{
+		DetachFromActor(FDetachmentTransformRules::KeepRelativeTransform);
+	}
 }
 
 // Called when the game starts or when spawned

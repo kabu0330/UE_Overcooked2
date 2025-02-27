@@ -33,11 +33,17 @@ protected:
 public:
 	ACookingGameMode();
 
+	UFUNCTION(BlueprintCallable)
 	void EntryStay();
+	UFUNCTION(BlueprintCallable)
 	void Stay(float DeltaTime);
+	UFUNCTION(BlueprintCallable)
 	void EntryStage();
+	UFUNCTION(BlueprintCallable)
 	void Stage(float DeltaTime);
+	UFUNCTION(BlueprintCallable)
 	void EntryScore();
+	UFUNCTION(BlueprintCallable)
 	void Score(float DeltaTime);
 
 	void ChangeState(ECookingGameModeState State);
@@ -50,4 +56,7 @@ private:
 	TArray<APlayerController*> PlayerControllers;
 	
 	ECookingGameModeState CurState = ECookingGameModeState::ECS_None;
+
+
+	float TestTime = 0.0f;
 };

@@ -2,6 +2,7 @@
 
 
 #include "LevelContent/Cook/Plate.h"
+#include <LevelContent/Cook/Ingredient.h>
 
 // Sets default values
 APlate::APlate()
@@ -25,3 +26,35 @@ void APlate::Tick(float DeltaTime)
 
 }
 
+
+void APlate::CleanPlate()
+{
+	{
+		if (nullptr != IngredientMesh)
+		{
+			return;
+		}
+	}
+}
+
+bool APlate::Add(AIngredient* Ingredient)
+{
+	if (Ingredient->GetCurIngredientState() == EIngredientState::EIS_NONE)
+	{
+		return false;
+	}
+
+
+	Ingredient->GetStaticMeshComponent()->SetStaticMesh(nullptr);
+	Ingredient->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
+	Ingredient->SetActorLocation(FVector(0.0f, 0.0f, 0.0f));
+
+	Ingredients.Add(Ingredient);
+
+	CookCheck();
+	return true;
+}
+
+void APlate::CookCheck()
+{
+}

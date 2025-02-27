@@ -2,6 +2,9 @@
 
 
 #include "Global/GameMode/CookingGameMode.h"
+#include "Kismet/GameplayStatics.h"
+#include "Global/OC2GameInstance.h"
+#include "Global/Data/IngredientDataTable.h"
 #include "Global/Component/OrderManageComponent.h"
 
 ACookingGameMode::ACookingGameMode()
@@ -56,6 +59,12 @@ void ACookingGameMode::EntryStay()
 
 void ACookingGameMode::Stay(float DeltaTime)
 {
+	TestTime += DeltaTime;
+
+	if (TestTime >= 5.0f)
+	{
+		ChangeState(ECookingGameModeState::ECS_Score);
+	}
 }
 
 void ACookingGameMode::EntryStage()
@@ -68,6 +77,13 @@ void ACookingGameMode::Stage(float DeltaTime)
 
 void ACookingGameMode::EntryScore()
 {
+	UOC2GameInstance* GameInstance = Cast<UOC2GameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+
+	EIngredientType Test = GameInstance->GetIngredientType(TEXT("Tomato"));
+	const TArray<FIngredientCookDataRow> DataRows = GameInstance->GetIngredientCookDataRows(TEXT("Tomato"));
+
+	UE_LOG(LogTemp, Log, TEXT("IngredientType: %d"), (int32)Test);
+	UE_LOG(LogTemp, Log, TEXT("PrevState: %d"), (int32)DataRows.Num());
 }
 
 void ACookingGameMode::Score(float DeltaTime)
