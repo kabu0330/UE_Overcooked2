@@ -4,20 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "TableDevUserWidget.generated.h"
+#include "CookingDevUserWidget.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class OVERCOOKED2_API UTableDevUserWidget : public UUserWidget
+class OVERCOOKED2_API UCookingDevUserWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
-public:
-
-protected:
-
-private:
-
 };

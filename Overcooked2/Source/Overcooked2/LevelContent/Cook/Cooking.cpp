@@ -14,6 +14,20 @@ ACooking::ACooking()
 	TimeEvent = CreateDefaultSubobject<UTimeEventComponent>(TEXT("TimeEvent"));
 }
 
+void ACooking::Interact(AActor* ChefActor)
+{
+	if (false == bIsInteracting)
+	{
+		AttachToActor(ChefActor, FAttachmentTransformRules::SnapToTargetIncludingScale);
+		FVector Offset = FVector(100.0f, 0.0f, 0.0f);
+		SetActorRelativeLocation(Offset);
+	}
+	else
+	{
+		DetachFromActor(FDetachmentTransformRules::KeepRelativeTransform);
+	}
+}
+
 // Called when the game starts or when spawned
 void ACooking::BeginPlay()
 {

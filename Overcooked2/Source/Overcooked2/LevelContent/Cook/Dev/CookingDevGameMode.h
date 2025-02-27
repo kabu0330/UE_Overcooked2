@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameMode.h"
-#include "TableDevGameMode.generated.h"
+#include "CookingDevGameMode.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class OVERCOOKED2_API ATableDevGameMode : public AGameMode
+class OVERCOOKED2_API ACookingDevGameMode : public AGameMode
 {
 	GENERATED_BODY()
 	
