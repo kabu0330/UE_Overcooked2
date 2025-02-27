@@ -3,6 +3,7 @@
 
 #include "Global/OC2Global.h"
 #include "AssetRegistry/AssetRegistryModule.h"
+#include "Global/OC2GameInstance.h"
 #include "Kismet/GameplayStatics.h"
 
 void UOC2Global::GetAssetPackageName(UClass* Class, const FString& AssetName, FString& Path)
@@ -45,6 +46,11 @@ TArray<FAssetData> UOC2Global::GetAssetDataArray(UClass* Class)
 	}
 
 	return MapList;
+}
+
+UOC2GameInstance* UOC2Global::GetOC2GameInstance(UWorld* World)
+{
+	return Cast<UOC2GameInstance>(UGameplayStatics::GetGameInstance(World));
 }
 
 void UOC2Global::StartServer(const UWorld* World, const FString& Port, const FString& LevelName)
