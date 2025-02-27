@@ -19,6 +19,9 @@ public:
 	// 상자에서 꺼냈을 때
 	UFUNCTION(BlueprintCallable)
 	void Init(FName Name);
+
+	//UFUNCTION(BlueprintCallable)
+	//void Init(EIngredientType Type); // 테스트 함수
 	
 	UFUNCTION(BlueprintCallable)
 	const FIngredientCookDataRow& CheckState(EIngredientState State);
@@ -81,7 +84,7 @@ protected:
 
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
-	FIngredientDataRow DataTable;
+	FIngredientDataRow DataTable = FIngredientDataRow();
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* StaticMeshComponent = nullptr;
