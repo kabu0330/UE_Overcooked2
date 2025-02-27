@@ -48,6 +48,7 @@ protected:
 	// 상호작용 중인가?
 	bool bIsInteracting = false;
 
+	bool bOccupied = false;
 
 private:	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
@@ -59,8 +60,9 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	bool bCanOvercook = false;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
-	bool bOccupied = false;
+	
+	
 	// 테이블이 사용 가능한가?
+
 
 };

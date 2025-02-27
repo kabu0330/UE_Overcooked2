@@ -64,8 +64,21 @@ void UOC2Global::StartServer_Implementation(const UWorld* World, const FString& 
 
 }
 
-void UOC2Global::ConnectServer(const UWorld* World, const FString& IP, const FString& Port)
+void UOC2Global::ConnectServer(const UWorld* World, APlayerController* Controller, const FString& IP, const FString& Port)
 {
 	FString ConnectLevelName = FString::Printf(TEXT("%s:%s"), *IP, *Port);
-	UGameplayStatics::OpenLevel(World, FName(*ConnectLevelName));
+	//UGameplayStatics::OpenLevel(World, FName(*ConnectLevelName));
+
+	if (Controller != nullptr)
+	{
+		Controller->ClientTravel(ConnectLevelName, ETravelType::TRAVEL_Absolute);
+	}
+}
+
+void UOC2Global::TravelServer(UWorld* World, const FString& LevelName)
+{
+	FString LevelPath = TEXT("");
+	UOC2Global::GetAssetPackageName(UWorld::StaticClass(), LevelName, LevelPath);
+
+	World->ServerTravel(LevelPath);
 }
