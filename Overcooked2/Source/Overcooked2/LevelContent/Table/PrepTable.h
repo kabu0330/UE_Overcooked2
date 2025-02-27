@@ -16,6 +16,6 @@ class OVERCOOKED2_API APrepTable : public ACookingTable
 
 public:
 	UFUNCTION(BlueprintCallable)
-	virtual void Interact(AActor* ChefActor) override;
+	virtual ACooking* Interact(AActor* ChefActor) override;
 
 };
