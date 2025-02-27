@@ -8,14 +8,12 @@
 #include "OC2Actor.generated.h"
 
 UCLASS()
-class OVERCOOKED2_API AOC2Actor : public AActor, public IInteractable
+class OVERCOOKED2_API AOC2Actor : public AActor//, public IInteractable
 {
 	GENERATED_BODY()
 	
 public:	
 	AOC2Actor();
-
-	virtual void Interact(AActor* ChefActor) override;
 
 protected:
 	virtual void BeginPlay() override;

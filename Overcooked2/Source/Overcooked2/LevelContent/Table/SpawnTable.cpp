@@ -49,7 +49,7 @@ AIngredient* ASpawnTable::SpawnIngredient(AActor* ChefActor)
 	// ¾×ÅÍ¿¡ ºÎÂø
 	if (nullptr != ChefActor)
 	{
-		NewIngredient->Interact(ChefActor);
+		//NewIngredient->Interact(ChefActor);
 	}
 
 	if (nullptr == NewIngredient)
