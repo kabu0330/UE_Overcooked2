@@ -4,22 +4,22 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
-#include "InteractableObject.generated.h"
+#include "Interactable.generated.h"
 
 UINTERFACE(MinimalAPI)
-class UInteractableObject : public UInterface
+class UInteractable : public UInterface
 {
 	GENERATED_BODY()
 };
 
 /**
- * 
+ *
  */
-class OVERCOOKED2_API IInteractableObject
+class OVERCOOKED2_API IInteractable
 {
 	GENERATED_BODY()
 
 public:
 	virtual void Interact(AActor* ChefActor) = 0;
-	
+
 };
