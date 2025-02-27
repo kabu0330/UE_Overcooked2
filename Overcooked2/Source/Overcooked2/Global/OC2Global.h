@@ -6,6 +6,8 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "OC2Global.generated.h"
 
+class UOC2GameInstance;
+
 /**
  * 
  */
@@ -21,6 +23,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	static TArray<FAssetData> GetAssetDataArray(UClass* Class);
+
+	UFUNCTION(BlueprintCallable)
+	static UOC2GameInstance* GetOC2GameInstance(UWorld* World);
 
 	UFUNCTION(BlueprintCallable)
 	static void StartServer(const UWorld* World, const FString& Port, const FString& LevelName);

@@ -83,3 +83,35 @@ FName UOC2GameInstance::GetIngredientDataTableRowName(EIngredientType Ingredient
 		return TEXT("");
 	}
 }
+
+const FIngredientDataRow& UOC2GameInstance::GetIngredientDataRowRef(const FName& RowName)
+{
+	static FIngredientDataRow EmptyData;
+
+	if (nullptr != IngredientDataTable)
+	{
+		FIngredientDataRow* IngredientData = IngredientDataTable->FindRow<FIngredientDataRow>(*RowName, nullptr);
+
+		if (nullptr != IngredientData)
+		{
+			return *IngredientData;
+		}
+	}
+
+	return EmptyData;
+}
+
+const FIngredientDataRow* UOC2GameInstance::GetIngredientDataRow(const FName& RowName)
+{
+	if (nullptr != IngredientDataTable)
+	{
+		FIngredientDataRow* IngredientData = IngredientDataTable->FindRow<FIngredientDataRow>(RowName, nullptr);
+
+		if (nullptr != IngredientData)
+		{
+			return IngredientData;
+		}
+	}
+
+	return nullptr;
+}
