@@ -5,7 +5,9 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "InputAction.h"
-#include "Character/OC2CharacterTestTable.h"
+#include "Global/GameFramework/OC2Actor.h"
+#include "LevelContent/Cook/Cooking.h"
+#include "LevelContent/Table/CookingTable.h"
 #include "OC2Character.generated.h"
 
 USTRUCT(BlueprintType)
@@ -55,7 +57,15 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void CheckInteract();
+
+	void Interact();
+	void Grab(ACooking* Cook);
+	void Drop();
+	void Throwing();
+	void Cooking();
+
 	void Dash();
+	void StopDash();
 private :
 	// 이 함수는 캐릭터의 머리를 설정하는 함수읾
 	
@@ -85,10 +95,17 @@ private :
 	USceneComponent* GrabComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Grab", meta = (AllowPrivateAccess = "true"))
-	AOC2CharacterTestTable* CurHighlightedTable = nullptr;
+	AOC2Actor* SelectedOC2Actor = nullptr;
 
-	bool bIsDash = false;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Grab", meta = (AllowPrivateAccess = "true"))
+	ACooking* GrabbedObject = nullptr;
+
+	/// <summary>
+	/// Dash Variables
+	/// </summary>
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dash", meta = (AllowPrivateAccess = "true"))
+	float DashPower = 500.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dash", meta = (AllowPrivateAccess = "true"))
 	float DashDuration = 0.5f;
-
-
+	FTimerHandle DashTimerHandle;
 };
