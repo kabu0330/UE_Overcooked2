@@ -58,21 +58,25 @@ protected:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	void LoadDataTable();
+	void LoadDataTable(class AIngredient* Ingredient);
+
+	void CheckAndChangeState(class AIngredient* Ingredient);
 
 private:
-	const FStageCookingDataRow* CookingDataTable = nullptr;
+	TArray<FIngredientCookDataRow> CookingDataTable;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	TArray<class AIngredient*> Ingredients;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* IngredientMesh = nullptr; // 재료
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* PlateMesh = nullptr; // 접시
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	EPlateState PlateState = EPlateState::NONE;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	EIngredientState PrveState = EIngredientState::EIS_NONE;
 };
