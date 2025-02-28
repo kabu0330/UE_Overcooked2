@@ -24,10 +24,7 @@ public:
 	//void Init(EIngredientType Type); // 테스트 함수
 	
 	UFUNCTION(BlueprintCallable)
-	const FIngredientCookDataRow& CheckState(EIngredientState State);
-
-	UFUNCTION(BlueprintCallable)
-	void ChageState(EIngredientState State);
+	void ChangeState(EIngredientState State);
 
 
 
@@ -64,14 +61,9 @@ public:
 		return CurIngredientState;
 	}
 
+	// 메시를 해당 함수를 호출하여 바꾸는 것은 지양, ChageState 함수를 사용하여 상태 기반으로 메시를 데이터에서 찾아와 바꿀 것
 	UFUNCTION(BlueprintCallable)
-	const FIngredientDataRow&  GetDataTable() const
-	{
-		return DataTable;
-	}
-
-	UFUNCTION(BlueprintCallable)
-	UStaticMeshComponent* const GetStaticMeshComponent() const
+	UStaticMeshComponent* GetStaticMeshComponent()
 	{
 		return StaticMeshComponent;
 	}
@@ -82,9 +74,9 @@ protected:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	const FIngredientCookDataRow& CheckState(EIngredientState State);
+
 private:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
-	FIngredientDataRow DataTable = FIngredientDataRow();
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* StaticMeshComponent = nullptr;
