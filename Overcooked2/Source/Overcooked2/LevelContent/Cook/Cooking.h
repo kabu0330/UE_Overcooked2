@@ -26,6 +26,18 @@ public:
 	{
 		return IngredientDataTable;
 	}
+	
+	UFUNCTION(BlueprintCallable)
+	const ECookingType GetCookingType() const 
+	{
+		return CookingType;
+	}
+
+	UFUNCTION(BlueprintCallable)
+	bool IsCookingType(ECookingType Type) const
+	{
+		return Type == CookingType;
+	}
 
 protected:
 	// Called when the game starts or when spawned

@@ -15,8 +15,7 @@ AIngredient::AIngredient()
 	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
 	RootComponent = StaticMeshComponent; // 설정 안해주면 nullptr 나와서 터짐
 
-	// Spawn되는 녀석의 기본 크기를 지정해줘야 한다면?
-	//SetActorScale3D(FVector(100.0f, 100.0f, 100.0f));
+
 }
 
 // Called when the game starts or when spawned
@@ -61,7 +60,10 @@ void AIngredient::Init(FName Name)
 	// 3. 추출한 데이터 열 값을 넣어준다.
 	StaticMeshComponent->SetStaticMesh(IngredientData->BaseMesh);
 	IngredientType = IngredientData->IngredientType;
-	CurIngredientState = IngredientData->StateRows[0].PrevIngredientState; // 이게 맞나???
+	CurIngredientState = IngredientData->StateRows[0].PrevIngredientState; 
+	// 위치값과 회전값을 데이터 테이블에서 받아서 저장
+	//FVector Pos = ;
+	//Offset()
 }
 
 //void AIngredient::Init(EIngredientType Type)
@@ -110,6 +112,12 @@ const FIngredientCookDataRow& AIngredient::CheckState(EIngredientState State)
 	}
 
 	return *Result;
+}
+
+void AIngredient::Offset(FVector Pos, FRotator Rot)
+{
+	FVector Scale = FVector(0.7f, 0.7f, 0.7f);
+	SetActorRelativeScale3D(Scale);
 }
 
 void AIngredient::ChangeState(EIngredientState State)

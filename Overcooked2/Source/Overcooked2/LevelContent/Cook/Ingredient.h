@@ -76,6 +76,8 @@ protected:
 
 	const FIngredientCookDataRow& CheckState(EIngredientState State);
 
+	void Offset(FVector Pos, FRotator Rot);
+
 private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
