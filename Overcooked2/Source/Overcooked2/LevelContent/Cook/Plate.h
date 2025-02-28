@@ -8,6 +8,16 @@
 
 #include "Plate.generated.h"
 
+UENUM(BlueprintType)
+enum class EPlateState : uint8
+{
+	NONE,
+	EMPTY,
+	OCCUPIED,
+	COMPLETED,
+	DIRTY,
+};
+
 // 접시 ~ 접시에 올라간 조리된 요리 ~ 요리들의 조합 ~ 완성된 요리
 UCLASS()
 class OVERCOOKED2_API APlate : public ACooking
@@ -15,19 +25,30 @@ class OVERCOOKED2_API APlate : public ACooking
 	GENERATED_BODY()
 	
 public:	
+
 	// Sets default values for this actor's properties
 	APlate();
-
-
-	UFUNCTION(BlueprintCallable)
-	void CleanPlate();
 
 	// 접시 위에 재료를 쌓는 모든 과정
 	UFUNCTION(BlueprintCallable)
 	bool Add(class AIngredient* Ingredient);
 
+	UFUNCTION(BlueprintCallable)
+	bool IsDirtyPlate();
+
+
+	// 설거지 성공 시 호출
+	UFUNCTION(BlueprintCallable)
+	void WashPlate();
+
+	UFUNCTION(BlueprintCallable)
+	void SetPlateState(EPlateState State)
+	{
+		PlateState = State;
+	}
 
 	void CookCheck();
+
 
 	
 protected:
@@ -37,8 +58,10 @@ protected:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	void LoadDataTable();
+
 private:
-	const FStageCookingDataRow* Data;
+	const FStageCookingDataRow* CookingDataTable = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	TArray<class AIngredient*> Ingredients;
@@ -49,6 +72,7 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* PlateMesh = nullptr; // 접시
 
-	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	EPlateState PlateState = EPlateState::NONE;
 
 };
