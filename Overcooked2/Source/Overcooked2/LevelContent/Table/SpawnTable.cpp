@@ -40,7 +40,7 @@ AIngredient* ASpawnTable::SpawnIngredient(AActor* ChefActor)
 	{
 		Location = GetActorLocation() + FVector(0.0f, 0.0f, 100.0f);
 	}
-	FRotator Rotator = FRotator(90.0f, 90.0f, 90.0f);
+	FRotator Rotator = FRotator::ZeroRotator;
 
 	// 1. 재료를 월드에 스폰한다.
 	// Transform은 있지만 메시도 없는 빈 껍데기 상태
