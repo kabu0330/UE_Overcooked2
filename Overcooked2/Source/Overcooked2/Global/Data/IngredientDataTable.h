@@ -16,10 +16,12 @@ struct FIngredientCookDataRow
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
 	EIngredientState PrevIngredientState = EIngredientState::EIS_NONE;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
 	EIngredientState IngredientState = EIngredientState::EIS_NONE;
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
+	FVector Location = FVector(0.0f, 0.0f, 0.0f);
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
+	FRotator Rotation = FRotator(0.0f, 0.0f, 0.0f);
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
 	UStaticMesh* CookMesh = nullptr;
 };
@@ -35,13 +37,12 @@ struct FIngredientDataRow : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
 	EIngredientType IngredientType = EIngredientType::EIT_NONE;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
 	UStaticMesh* BaseMesh = nullptr;
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
+	FVector Location = FVector(0.0f, 0.0f, 0.0f);
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
 	FRotator Rotation = FRotator(0.0f, 0.0f, 0.0f);
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
 	TArray<FIngredientCookDataRow> StateRows;
 };
@@ -55,10 +56,8 @@ struct FCookableIngredient
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
 	EIngredientType IngredientType = EIngredientType::EIT_NONE;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
 	EIngredientState IngredientState = EIngredientState::EIS_NONE;
-
 };
 
 // 재료 조합별 메쉬 데이터 속성
@@ -70,7 +69,10 @@ struct FRecipeMeshDataRow
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
 	TArray<FCookableIngredient> Array;
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
+	FVector Location = FVector(0.0f, 0.0f, 0.0f);
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
+	FRotator Rotation = FRotator(0.0f, 0.0f, 0.0f);
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
 	UStaticMesh* BaseMesh = nullptr;
 };
@@ -84,10 +86,8 @@ struct FRecipeDataRow : public FTableRowBase
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
 	FString Name;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
 	TArray<FCookableIngredient> CookableIngredients;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
 	TArray<FRecipeMeshDataRow> CheckMesh;
 };
