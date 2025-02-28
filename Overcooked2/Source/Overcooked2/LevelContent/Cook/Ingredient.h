@@ -74,7 +74,7 @@ protected:
 
 	const FIngredientCookDataRow& CheckState(EIngredientState State);
 
-	void Offset(FVector Pos, FRotator Rot);
+	void Offset();
 
 private:
 

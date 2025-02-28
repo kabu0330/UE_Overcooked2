@@ -14,8 +14,6 @@ AIngredient::AIngredient()
 
 	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
 	RootComponent = StaticMeshComponent; // 설정 안해주면 nullptr 나와서 터짐
-
-
 }
 
 // Called when the game starts or when spawned
@@ -38,18 +36,26 @@ void AIngredient::Init(EIngredientType Type)
 	FName Name = GameInst->GetIngredientDataTableRowName(Type);
 	
 	// 1. 해당 재료 타입의 데이터 행 추출
-	IngredientDataTable = GameInst->GetIngredientDataRow(Name);
+	IngredientDataTable = &GameInst->GetIngredientDataRow(Name);
+	if (nullptr == IngredientDataTable)
+	{
+		return;
+	}
 
 	// 2. Setting
-	StaticMeshComponent->SetStaticMesh(IngredientDataTable.BaseMesh);
-	IngredientType = IngredientDataTable.IngredientType;
-	CurIngredientState = IngredientDataTable.StateRows[0].PrevIngredientState;
+	StaticMeshComponent->SetStaticMesh(IngredientDataTable->BaseMesh);
+	IngredientType = IngredientDataTable->IngredientType;
+	CurIngredientState = IngredientDataTable->StateRows[0].PrevIngredientState;
 
 	// 3. Offset
-	FVector Location = IngredientDataTable.Location;
-	AddActorLocalOffset(Location);
+	Offset();
+}
 
-	FRotator Rotation = IngredientDataTable.Rotation;
+void AIngredient::Offset()
+{
+	FVector Location = IngredientDataTable->Location;
+	FRotator Rotation = IngredientDataTable->Rotation;
+	AddActorLocalOffset(Location);
 	SetActorRelativeRotation(Rotation);
 }
 
@@ -57,22 +63,16 @@ const FIngredientCookDataRow& AIngredient::CheckState(EIngredientState State)
 {
 	const FIngredientCookDataRow* Result = nullptr;
 
-	for (size_t i = 0; i < IngredientDataTable.StateRows.Num(); i++)
+	for (size_t i = 0; i < IngredientDataTable->StateRows.Num(); i++)
 	{
-		if (IngredientDataTable.StateRows[i].IngredientState == State)
+		if (IngredientDataTable->StateRows[i].IngredientState == State)
 		{
-			Result = &IngredientDataTable.StateRows[i];
+			Result = &IngredientDataTable->StateRows[i];
 			break;
 		}
 	}
 
 	return *Result;
-}
-
-void AIngredient::Offset(FVector Pos, FRotator Rot)
-{
-	FVector Scale = FVector(0.7f, 0.7f, 0.7f);
-	SetActorRelativeScale3D(Scale);
 }
 
 void AIngredient::ChangeState(EIngredientState State)
