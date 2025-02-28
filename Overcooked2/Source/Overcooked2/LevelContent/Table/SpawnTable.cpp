@@ -59,7 +59,7 @@ AIngredient* ASpawnTable::SpawnIngredient(AActor* ChefActor)
 	}
 	
 	// 2. 메시를 찾아서
-	NewIngredient->Init(IngredientName);
+//	NewIngredient->Init(IngredientName);
 
 	return NewIngredient;
 }
