@@ -21,6 +21,11 @@ public:
 	// Sets default values for this actor's properties
 	ACooking();
 
+	UFUNCTION(BlueprintCallable)
+	const FIngredientDataRow& GetDataTable() const
+	{
+		return IngredientDataTable;
+	}
 
 protected:
 	// Called when the game starts or when spawned
@@ -31,6 +36,10 @@ protected:
 
 	class UTimeEventComponent* TimeEvent = nullptr;
 
-private:	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	ECookingType CookingType = ECookingType::ECT_NONE;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	FIngredientDataRow IngredientDataTable = FIngredientDataRow();
+private:	
 };
