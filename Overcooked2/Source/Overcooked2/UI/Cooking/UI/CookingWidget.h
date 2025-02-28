@@ -15,8 +15,7 @@ struct FOrder
 	GENERATED_BODY()
 
 	class UImage* BackgroundImage = nullptr;
-	FVector2D Position = { 0.0f, 0.0f };
-
+	bool bIsOrder = false;
 };
 
 
@@ -35,6 +34,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "OCUI")
 	void OrderComplete();
 
+	UFUNCTION(BlueprintCallable, Category = "OCUI")
+	void NewOrder();
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OCUI")
 	class UImage* OrderBackground_0;
@@ -46,8 +47,6 @@ public:
 	class UImage* OrderBackground_2;
 
 
-	UPROPERTY(BlueprintReadWrite, Category = "OCUI", meta = (BindWidget))
-	class UCanvasPanel* CanvasPanel;
 
 protected:
 	virtual void NativeOnInitialized() override;
@@ -56,7 +55,7 @@ protected:
 
 private:
 	int CompleteOrderNum = 0;
-
+	int NewOrderNum = 0;
 
 	TArray<FOrder> Orders;
 
@@ -67,7 +66,12 @@ private:
 	FVector2D TargetOffset = FVector2D(50.0f, 0.0f);
 	float MoveTimeElapsed = 10.0f;
 
+	float ImageOffset = 10.0f;
+	float FinalPos = 0.0f;
+	int Size = 3;
 
 	void UpdateImageOpacity();
-	void UpdateImagePosition(float InDeltaTime);
+	void UpdateImagePosition();
+	void MoveNewOrder();
+
 };
