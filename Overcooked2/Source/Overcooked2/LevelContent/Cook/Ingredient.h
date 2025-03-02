@@ -19,10 +19,10 @@ public:
 
 	// »óÀÚ¿¡¼­ ²¨³ÂÀ» ¶§
 	UFUNCTION(BlueprintCallable)
-	void Init(EIngredientType Type); 
+	AIngredient* Init(EIngredientType Type);
 	
 	UFUNCTION(BlueprintCallable)
-	void ChangeState(EIngredientState State);
+	AIngredient* ChangeState(EIngredientState State);
 
 
 
@@ -74,7 +74,7 @@ protected:
 
 	const FIngredientCookDataRow& CheckState(EIngredientState State);
 
-	void Offset();
+	void Offset(FVector Pos, FRotator Rot);
 
 private:
 

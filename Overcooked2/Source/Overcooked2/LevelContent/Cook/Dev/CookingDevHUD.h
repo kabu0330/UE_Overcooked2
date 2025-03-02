@@ -13,5 +13,26 @@ UCLASS()
 class OVERCOOKED2_API ACookingDevHUD : public AHUD
 {
 	GENERATED_BODY()
-	
+
+public:
+	ACookingDevHUD();
+	~ACookingDevHUD();
+
+	class UCookingDevUserWidget* GetWidget()
+	{
+		return Widget;
+	}
+
+protected:
+
+	virtual void BeginPlay() override;
+	virtual void Tick(float _DeltaTime) override;
+
+
+	UPROPERTY(EditAnywhere, Category = "Cooking")
+	TSubclassOf<class UCookingDevUserWidget> WidgetSubclass = nullptr;
+
+private:
+	class UCookingDevUserWidget* Widget = nullptr;
+
 };

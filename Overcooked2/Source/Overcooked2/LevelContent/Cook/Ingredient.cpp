@@ -30,16 +30,17 @@ void AIngredient::Tick(float DeltaTime)
 
 }
 
-void AIngredient::Init(EIngredientType Type)
+AIngredient* AIngredient::Init(EIngredientType Type)
 {
 	UOC2GameInstance* GameInst = Cast<UOC2GameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 	FName Name = GameInst->GetIngredientDataTableRowName(Type);
 	
 	// 1. 해당 재료 타입의 데이터 행 추출
+	// FIngredientDataRow IngredientDataTable
 	IngredientDataTable = &GameInst->GetIngredientDataRow(Name);
 	if (nullptr == IngredientDataTable)
 	{
-		return;
+		return nullptr;
 	}
 
 	// 2. Setting
@@ -48,15 +49,17 @@ void AIngredient::Init(EIngredientType Type)
 	CurIngredientState = IngredientDataTable->StateRows[0].PrevIngredientState;
 
 	// 3. Offset
-	Offset();
-}
-
-void AIngredient::Offset()
-{
 	FVector Location = IngredientDataTable->Location;
 	FRotator Rotation = IngredientDataTable->Rotation;
-	AddActorLocalOffset(Location);
-	SetActorRelativeRotation(Rotation);
+	Offset(Location, Rotation);
+
+	return this;
+}
+
+void AIngredient::Offset(FVector Pos, FRotator Ro)
+{
+	AddActorLocalOffset(Pos);
+	SetActorRelativeRotation(Ro);
 }
 
 const FIngredientCookDataRow& AIngredient::CheckState(EIngredientState State)
@@ -75,17 +78,23 @@ const FIngredientCookDataRow& AIngredient::CheckState(EIngredientState State)
 	return *Result;
 }
 
-void AIngredient::ChangeState(EIngredientState State)
+AIngredient* AIngredient::ChangeState(EIngredientState State)
 {
-	const FIngredientCookDataRow* Data = &CheckState(State);
+	const FIngredientCookDataRow* CookData = &CheckState(State);
 
-	if (nullptr == Data)
+	if (nullptr == CookData)
 	{
-		return;
+		return nullptr;
 	}
 
 	CurIngredientState = State;
-	StaticMeshComponent->SetStaticMesh(Data->CookMesh);
+	StaticMeshComponent->SetStaticMesh(CookData->CookMesh);
+
+	FVector Location = CookData->Location;
+	FRotator Rotation = CookData->Rotation;
+	Offset(Location, Rotation);
+
+	return this;
 }
 
 
