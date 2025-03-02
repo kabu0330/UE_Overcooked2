@@ -79,4 +79,7 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	EIngredientState PrveState = EIngredientState::EIS_NONE;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	FRotator Rotation = FRotator::ZeroRotator;
 };
