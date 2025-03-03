@@ -17,6 +17,9 @@ APlate::APlate()
 	PlateMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PlateMesh"));
 	RootComponent = PlateMesh;
 
+	Rotation = FRotator(0.0f, 0.0f, 90.0f);
+	SetActorRelativeRotation(Rotation);
+
 	//FVector Offset = GetActorLocation() + FVector(0.0f, 0.0f, 30.0f);
 	//IngredientMesh->AddRelativeLocation(Offset);
 
