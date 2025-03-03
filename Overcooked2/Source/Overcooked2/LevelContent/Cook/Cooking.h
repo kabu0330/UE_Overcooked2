@@ -49,6 +49,8 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	ECookingType CookingType = ECookingType::ECT_NONE;
+
+
 	const FIngredientDataRow* IngredientDataTable = nullptr;
 private:	
 };
