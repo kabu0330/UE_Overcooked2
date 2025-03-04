@@ -6,19 +6,21 @@
 
 void UCookingDevUserWidget::ChangeState(EIngredientState State)
 {
-	AIngredient* Ingredient = Cast<AIngredient>(CookingActor);
-	if (nullptr == Ingredient)
+	if (true == CookingActor.IsEmpty())
 	{
 		return;
 	}
 
-	if (State == Ingredient->GetCurIngredientState())
+	for (int i = 0; i < CookingActor.Num(); i++)
 	{
-		return;
+		AIngredient* Ingredient = Cast<AIngredient>(CookingActor[i]);
+		if (State == Ingredient->GetCurIngredientState())
+		{
+			return;
+		}
+		else
+		{
+			Ingredient->ChangeState(State);
+		}
 	}
-	else
-	{
-		Ingredient->ChangeState(State);
-	}
-
 }

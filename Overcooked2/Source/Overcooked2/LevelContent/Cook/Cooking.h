@@ -38,6 +38,23 @@ public:
 		return Type == CookingType;
 	}
 
+	// 템플릿은 BP에서 호출할 수 없다.
+	template<typename T>
+	T* GetChild(T* Cooking)
+	{
+		T* NewCooking = Cast<T>(Cooking);
+		return NewCooking;
+	}
+
+	// 머티리얼 하이라이트 효과 적용
+	UFUNCTION(BlueprintCallable)
+	virtual void ApplyMaterialHighlight() {}
+
+	// 머티리얼 하이라이트 효과를 제거
+	UFUNCTION(BlueprintCallable)
+	virtual void RestoreMaterial() {}
+
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

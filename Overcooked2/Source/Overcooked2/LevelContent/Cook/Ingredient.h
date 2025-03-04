@@ -24,7 +24,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	AIngredient* ChangeState(EIngredientState State);
 
+	
+	virtual void ApplyMaterialHighlight() override;
 
+	virtual void RestoreMaterial() override;
 
 	// 도마에서 썰어야 하는 재료야?
 	UFUNCTION(BlueprintCallable)
@@ -86,4 +89,9 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	EIngredientState CurIngredientState = EIngredientState::EIS_NONE;
+
+	TArray<UMaterialInterface*> Materials;
+	float DiffuseColorMapWeight = 0.0f;
+
+	bool bIsHighlighted = false;
 };

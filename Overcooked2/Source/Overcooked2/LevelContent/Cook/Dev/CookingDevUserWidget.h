@@ -19,13 +19,35 @@ class OVERCOOKED2_API UCookingDevUserWidget : public UUserWidget
 public:
 
 	UFUNCTION(BlueprintCallable)
-	void SetTargetActor(ACooking* Actor)
+	void AddTargetActor(ACooking* Actor)
 	{
-		if (nullptr != CookingActor)
+		if (false == CookingActor.IsEmpty())
 		{
-			CookingActor = nullptr;
+			ACooking* NewActor = CookingActor.Last();
+			FVector Offset = FVector(0.0f, 50.0f, 0.0f);
+			FVector AdjustLocation = Offset + NewActor->GetActorLocation();
+			Actor->SetActorLocation(AdjustLocation);
 		}
-		CookingActor = Actor;
+	
+		CookingActor.Add(Actor);
+	}
+
+	UFUNCTION(BlueprintCallable)
+	TArray<ACooking*>& GetTargetActor()
+	{
+		return CookingActor;
+	}
+
+	UFUNCTION(BlueprintCallable)
+	ACooking* GetTargetActorIndex(int Index)
+	{
+		return CookingActor[Index];
+	}
+
+	UFUNCTION(BlueprintCallable)
+	void Reset()
+	{
+		CookingActor.Empty();
 	}
 
 	UFUNCTION(BlueprintCallable)
@@ -35,5 +57,5 @@ protected:
 
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
-	ACooking* CookingActor = nullptr;
+	TArray<ACooking*> CookingActor;
 };
