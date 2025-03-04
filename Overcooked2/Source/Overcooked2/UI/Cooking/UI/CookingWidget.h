@@ -15,7 +15,7 @@ struct FOrder
 	GENERATED_BODY()
 
 	class UImage* BackgroundImage = nullptr;
-	bool bIsOrder = false;
+
 };
 
 
@@ -35,7 +35,7 @@ public:
 	void OrderComplete();
 
 	UFUNCTION(BlueprintCallable, Category = "OCUI")
-	void NewOrder();
+	void CreateNewOrder();
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OCUI")
 	class UImage* OrderBackground_0;
@@ -46,13 +46,16 @@ public:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OCUI")
 	class UImage* OrderBackground_2;
 
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OCUI")
+	class UImage* OrderBackground_3;
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OCUI")
+	class UImage* OrderBackground_4;
 
 
 protected:
 	virtual void NativeOnInitialized() override;
-	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
-
-
+	virtual void NativeConstruct() override;
 private:
 	int CompleteOrderNum = 0;
 	int NewOrderNum = 0;
@@ -66,9 +69,11 @@ private:
 	FVector2D TargetOffset = FVector2D(50.0f, 0.0f);
 	float MoveTimeElapsed = 10.0f;
 
-	float ImageOffset = 10.0f;
+	float ImageOffset = 20.0f;
 	float FinalPos = 0.0f;
-	int Size = 3;
+	float ArrivePos = 0.0f;
+	int CurOrderCount = 0;
+
 
 	void UpdateImageOpacity();
 	void UpdateImagePosition();
