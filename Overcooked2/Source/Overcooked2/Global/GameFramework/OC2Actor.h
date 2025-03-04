@@ -7,6 +7,15 @@
 #include "Global/Interface/Interactable.h"
 #include "OC2Actor.generated.h"
 
+USTRUCT(BlueprintType)
+struct FMaterialData
+{
+	GENERATED_BODY()
+public:
+	UMaterialInterface* Material = nullptr;
+	float DiffuseColorMapWeight = 0.0f;
+};
+
 UCLASS()
 class OVERCOOKED2_API AOC2Actor : public AActor//, public IInteractable
 {
@@ -18,6 +27,8 @@ public:
 	// 머티리얼 하이라이트 효과 적용
 	UFUNCTION(BlueprintCallable)
 	virtual void ApplyMaterialHighlight();
+
+	void ApplyMaterialHighlight(UMeshComponent* Mesh);
 
 	// 머티리얼 하이라이트 효과를 제거
 	UFUNCTION(BlueprintCallable)
@@ -39,12 +50,14 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 
-	TArray<UMaterialInterface*> Materials;
-	float DiffuseColorMapWeight = 0.0f;
+	//TArray<UMaterialInterface*> Materials;
+	//float DiffuseColorMapWeight = 0.0f;
 	bool bIsHighlighted = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* StaticMeshComponent = nullptr;
+
+	TMap<UMeshComponent*, TArray<FMaterialData>> Materials;
 public:	
 
 };

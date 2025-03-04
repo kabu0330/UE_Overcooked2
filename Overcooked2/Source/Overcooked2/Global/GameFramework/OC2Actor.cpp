@@ -23,6 +23,11 @@ void AOC2Actor::Tick(float DeltaTime)
 
 void AOC2Actor::ApplyMaterialHighlight()
 {
+	ApplyMaterialHighlight(StaticMeshComponent);
+}
+
+void AOC2Actor::ApplyMaterialHighlight(UMeshComponent* Mesh)
+{
 	if (nullptr == StaticMeshComponent)
 	{
 		return;
