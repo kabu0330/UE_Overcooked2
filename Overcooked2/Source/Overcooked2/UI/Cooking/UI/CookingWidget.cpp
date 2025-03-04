@@ -14,30 +14,52 @@ void UCookingWidget::NativeOnInitialized()
 
     Orders.SetNum(5);
 
-    Orders[0].BackgroundImage = OrderBackground_0;
-    Orders[1].BackgroundImage = OrderBackground_1;
-    Orders[2].BackgroundImage = OrderBackground_2;
-    Orders[3].BackgroundImage = OrderBackground_3;
-    Orders[4].BackgroundImage = OrderBackground_4;
+
+    Orders[0] = Order_0;
+    Orders[1] = Order_1;
+    Orders[2] = Order_2;
+    Orders[3] = Order_3;
+    Orders[4] = Order_4;
+
 
     // Test Setting
     CurOrderCount = 2;
-
 
     float StartPos = 0.0f;
 
     for (int i = 0; i < Orders.Num(); i++)
     {
-        Orders[i].BackgroundImage->SetRenderTranslation({ StartPos + ImageOffset, 0.0f });
-    
-        StartPos += 250;
+        Orders[i]->SetRenderTranslation({ StartPos + ImageOffset * (i + 1), 0.0f });
+
+        StartPos += ImageSize;
     }
 
     for (int i = CurOrderCount; i < Orders.Num(); i++)
     {
-        Orders[i].BackgroundImage->SetVisibility(ESlateVisibility::Collapsed);
+        Orders[i]->SetVisibility(ESlateVisibility::Collapsed);
     }
 
+    {
+        int testnum = 0;
+
+        FName ImageName = *FString::Printf(TEXT("Dish_%d"), testnum);
+
+        TArray<UWidget*> Children;
+        Children = Orders[0]->GetAllChildren();
+
+        for (UWidget* Child : Children)
+        {
+            if (UImage* Image = Cast<UImage>(Child))
+            {
+
+                if (Image->GetName() == ImageName)
+                {
+                    int a = 0;
+                    //Image->SetBrushFromTexture();
+                }
+            }
+        }
+    }
 }
 
 void UCookingWidget::NativeConstruct()
@@ -52,9 +74,11 @@ void UCookingWidget::NativeConstruct()
 void UCookingWidget::OrderComplete()
 {
 
-    if (!Orders[CompleteOrderNum].BackgroundImage) return;
+    if (Orders[CompleteOrderNum] == nullptr) return;
 
-    if (Orders[CompleteOrderNum].BackgroundImage->GetVisibility() != ESlateVisibility::Collapsed)
+    if (GetWorld()->GetTimerManager().IsTimerActive(OpacityTimerHandle)) return;
+
+    if (Orders[CompleteOrderNum]->GetVisibility() != ESlateVisibility::Collapsed)
     {
         CurOrderCount -= 1;
 
@@ -65,24 +89,25 @@ void UCookingWidget::OrderComplete()
 
 void UCookingWidget::CreateNewOrder()
 {
+    if (CurOrderCount >= Orders.Num()) return; 
+
+    if (GetWorld()->GetTimerManager().IsTimerActive(MoveTimerHandle)) return;
+
     NewOrderNum = CurOrderCount;
-    if (NewOrderNum < Orders.Num())
-    {
-        FVector2D ScreenSize = UWidgetLayoutLibrary::GetViewportSize(this);
 
-        Orders[NewOrderNum].BackgroundImage->SetVisibility(ESlateVisibility::Visible);
+    FVector2D ScreenSize = UWidgetLayoutLibrary::GetViewportSize(this);
 
-        const FLinearColor& curcolor = Orders[NewOrderNum].BackgroundImage->GetColorAndOpacity();
+    Orders[NewOrderNum]->SetVisibility(ESlateVisibility::Visible);
+    Orders[NewOrderNum]->SetRenderTransformAngle(-20.0f);
+    Orders[NewOrderNum]->SetRenderOpacity(1.0f);
+    Orders[NewOrderNum]->SetRenderTranslation({ ScreenSize.X * 1.5f, 0.0f });
+    Orders[NewOrderNum]->SetRenderScale({ 1.0f, 1.2f });
 
-        Orders[NewOrderNum].BackgroundImage->SetRenderTransformAngle(-20.0f);
-        Orders[NewOrderNum].BackgroundImage->SetColorAndOpacity({ curcolor.R, curcolor.G, curcolor.B, 1.0f });
-        Orders[NewOrderNum].BackgroundImage->SetRenderTranslation({ ScreenSize.X * 1.5f, 0.0f });
-        Orders[NewOrderNum].BackgroundImage->SetRenderScale({ 1.0f, 1.2f });
+    CurOrderCount += 1;
 
-        CurOrderCount += 1;
 
-        GetWorld()->GetTimerManager().SetTimer(MoveTimerHandle, this, &UCookingWidget::MoveNewOrder, 0.01f, true);
-    }
+    GetWorld()->GetTimerManager().ClearTimer(MoveTimerHandle);
+    GetWorld()->GetTimerManager().SetTimer(MoveTimerHandle, this, &UCookingWidget::MoveNewOrder, 0.01f, true);
 }
 
 
@@ -90,18 +115,18 @@ void UCookingWidget::CreateNewOrder()
 void UCookingWidget::MoveNewOrder()
 {
 
-    if (!Orders[NewOrderNum].BackgroundImage) return;
+    if (Orders[NewOrderNum] == nullptr) return;
 
-    FVector2D curpos = Orders[NewOrderNum].BackgroundImage->GetRenderTransform().Translation;
-    
-    float curangle = Orders[NewOrderNum].BackgroundImage->GetRenderTransform().Angle;
+    FVector2D curpos = Orders[NewOrderNum]->GetRenderTransform().Translation;
+
+    float curangle = Orders[NewOrderNum]->GetRenderTransform().Angle;
 
     if (NewOrderNum != 0)
     {
         ArrivePos = ImageOffset;
-        for (int i = 0; i < CurOrderCount-1; i++)
+        for (int i = 0; i < CurOrderCount - 1; i++)
         {
-            ArrivePos += Orders[i].BackgroundImage->GetDesiredSize().X;
+            ArrivePos += ImageSize + ImageOffset;
         }
 
     }
@@ -116,11 +141,12 @@ void UCookingWidget::MoveNewOrder()
 
     if (curpos.X <= ArrivePos && curangle >= 0.0f)
     {
-        Orders[NewOrderNum].BackgroundImage->SetRenderScale({1.0f, 1.0f});
-        Orders[NewOrderNum].BackgroundImage->SetRenderTranslation({ ArrivePos,0.0f });
-        Orders[NewOrderNum].BackgroundImage->SetRenderTransformAngle({ 0.0f });
+        Orders[NewOrderNum]->SetRenderScale({ 1.0f, 1.0f });
+        Orders[NewOrderNum]->SetRenderTranslation({ ArrivePos,0.0f });
+        Orders[NewOrderNum]->SetRenderTransformAngle({ 0.0f });
 
         MoveTimeElapsed = 0.0f;
+
         GetWorld()->GetTimerManager().ClearTimer(MoveTimerHandle);
         return;
     }
@@ -128,12 +154,12 @@ void UCookingWidget::MoveNewOrder()
     {
         if (curpos.X > ArrivePos)
         {
-            Orders[NewOrderNum].BackgroundImage->SetRenderTranslation(curpos - FVector2D(TargetOffset.X + MoveTimeElapsed, 0));
+            Orders[NewOrderNum]->SetRenderTranslation(curpos - FVector2D(TargetOffset.X + MoveTimeElapsed, 0));
 
         }
         if (curangle < 0.0f)
         {
-            Orders[NewOrderNum].BackgroundImage->SetRenderTransformAngle(curangle + 0.7f);
+            Orders[NewOrderNum]->SetRenderTransformAngle(curangle + 0.7f);
         }
     }
 
@@ -145,17 +171,17 @@ void UCookingWidget::MoveNewOrder()
 void UCookingWidget::UpdateImageOpacity()
 {
 
-    if (Orders[CompleteOrderNum].BackgroundImage->GetColorAndOpacity().A <= 0.0f)
+    if (Orders[CompleteOrderNum]->GetRenderOpacity() <= 0.0f)
     {
-        Orders[CompleteOrderNum].BackgroundImage->SetVisibility(ESlateVisibility::Collapsed);
+        Orders[CompleteOrderNum]->SetVisibility(ESlateVisibility::Collapsed);
         UpdateImagePosition();
 
         GetWorld()->GetTimerManager().ClearTimer(OpacityTimerHandle);
         return;
     }
 
-    const FLinearColor& curcolor = Orders[CompleteOrderNum].BackgroundImage->GetColorAndOpacity();
-    Orders[CompleteOrderNum].BackgroundImage->SetColorAndOpacity({ curcolor.R, curcolor.G, curcolor.B, FMath::Clamp(curcolor.A - OpacityOffset, 0.0f, 1.0f) });
+    float curcolor = Orders[CompleteOrderNum]->GetRenderOpacity();
+    Orders[CompleteOrderNum]->SetRenderOpacity(FMath::Clamp(curcolor - OpacityOffset, 0.0f, 1.0f));
 
 }
 
@@ -169,25 +195,24 @@ void UCookingWidget::UpdateImagePosition()
         return;
     }
 
-    class UImage* backgroundimg = Orders[CompleteOrderNum].BackgroundImage;
+    class UCanvasPanel* Panel = Orders[CompleteOrderNum];
 
     // 앞으로 이동
     for (int i = CompleteOrderNum; i < CurOrderCount; i++)
     {
 
-        const FVector2D& imagesize = Orders[i].BackgroundImage->GetDesiredSize();
         int lastnum = 0;
 
         Orders[i] = Orders[i + 1];
-        const FWidgetTransform& trfm = Orders[i].BackgroundImage->GetRenderTransform();
-        FinalPos = trfm.Translation.X - imagesize.X ;
+        const FWidgetTransform& trfm = Orders[i]->GetRenderTransform();
+        FinalPos = trfm.Translation.X - ImageSize - ImageOffset;
 
-        Orders[i].BackgroundImage->SetRenderTranslation({ FinalPos, 0.0f });
+        Orders[i]->SetRenderTranslation({ FinalPos, 0.0f });
 
     }
 
-    Orders[CurOrderCount].BackgroundImage = backgroundimg;
+    Orders[CurOrderCount] = Panel;
 
     return;
-    
+
 }

@@ -27,6 +27,13 @@ public:
 	}
 	
 	UFUNCTION(BlueprintCallable)
+	void SetSimulatePhysics(bool Value)
+	{
+		StaticMeshComponent->SetSimulatePhysics(Value);
+	}
+
+
+	UFUNCTION(BlueprintCallable)
 	const ECookingType GetCookingType() const 
 	{
 		return CookingType;
@@ -37,6 +44,15 @@ public:
 	{
 		return Type == CookingType;
 	}
+
+	// 템플릿은 BP에서 호출할 수 없다.
+	template<typename T>
+	T* GetChild(T* Cooking)
+	{
+		T* NewCooking = Cast<T>(Cooking);
+		return NewCooking;
+	}
+
 
 protected:
 	// Called when the game starts or when spawned
@@ -50,7 +66,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	ECookingType CookingType = ECookingType::ECT_NONE;
 
-
 	const FIngredientDataRow* IngredientDataTable = nullptr;
+
+	class UPrimitiveComponent* PrimitiveComponent = nullptr;
 private:	
 };

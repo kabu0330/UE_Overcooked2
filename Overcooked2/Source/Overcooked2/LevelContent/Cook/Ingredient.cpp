@@ -12,8 +12,7 @@ AIngredient::AIngredient()
 
 	CookingType = ECookingType::ECT_INGREDIENT;
 
-	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
-	RootComponent = StaticMeshComponent; // 설정 안해주면 nullptr 나와서 터짐
+
 }
 
 // Called when the game starts or when spawned
@@ -56,10 +55,10 @@ AIngredient* AIngredient::Init(EIngredientType Type)
 	return this;
 }
 
-void AIngredient::Offset(FVector Pos, FRotator Ro)
+void AIngredient::Offset(FVector Pos, FRotator Rot)
 {
 	AddActorLocalOffset(Pos);
-	SetActorRelativeRotation(Ro);
+	SetActorRelativeRotation(Rot);
 }
 
 const FIngredientCookDataRow& AIngredient::CheckState(EIngredientState State)
@@ -87,8 +86,12 @@ AIngredient* AIngredient::ChangeState(EIngredientState State)
 		return nullptr;
 	}
 
+	DeactivateHighlight();
+
 	CurIngredientState = State;
 	StaticMeshComponent->SetStaticMesh(CookData->CookMesh);
+
+	ActivateHighlight();
 
 	FVector Location = CookData->Location;
 	FRotator Rotation = CookData->Rotation;
@@ -97,5 +100,30 @@ AIngredient* AIngredient::ChangeState(EIngredientState State)
 	return this;
 }
 
+void AIngredient::DeactivateHighlight()
+{
+	if (bIsHighlighted)
+	{
+		RestoreMaterial();
+		for (int i = 0; i < StaticMeshComponent->GetNumMaterials(); i++)
+		{
+			StaticMeshComponent->SetMaterial(i, nullptr);
+		}
+		bIsHighlighted = true;
+	}
+}
 
-
+void AIngredient::ActivateHighlight()
+{
+	if (bIsHighlighted)
+	{
+		ApplyMaterialHighlight();
+	}
+	else
+	{
+		for (int i = 0; i < StaticMeshComponent->GetNumMaterials(); i++)
+		{
+			StaticMeshComponent->SetMaterial(i, nullptr);
+		}
+	}
+}
