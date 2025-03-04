@@ -13,5 +13,9 @@ UCLASS()
 class OVERCOOKED2_API UOC2Const : public UObject
 {
 	GENERATED_BODY()
+
+public:
+	static float OrderSpawnDelay;
+	static float MaxOrderCount;
 	
 };
