@@ -16,13 +16,19 @@ public:
 	// Sets default values for this actor's properties
 	AOC2CharacterTestTable();
 
+	virtual ACooking* Interact(AActor* ChefActor) override;
+	AIngredient* SpawnIngredient(AActor* ChefActor);
+	virtual void PlaceItem(ACooking* Cook);
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	ACooking* CurCook = nullptr;
 
 	void Highlight();
 	void OffHighlight();
@@ -30,11 +36,19 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* StaticMesh;
 
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	USceneComponent* Root = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+	USceneComponent* MySceneComponent = nullptr;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input", meta = (AllowPrivateAccess = "true"))
 	UMaterial* OriginMat;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input", meta = (AllowPrivateAccess = "true"))
 	UMaterial* HighlightMat;
 
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	EIngredientType IngredientType;
 };
