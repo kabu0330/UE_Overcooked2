@@ -71,7 +71,9 @@ void AOC2Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent);
 	
 	EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AOC2Character::MoveCharacter);
-	EnhancedInputComponent->BindAction(GrabAction, ETriggerEvent::Started, this, &AOC2Character::Interact);
+	EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Started, this, &AOC2Character::Interact);
+	EnhancedInputComponent->BindAction(CharacterAction, ETriggerEvent::Started, this, &AOC2Character::DoSth);
+	EnhancedInputComponent->BindAction(CharacterAction, ETriggerEvent::Completed, this, &AOC2Character::DoSth);
 	EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Triggered, this, &AOC2Character::Dash);
 }
 
@@ -105,7 +107,7 @@ void AOC2Character::Interact()
 		if (SelectedOC2Actor->IsA(ACooking::StaticClass()))
 		{
 			UE_LOG(LogTemp, Log, TEXT("Hold"));
-			// 내가 들고있는 액터에 저장한다.
+			// 그냥 든다.
 			Grab(Cast<ACooking>(SelectedOC2Actor));
 
 		}
@@ -113,7 +115,19 @@ void AOC2Character::Interact()
 		if (SelectedOC2Actor->IsA(ACookingTable::StaticClass()))
 		{
 			auto Table = Cast<ACookingTable>(SelectedOC2Actor);
-			Grab(Table->Interact(this));
+			// 테이블과 상호작용한 결과를 저장
+			ACooking* Cook = Table->Interact(this);
+			// 잡고있는 물건이 없고, 테이블에 올려진 물체가 있는 경우
+			if (GrabbedObject == nullptr && Cook != nullptr)
+			{
+				Grab(Cook);
+			}
+			else if (GrabbedObject != nullptr && Cook == nullptr)
+			{
+				// 다른 액터에 Attach하게 되면 수동으로 Detach할 필요 X
+				Table->PlaceItem(GrabbedObject);
+				GrabbedObject = nullptr;
+			}
 		}
 	}
 	else
@@ -126,32 +140,98 @@ void AOC2Character::Grab(ACooking* Cook)
 {
 	if (GrabbedObject == nullptr)
 	{
-		UE_LOG(LogTemp, Log, TEXT("Grab"));
 		GrabbedObject = Cook;
+		UPrimitiveComponent* PhysicsComp = Cast<UPrimitiveComponent>(GrabbedObject->GetRootComponent());
+		PhysicsComp->SetCollisionProfileName(TEXT("Interactable"));
+		PhysicsComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		PhysicsComp->SetSimulatePhysics(false);
+		UE_LOG(LogTemp, Log, TEXT("Grab"));
 		GrabbedObject->AttachToComponent(GrabComponent, FAttachmentTransformRules::SnapToTargetIncludingScale);
-		Cast<UPrimitiveComponent>(GrabbedObject->GetRootComponent())->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
 	}
 }
 
 void AOC2Character::Drop()
 {
-	// 주위에 상호작용할 수 있는 개체가 아무것도 없으면
-	if (GrabbedObject)
+	// 내가 들고 있는 물건이 있을때
+	if (GrabbedObject != nullptr)
 	{
+		UPrimitiveComponent* PhysicsComp = Cast<UPrimitiveComponent>(GrabbedObject->GetRootComponent());
 		UE_LOG(LogTemp, Log, TEXT("Drop"));
-		// 잡은 물체에 대해 상호작용을 실행한다. 바닥에 내려놓는다는 뜻.
+		// 들고 있는 물체에 대해 상호작용을 실행한다. 바닥에 내려놓는다는 뜻.
+		PhysicsComp->SetSimulatePhysics(true);
+		PhysicsComp->SetCollisionProfileName(TEXT("Interactable"));
+		PhysicsComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+
 		GrabbedObject->DetachFromActor(FDetachmentTransformRules::KeepRelativeTransform);
 		GrabbedObject->SetActorLocation(GrabComponent->GetComponentLocation());
-		Cast<UPrimitiveComponent>(GrabbedObject->GetRootComponent())->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-		Cast<UPrimitiveComponent>(GrabbedObject->GetRootComponent())->SetCollisionProfileName(TEXT("Interactable"));
+		GrabbedObject->SetActorRotation(GetActorRotation());
+		
 
 		GrabbedObject = nullptr;
 	}
 }
 
+void AOC2Character::DoSth()
+{
+	if (GrabbedObject == nullptr && SelectedOC2Actor == nullptr)
+	{
+		return;
+	}
+	if (GrabbedObject != nullptr)
+	{
+		Throwing();
+	}
+	else
+	{
+		Cooking();
+	}
+
+
+}
+
+void AOC2Character::Throwing()
+{
+	if (GrabbedObject)
+	{
+		// 1️⃣ 액터의 루트 컴포넌트를 가져오기
+		UPrimitiveComponent* PhysicsComp = Cast<UPrimitiveComponent>(GrabbedObject->GetRootComponent());
+
+		if (PhysicsComp)
+		{
+			// 2️⃣ 액터 놓기 (월드 좌표 유지)
+			GrabbedObject->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+
+			// 3️⃣ 물리 시뮬레이션 활성화
+			PhysicsComp->SetSimulatePhysics(true);
+			PhysicsComp->SetCollisionProfileName(TEXT("Interactable"));
+			PhysicsComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+
+
+			// 4️⃣ 던질 방향과 세기 설정
+			FVector ThrowDirection = GetActorForwardVector();  // 캐릭터가 바라보는 방향
+			float ThrowStrength = 1000.0f;  // 던지는 힘 조절
+
+			// 5️⃣ 물리적 임펄스 추가 (던지기)
+			PhysicsComp->AddImpulse(ThrowDirection * ThrowStrength, NAME_None, true);
+		}
+
+		// 6️⃣ 잡고 있던 객체 초기화
+		GrabbedObject = nullptr;
+	}
+
+}
+
+void AOC2Character::Cooking()
+{
+}
+
 void AOC2Character::CheckInteract()
 {
-	if (!GrabComponent) return; // SceneComponent가 유효한지 확인
+	if (GrabComponent == nullptr)
+	{
+		return; // SceneComponent가 유효한지 확인(사실 무조건 유효해야함)
+	}
 
 	FVector TraceLocation = GrabComponent->GetComponentLocation(); // SceneComponent 위치 가져오기
 

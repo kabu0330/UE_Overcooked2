@@ -38,6 +38,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void MoveCharacter(const FInputActionValue& Value);
+
+	UFUNCTION(BlueprintCallable)
+	bool IsHolding() { return GrabbedObject != nullptr; }
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -58,9 +61,15 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void CheckInteract();
 
+	// 테이블 또는 접시와의 상호작용
 	void Interact();
+
 	void Grab(ACooking* Cook);
 	void Drop();
+
+	// 캐릭터의 행동(요리하기, 던지기 등)
+	void DoSth();
+
 	void Throwing();
 	void Cooking();
 
@@ -73,36 +82,48 @@ private :
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UserInput", meta = (AllowPrivateAccess = "true"))
 	float Alpha = 0.0f;
 
+	//Actions -------------------------------------------------------------------------------------------------
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UserInput", meta = (AllowPrivateAccess = "true"))
 	UInputAction* MoveAction = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UserInput", meta = (AllowPrivateAccess = "true"))
-	UInputAction* GrabAction = nullptr;
+	UInputAction* InteractAction = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UserInput", meta = (AllowPrivateAccess = "true"))
+	UInputAction* CharacterAction = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UserInput", meta = (AllowPrivateAccess = "true"))
 	UInputAction* DashAction = nullptr;
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UserInput", meta = (AllowPrivateAccess = "true"))
 	UMaterial* TransparentMat = nullptr;
 
+	// 상호작용 할 범위 구체에 대한 반지름
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UserInput", meta = (AllowPrivateAccess = "true"))
-	float TraceRadius = 100.0f; // 트레이스 반지름
+	float TraceRadius = 100.0f; 
 
+	// 캐릭터 머리 정보
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UserInput", meta = (AllowPrivateAccess = "true"))
 	TMap<FString, FCharacterData> CharacterHeadMap;
 
+	// 잡은 오브젝트가 위치할 Transform을 가지고 있는 Component
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Grab", meta = (AllowPrivateAccess = "true"))
 	USceneComponent* GrabComponent;
 
+	// 현재 내가 상호작용할 수 있는 객체의 정보 ( 테이블이나 음식이나 소화기나.. 등등)
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Grab", meta = (AllowPrivateAccess = "true"))
 	AOC2Actor* SelectedOC2Actor = nullptr;
 
+	// 현재 내가 들고 있는 객체의 정보 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Grab", meta = (AllowPrivateAccess = "true"))
 	ACooking* GrabbedObject = nullptr;
 
 	/// <summary>
 	/// Dash Variables
 	/// </summary>
+	/// 
+	/// Todo : 대쉬 제대로 안되는거 같아서 나중에 고쳐야 함.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dash", meta = (AllowPrivateAccess = "true"))
 	float DashPower = 500.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dash", meta = (AllowPrivateAccess = "true"))
