@@ -11,6 +11,21 @@ ACooking::ACooking()
 	PrimaryActorTick.bCanEverTick = true;
 
 	TimeEvent = CreateDefaultSubobject<UTimeEventComponent>(TEXT("TimeEvent"));
+
+	//// 추상클래스여서 UPrimitiveComponent로 직접 생성 불가.
+	//PrimitiveComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PrimitiveComponent"));
+
+	if (nullptr != StaticMeshComponent)
+	{
+		StaticMeshComponent->SetMobility(EComponentMobility::Movable);
+		StaticMeshComponent->SetSimulatePhysics(true);
+		StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+		StaticMeshComponent->SetCollisionProfileName(TEXT("PhysicsActor"));
+	}
+	//Cast<UStaticMeshComponent>(PrimitiveComponent)->SetSimulatePhysics(true);
+	
+
+	bReplicates = true;
 }
 
 // Called when the game starts or when spawned

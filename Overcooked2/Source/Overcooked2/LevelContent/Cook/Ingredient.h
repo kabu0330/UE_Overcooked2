@@ -24,8 +24,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	AIngredient* ChangeState(EIngredientState State);
 
-
-
 	// 도마에서 썰어야 하는 재료야?
 	UFUNCTION(BlueprintCallable)
 	bool IsChoppable() const
@@ -59,13 +57,6 @@ public:
 		return CurIngredientState;
 	}
 
-	// 메시를 해당 함수를 호출하여 바꾸는 것은 지양, ChageState 함수를 사용하여 상태 기반으로 메시를 데이터에서 찾아와 바꿀 것
-	UFUNCTION(BlueprintCallable)
-	UStaticMeshComponent* GetStaticMeshComponent()
-	{
-		return StaticMeshComponent;
-	}
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -77,13 +68,15 @@ protected:
 	void Offset(FVector Pos, FRotator Rot);
 
 private:
+	void DeactivateHighlight();
+	void ActivateHighlight();
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
-	UStaticMeshComponent* StaticMeshComponent = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	EIngredientType IngredientType = EIngredientType::EIT_NONE;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	EIngredientState CurIngredientState = EIngredientState::EIS_NONE;
+
+
 };
