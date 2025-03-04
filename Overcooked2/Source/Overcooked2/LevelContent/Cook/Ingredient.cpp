@@ -12,8 +12,7 @@ AIngredient::AIngredient()
 
 	CookingType = ECookingType::ECT_INGREDIENT;
 
-	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
-	RootComponent = StaticMeshComponent; // 설정 안해주면 nullptr 나와서 터짐
+
 }
 
 // Called when the game starts or when spawned

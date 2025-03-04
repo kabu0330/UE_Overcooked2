@@ -7,6 +7,8 @@ AOC2Actor::AOC2Actor()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
+	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
+	RootComponent = StaticMeshComponent; 
 }
 
 void AOC2Actor::BeginPlay()
