@@ -23,6 +23,10 @@ public:
 
 	virtual ACooking* Interact(AActor* ChefActor) { return nullptr; };
 	
+	virtual void PlaceItem(ACooking* Item)
+	{
+
+	}
 
 	UFUNCTION(BlueprintCallable)
 	bool IsInteracting() const
