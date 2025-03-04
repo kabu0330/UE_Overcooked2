@@ -16,15 +16,13 @@ public:
 	// Sets default values for this actor's properties
 	AIngredient();
 
+
 	// 상자에서 꺼냈을 때
 	UFUNCTION(BlueprintCallable)
-	void Init(FName Name);
-
-	//UFUNCTION(BlueprintCallable)
-	//void Init(EIngredientType Type); // 테스트 함수
+	AIngredient* Init(EIngredientType Type);
 	
 	UFUNCTION(BlueprintCallable)
-	void ChangeState(EIngredientState State);
+	AIngredient* ChangeState(EIngredientState State);
 
 
 
@@ -75,6 +73,8 @@ protected:
 	virtual void Tick(float DeltaTime) override;
 
 	const FIngredientCookDataRow& CheckState(EIngredientState State);
+
+	void Offset(FVector Pos, FRotator Rot);
 
 private:
 

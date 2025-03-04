@@ -14,9 +14,6 @@ AIngredient::AIngredient()
 
 	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
 	RootComponent = StaticMeshComponent; // 설정 안해주면 nullptr 나와서 터짐
-
-	// Spawn되는 녀석의 기본 크기를 지정해줘야 한다면?
-	//SetActorScale3D(FVector(100.0f, 100.0f, 100.0f));
 }
 
 // Called when the game starts or when spawned
@@ -33,78 +30,47 @@ void AIngredient::Tick(float DeltaTime)
 
 }
 
-// 데이터 테이블에서 적절한 메시를 찾고, 재료의 상태를 초기화하는 함수
-void AIngredient::Init(FName Name)
+AIngredient* AIngredient::Init(EIngredientType Type)
 {
 	UOC2GameInstance* GameInst = Cast<UOC2GameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
-
-	// 1. 데이터 테이블을 가져온다.
-	UDataTable* DataTable = LoadObject<UDataTable>(nullptr, TEXT("/Game/Blueprints/Global/Data/DT_IngredientDataTable.DT_IngredientDataTable"));
-
-	if (nullptr == DataTable)
+	FName Name = GameInst->GetIngredientDataTableRowName(Type);
+	
+	// 1. 해당 재료 타입의 데이터 행 추출
+	// FIngredientDataRow IngredientDataTable
+	IngredientDataTable = &GameInst->GetIngredientDataRow(Name);
+	if (nullptr == IngredientDataTable)
 	{
-		int a = 0;
+		return nullptr;
 	}
 
-	// 2. 행 이름(Fish)을 기준으로 데이터 열("생선", 메시경로, State)을 가져온다.
-	FIngredientDataRow* IngredientData = DataTable->FindRow<FIngredientDataRow>(Name, TEXT(""));
-	IngredientDataTable = *IngredientData;
-	if (nullptr == IngredientData)
-	{
-		int a = 0;
-	}
+	// 2. Setting
+	StaticMeshComponent->SetStaticMesh(IngredientDataTable->BaseMesh);
+	IngredientType = IngredientDataTable->IngredientType;
+	CurIngredientState = IngredientDataTable->StateRows[0].PrevIngredientState;
 
-	//DataTable = UGlobalDataTable::GetActorClass(Name);
-	//DataTable = 
-	//StaticMeshComponent->SetStaticMesh(DataTable.BaseMesh);
+	// 3. Offset
+	FVector Location = IngredientDataTable->Location;
+	FRotator Rotation = IngredientDataTable->Rotation;
+	Offset(Location, Rotation);
 
-	// 3. 추출한 데이터 열 값을 넣어준다.
-	StaticMeshComponent->SetStaticMesh(IngredientData->BaseMesh);
-	IngredientType = IngredientData->IngredientType;
-	CurIngredientState = IngredientData->StateRows[0].PrevIngredientState; // 이게 맞나???
+	return this;
 }
 
-//void AIngredient::Init(EIngredientType Type)
-//{
-//	//UOC2GameInstance* GameInst = Cast<UOC2GameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
-//
-//	//// 1. 데이터 테이블을 가져온다.
-//	//UDataTable* IngredientDataTable = LoadObject<UDataTable>(nullptr, TEXT("/Game/Blueprints/Global/Data/DT_IngredientDataTable.DT_IngredientDataTable"));
-//
-//	////DataTable = GameInst->
-//	//FName RowName = GameInst->GetIngredientDataTableRowName(Type);
-//
-//	//if (nullptr == IngredientDataTable)
-//	//{
-//	//	int a = 0;
-//	//}
-//
-//	//// 2. 행 이름(Fish)을 기준으로 데이터 열("생선", 메시경로, State)을 가져온다.
-//	////FIngredientDataRow* IngredientData = IngredientDataTable->FindRow<FIngredientDataRow>(Name, TEXT(""));
-//	////if (nullptr == IngredientData)
-//	////{
-//	////	int a = 0;
-//	////}
-//
-//	////DataTable = UGlobalDataTable::GetActorClass(Name);
-//	////DataTable = 
-//	////StaticMeshComponent->SetStaticMesh(DataTable.BaseMesh);
-//
-//	//// 3. 추출한 데이터 열 값을 넣어준다.
-//	//StaticMeshComponent->SetStaticMesh(IngredientData->BaseMesh);
-//	//IngredientType = IngredientData->IngredientType;
-//	//CurIngredientState = IngredientData->StateRows[0].PrevIngredientState; // 이게 맞나???
-//}
+void AIngredient::Offset(FVector Pos, FRotator Ro)
+{
+	AddActorLocalOffset(Pos);
+	SetActorRelativeRotation(Ro);
+}
 
 const FIngredientCookDataRow& AIngredient::CheckState(EIngredientState State)
 {
 	const FIngredientCookDataRow* Result = nullptr;
 
-	for (size_t i = 0; i < IngredientDataTable.StateRows.Num(); i++)
+	for (size_t i = 0; i < IngredientDataTable->StateRows.Num(); i++)
 	{
-		if (IngredientDataTable.StateRows[i].IngredientState == State)
+		if (IngredientDataTable->StateRows[i].IngredientState == State)
 		{
-			Result = &IngredientDataTable.StateRows[i];
+			Result = &IngredientDataTable->StateRows[i];
 			break;
 		}
 	}
@@ -112,17 +78,23 @@ const FIngredientCookDataRow& AIngredient::CheckState(EIngredientState State)
 	return *Result;
 }
 
-void AIngredient::ChangeState(EIngredientState State)
+AIngredient* AIngredient::ChangeState(EIngredientState State)
 {
-	const FIngredientCookDataRow* Data = &CheckState(State);
+	const FIngredientCookDataRow* CookData = &CheckState(State);
 
-	if (nullptr == Data)
+	if (nullptr == CookData)
 	{
-		return;
+		return nullptr;
 	}
 
 	CurIngredientState = State;
-	StaticMeshComponent->SetStaticMesh(Data->CookMesh);
+	StaticMeshComponent->SetStaticMesh(CookData->CookMesh);
+
+	FVector Location = CookData->Location;
+	FRotator Rotation = CookData->Rotation;
+	Offset(Location, Rotation);
+
+	return this;
 }
 
 

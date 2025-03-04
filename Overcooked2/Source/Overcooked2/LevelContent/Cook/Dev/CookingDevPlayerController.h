@@ -14,4 +14,17 @@ class OVERCOOKED2_API ACookingDevPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 	
+public:
+	ACookingDevPlayerController();
+	~ACookingDevPlayerController();
+
+	UFUNCTION(BlueprintCallable)
+	void EnableUIMode();
+
+protected:
+	virtual void BeginPlay() override;
+	virtual void Tick(float _DeltaTime) override;
+
+private:
+
 };

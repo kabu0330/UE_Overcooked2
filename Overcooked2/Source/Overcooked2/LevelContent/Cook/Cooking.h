@@ -21,10 +21,21 @@ public:
 	// Sets default values for this actor's properties
 	ACooking();
 
-	UFUNCTION(BlueprintCallable)
-	const FIngredientDataRow& GetDataTable() const
+	const FIngredientDataRow* const GetIngredientDataTable() const
 	{
 		return IngredientDataTable;
+	}
+	
+	UFUNCTION(BlueprintCallable)
+	const ECookingType GetCookingType() const 
+	{
+		return CookingType;
+	}
+
+	UFUNCTION(BlueprintCallable)
+	bool IsCookingType(ECookingType Type) const
+	{
+		return Type == CookingType;
 	}
 
 protected:
@@ -39,7 +50,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	ECookingType CookingType = ECookingType::ECT_NONE;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
-	FIngredientDataRow IngredientDataTable = FIngredientDataRow();
+
+	const FIngredientDataRow* IngredientDataTable = nullptr;
 private:	
 };
