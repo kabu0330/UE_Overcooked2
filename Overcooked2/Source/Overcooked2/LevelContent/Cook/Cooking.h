@@ -27,6 +27,13 @@ public:
 	}
 	
 	UFUNCTION(BlueprintCallable)
+	void SetSimulatePhysics(bool Value)
+	{
+		StaticMeshComponent->SetSimulatePhysics(Value);
+	}
+
+
+	UFUNCTION(BlueprintCallable)
 	const ECookingType GetCookingType() const 
 	{
 		return CookingType;
@@ -60,5 +67,7 @@ protected:
 	ECookingType CookingType = ECookingType::ECT_NONE;
 
 	const FIngredientDataRow* IngredientDataTable = nullptr;
+
+	class UPrimitiveComponent* PrimitiveComponent = nullptr;
 private:	
 };
