@@ -46,14 +46,6 @@ public:
 		return NewCooking;
 	}
 
-	// 머티리얼 하이라이트 효과 적용
-	UFUNCTION(BlueprintCallable)
-	virtual void ApplyMaterialHighlight() {}
-
-	// 머티리얼 하이라이트 효과를 제거
-	UFUNCTION(BlueprintCallable)
-	virtual void RestoreMaterial() {}
-
 
 protected:
 	// Called when the game starts or when spawned
@@ -66,7 +58,6 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	ECookingType CookingType = ECookingType::ECT_NONE;
-
 
 	const FIngredientDataRow* IngredientDataTable = nullptr;
 private:	

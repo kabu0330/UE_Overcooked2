@@ -15,10 +15,36 @@ class OVERCOOKED2_API AOC2Actor : public AActor//, public IInteractable
 public:	
 	AOC2Actor();
 
+	// 머티리얼 하이라이트 효과 적용
+	UFUNCTION(BlueprintCallable)
+	virtual void ApplyMaterialHighlight();
+
+	// 머티리얼 하이라이트 효과를 제거
+	UFUNCTION(BlueprintCallable)
+	virtual void RestoreMaterial();
+
+	UFUNCTION(BlueprintCallable)
+	UStaticMeshComponent* GetStaticMeshComponent()
+	{
+		return StaticMeshComponent;
+	}
+
+	UFUNCTION(BlueprintCallable)
+	bool IsHighlighted()
+	{
+		return bIsHighlighted;
+	}
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 
+	TArray<UMaterialInterface*> Materials;
+	float DiffuseColorMapWeight = 0.0f;
+	bool bIsHighlighted = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	UStaticMeshComponent* StaticMeshComponent = nullptr;
 public:	
 
 };
