@@ -16,17 +16,20 @@ class OVERCOOKED2_API UCookingWidget : public UUserWidget
     GENERATED_BODY()
 
 public:
+
+    //Test
     UFUNCTION(BlueprintCallable, Category = "OC2UI")
     void SetCompleteOrderNum(int num)
     {
         CompleteOrderNum = num;
     }
 
+
     UFUNCTION(BlueprintCallable, Category = "OC2UI")
     void OrderComplete();
 
     UFUNCTION(BlueprintCallable, Category = "OC2UI")
-    void CreateNewOrder();
+    void CreateNewOrder(struct FOrder& order);
 
 
     UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
@@ -61,6 +64,11 @@ private:
     FVector2D TargetOffset = FVector2D(50.0f, 0.0f);
     float MoveTimeElapsed = 10.0f;
 
+    FTimerHandle IngredientTimerHandle;
+    FVector2D IngredientTargetOffset = FVector2D(0.0f, 10.0f);
+    float IngredientTimeElapsed = 10.0f;
+    float IngredientArrivePos = 100.f;
+
     float ImageOffset = 20.0f;
     float FinalPos = 0.0f;
     float ArrivePos = 0.0f;
@@ -68,8 +76,20 @@ private:
 
     float ImageSize = 180.0f;
 
+    int PrevIngredientNum = 3;
+
     void UpdateImageOpacity();
     void UpdateImagePosition();
+    void UpdateIngredientImagePosition();
+
+    void SettingIngredientImages(FOrder& order);
+    FVector2D IShortSize = { 56.0f, 60.f };
+    FVector2D ILongSize = {56.0f, 90.f};
+
+
     void MoveNewOrder();
+
+    class UImage* FindChildImage(const FString& name, class UCanvasPanel* canvasepanel);
+    class UCanvasPanel* FindChildPanel(const FString& name, UCanvasPanel* canvase);
 
 };
