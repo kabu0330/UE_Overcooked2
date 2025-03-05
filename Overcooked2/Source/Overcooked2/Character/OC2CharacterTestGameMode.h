@@ -13,5 +13,9 @@ UCLASS()
 class OVERCOOKED2_API AOC2CharacterTestGameMode : public AGameMode
 {
 	GENERATED_BODY()
-	
+public:
+    UFUNCTION(Server, Reliable, WithValidation)
+    void ServerSpawnIngredient();
+
+    
 };

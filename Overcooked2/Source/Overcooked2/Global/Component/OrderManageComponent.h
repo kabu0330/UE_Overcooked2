@@ -8,19 +8,6 @@
 
 //class AIngredient;
 
-USTRUCT(BlueprintType)
-struct OVERCOOKED2_API FRecipe
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Order")
-	TArray<UClass*> RequiredActor;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Order")
-	float TimeLimit = 0.0f;
-};
-
-
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class OVERCOOKED2_API UOrderManageComponent : public UActorComponent
 {
@@ -39,5 +26,5 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 private:
-	TArray<FRecipe> OrderList;
+	//TArray<FRecipe> OrderList;
 };
