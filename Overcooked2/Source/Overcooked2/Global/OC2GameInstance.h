@@ -5,7 +5,12 @@
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
 #include "Engine/DataTable.h"
+
 #include "Global/Data/IngredientDataTable.h"
+#include "Global/Data/OrderDataTable.h"
+
+#include "Global/OC2Struct.h"
+
 #include "OC2GameInstance.generated.h"
 
 /**
@@ -62,10 +67,23 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Global|Data")
 	const FIngredientDataRow& GetIngredientDataRow(const FName& RowName);
+	/**
+	 * 특정 재료의 데이터 테이블 행 데이터를 타입을 사용하여
+	 *
+	 * @param World 게임 월드 객체입니다.
+	 * @return FIngredientDataRow 해당 재료의 데이터 테이블 행 데이터입니다.
+	 */
+	const FIngredientDataRow& GetIngredientDataRow(EIngredientType IngredientType);
 
+	const UStaticMesh* GetPlateMesh(TArray<FRecipe>& Recipes);
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
 	UDataTable* IngredientDataTable = nullptr;
-	
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
+	UDataTable* OrderDataTable = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
+	UDataTable* RecipeDataTable = nullptr;
 };

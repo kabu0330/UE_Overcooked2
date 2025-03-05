@@ -66,7 +66,31 @@ const FIngredientDataRow& UOC2GlobalData::GetIngredientDataRow(UWorld* World, co
 	if (nullptr != GameInstance)
 	{
 		return GameInstance->GetIngredientDataRow(RowName);
+	}	
+
+	return EmptyData;
+}
+
+const FIngredientDataRow& UOC2GlobalData::GetIngredientDataRow(UWorld* World, EIngredientType IngredientType)
+{
+	static FIngredientDataRow EmptyData;
+
+	UOC2GameInstance* GameInstance = UOC2Global::GetOC2GameInstance(World);
+
+	if (nullptr != GameInstance)
+	{
+		return GameInstance->GetIngredientDataRow(IngredientType);
 	}
 
 	return EmptyData;
+}
+
+const UStaticMesh* UOC2GlobalData::GetPlateMesh(TArray<FRecipe>& Recipes)
+{
+	if (Recipes.Num() == 1)
+	{
+
+	}
+
+	return nullptr;
 }
