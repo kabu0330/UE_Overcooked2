@@ -3,9 +3,12 @@
 
 #include "UI/Cooking/UI/CookingWidget.h"
 #include "Components/Image.h"
+#include "Engine/Texture2D.h"
 #include "Components/CanvasPanel.h"
 #include "Components/CanvasPanelSlot.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
+#include "Global/Data/OrderDataTable.h"
+
 
 
 void UCookingWidget::NativeOnInitialized()
@@ -38,28 +41,6 @@ void UCookingWidget::NativeOnInitialized()
     {
         Orders[i]->SetVisibility(ESlateVisibility::Collapsed);
     }
-
-    {
-        int testnum = 0;
-
-        FName ImageName = *FString::Printf(TEXT("Dish_%d"), testnum);
-
-        TArray<UWidget*> Children;
-        Children = Orders[0]->GetAllChildren();
-
-        for (UWidget* Child : Children)
-        {
-            if (UImage* Image = Cast<UImage>(Child))
-            {
-
-                if (Image->GetName() == ImageName)
-                {
-                    int a = 0;
-                    //Image->SetBrushFromTexture();
-                }
-            }
-        }
-    }
 }
 
 void UCookingWidget::NativeConstruct()
@@ -82,12 +63,30 @@ void UCookingWidget::OrderComplete()
     {
         CurOrderCount -= 1;
 
+        TArray<UWidget*> Children;
+        Children = Orders[CompleteOrderNum]->GetAllChildren();
+
+        FString TargetPrefix = TEXT("IngredientPanel_");
+
+        for (UWidget* Child : Children)
+        {
+            if (UCanvasPanel* Panel = Cast<UCanvasPanel>(Child))
+            {
+                FString PanelName = Panel->GetName();
+                if (PanelName.StartsWith(TargetPrefix))
+                {
+                    Panel->SetRenderTranslation({ 0.0f, -IngredientArrivePos });
+
+                }
+            }
+        }
+
         GetWorld()->GetTimerManager().SetTimer(OpacityTimerHandle, this, &UCookingWidget::UpdateImageOpacity, 0.01f, true);
     }
 
 }
 
-void UCookingWidget::CreateNewOrder()
+void UCookingWidget::CreateNewOrder(FOrder& order)
 {
     if (CurOrderCount >= Orders.Num()) return; 
 
@@ -105,6 +104,28 @@ void UCookingWidget::CreateNewOrder()
 
     CurOrderCount += 1;
 
+
+    {
+        FString texturepath = TEXT("/Game/Resources/UI/Order/Dish/ui_cheeseburger.ui_cheeseburger");
+        class UTexture2D* texture = Cast<UTexture2D>(StaticLoadObject(UTexture2D::StaticClass(), nullptr, *texturepath));
+
+        UImage* dishimage = FindChildImage("Dish_", Orders[NewOrderNum]);
+
+        if (dishimage == nullptr) return;
+        
+        if (order.OrderTexutre != nullptr)
+        {
+            dishimage->SetBrushFromTexture(order.OrderTexutre);
+        }
+        else
+        {
+            dishimage->SetBrushFromTexture(texture);
+        }
+                
+            
+    }
+
+    SettingIngredientImages(order);
 
     GetWorld()->GetTimerManager().ClearTimer(MoveTimerHandle);
     GetWorld()->GetTimerManager().SetTimer(MoveTimerHandle, this, &UCookingWidget::MoveNewOrder, 0.01f, true);
@@ -134,10 +155,6 @@ void UCookingWidget::MoveNewOrder()
     {
         ArrivePos = ImageOffset;
     }
-    else
-    {
-        return;
-    }
 
     if (curpos.X <= ArrivePos && curangle >= 0.0f)
     {
@@ -146,6 +163,13 @@ void UCookingWidget::MoveNewOrder()
         Orders[NewOrderNum]->SetRenderTransformAngle({ 0.0f });
 
         MoveTimeElapsed = 0.0f;
+        IngredientTimeElapsed = 0.0f;
+
+
+
+        GetWorld()->GetTimerManager().ClearTimer(IngredientTimerHandle);
+        GetWorld()->GetTimerManager().SetTimer(IngredientTimerHandle, this, &UCookingWidget::UpdateIngredientImagePosition, 0.01f, true);
+
 
         GetWorld()->GetTimerManager().ClearTimer(MoveTimerHandle);
         return;
@@ -166,6 +190,129 @@ void UCookingWidget::MoveNewOrder()
     MoveTimeElapsed += 0.1f;
 }
 
+void UCookingWidget::SettingIngredientImages(FOrder& order)
+{
+    if (order.RequireIngredients.IsEmpty())
+    {
+        //return;
+    }
+
+
+    UCanvasPanel* panel = FindChildPanel("IngredientPanel_", Orders[NewOrderNum]);
+    if (panel == nullptr) return;
+
+    UCanvasPanel* ibackpanel = FindChildPanel("IBackImg_", panel);
+    if (ibackpanel == nullptr) return;
+
+    UCanvasPanel* imgpanel = FindChildPanel("I_Img_", panel);
+    if (imgpanel == nullptr) return;
+
+    int testnum = 3;
+
+    if (NewOrderNum == 1)
+    {
+        testnum = 2;
+    }
+
+
+    // for (int i = 0; i < order.RequireIngredients.Num(); i++)
+    for (int i = 0; i < testnum; i++)
+    {
+        TArray<UWidget*> backpanelchind = ibackpanel->GetAllChildren();
+        UWidget* ibackimg = backpanelchind[i];
+
+
+        if (ibackimg != nullptr)
+        {
+            UCanvasPanelSlot* backslot = Cast<UCanvasPanelSlot>(ibackimg->Slot);
+            UImage* bimg = FindChildImage("BIngredient" + FString::FromInt(i), ibackpanel);
+            UImage* img = FindChildImage("IngredientImg" + FString::FromInt(i), imgpanel);
+            img->SetVisibility(ESlateVisibility::Visible);
+            bimg->SetVisibility(ESlateVisibility::Visible);
+
+            UImage* dishimg = FindChildImage("Dish_", Orders[NewOrderNum]);
+            dishimg->SetRenderTranslation({ 0.0f, 0.0f });
+
+            UImage* backimg = FindChildImage("OrderBackground_", Orders[NewOrderNum]);
+            backimg->SetRenderScale({ 1.0f, 1.0f });
+            backimg->SetRenderTranslation({ 0.f, 0.0f });
+
+
+            // if(order.RequireIngredients[i].IngredientState != EIngredientState::EIS_NONE)
+            if (i == 1)
+            {
+                backslot->SetSize(IShortSize);
+                
+            }
+            /*if (order.RequireIngredients[i].IngredientTexture != nullptr)
+            {
+                img->SetBrushFromTexture(order.RequireIngredients[i].IngredientTexture);
+            }*/
+            //else
+            {
+                FString texturepath = TEXT("/Game/Resources/UI/Order/Ingredient/Fish_Icon.Fish_Icon");
+                class UTexture2D* texture = Cast<UTexture2D>(StaticLoadObject(UTexture2D::StaticClass(), nullptr, *texturepath));
+
+                img->SetBrushFromTexture(texture);
+            }
+        }
+    }
+
+    //if (order.RequireIngredients.Num() < 3)
+    if (testnum < 3)
+    {
+        //for (int i = order.RequireIngredients.Num() - 1; i < 3; i++)
+        for (int i = testnum; i < 3; i++)
+        {
+            UImage* img = FindChildImage("IngredientImg" + FString::FromInt(i), imgpanel);
+            UImage* bimg = FindChildImage("BIngredient" + FString::FromInt(i), ibackpanel);
+            img->SetVisibility(ESlateVisibility::Hidden);
+            bimg->SetVisibility(ESlateVisibility::Hidden);
+        }
+
+        
+        UImage* dishimg = FindChildImage("Dish_" , Orders[NewOrderNum]);
+        dishimg->SetRenderTranslation({-30.0f, 0.0f});
+
+        UImage* backimg = FindChildImage("OrderBackground_", Orders[NewOrderNum]);
+        backimg->SetRenderScale({ 0.7f, 1.0f });
+        backimg->SetRenderTranslation({ -30.f, 0.0f });
+
+    }
+
+}
+
+
+
+void UCookingWidget::UpdateIngredientImagePosition()
+{
+    if (Orders[NewOrderNum] == nullptr) return;
+    
+    UCanvasPanel* panel = FindChildPanel("IngredientPanel_", Orders[NewOrderNum]);
+
+    if (panel == nullptr) return;
+
+    FVector2D curpos = panel->GetRenderTransform().Translation;
+
+    if (curpos.Y >= IngredientArrivePos)
+    {
+        panel->SetRenderTranslation({ 0.0f, IngredientArrivePos });
+
+        IngredientTimeElapsed = 0.0f;
+
+        GetWorld()->GetTimerManager().ClearTimer(IngredientTimerHandle);
+        return;
+
+    }
+    else
+    {
+        panel->SetRenderTranslation(curpos + FVector2D(0.0f, IngredientTargetOffset.Y + IngredientTimeElapsed));
+    }
+            
+
+    IngredientTimeElapsed += 0.1f;
+
+}
 
 
 void UCookingWidget::UpdateImageOpacity()
@@ -197,7 +344,6 @@ void UCookingWidget::UpdateImagePosition()
 
     class UCanvasPanel* Panel = Orders[CompleteOrderNum];
 
-    // 앞으로 이동
     for (int i = CompleteOrderNum; i < CurOrderCount; i++)
     {
 
@@ -215,4 +361,48 @@ void UCookingWidget::UpdateImagePosition()
 
     return;
 
+}
+
+UImage* UCookingWidget::FindChildImage(const FString& name, UCanvasPanel* canvase)
+{
+    FString TargetPrefix = name;
+
+    TArray<UWidget*> Children;
+    Children = canvase->GetAllChildren();
+
+    for (UWidget* Child : Children)
+    {
+        if (UImage* image = Cast<UImage>(Child))
+        {
+            FString imgname = image->GetName();
+            if (imgname.StartsWith(TargetPrefix))
+            {
+                return image;
+            }
+        }
+    }
+
+    return nullptr;
+}
+
+UCanvasPanel* UCookingWidget::FindChildPanel(const FString& name, UCanvasPanel* canvase)
+{
+    FString TargetPrefix = name;
+
+    TArray<UWidget*> Children;
+    Children = canvase->GetAllChildren();
+
+    for (UWidget* Child : Children)
+    {
+        if (UCanvasPanel* panel = Cast<UCanvasPanel>(Child))
+        {
+            FString panelname = panel->GetName();
+            if (panelname.StartsWith(TargetPrefix))
+            {
+                return panel;
+            }
+        }
+    }
+
+    return nullptr;
 }

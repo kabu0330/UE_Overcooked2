@@ -2,13 +2,21 @@
 
 
 #include "Global/GameFramework/OC2Actor.h"
+#include "Net/UnrealNetwork.h"
 
 AOC2Actor::AOC2Actor()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
 	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
-	RootComponent = StaticMeshComponent; 
+	RootComponent = StaticMeshComponent;
+}
+
+void AOC2Actor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AOC2Actor, StaticMeshComponent);
 }
 
 void AOC2Actor::BeginPlay()
@@ -30,14 +38,20 @@ void AOC2Actor::ApplyMaterialHighlight()
 		return;
 	}
 
-	for (int i = 0; i < StaticMeshComponent->GetNumMaterials(); i++)
-	{
-		StaticMeshComponent->SetMaterial(i, nullptr);
-	}
-
 	float HighlightValue = 5.0f;
 	for (int i = 0; i < StaticMeshComponent->GetNumMaterials(); i++)
 	{
+		if (StaticMeshComponent->GetMaterials().IsValidIndex(i) && StaticMeshComponent->GetMaterials()[i] != nullptr)
+		{
+			UMaterialInstanceDynamic* ExistingDynamicMaterial = Cast<UMaterialInstanceDynamic>(StaticMeshComponent->GetMaterials()[i]);
+			if (ExistingDynamicMaterial)
+			{
+				// 이미 존재하는 다이나믹 머티리얼이 있으면 값을 변경
+				ExistingDynamicMaterial->SetScalarParameterValue(FName("DiffuseColorMapWeight"), HighlightValue);
+				continue;
+			}
+		}
+
 		// 1. 메시의 머티리얼을 모두 가져온다.
 		UMaterialInterface* Material = StaticMeshComponent->GetMaterial(i);
 		if (nullptr != Material)
@@ -50,7 +64,7 @@ void AOC2Actor::ApplyMaterialHighlight()
 			{
 				// 3. 기존 머티리얼을 먼저 저장하고
 				Material->GetScalarParameterValue(FName("DiffuseColorMapWeight"), DiffuseColorMapWeight);
-				Materials.Add(Material);
+				//Materials.Add(Material);
 
 				// 4. 다이나믹 머티리얼로 교체한다.
 				DynamicMaterial->SetScalarParameterValue(FName("DiffuseColorMapWeight"), HighlightValue);
@@ -63,14 +77,20 @@ void AOC2Actor::ApplyMaterialHighlight()
 
 void AOC2Actor::RestoreMaterial()
 {
-	if (true == Materials.IsEmpty())
-	{
-		return;
-	}
-
 	// 1. 머티리얼을 원래대로 되돌리고
 	for (int i = 0; i < StaticMeshComponent->GetNumMaterials(); i++)
 	{
+		if (StaticMeshComponent->GetMaterials().IsValidIndex(i) && StaticMeshComponent->GetMaterials()[i] != nullptr)
+		{
+			UMaterialInstanceDynamic* ExistingDynamicMaterial = Cast<UMaterialInstanceDynamic>(StaticMeshComponent->GetMaterials()[i]);
+			if (ExistingDynamicMaterial)
+			{
+				// 이미 존재하는 다이나믹 머티리얼이 있으면 값을 변경
+				ExistingDynamicMaterial->SetScalarParameterValue(FName("DiffuseColorMapWeight"), DiffuseColorMapWeight);
+				continue;
+			}
+		}
+
 		UMaterialInterface* Material = Materials[i];
 		if (nullptr != Material)
 		{

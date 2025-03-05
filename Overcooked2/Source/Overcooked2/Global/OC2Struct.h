@@ -5,45 +5,42 @@
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 #include "Global/OC2Enum.h"
-#include "Global/OC2Struct.h"
-#include "Global/Data/IngredientDataTable.h"
-#include "OrderDataTable.generated.h"
+#include "OC2Struct.generated.h"
 
-// 재료 조합별 메쉬 데이터 속성
+// 손질 가능한 요리 속성
 USTRUCT(BlueprintType)
-struct FOrder
+struct FCookableIngredient
 {
 	GENERATED_BODY()
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
-	UTexture2D* OrderTexutre = nullptr;
-
+	EIngredientType IngredientType = EIngredientType::EIT_NONE;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
-	TArray<FCookableIngredient> RequireIngredients;
+	EIngredientState IngredientState = EIngredientState::EIS_NONE;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
+	UTexture2D* IngredientTexture = nullptr;
+
 };
 
-// 주문 데이터 행
+// 손질 가능한 요리 속성
 USTRUCT(BlueprintType)
-struct FOrderDataRow : public FTableRowBase
+struct FRecipe
 {
 	GENERATED_BODY()
 
-	FOrderDataRow() {}
-	~FOrderDataRow() {}
-
+public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
-	UTexture2D* OrderTexutre = nullptr;
-
+	EIngredientType IngredientType = EIngredientType::EIT_NONE;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
-	TArray<FCookableIngredient> RequireIngredients;
+	EIngredientState IngredientState = EIngredientState::EIS_NONE;
 };
 
 /**
  * 
  */
 UCLASS()
-class OVERCOOKED2_API UOrderDataTable : public UObject
+class OVERCOOKED2_API UOC2Struct : public UObject
 {
 	GENERATED_BODY()
 	

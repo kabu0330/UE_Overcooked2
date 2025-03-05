@@ -4,7 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
+
+#include "Global/OC2Struct.h"
+
 #include "Global/Data/IngredientDataTable.h"
+#include "Global/Data/OrderDataTable.h"
+
 #include "OC2GlobalData.generated.h"
 
 /**
@@ -54,6 +59,10 @@ public:
 	 * @param World 게임 월드 객체입니다.
 	 * @return FIngredientDataRow 해당 재료의 데이터 테이블 행 데이터입니다.
 	 */
+	UFUNCTION(BlueprintCallable, Category = "Global|Data")
 	const FIngredientDataRow& GetIngredientDataRow(UWorld* World, const FName& RowName);
-	
+
+	const FIngredientDataRow& GetIngredientDataRow(UWorld* World, EIngredientType IngredientType);
+
+	const UStaticMesh* GetPlateMesh(TArray<FRecipe>& Recipes);
 };

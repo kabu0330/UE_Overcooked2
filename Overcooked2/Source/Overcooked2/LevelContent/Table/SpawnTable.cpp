@@ -16,23 +16,6 @@ void ASpawnTable::Init(FName Name)
 
 AIngredient* ASpawnTable::SpawnIngredient(AActor* ChefActor)
 {
-	//UDataTable* DataTable = LoadObject<UDataTable>(nullptr, TEXT("/Script/Engine.DataTable'/Game/Blueprints/Global/Data/DT_IngredientDataTable.DT_IngredientDataTable'_C"));
-
-	//if (nullptr == DataTable)
-	//{
-	//	UE_LOG(LogTemp, Warning, TEXT("IngredientDataTable을 찾지 못해 재료 스폰에 실패했습니다."));
-	//	return nullptr;
-	//}
-
-	//FName RowName = *StaticEnum<EIngredientType>()->GetDisplayNameTextByValue(static_cast<int64>(Ingredient)).ToString();
-	//FName RowName = *StaticEnum<EIngredientType>()->GetDisplayNameTextByValue(static_cast<int64>(Ingredient)).ToString();
-	//FIngredientDataRow* IngredientData = DataTable->FindRow<FIngredientDataRow>(RowName, TEXT(""));
-
-	//if (nullptr == IngredientData)
-	//{
-	//	UE_LOG(LogTemp, Warning, TEXT("IngredinetDataTable에서 재료 타입과 일치하는 데이터를 추출에 실패했습니다."));
-	//	return nullptr;
-	//}
 
 	FActorSpawnParameters SpawnParameters; // 적절한 오버로딩 함수 호출을 위해(회전값 추가), FActorSpawnParameters 사용
 	FVector Location = FVector();

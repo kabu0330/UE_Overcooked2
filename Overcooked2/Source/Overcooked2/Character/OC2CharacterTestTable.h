@@ -23,31 +23,14 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	ACooking* CurCook = nullptr;
 
-	void Highlight();
-	void OffHighlight();
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components", meta = (AllowPrivateAccess = "true"))
-	UStaticMeshComponent* StaticMesh;
-
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components", meta = (AllowPrivateAccess = "true"))
-	USceneComponent* Root = nullptr;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UserComponents")
 	USceneComponent* MySceneComponent = nullptr;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input", meta = (AllowPrivateAccess = "true"))
-	UMaterial* OriginMat;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input", meta = (AllowPrivateAccess = "true"))
-	UMaterial* HighlightMat;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input", meta = (AllowPrivateAccess = "true"))
 	EIngredientType IngredientType;
