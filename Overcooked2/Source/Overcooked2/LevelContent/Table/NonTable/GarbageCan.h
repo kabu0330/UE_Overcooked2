@@ -13,5 +13,21 @@ UCLASS()
 class OVERCOOKED2_API AGarbageCan : public ACookingTable
 {
 	GENERATED_BODY()
+
+public:
+	AGarbageCan();
+
+	UFUNCTION(BlueprintCallable)
+	virtual ACooking* Interact(AActor* ChefActor) override 
+	{
+		return nullptr; 
+	};
+
+	UFUNCTION(BlueprintCallable)
+	virtual void PlaceItem(ACooking* Item) override;
+
+private:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TimeSetting", meta = (AllowPrivateAccess = "true"))
+	float Timer = 0.0f;
 	
 };

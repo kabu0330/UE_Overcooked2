@@ -3,3 +3,12 @@
 
 #include "LevelContent/Table/NonTable/GarbageCan.h"
 
+AGarbageCan::AGarbageCan()
+{
+
+}
+
+void AGarbageCan::PlaceItem(ACooking* Item)
+{
+
+}
