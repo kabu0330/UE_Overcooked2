@@ -8,6 +8,7 @@
 #include "Global/GameFramework/OC2Actor.h"
 #include "LevelContent/Cook/Cooking.h"
 #include "LevelContent/Table/CookingTable.h"
+#include "Global/Component/TimeEventComponent.h"
 #include "OC2Character.generated.h"
 
 USTRUCT(BlueprintType)
@@ -62,9 +63,13 @@ public:
 	void CheckInteract();
 
 	// 테이블 또는 접시와의 상호작용
+	UFUNCTION(BlueprintCallable, Reliable, Server)
 	void Interact();
 
+	UFUNCTION(Reliable, Server)
 	void Grab(ACooking* Cook);
+
+	UFUNCTION(Reliable, Server)
 	void Drop();
 
 	// 캐릭터의 행동(요리하기, 던지기 등)
@@ -73,8 +78,14 @@ public:
 	void Throwing();
 	void Cooking();
 
+	UFUNCTION(Reliable, Server)
 	void Dash();
+
+	UFUNCTION(BlueprintCallable)
 	void StopDash();
+
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
+
 private :
 	// 이 함수는 캐릭터의 머리를 설정하는 함수읾
 	
@@ -107,6 +118,10 @@ private :
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UserInput", meta = (AllowPrivateAccess = "true"))
 	TMap<FString, FCharacterData> CharacterHeadMap;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Grab", meta = (AllowPrivateAccess = "true"))
+	UTimeEventComponent* TimeEvent;
+
+
 	// 잡은 오브젝트가 위치할 Transform을 가지고 있는 Component
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Grab", meta = (AllowPrivateAccess = "true"))
 	USceneComponent* GrabComponent;
@@ -116,16 +131,19 @@ private :
 	AOC2Actor* SelectedOC2Actor = nullptr;
 
 	// 현재 내가 들고 있는 객체의 정보 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Grab", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, Replicated, BlueprintReadOnly, Category = "Grab", meta = (AllowPrivateAccess = "true"))
 	ACooking* GrabbedObject = nullptr;
+
 
 	/// <summary>
 	/// Dash Variables
 	/// </summary>
 	/// 
-	/// Todo : 대쉬 제대로 안되는거 같아서 나중에 고쳐야 함.
+	/// Todo : 대쉬 제대로 안되는거 같아서 나중에 고쳐야 함
+	
+	bool IsDashing = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dash", meta = (AllowPrivateAccess = "true"))
-	float DashPower = 500.0f;
+	float DashPower = 400.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dash", meta = (AllowPrivateAccess = "true"))
 	float DashDuration = 0.5f;
 	FTimerHandle DashTimerHandle;

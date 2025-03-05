@@ -5,11 +5,13 @@
 #include "EnhancedInputComponent.h"
 #include "OC2CharacterTestTable.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Net/UnrealNetwork.h"
+
 
 // Sets default values
 AOC2Character::AOC2Character()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	bReplicates = true;
@@ -17,6 +19,8 @@ AOC2Character::AOC2Character()
 
 	GrabComponent = CreateDefaultSubobject<USceneComponent>("GrabPosition");
 	GrabComponent->SetupAttachment(RootComponent);
+
+	TimeEvent = CreateDefaultSubobject<UTimeEventComponent>("EventTimer");
 }
 
 void AOC2Character::MoveCharacter(const FInputActionValue& Value)
@@ -58,6 +62,11 @@ void AOC2Character::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (IsDashing)
+	{
+		Dash();
+	}
+
 	CheckInteract();
 
 	DrawDebugSphere(GetWorld(), GrabComponent->GetComponentLocation(), TraceRadius, 20, FColor::Green, false, 0.0f);
@@ -69,12 +78,13 @@ void AOC2Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent);
-	
+
 	EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AOC2Character::MoveCharacter);
 	EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Started, this, &AOC2Character::Interact);
 	EnhancedInputComponent->BindAction(CharacterAction, ETriggerEvent::Started, this, &AOC2Character::DoSth);
 	EnhancedInputComponent->BindAction(CharacterAction, ETriggerEvent::Completed, this, &AOC2Character::DoSth);
-	EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Triggered, this, &AOC2Character::Dash);
+	EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Started, this, &AOC2Character::Dash);
+
 }
 
 void AOC2Character::InitMesh()
@@ -98,7 +108,7 @@ void AOC2Character::InitMesh()
 }
 
 //상호작용 : Space Key
-void AOC2Character::Interact()
+void AOC2Character::Interact_Implementation()
 {
 	// 만약 지금 상호작용을 시도할 수 있는 개체가 있으면
 	if (SelectedOC2Actor != nullptr)
@@ -106,10 +116,16 @@ void AOC2Character::Interact()
 		//만약 이 액터가 재료나 요리 접시인 경우
 		if (SelectedOC2Actor->IsA(ACooking::StaticClass()))
 		{
-			UE_LOG(LogTemp, Log, TEXT("Hold"));
-			// 그냥 든다.
-			Grab(Cast<ACooking>(SelectedOC2Actor));
-
+			if (GrabbedObject == nullptr)
+			{
+				UE_LOG(LogTemp, Log, TEXT("Hold"));
+				// 그냥 든다.
+				Grab(Cast<ACooking>(SelectedOC2Actor));
+			}
+			else
+			{
+				Drop();
+			}
 		}
 		//만약 이 액터가 테이블인 경우
 		if (SelectedOC2Actor->IsA(ACookingTable::StaticClass()))
@@ -136,37 +152,33 @@ void AOC2Character::Interact()
 	}
 }
 
-void AOC2Character::Grab(ACooking* Cook)
+void AOC2Character::Grab_Implementation(ACooking* Cook)
 {
-	if (GrabbedObject == nullptr)
-	{
-		GrabbedObject = Cook;
-		UPrimitiveComponent* PhysicsComp = Cast<UPrimitiveComponent>(GrabbedObject->GetRootComponent());
-		PhysicsComp->SetCollisionProfileName(TEXT("Interactable"));
-		PhysicsComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		PhysicsComp->SetSimulatePhysics(false);
-		UE_LOG(LogTemp, Log, TEXT("Grab"));
-		GrabbedObject->AttachToComponent(GrabComponent, FAttachmentTransformRules::SnapToTargetIncludingScale);
+	GrabbedObject = Cook;
+	UStaticMeshComponent* PhysicsComp = Cast<UStaticMeshComponent>(GrabbedObject->GetRootComponent());
+	GrabbedObject->SetSimulatePhysics(false);
+	PhysicsComp->SetCollisionProfileName("NoCollision");
 
-	}
+	GrabbedObject->AttachToComponent(GrabComponent, FAttachmentTransformRules::KeepRelativeTransform);
+	GrabbedObject->SetActorLocation(GrabComponent->GetComponentLocation());
+
 }
 
-void AOC2Character::Drop()
+void AOC2Character::Drop_Implementation()
 {
 	// 내가 들고 있는 물건이 있을때
 	if (GrabbedObject != nullptr)
 	{
-		UPrimitiveComponent* PhysicsComp = Cast<UPrimitiveComponent>(GrabbedObject->GetRootComponent());
+		UPrimitiveComponent* PrimitiveComp = Cast<UPrimitiveComponent>(GrabbedObject->GetRootComponent());
 		UE_LOG(LogTemp, Log, TEXT("Drop"));
 		// 들고 있는 물체에 대해 상호작용을 실행한다. 바닥에 내려놓는다는 뜻.
-		PhysicsComp->SetSimulatePhysics(true);
-		PhysicsComp->SetCollisionProfileName(TEXT("Interactable"));
-		PhysicsComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		GrabbedObject->SetSimulatePhysics(true);
+		PrimitiveComp->SetCollisionProfileName("Interactable");
 
 		GrabbedObject->DetachFromActor(FDetachmentTransformRules::KeepRelativeTransform);
 		GrabbedObject->SetActorLocation(GrabComponent->GetComponentLocation());
 		GrabbedObject->SetActorRotation(GetActorRotation());
-		
+
 
 		GrabbedObject = nullptr;
 	}
@@ -195,17 +207,17 @@ void AOC2Character::Throwing()
 	if (GrabbedObject)
 	{
 		// 1️⃣ 액터의 루트 컴포넌트를 가져오기
-		UPrimitiveComponent* PhysicsComp = Cast<UPrimitiveComponent>(GrabbedObject->GetRootComponent());
+		UPrimitiveComponent* PrimitiveComp = Cast<UPrimitiveComponent>(GrabbedObject->GetRootComponent());
 
-		if (PhysicsComp)
+		if (PrimitiveComp)
 		{
 			// 2️⃣ 액터 놓기 (월드 좌표 유지)
 			GrabbedObject->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 
 			// 3️⃣ 물리 시뮬레이션 활성화
-			PhysicsComp->SetSimulatePhysics(true);
-			PhysicsComp->SetCollisionProfileName(TEXT("Interactable"));
-			PhysicsComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+			PrimitiveComp->SetCollisionProfileName(TEXT("Interactable"));
+			PrimitiveComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+			GrabbedObject->SetSimulatePhysics(true);
 
 
 			// 4️⃣ 던질 방향과 세기 설정
@@ -213,7 +225,7 @@ void AOC2Character::Throwing()
 			float ThrowStrength = 1000.0f;  // 던지는 힘 조절
 
 			// 5️⃣ 물리적 임펄스 추가 (던지기)
-			PhysicsComp->AddImpulse(ThrowDirection * ThrowStrength, NAME_None, true);
+			PrimitiveComp->AddImpulse(ThrowDirection * ThrowStrength, NAME_None, true);
 		}
 
 		// 6️⃣ 잡고 있던 객체 초기화
@@ -224,6 +236,12 @@ void AOC2Character::Throwing()
 
 void AOC2Character::Cooking()
 {
+	if (SelectedOC2Actor != nullptr)
+	{
+		return;
+	}
+
+
 }
 
 void AOC2Character::CheckInteract()
@@ -266,49 +284,55 @@ void AOC2Character::CheckInteract()
 			return FVector::DistSquared(TraceLocation, A.GetActor()->GetActorLocation()) < FVector::DistSquared(TraceLocation, B.GetActor()->GetActorLocation());
 			});
 
-		AActor* ClosestActor = HitResults[0].GetActor();
 		// maybe Interactable.
-		auto Temp = Cast<AOC2Actor>(ClosestActor);
-		if (SelectedOC2Actor!= nullptr && Temp != SelectedOC2Actor)
+		AOC2Actor* ClosestActor = Cast<AOC2Actor>(HitResults[0].GetActor());
+		if (SelectedOC2Actor != nullptr)
 		{
-			//Cast<AOC2CharacterTestTable>(SelectedOC2Actor)->OffHighlight();
-			//auto Mesh = SelectedOC2Actor->FindComponentByClass<UStaticMeshComponent>();
+			if (ClosestActor != SelectedOC2Actor)
+			{
+				SelectedOC2Actor->RestoreMaterial();
+			}
 			//UMaterialInstanceDynamic* DynamicMat = Mesh->CreateDynamicMaterialInstance(0);
 			//if (DynamicMat)
 			//{
 			//	DynamicMat->SetScalarParameterValue(TEXT("Brightness"), 2.0f);
 			//}
 		}
-		SelectedOC2Actor = Temp;
-		//Cast<AOC2CharacterTestTable>(SelectedOC2Actor)->Highlight();
+		SelectedOC2Actor = ClosestActor;
+		if (!SelectedOC2Actor->IsHighlighted())
+		{
+			SelectedOC2Actor->ApplyMaterialHighlight();
+		}
 		//SelectedOC2Actor->Highlight();
 	}
 	else
 	{
-		SelectedOC2Actor = nullptr;
-
 		if (SelectedOC2Actor != nullptr)
 		{
 			//Cast<AOC2CharacterTestTable>(SelectedOC2Actor)->OffHighlight();
-			//SelectedOC2Actor->OffHighlight();
+			SelectedOC2Actor->RestoreMaterial();
 		}
+		SelectedOC2Actor = nullptr;
 	}
 }
 
-void AOC2Character::Dash()
+void AOC2Character::Dash_Implementation()
 {
-	if (GetCharacterMovement()->IsFalling()) return; // 공중에서는 대시 불가
-
 	FVector DashDirection = GetActorForwardVector(); // 바라보는 방향
 	LaunchCharacter(DashDirection * DashPower, true, false); // 대시 실행
-
-	// 일정 시간이 지나면 멈추도록 타이머 설정
-	GetWorld()->GetTimerManager().SetTimer(DashTimerHandle, this, &AOC2Character::StopDash, DashDuration, false, DashDuration);
 }
 
 void AOC2Character::StopDash()
 {
+	IsDashing = false;
 	GetCharacterMovement()->StopMovementImmediately();
+}
+
+void AOC2Character::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AOC2Character, GrabbedObject);
 }
 
 void AOC2Character::SetCharacterHead(FString Name)
