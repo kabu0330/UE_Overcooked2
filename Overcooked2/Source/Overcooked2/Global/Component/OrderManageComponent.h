@@ -13,9 +13,6 @@ struct OVERCOOKED2_API FRecipe
 {
 	GENERATED_BODY()
 
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Order")
-	//TArray<TObjectPtr<AIngredient>> RequiredIngredients;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Order")
 	TArray<UClass*> RequiredActor;
 

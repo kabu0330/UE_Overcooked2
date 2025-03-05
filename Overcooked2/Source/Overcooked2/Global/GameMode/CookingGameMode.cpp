@@ -2,10 +2,12 @@
 
 
 #include "Global/GameMode/CookingGameMode.h"
-#include "Kismet/GameplayStatics.h"
 #include "Global/OC2GameInstance.h"
 #include "Global/Data/IngredientDataTable.h"
 #include "Global/Component/OrderManageComponent.h"
+#include "Global/OC2Const.h"
+
+#include "Kismet/GameplayStatics.h"
 
 ACookingGameMode::ACookingGameMode()
 {
@@ -16,7 +18,7 @@ void ACookingGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
-	ChangeState(ECookingGameModeState::ECS_Stay);
+	ChangeState(ECookingGameModeState::ECS_Stage);
 }
 
 void ACookingGameMode::Tick(float DeltaTime)
@@ -47,7 +49,7 @@ void ACookingGameMode::PostLogin(APlayerController* NewPlayerController)
 
 	PlayerControllers.Push(NewPlayerController);
 
-	if (4 == PlayerControllers.Num())
+	if (4 == PlayerControllers.Num() && ECookingGameModeState::ECS_Stay == CurState)
 	{
 		ChangeState(ECookingGameModeState::ECS_Stage);
 	}
@@ -59,20 +61,27 @@ void ACookingGameMode::EntryStay()
 
 void ACookingGameMode::Stay(float DeltaTime)
 {
-	TestTime += DeltaTime;
+	//TestTime += DeltaTime;
 
-	if (TestTime >= 5.0f)
-	{
-		ChangeState(ECookingGameModeState::ECS_Score);
-	}
+	//if (TestTime >= 5.0f)
+	//{
+	//	ChangeState(ECookingGameModeState::ECS_Score);
+	//}
 }
 
 void ACookingGameMode::EntryStage()
 {
+	CheckTime = 0.0f;
 }
 
 void ACookingGameMode::Stage(float DeltaTime)
 {
+	CheckTime += DeltaTime;
+
+	if (CheckTime >= UOC2Const::OrderSpawnDelay)
+	{
+		CheckTime = 0.0f;
+	}
 }
 
 void ACookingGameMode::EntryScore()

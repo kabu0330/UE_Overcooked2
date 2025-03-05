@@ -57,6 +57,5 @@ private:
 	
 	ECookingGameModeState CurState = ECookingGameModeState::ECS_None;
 
-
-	float TestTime = 0.0f;
+	float CheckTime = 0.0f;
 };
