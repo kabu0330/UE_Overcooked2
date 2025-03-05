@@ -16,6 +16,9 @@ struct FOrder
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
+	UTexture* OrderTexutre = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
 	EIngredientType IngredientType = EIngredientType::EIT_NONE;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
