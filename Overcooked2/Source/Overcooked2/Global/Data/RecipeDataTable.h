@@ -4,46 +4,33 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
-#include "Global/OC2Enum.h"
 #include "Global/OC2Struct.h"
-#include "Global/Data/IngredientDataTable.h"
-#include "OrderDataTable.generated.h"
+#include "RecipeDataTable.generated.h"
 
-// 재료 조합별 메쉬 데이터 속성
+// 레시피 데이터 행
 USTRUCT(BlueprintType)
-struct FOrder
+struct FRecipeDataRow : public FTableRowBase
 {
 	GENERATED_BODY()
 
-public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
-	UTexture2D* OrderTexutre = nullptr;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
-	TArray<FCookableIngredient> RequireIngredients;
-};
-
-// 주문 데이터 행
-USTRUCT(BlueprintType)
-struct FOrderDataRow : public FTableRowBase
-{
-	GENERATED_BODY()
-
-	FOrderDataRow() {}
-	~FOrderDataRow() {}
+	FRecipeDataRow() {}
+	~FRecipeDataRow() {}
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
 	UTexture2D* OrderTexutre = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
 	TArray<FCookableIngredient> RequireIngredients;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
+	UStaticMesh* FoodMesh = nullptr;
 };
 
 /**
  * 
  */
 UCLASS()
-class OVERCOOKED2_API UOrderDataTable : public UObject
+class OVERCOOKED2_API URecipeDataTable : public UObject
 {
 	GENERATED_BODY()
 	

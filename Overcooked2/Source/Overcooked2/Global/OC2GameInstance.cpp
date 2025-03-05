@@ -4,6 +4,10 @@
 #include "Global/OC2GameInstance.h"
 #include "Overcooked2.h"
 
+#include "Global/Data/RecipeDataTable.h"
+#include "Global/Data/IngredientDataTable.h"
+#include "Global/Data/OrderDataTable.h"
+
 UOC2GameInstance::UOC2GameInstance()
 {
 
@@ -99,4 +103,50 @@ const FIngredientDataRow& UOC2GameInstance::GetIngredientDataRow(const FName& Ro
 	}
 
 	return EmptyData;
+}
+
+const FIngredientDataRow& UOC2GameInstance::GetIngredientDataRow(EIngredientType FindIngredientType)
+{
+	static FIngredientDataRow EmptyData;
+
+	// 데이터 테이블의 모든 행의 이름을 가져오기
+	TArray<FName> RowNames = IngredientDataTable->GetRowNames();
+
+	for (const FName& RowName : RowNames)
+	{
+		// 현재 행을 가져오기
+		FIngredientDataRow* IngredientData = IngredientDataTable->FindRow<FIngredientDataRow>(RowName, nullptr);
+
+		if (nullptr != IngredientData && IngredientData->IngredientType == FindIngredientType)
+		{
+			return *IngredientData; // 원하는 값이 있는 행을 찾으면 반환
+		}
+	}
+
+	return EmptyData;
+}
+
+const UStaticMesh* UOC2GameInstance::GetPlateMesh(TArray<FRecipe>& Recipes)
+{
+	TArray<FCookableIngredient> FindRecipes;
+	
+	TArray<FName> RowNames = RecipeDataTable->GetRowNames();
+
+	for (const FName& RowName : RowNames)
+	{
+		// 현재 행을 가져오기
+		FRecipeDataRow* RecipeData = RecipeDataTable->FindRow<FRecipeDataRow>(RowName, nullptr);
+
+		if (RecipeData->RequireIngredients.Num() == Recipes.Num())
+		{
+			for (int i = 0; i < RecipeData->RequireIngredients.Num(); i++)
+			{
+				FCookableIngredient Data = RecipeData->RequireIngredients[i];
+
+				FindRecipes.Push(Data);
+			}
+		}
+	}
+
+	return nullptr;
 }

@@ -11,8 +11,8 @@ UCLASS()
 class OVERCOOKED2_API AOC2Actor : public AActor//, public IInteractable
 {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 	AOC2Actor();
 
 	// 머티리얼 하이라이트 효과 적용
@@ -35,6 +35,8 @@ public:
 		return bIsHighlighted;
 	}
 
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
@@ -43,8 +45,8 @@ protected:
 	float DiffuseColorMapWeight = 0.0f;
 	bool bIsHighlighted = false;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, Replicated, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* StaticMeshComponent = nullptr;
-public:	
+public:
 
 };
