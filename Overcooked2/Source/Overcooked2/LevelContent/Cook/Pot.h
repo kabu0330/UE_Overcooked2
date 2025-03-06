@@ -17,11 +17,18 @@ class OVERCOOKED2_API APot : public ACooking
 public:
 	APot();
 
+	void Boiling(ACooking* Rice);
+
+	UFUNCTION(BlueprintCallable)
+	void CookRice();
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 
 private:
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowprivateAccess = "true"))
+	USkeletalMeshComponent* SoupSkeletalMeshComponent = nullptr;
 
 };

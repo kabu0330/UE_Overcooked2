@@ -31,14 +31,14 @@ ACooking::ACooking()
 // Called when the game starts or when spawned
 void ACooking::BeginPlay()
 {
-	Super::BeginPlay();
+	AOC2Actor::BeginPlay();
 	
 }
 
 // Called every frame
 void ACooking::Tick(float DeltaTime)
 {
-	Super::Tick(DeltaTime);
+	AOC2Actor::Tick(DeltaTime);
 
 }
 

@@ -28,13 +28,13 @@ APlate::APlate()
 // Called when the game starts or when spawned
 void APlate::BeginPlay()
 {
-	Super::BeginPlay();
+	ACooking::BeginPlay();
 }
 
 // Called every frame
 void APlate::Tick(float DeltaTime)
 {
-	Super::Tick(DeltaTime);
+	ACooking::Tick(DeltaTime);
 
 }
 

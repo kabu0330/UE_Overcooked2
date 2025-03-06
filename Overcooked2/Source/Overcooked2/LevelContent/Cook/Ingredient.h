@@ -67,6 +67,8 @@ protected:
 
 	void Offset(FVector Pos, FRotator Rot);
 
+	void SetMesh();
+
 private:
 	void DeactivateHighlight();
 	void ActivateHighlight();

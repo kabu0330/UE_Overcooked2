@@ -5,15 +5,24 @@
 
 APot::APot()
 {
+	SoupSkeletalMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SoupSkeletalMeshComponent"));
+	SoupSkeletalMeshComponent->SetupAttachment(StaticMeshComponent);
+}
+
+void APot::Boiling(ACooking* Rice)
+{
+}
+
+void APot::CookRice()
+{
 }
 
 void APot::BeginPlay()
 {
-	Super::BeginPlay();
-
+	ACooking::BeginPlay();
 }
 
 void APot::Tick(float DeltaTime)
 {
-	Super::Tick(DeltaTime);
+	ACooking::BeginPlay();
 }

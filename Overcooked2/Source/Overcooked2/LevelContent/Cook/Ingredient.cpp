@@ -18,14 +18,14 @@ AIngredient::AIngredient()
 // Called when the game starts or when spawned
 void AIngredient::BeginPlay()
 {
-	Super::BeginPlay();
+	ACooking::BeginPlay();
 
 }
 
 // Called every frame
 void AIngredient::Tick(float DeltaTime)
 {
-	Super::Tick(DeltaTime);
+	ACooking::Tick(DeltaTime);
 
 }
 
@@ -33,7 +33,7 @@ AIngredient* AIngredient::Init(EIngredientType Type)
 {
 	UOC2GameInstance* GameInst = Cast<UOC2GameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 	FName Name = GameInst->GetIngredientDataTableRowName(Type);
-	
+
 	// 1. 해당 재료 타입의 데이터 행 추출
 	// FIngredientDataRow IngredientDataTable
 	IngredientDataTable = &GameInst->GetIngredientDataRow(Name);
@@ -42,17 +42,26 @@ AIngredient* AIngredient::Init(EIngredientType Type)
 		return nullptr;
 	}
 
-	// 2. Setting
-	StaticMeshComponent->SetStaticMesh(IngredientDataTable->BaseMesh);
-	IngredientType = IngredientDataTable->IngredientType;
-	CurIngredientState = IngredientDataTable->StateRows[0].PrevIngredientState;
-
-	// 3. Offset
-	FVector Location = IngredientDataTable->Location;
-	FRotator Rotation = IngredientDataTable->Rotation;
-	Offset(Location, Rotation);
+	SetMesh();
 
 	return this;
+}
+
+// Init 함수 호출 이후 BeginPlay를 실행해야 정상적으로 메시를 입힐 수 있다.
+void AIngredient::SetMesh()
+{
+	// 2. Setting
+	if (nullptr != StaticMeshComponent)
+	{
+		StaticMeshComponent->SetStaticMesh(IngredientDataTable->BaseMesh);
+		IngredientType = IngredientDataTable->IngredientType;
+		CurIngredientState = IngredientDataTable->StateRows[0].PrevIngredientState;
+
+		// 3. Offset
+		FVector Location = IngredientDataTable->Location;
+		FRotator Rotation = IngredientDataTable->Rotation;
+		Offset(Location, Rotation);
+	}
 }
 
 void AIngredient::Offset(FVector Pos, FRotator Rot)
