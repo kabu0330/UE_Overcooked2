@@ -15,6 +15,12 @@ class OVERCOOKED2_API APrepTable : public ACookingTable
 	GENERATED_BODY()
 
 public:
+	APrepTable();
+
+	virtual void BeginPlay() override;
+
+	virtual void Tick(float DeltaTime) override;
+
 	UFUNCTION(BlueprintCallable)
 	virtual ACooking* Interact(AActor* ChefActor) override;
 
