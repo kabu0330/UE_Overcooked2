@@ -36,6 +36,22 @@ public:
 	EIngredientState IngredientState = EIngredientState::EIS_NONE;
 };
 
+USTRUCT(BlueprintType)
+struct FPlateInitData
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
+	UStaticMesh* StaticMesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
+	FVector OffsetLocation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
+	FRotator OffsetRotation;
+};
+
 /**
  * 
  */
