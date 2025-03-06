@@ -13,6 +13,8 @@
 
 #include "OC2GameInstance.generated.h"
 
+struct FRecipeDataRow;
+
 /**
  * 
  */
@@ -75,7 +77,8 @@ public:
 	 */
 	const FIngredientDataRow& GetIngredientDataRow(EIngredientType IngredientType);
 
-	const UStaticMesh* GetPlateMesh(TArray<FRecipe>& Recipes);
+	TArray<FPlateInitData> GetPlateMesh(TArray<FRecipe>& Recipes);
+	bool FindRecipe(const FRecipeDataRow* RecipeDataRow, TArray<FRecipe>& Recipes);
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")

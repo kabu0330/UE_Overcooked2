@@ -24,6 +24,12 @@ struct FRecipeDataRow : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
 	UStaticMesh* FoodMesh = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
+	FVector OffsetLocation = FVector::ZeroVector;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
+	FRotator OffsetRotation = FRotator::ZeroRotator;
 };
 
 /**

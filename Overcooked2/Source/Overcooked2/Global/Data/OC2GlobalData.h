@@ -6,11 +6,14 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 
 #include "Global/OC2Struct.h"
+#include "Global/OC2Enum.h"
 
 #include "Global/Data/IngredientDataTable.h"
 #include "Global/Data/OrderDataTable.h"
 
 #include "OC2GlobalData.generated.h"
+
+class AIngredient;
 
 /**
  * 
@@ -60,9 +63,11 @@ public:
 	 * @return FIngredientDataRow 해당 재료의 데이터 테이블 행 데이터입니다.
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Global|Data")
-	const FIngredientDataRow& GetIngredientDataRow(UWorld* World, const FName& RowName);
+	static const FIngredientDataRow& GetIngredientDataRow(UWorld* World, const FName& RowName);
 
-	const FIngredientDataRow& GetIngredientDataRow(UWorld* World, EIngredientType IngredientType);
+	static const FIngredientDataRow& GetIngredientDataRow(UWorld* World, EIngredientType IngredientType);
 
-	const UStaticMesh* GetPlateMesh(TArray<FRecipe>& Recipes);
+	static TArray<FPlateInitData> GetPlateMesh(UWorld* World, TArray<FRecipe>& Recipes);
+
+	static TArray<FPlateInitData> GetPlateMesh(UWorld* World, const TArray<class AIngredient*>& Ingredients);
 };

@@ -6,6 +6,7 @@
 #include "Global/Data/IngredientDataTable.h"
 #include "Global/Component/OrderManageComponent.h"
 #include "Global/OC2Const.h"
+#include "Global/Data/OC2GlobalData.h"
 
 #include "Kismet/GameplayStatics.h"
 
@@ -81,6 +82,18 @@ void ACookingGameMode::Stage(float DeltaTime)
 	if (CheckTime >= UOC2Const::OrderSpawnDelay)
 	{
 		CheckTime = 0.0f;
+		TArray<FRecipe> Recipes;
+
+		FRecipe Recipe1;
+
+		Recipe1.IngredientState = EIngredientState::EIS_CHOPPED;
+		Recipe1.IngredientType = EIngredientType::EIT_FISH;
+		
+		Recipes.Add(Recipe1);
+
+		TArray<FPlateInitData> Result = UOC2GlobalData::GetPlateMesh(GetWorld(), Recipes);
+
+		Result;
 	}
 }
 
