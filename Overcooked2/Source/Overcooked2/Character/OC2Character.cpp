@@ -17,6 +17,8 @@ AOC2Character::AOC2Character()
 	bReplicates = true;
 	//bUseControllerRotationYaw = false;
 
+	GetMesh()->Mobility = EComponentMobility::Movable;
+
 	GrabComponent = CreateDefaultSubobject<USceneComponent>("GrabPosition");
 	GrabComponent->SetupAttachment(RootComponent);
 
@@ -31,6 +33,7 @@ void AOC2Character::MoveCharacter(const FInputActionValue& Value)
 	MovementInput.Normalize();
 
 	AddMovementInput(MovementInput);
+
 	float CurrentYaw = GetActorRotation().Yaw;
 	float TargetYaw = MovementInput.Rotation().Yaw;
 
@@ -155,9 +158,7 @@ void AOC2Character::Interact_Implementation()
 void AOC2Character::Grab_Implementation(ACooking* Cook)
 {
 	GrabbedObject = Cook;
-	UStaticMeshComponent* PhysicsComp = Cast<UStaticMeshComponent>(GrabbedObject->GetRootComponent());
-	GrabbedObject->SetSimulatePhysics(false);
-	PhysicsComp->SetCollisionProfileName("NoCollision");
+	Cast<AOC2CharacterTestObject>(GrabbedObject)->SetPhysics(false);
 
 	GrabbedObject->AttachToComponent(GrabComponent, FAttachmentTransformRules::KeepRelativeTransform);
 	GrabbedObject->SetActorLocation(GrabComponent->GetComponentLocation());
