@@ -14,4 +14,14 @@ class OVERCOOKED2_API APot : public ACooking
 {
 	GENERATED_BODY()
 	
+public:
+	APot();
+
+protected:
+	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
+
+private:
+
+
 };
