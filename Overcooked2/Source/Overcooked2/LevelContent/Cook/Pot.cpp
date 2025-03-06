@@ -3,3 +3,17 @@
 
 #include "LevelContent/Cook/Pot.h"
 
+APot::APot()
+{
+}
+
+void APot::BeginPlay()
+{
+	Super::BeginPlay();
+
+}
+
+void APot::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+}

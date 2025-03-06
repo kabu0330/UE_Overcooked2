@@ -8,14 +8,18 @@ AOC2Actor::AOC2Actor()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
+	SecenComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SecenComponent"));
+	RootComponent = SecenComponent;
+	
 	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
-	RootComponent = StaticMeshComponent;
+	StaticMeshComponent->SetupAttachment(RootComponent);
 }
 
 void AOC2Actor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
+	DOREPLIFETIME(AOC2Actor, SecenComponent);
 	DOREPLIFETIME(AOC2Actor, StaticMeshComponent);
 }
 

@@ -45,8 +45,11 @@ protected:
 	float DiffuseColorMapWeight = 0.0f;
 	bool bIsHighlighted = false;
 
-	UPROPERTY(EditAnywhere, Replicated, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, Replicated, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* StaticMeshComponent = nullptr;
+
+	UPROPERTY(EditAnywhere, Replicated, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	USceneComponent* SecenComponent = nullptr;
 public:
 
 };
