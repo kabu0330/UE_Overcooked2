@@ -17,12 +17,13 @@ class OVERCOOKED2_API ASpawnTable : public ACookingTable
 	
 public:
 	ASpawnTable();
-	
-	UFUNCTION(BlueprintCallable)
-	void Init(FName Name);
+
+	virtual void BeginPlay() override;
+
+	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION(BlueprintCallable)
-	class AIngredient* SpawnIngredient(AActor* ChefActor);
+	class AIngredient* SpawnIngredient(AActor* ChefActor, EIngredientType Ingredient);
 
 	UFUNCTION(BlueprintCallable)
 	virtual ACooking* Interact(AActor* ChefActor) override;
@@ -30,5 +31,5 @@ public:
 protected:
 
 private:
-	FName IngredientName = FName();
+	
 };

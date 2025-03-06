@@ -4,6 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameMode.h"
+
+#include "Global/OC2Struct.h"
+#include "Global/OC2Enum.h"
+
 #include "CookingGameMode.generated.h"
 
 class UOrderManageComponent;

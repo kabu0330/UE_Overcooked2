@@ -4,6 +4,8 @@
 #include "Global/OC2GameInstance.h"
 #include "Overcooked2.h"
 
+#include "Global/OC2Enum.h"
+
 #include "Global/Data/RecipeDataTable.h"
 #include "Global/Data/IngredientDataTable.h"
 #include "Global/Data/OrderDataTable.h"
@@ -126,9 +128,10 @@ const FIngredientDataRow& UOC2GameInstance::GetIngredientDataRow(EIngredientType
 	return EmptyData;
 }
 
-const UStaticMesh* UOC2GameInstance::GetPlateMesh(TArray<FRecipe>& Recipes)
+TArray<FPlateInitData> UOC2GameInstance::GetPlateMesh(TArray<FRecipe>& Recipes)
 {
-	TArray<FCookableIngredient> FindRecipes;
+	static TArray<FPlateInitData> EmptyArray;
+	TArray<FRecipeDataRow*> FindRecipes;
 	
 	TArray<FName> RowNames = RecipeDataTable->GetRowNames();
 
@@ -137,16 +140,57 @@ const UStaticMesh* UOC2GameInstance::GetPlateMesh(TArray<FRecipe>& Recipes)
 		// 현재 행을 가져오기
 		FRecipeDataRow* RecipeData = RecipeDataTable->FindRow<FRecipeDataRow>(RowName, nullptr);
 
-		if (RecipeData->RequireIngredients.Num() == Recipes.Num())
+		if (RecipeData->RequireIngredients.Num() == Recipes.Num()
+			&& true == FindRecipe(RecipeData, Recipes))
 		{
+			TArray<FPlateInitData> Result;
+
 			for (int i = 0; i < RecipeData->RequireIngredients.Num(); i++)
 			{
-				FCookableIngredient Data = RecipeData->RequireIngredients[i];
-
-				FindRecipes.Push(Data);
+				FPlateInitData PlateInitData;
+				
+				PlateInitData.StaticMesh = RecipeData->FoodMesh;
+				PlateInitData.OffsetLocation = RecipeData->OffsetLocation;
+				PlateInitData.OffsetRotation = RecipeData->OffsetRotation;
+				
+				Result.Add(PlateInitData);
 			}
+
+			return Result;
 		}
 	}
 
-	return nullptr;
+	return EmptyArray;
+}
+
+bool UOC2GameInstance::FindRecipe(const FRecipeDataRow* RecipeDataRow, TArray<FRecipe>& Recipes)
+{
+	if (nullptr == RecipeDataRow || 0 == RecipeDataRow->RequireIngredients.Num()|| 0 == Recipes.Num())
+	{
+		// UE_LOG(LogTemp, )
+		return false;
+	}
+
+	for (int i = 0; i < RecipeDataRow->RequireIngredients.Num(); i++)
+	{
+		EIngredientType IngredientType = RecipeDataRow->RequireIngredients[i].IngredientType;
+		EIngredientState IngredientState = RecipeDataRow->RequireIngredients[i].IngredientState;
+
+		bool bFound = false;
+		for (int j = 0; j < Recipes.Num(); j++)
+		{
+			if (Recipes[j].IngredientType == IngredientType && Recipes[j].IngredientState == IngredientState)
+			{
+				bFound = true;
+				break;
+			}
+		}
+
+		if (false == bFound)
+		{
+			return false;
+		}
+	}
+
+	return true;
 }

@@ -9,25 +9,33 @@ ASpawnTable::ASpawnTable()
 {
 }
 
-void ASpawnTable::Init(FName Name)
+void ASpawnTable::BeginPlay()
 {
-	IngredientName = Name;
+	Super::BeginPlay();
+
 }
 
-AIngredient* ASpawnTable::SpawnIngredient(AActor* ChefActor)
+void ASpawnTable::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+}
+
+
+AIngredient* ASpawnTable::SpawnIngredient(AActor* ChefActor, EIngredientType IngredientType)
 {
 
 	FActorSpawnParameters SpawnParameters; // 적절한 오버로딩 함수 호출을 위해(회전값 추가), FActorSpawnParameters 사용
 	FVector Location = FVector();
-	if (nullptr != ChefActor)
+	/*if (nullptr != ChefActor)
 	{
 		Location = GetActorLocation() + FVector(0.0f, 0.0f, 100.0f);
-	}
+	}*/
+	Location = GetActorLocation() + FVector(0.0f, 0.0f, 100.0f);
 	FRotator Rotator = FRotator::ZeroRotator;
 
-	// 1. 재료를 월드에 스폰한다.
-	// Transform은 있지만 메시도 없는 빈 껍데기 상태
 	AIngredient* NewIngredient = GetWorld()->SpawnActor<AIngredient>(AIngredient::StaticClass(), Location, Rotator, SpawnParameters);
+	NewIngredient->Init(IngredientType);
+	//재료 월드에 스폰, Init
 
 	// 액터에 부착
 	if (nullptr != ChefActor)
@@ -40,9 +48,6 @@ AIngredient* ASpawnTable::SpawnIngredient(AActor* ChefActor)
 		UE_LOG(LogTemp, Warning, TEXT("액터 스폰에 실패했습니다."));
 		return nullptr;
 	}
-	
-	// 2. 메시를 찾아서
-//	NewIngredient->Init(IngredientName);
 
 	return NewIngredient;
 }
@@ -51,7 +56,7 @@ ACooking* ASpawnTable::Interact(AActor* ChefActor)
 {
 	if (false == bOccupied)
 	{
-		return SpawnIngredient(ChefActor);
+		//return SpawnIngredient(ChefActor);
 	}
 
 	return nullptr;
