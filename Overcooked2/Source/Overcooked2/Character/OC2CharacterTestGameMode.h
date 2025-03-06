@@ -14,8 +14,13 @@ class OVERCOOKED2_API AOC2CharacterTestGameMode : public AGameMode
 {
 	GENERATED_BODY()
 public:
-    UFUNCTION(Server, Reliable, WithValidation)
-    void ServerSpawnIngredient();
+    AOC2CharacterTestGameMode();
+
+protected:
+    void BeginPlay() override;
 
     
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+    class UTestItemManager* ItemManger = nullptr;
 };
