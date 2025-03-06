@@ -17,6 +17,10 @@ class OVERCOOKED2_API AGarbageCan : public ACookingTable
 public:
 	AGarbageCan();
 
+	virtual void BeginPlay() override;
+
+	virtual void Tick(float DeltaTime) override;
+
 	UFUNCTION(BlueprintCallable)
 	virtual ACooking* Interact(AActor* ChefActor) override 
 	{
@@ -26,8 +30,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual void PlaceItem(ACooking* Item) override;
 
+	void DestroyIngredient(AIngredient* WrongIngredient);
+
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TimeSetting", meta = (AllowPrivateAccess = "true"))
 	float Timer = 0.0f;
+
+	class AIngredient* Garbage = nullptr;
 	
 };
