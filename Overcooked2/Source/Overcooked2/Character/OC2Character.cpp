@@ -17,6 +17,9 @@ AOC2Character::AOC2Character()
 	bReplicates = true;
 	//bUseControllerRotationYaw = false;
 
+	GetCharacterMovement()->SetPlaneConstraintEnabled(true);
+	GetCharacterMovement()->SetPlaneConstraintNormal(FVector(0, 0, 1));
+
 	GetMesh()->Mobility = EComponentMobility::Movable;
 
 	GrabComponent = CreateDefaultSubobject<USceneComponent>("GrabPosition");
@@ -158,9 +161,8 @@ void AOC2Character::Interact_Implementation()
 void AOC2Character::Grab_Implementation(ACooking* Cook)
 {
 	GrabbedObject = Cook;
-	Cast<AOC2CharacterTestObject>(GrabbedObject)->SetPhysics(false);
+	Cast<AOC2CharacterTestObject>(GrabbedObject)->AttachToChef(this);
 
-	GrabbedObject->AttachToComponent(GrabComponent, FAttachmentTransformRules::KeepRelativeTransform);
 	GrabbedObject->SetActorLocation(GrabComponent->GetComponentLocation());
 
 }
@@ -173,10 +175,8 @@ void AOC2Character::Drop_Implementation()
 		UPrimitiveComponent* PrimitiveComp = Cast<UPrimitiveComponent>(GrabbedObject->GetRootComponent());
 		UE_LOG(LogTemp, Log, TEXT("Drop"));
 		// 들고 있는 물체에 대해 상호작용을 실행한다. 바닥에 내려놓는다는 뜻.
-		GrabbedObject->SetSimulatePhysics(true);
-		PrimitiveComp->SetCollisionProfileName("Interactable");
+		Cast<AOC2CharacterTestObject>(GrabbedObject)->DetachFromChef(this);
 
-		GrabbedObject->DetachFromActor(FDetachmentTransformRules::KeepRelativeTransform);
 		GrabbedObject->SetActorLocation(GrabComponent->GetComponentLocation());
 		GrabbedObject->SetActorRotation(GetActorRotation());
 
@@ -185,7 +185,7 @@ void AOC2Character::Drop_Implementation()
 	}
 }
 
-void AOC2Character::DoSth()
+void AOC2Character::DoSth_Implementation()
 {
 	if (GrabbedObject == nullptr && SelectedOC2Actor == nullptr)
 	{
@@ -203,7 +203,7 @@ void AOC2Character::DoSth()
 
 }
 
-void AOC2Character::Throwing()
+void AOC2Character::Throwing_Implementation()
 {
 	if (GrabbedObject)
 	{
@@ -212,14 +212,8 @@ void AOC2Character::Throwing()
 
 		if (PrimitiveComp)
 		{
-			// 2️⃣ 액터 놓기 (월드 좌표 유지)
-			GrabbedObject->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-
-			// 3️⃣ 물리 시뮬레이션 활성화
-			PrimitiveComp->SetCollisionProfileName(TEXT("Interactable"));
-			PrimitiveComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-			GrabbedObject->SetSimulatePhysics(true);
-
+			Cast<AOC2CharacterTestObject>(GrabbedObject)->DetachFromChef(this);
+			GrabbedObject->SetActorLocation(GrabComponent->GetComponentLocation());
 
 			// 4️⃣ 던질 방향과 세기 설정
 			FVector ThrowDirection = GetActorForwardVector();  // 캐릭터가 바라보는 방향

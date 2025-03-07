@@ -16,6 +16,8 @@ class OVERCOOKED2_API AOC2CharacterTestGameMode : public AGameMode
 public:
     AOC2CharacterTestGameMode();
 
+
+
 protected:
     void BeginPlay() override;
 

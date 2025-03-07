@@ -73,8 +73,10 @@ public:
 	void Drop();
 
 	// 캐릭터의 행동(요리하기, 던지기 등)
+	UFUNCTION(BlueprintCallable, Reliable, Server)
 	void DoSth();
 
+	UFUNCTION(Reliable, Server)
 	void Throwing();
 	void Cooking();
 

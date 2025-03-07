@@ -28,7 +28,6 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-
 	ACooking* CurCook = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UserComponents")
@@ -36,4 +35,8 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input", meta = (AllowPrivateAccess = "true"))
 	EIngredientType IngredientType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<ACooking> ActorToSpawn;
+
 };

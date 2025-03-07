@@ -20,8 +20,13 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetIngredient(EIngredientType Type);
 
-	UFUNCTION(Reliable, Server)
-	void SetPhysics(bool Value);
+	void SetPhysics(bool Value, AActor* Player);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void AttachToChef(AActor* Player);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void DetachFromChef(AActor* Player);
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
