@@ -57,6 +57,7 @@ private:
 
     TArray <class UCanvasPanel*> Orders;
 
+
     FTimerHandle OpacityTimerHandle;
     float OpacityOffset = 0.05f;
 
@@ -76,19 +77,19 @@ private:
 
     float ImageSize = 180.0f;
 
-    int PrevIngredientNum = 3;
-
     void UpdateImageOpacity();
     void UpdateImagePosition();
     void UpdateIngredientImagePosition();
 
     void SettingIngredientImages(FOrder& order);
     FVector2D IShortSize = { 56.0f, 60.f };
-    FVector2D ILongSize = {56.0f, 90.f};
-
+    FVector2D ILongSize = { 56.0f, 90.f };
 
     void MoveNewOrder();
 
+
+    template <typename T>
+    T* FindChildWidget(const FString& name, UCanvasPanel* canvas);
     class UImage* FindChildImage(const FString& name, class UCanvasPanel* canvasepanel);
     class UCanvasPanel* FindChildPanel(const FString& name, UCanvasPanel* canvase);
 
