@@ -22,6 +22,12 @@ public:
 	ACookingTable();
 
 	virtual ACooking* Interact(AActor* ChefActor) { return nullptr; };
+
+	/*UFUNCTION(BlueprintCallable)
+	virtual void SetAndSpawnCooking(AActor* ChefActor, ACooking* CookingObj)
+	{
+
+	}*/
 	
 	virtual void PlaceItem(ACooking* Item)
 	{

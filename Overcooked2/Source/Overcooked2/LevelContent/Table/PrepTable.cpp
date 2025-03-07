@@ -22,3 +22,18 @@ ACooking* APrepTable::Interact(AActor* ChefActor)
 {
 	return nullptr;
 }
+
+// ACooking이 AIngredient인지 APlate인지 확인 가능해야 한다.
+// 
+//void APrepTable::SetAndSpawnCooking(AActor* ChefActor, ACooking* CookingObj)
+//{
+//	FVector CookingObjPos = FVector::ZAxisVector * 100.0f;
+//	ACooking* NewCookingObj = CookingObj;
+//	NewCookingObj = GetWorld()->SpawnActor<ACooking>();
+//	NewCookingObj->SetActorLocation(CookingObjPos);
+//}
+
+void APrepTable::SetAndSpawnCooking(AActor* ChefActor, EIngredientType IngredientType)
+{
+
+}
