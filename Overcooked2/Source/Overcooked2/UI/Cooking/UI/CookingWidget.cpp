@@ -16,6 +16,7 @@ void UCookingWidget::NativeOnInitialized()
     Super::NativeOnInitialized();
 
     Orders.SetNum(5);
+    OrderTime.SetNum(5);
 
     Orders[0] = Order_0;
     Orders[1] = Order_1;
@@ -25,7 +26,7 @@ void UCookingWidget::NativeOnInitialized()
 
 
     // Test Setting
-    CurOrderCount = 2;
+    CurOrderCount = 0;
 
     float StartPos = 0.0f;
 
@@ -42,16 +43,21 @@ void UCookingWidget::NativeOnInitialized()
     }
 }
 
-void UCookingWidget::NativeConstruct()
+void UCookingWidget::NativeTick(const FGeometry& MyGeometry, float DeltaTime)
 {
-    Super::NativeConstruct();
+    Super::NativeTick(MyGeometry, DeltaTime);
 
-    InvalidateLayoutAndVolatility();
+    for (int i = 0; i < CurOrderCount; i++)
+    {
+        UpdateOrderTime(i, DeltaTime);
+    }
 }
 
 
-void UCookingWidget::OrderComplete()
+void UCookingWidget::OrderComplete(int index)
 {
+
+    CompleteOrderNum = index;
 
     if (Orders[CompleteOrderNum] == nullptr) return;
 
@@ -96,6 +102,10 @@ void UCookingWidget::CreateNewOrder(FOrder& order)
     Orders[NewOrderNum]->SetRenderOpacity(1.0f);
     Orders[NewOrderNum]->SetRenderTranslation({ ScreenSize.X * 1.5f, 0.0f });
     Orders[NewOrderNum]->SetRenderScale({ 1.0f, 1.2f });
+    OrderTime[NewOrderNum] = TimeLimit;
+
+    UProgressBar* timeimg = FindChildWidget<UProgressBar>("Time_", Orders[NewOrderNum]);
+    timeimg->SetFillColorAndOpacity({ 0.1f,0.3f,0.0f });
 
     CurOrderCount += 1;
 
@@ -187,7 +197,7 @@ void UCookingWidget::SettingIngredientImages(FOrder& order)
 {
     if (order.RequireIngredients.IsEmpty())
     {
-        //return;
+        return;
     }
 
 
@@ -208,8 +218,8 @@ void UCookingWidget::SettingIngredientImages(FOrder& order)
     }
 
 
-    // for (int i = 0; i < order.RequireIngredients.Num(); i++)
-    for (int i = 0; i < testnum; i++)
+    //for (int i = 0; i < testnum; i++)
+    for (int i = 0; i < order.RequireIngredients.Num(); i++)
     {
         TArray<UWidget*> backpanelchind = ibackpanel->GetAllChildren();
         UWidget* ibackimg = backpanelchind[i];
@@ -234,18 +244,20 @@ void UCookingWidget::SettingIngredientImages(FOrder& order)
             timeimg->SetRenderScale({ 1.0f, 1.0f });
             timeimg->SetRenderTranslation({ 0.f, 0.0f });
 
-            // if(order.RequireIngredients[i].IngredientState != EIngredientState::EIS_NONE)
-            if (i == 1)
+            //if (i == 1)
+            if (order.RequireIngredients[i].IngredientState == EIngredientState::EIS_BOILABLE)
             {
                 UImage* toolimg = FindChildImage("Tool_", imgpanel);
                 toolimg->SetVisibility(ESlateVisibility::Visible);
                 backslot->SetSize(ILongSize);
             }
-            /*if (order.RequireIngredients[i].IngredientTexture != nullptr)
+
+            
+            if (order.RequireIngredients[i].IngredientTexture != nullptr)
             {
                 img->SetBrushFromTexture(order.RequireIngredients[i].IngredientTexture);
-            }*/
-            //else
+            }
+            else
             {
                 FString texturepath = TEXT("/Game/Resources/UI/Order/Ingredient/Fish_Icon.Fish_Icon");
                 class UTexture2D* texture = Cast<UTexture2D>(StaticLoadObject(UTexture2D::StaticClass(), nullptr, *texturepath));
@@ -255,11 +267,11 @@ void UCookingWidget::SettingIngredientImages(FOrder& order)
         }
     }
 
-    //if (order.RequireIngredients.Num() < 3)
-    if (testnum < 3)
+    //if (testnum < 3)
+    if (order.RequireIngredients.Num() < 3)
     {
-        //for (int i = order.RequireIngredients.Num() - 1; i < 3; i++)
-        for (int i = testnum; i < 3; i++)
+        //for (int i = testnum; i < 3; i++)
+        for (int i = order.RequireIngredients.Num() - 1; i < 3; i++)
         {
             UImage* img = FindChildImage("IngredientImg" + FString::FromInt(i), imgpanel);
             UImage* bimg = FindChildImage("BIngredient" + FString::FromInt(i), ibackpanel);
@@ -283,6 +295,31 @@ void UCookingWidget::SettingIngredientImages(FOrder& order)
 
 }
 
+
+void UCookingWidget::UpdateOrderTime(int Index, float DeltaTime)
+{
+    OrderTime[Index] -= DeltaTime;
+
+    UProgressBar* timeimg = FindChildWidget<UProgressBar>("Time_", Orders[Index]);
+
+    timeimg->SetPercent({ OrderTime[Index] / TimeLimit });
+    FLinearColor color = timeimg->GetFillColorAndOpacity();
+
+
+    if (OrderTime[Index] > (TimeLimit / 3) * 2)
+    {
+        timeimg->SetFillColorAndOpacity({ color.R + DeltaTime * 0.7f, color.G + DeltaTime * 0.7f, 0.0f });
+    }
+    else if (OrderTime[Index] > TimeLimit / 3)
+    {
+        timeimg->SetFillColorAndOpacity({ color.R + DeltaTime * 0.7f, color.G - DeltaTime * 0.5f, 0.0f });
+    }
+    else
+    {
+        timeimg->SetFillColorAndOpacity({ color.R + DeltaTime * 0.2f, color.G - DeltaTime * 0.1f, 0.0f });
+    }
+
+}
 
 
 void UCookingWidget::UpdateIngredientImagePosition()
@@ -313,7 +350,6 @@ void UCookingWidget::UpdateIngredientImagePosition()
 
 
     IngredientTimeElapsed += 0.1f;
-
 }
 
 
@@ -329,8 +365,21 @@ void UCookingWidget::UpdateImageOpacity()
         return;
     }
 
-    float curcolor = Orders[CompleteOrderNum]->GetRenderOpacity();
-    Orders[CompleteOrderNum]->SetRenderOpacity(FMath::Clamp(curcolor - OpacityOffset, 0.0f, 1.0f));
+    float curopacity = Orders[CompleteOrderNum]->GetRenderOpacity();
+    Orders[CompleteOrderNum]->SetRenderOpacity(FMath::Clamp(curopacity - OpacityOffset, 0.0f, 1.0f));
+
+
+    TArray<UWidget*> Children = Orders[CompleteOrderNum]->GetAllChildren();
+
+    for (UWidget* Child : Children)
+    {
+        // UImage 타입인지 확인하고 opacity 적용
+        if (UImage* Image = Cast<UImage>(Child))
+        {
+            const FLinearColor& color = Image->GetColorAndOpacity();
+            Image->SetColorAndOpacity({ color.R, color.G + 1.0f, color.B, color.A });
+        }
+    }
 
 }
 
@@ -350,6 +399,7 @@ void UCookingWidget::UpdateImagePosition()
     {
 
         Orders[i] = Orders[i + 1];
+        OrderTime[i] = OrderTime[i + 1];
         FinalPos = ImageOffset;
 
         for (int j = 0; j < i; j++)
