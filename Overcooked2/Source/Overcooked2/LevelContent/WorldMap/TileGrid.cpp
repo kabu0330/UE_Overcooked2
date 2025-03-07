@@ -4,39 +4,8 @@
 #include "LevelContent/WorldMap/TileGrid.h"
 #include "Components/InstancedStaticMeshComponent.h"
 #include "Global/OC2Global.h"
-#include "AssetRegistry/AssetRegistryModule.h"	// Temp
 
 // TODO: Organize
-
-// Temp
-bool GetAssetPackageName(UClass* Class, const FString& MeshName, FString& MeshPath)
-{
-	if (!FModuleManager::Get().IsModuleLoaded("AssetRegistry"))
-	{
-		return false;
-	}
-
-	IAssetRegistry& AssetRegistry = FModuleManager::Get().LoadModuleChecked<FAssetRegistryModule>("AssetRegistry").Get();
-	if (AssetRegistry.IsLoadingAssets())
-	{
-		return false;
-	}
-		
-	TArray<FAssetData> MapList;
-	if (AssetRegistry.GetAssetsByClass(UStaticMesh::StaticClass()->GetClassPathName(), MapList))
-	{
-		FName CheckAssetName = FName(MeshName);
-		for (const FAssetData& AssetData : MapList)
-		{
-			if (AssetData.AssetName == CheckAssetName)
-			{
-				MeshPath = AssetData.PackageName.ToString();
-				return true;
-			}
-		}
-	}
-	return false;
-}
 
 ATileGrid::ATileGrid()
 {
@@ -45,38 +14,58 @@ ATileGrid::ATileGrid()
 	SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
 	RootComponent = SceneComponent;
 
+	// Temp 10
+	CreateTiles(Tiles, 10);
+
+	/*
+	* 생성과 동시에 머티리얼을 세팅하면 레벨 로드가 안되어서 머티리얼 로드가 안될 때
+	* MaterialInstnce가 생성되지 않아서 크래시가 나는 경우가 있어 별도로 세팅함
+	*/
+	SetTileMaterials(Tiles);
+	
+	MulRadius = RADIUS * FMath::Sqrt(3.f);
+}
+
+void ATileGrid::CreateTiles(TMap<int8, FTileData>& _RefMap, int _Size)
+{
+	_RefMap.Empty();
+
+	for (int i = 0; i < _Size; ++i)
+	{
+		FString Name = FString::Printf(TEXT("ISMComp_%d"), i);
+		UInstancedStaticMeshComponent* Inst = CreateDefaultSubobject<UInstancedStaticMeshComponent>(*Name);
+		Inst->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
+		Inst->SetMobility(EComponentMobility::Movable);
+
+		FTileData Data;
+		Data.TileInst = Inst;
+		_RefMap.Add({ i, Data });
+	}
+}
+
+void ATileGrid::SetTileMaterials(TMap<int8, FTileData>& _Tiles)
+{
 	FString MeshName = "Mesh_TileDesertGrassBlend";
 	FString MeshPath = "";
-	
-	if (GetAssetPackageName(UStaticMesh::StaticClass(), MeshName, MeshPath) == true)
+
+	UOC2Global::GetAssetPackageName(UStaticMesh::StaticClass(), MeshName, MeshPath);
+	if (!MeshPath.IsEmpty())
 	{
 		static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(*MeshPath);
-		//static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(TEXT("/Game/Resources/LevelResource/WorldMap/Tile/Mesh_TileDesertGrassBlend.Mesh_TileDesertGrassBlend"));
 		if (!MeshAsset.Succeeded())
 		{
-			UE_LOG(LogTemp, Fatal, TEXT("Check the mesh: Mesh_TileDesertGrassBlend"));
+			UE_LOG(LogTemp, Fatal, TEXT("Check the mesh: %s"), MeshName);
 		}
 
-		// Temp
-		for (int i = 0; i < 10; ++i)
+		for (TPair<int8, FTileData>& Elem : _Tiles)
 		{
-			FString Name = FString::Printf(TEXT("ISMComp_%d"), i);
-			UInstancedStaticMeshComponent* _Tiles = CreateDefaultSubobject<UInstancedStaticMeshComponent>(*Name);
-			_Tiles->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
-			_Tiles->SetMobility(EComponentMobility::Movable);
-			_Tiles->SetStaticMesh(MeshAsset.Object);
+			Elem.Value.TileInst->SetStaticMesh(MeshAsset.Object);
 
-			UMaterialInstanceDynamic* MatInstD = UMaterialInstanceDynamic::Create(_Tiles->GetMaterial(0), this);
+			UMaterialInstanceDynamic* MatInstD = UMaterialInstanceDynamic::Create(Elem.Value.TileInst->GetMaterial(0), this);
 			MatInstD->SetScalarParameterValue("AlphaValue", 0.0f);
-			_Tiles->SetMaterial(0, MatInstD);
-
-			FTileData Data;
-			Data.TileInst = _Tiles;
-			Tiles.Add({ i, Data });
+			Elem.Value.TileInst->SetMaterial(0, MatInstD);
 		}
 	}
-
-	MulRadius = RADIUS * FMath::Sqrt(3.f);
 }
 
 // Temp
@@ -248,7 +237,6 @@ void ATileGrid::BeginPlay()
 	}
 }
 
-// Called every frame
 void ATileGrid::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);

@@ -35,9 +35,6 @@ protected:
 private:
 	USceneComponent* SceneComponent = nullptr;
 
-	UPROPERTY(VisibleAnywhere, Category = "ISM", meta = (AllowPrivateAccess = "true"))
-	TMap<int8, FTileData> Tiles;
-
 	UPROPERTY(EditAnywhere, Category = "ISM", meta = (AllowPrivateAccess = "true"))
 	int NumI = 0;
 
@@ -52,10 +49,16 @@ private:
 	float ElpasedRotateSecs = 0.f;
 
 	int RotateIdx = -1;
+
+	UPROPERTY()
+	TMap<int8, FTileData> Tiles;
 	TMap<FIntVector2, int8> OrderMap;
 
 	FIntVector2 GetXY(int _IdxI, int _IdxJ);
 	bool IsExclude(int _i, int _j);
 	TArray<FIntVector2> GetSurroundedNewIdxs(TArray<FIntVector2>& _Centers, int _Idx);
 	TMap<FIntVector2, int8> GetSurroundedIdxs(const FIntVector2& _RowCol, uint8 _Size);
+
+	void CreateTiles(TMap<int8, FTileData>& _RefMap, int _Size);
+	void SetTileMaterials(TMap<int8, FTileData>& _Tiles);
 };
