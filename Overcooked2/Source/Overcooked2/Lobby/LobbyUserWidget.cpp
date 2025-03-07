@@ -17,3 +17,14 @@ void ULobbyUserWidget::MoveToPlayLevel()
 		UOC2Global::TravelServer(GetWorld(), PLAY_LEVEL);
 	}
 }
+
+void ULobbyUserWidget::StartServer()
+{
+	UOC2Global::StartServer(GetWorld(), Port, PLAY_LEVEL);
+}
+
+void ULobbyUserWidget::ConnectServer()
+{
+	APlayerController* Controller = GetOwningLocalPlayer()->GetPlayerController(GetWorld());
+	UOC2Global::ConnectServer(GetWorld(), Controller, IP, Port);
+}

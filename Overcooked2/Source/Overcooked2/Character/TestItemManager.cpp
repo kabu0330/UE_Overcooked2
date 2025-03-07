@@ -26,12 +26,14 @@ void UTestItemManager::BeginPlay()
 
 AActor* UTestItemManager::CreateItem(EIngredientType Type)
 {
-	AOC2CharacterTestObject* NewIngredient = GetWorld()->SpawnActorDeferred<AOC2CharacterTestObject>(AOC2CharacterTestObject::StaticClass(), FTransform());
+	FTransform Trans;
+	AOC2CharacterTestObject* NewIngredient = GetWorld()->SpawnActorDeferred<AOC2CharacterTestObject>(AOC2CharacterTestObject::StaticClass(), Trans);
 
 	// 2. 메시를 찾아서
 	NewIngredient->SetIngredient(Type);
 
-	NewIngredient->FinishSpawning(FTransform());
+	Trans.SetLocation(FVector(100.0f, 100.0f, 0.0f));
+	NewIngredient->FinishSpawning(Trans);
 
 	return NewIngredient;
 

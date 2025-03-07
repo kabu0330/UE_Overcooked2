@@ -23,6 +23,20 @@ public:
 
 };
 
+// 재료 조합별 메쉬 데이터 속성
+USTRUCT(BlueprintType)
+struct FOrder
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
+	UTexture2D* OrderTexutre = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
+	TArray<FCookableIngredient> RequireIngredients;
+};
+
 // 손질 가능한 요리 속성
 USTRUCT(BlueprintType)
 struct FRecipe

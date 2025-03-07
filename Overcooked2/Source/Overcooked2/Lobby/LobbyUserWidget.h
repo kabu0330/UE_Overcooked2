@@ -20,4 +20,16 @@ private:
 
 	UFUNCTION(BlueprintCallable, meta=(AllowPrivateAccess="true"))
 	void MoveToPlayLevel();
+
+	UFUNCTION(BlueprintCallable, meta = (AllowPrivateAccess = "true"))
+	void StartServer();
+
+	UFUNCTION(BlueprintCallable, meta = (AllowPrivateAccess = "true"))
+	void ConnectServer();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Network", meta = (AllowPrivateAccess = "true"))
+	FString IP = TEXT("127.0.0.1");
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Network", meta = (AllowPrivateAccess = "true"))
+	FString Port = TEXT("30000");
 };
