@@ -13,5 +13,19 @@ UCLASS()
 class OVERCOOKED2_API AChoppingTable : public ACookingTable
 {
 	GENERATED_BODY()
+
+public:
+	AChoppingTable();
+
+	virtual void BeginPlay() override;
+
+	virtual void Tick(float DeltaTime) override;
+
+	UFUNCTION(BlueprintCallable)
+	virtual ACooking* Interact(AActor* ChefActor) override;
+
+protected:
+
+private:
 	
 };
