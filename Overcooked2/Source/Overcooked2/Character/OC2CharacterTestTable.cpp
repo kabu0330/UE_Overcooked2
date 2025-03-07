@@ -29,7 +29,7 @@ AOC2CharacterTestObject* AOC2CharacterTestTable::SpawnIngredient(AActor* ChefAct
 
 	// 1. 재료를 월드에 스폰한다.
 	// Transform은 있지만 메시도 없는 빈 껍데기 상태
-	AOC2CharacterTestObject* NewIngredient = GetWorld()->SpawnActorDeferred<AOC2CharacterTestObject>(AOC2CharacterTestObject::StaticClass(), FTransform());
+	AOC2CharacterTestObject* NewIngredient = GetWorld()->SpawnActorDeferred<AOC2CharacterTestObject>(ActorToSpawn, FTransform());
 
 	// 2. 메시를 찾아서
 	NewIngredient->SetIngredient(IngredientType);

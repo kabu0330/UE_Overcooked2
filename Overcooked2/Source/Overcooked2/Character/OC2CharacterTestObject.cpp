@@ -7,6 +7,9 @@
 
 AOC2CharacterTestObject::AOC2CharacterTestObject()
 {
+	StaticMeshComponent->bReplicatePhysicsToAutonomousProxy = true;
+	bReplicates = true;
+	SetReplicateMovement(true);
 }
 
 void AOC2CharacterTestObject::SetIngredient(EIngredientType Type)
@@ -14,19 +17,27 @@ void AOC2CharacterTestObject::SetIngredient(EIngredientType Type)
 	IngredientType = Type;
 }
 
-void AOC2CharacterTestObject::SetPhysics_Implementation(bool Value)
+void AOC2CharacterTestObject::SetPhysics(bool Value, AActor* Player)
 {
-	StaticMeshComponent->SetSimulatePhysics(Value);
-	if (Value)
-	{
-		StaticMeshComponent->SetCollisionProfileName(TEXT("Interactable"));
-		StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	}
-	else
-	{
-		StaticMeshComponent->SetCollisionProfileName(TEXT("NoCollision"));
-		StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	}
+
+}
+
+void AOC2CharacterTestObject::AttachToChef_Implementation(AActor* Player)
+{
+	StaticMeshComponent->SetSimulatePhysics(false);
+	StaticMeshComponent->SetCollisionProfileName(TEXT("NoCollision"));
+	StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	AttachToActor(Player, FAttachmentTransformRules::KeepRelativeTransform);
+}
+
+
+void AOC2CharacterTestObject::DetachFromChef_Implementation(AActor* Player)
+{
+	StaticMeshComponent->SetSimulatePhysics(true);
+	StaticMeshComponent->SetCollisionProfileName(TEXT("Interactable"));
+	StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	DetachFromActor(FDetachmentTransformRules::KeepRelativeTransform);
+
 }
 
 void AOC2CharacterTestObject::BeginPlay()
