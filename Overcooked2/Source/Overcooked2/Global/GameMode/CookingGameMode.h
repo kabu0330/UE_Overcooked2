@@ -7,10 +7,14 @@
 
 #include "Global/OC2Struct.h"
 #include "Global/OC2Enum.h"
+#include "Global/OC2Const.h"
 
 #include "CookingGameMode.generated.h"
 
 class UOrderManageComponent;
+class USpawnManageComponent;
+class AIngredient;
+class APlate;
 
 UENUM(BlueprintType)
 enum class ECookingGameModeState : uint8
@@ -28,6 +32,10 @@ class OVERCOOKED2_API ACookingGameMode : public AGameMode
 {
 	GENERATED_BODY()
 
+public:
+	ACookingGameMode();
+
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
@@ -35,27 +43,36 @@ protected:
 	virtual void PostLogin(APlayerController* NewPlayerController) override;
 	
 public:
-	ACookingGameMode();
-
-	UFUNCTION(BlueprintCallable)
 	void EntryStay();
-	UFUNCTION(BlueprintCallable)
 	void Stay(float DeltaTime);
-	UFUNCTION(BlueprintCallable)
+
 	void EntryStage();
-	UFUNCTION(BlueprintCallable)
 	void Stage(float DeltaTime);
-	UFUNCTION(BlueprintCallable)
+
 	void EntryScore();
-	UFUNCTION(BlueprintCallable)
 	void Score(float DeltaTime);
 
 	void ChangeState(ECookingGameModeState State);
+
+public:
+	AIngredient* SpawnIngredientActor(EIngredientType Type);
+	APlate* SpawnPlateActor();
+
+private:
 	void PrintDebugMessage();
 
 private:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Component", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Order", meta = (AllowPrivateAccess = "true"))
 	UOrderManageComponent* OrderManager = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Spawning", meta = (AllowPrivateAccess = "true"))
+	USpawnManageComponent* SpawnManager = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Spawning", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<AIngredient> IngredientToSpawn;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Spawning", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<APlate> PlateToSpawn;
 
 	TArray<APlayerController*> PlayerControllers;
 	
