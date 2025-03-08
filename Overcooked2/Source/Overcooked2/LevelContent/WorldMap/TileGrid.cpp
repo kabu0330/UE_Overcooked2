@@ -54,7 +54,7 @@ void ATileGrid::SetTileMaterials(TMap<int8, FTileData>& _Tiles)
 		static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(*MeshPath);
 		if (!MeshAsset.Succeeded())
 		{
-			UE_LOG(LogTemp, Fatal, TEXT("Check the mesh: %s"), MeshName);
+			UE_LOG(LogTemp, Fatal, TEXT("Check the mesh: %s"), *MeshName);
 		}
 
 		for (TPair<int8, FTileData>& Elem : _Tiles)
