@@ -67,8 +67,6 @@ ACooking* AOC2CharacterTestTable::Interact(AActor* ChefActor)
 	}
 }
 
-
-
 // Called when the game starts or when spawned
 void AOC2CharacterTestTable::BeginPlay()
 {

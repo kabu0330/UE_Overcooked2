@@ -4,9 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
+
+#include "Global/OC2Struct.h"
+#include "Global/OC2Enum.h"
+#include "Global/OC2Const.h"
+
 #include "OC2Global.generated.h"
 
 class UOC2GameInstance;
+class AIngredient;
+class APlate;
 
 /**
  * 
@@ -35,4 +42,7 @@ public:
 	static void ConnectServer(const UWorld* World, APlayerController* Controller, const FString& IP, const FString& Port);
 
 	static void TravelServer(UWorld* World, const FString& LevelName);
+
+	static AIngredient* SpawnIngredientActor(UWorld* World, EIngredientType IngredientType);
+	static APlate* SpawnPlateActor(UWorld* World);
 };

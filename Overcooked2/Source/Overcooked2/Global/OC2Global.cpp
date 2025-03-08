@@ -2,8 +2,12 @@
 
 
 #include "Global/OC2Global.h"
+#include "Overcooked2.h"
+
 #include "AssetRegistry/AssetRegistryModule.h"
 #include "Global/OC2GameInstance.h"
+#include "LevelContent/Cook/Ingredient.h"
+#include "Global/GameMode/CookingGameMode.h"
 #include "Kismet/GameplayStatics.h"
 
 void UOC2Global::GetAssetPackageName(UClass* Class, const FString& AssetName, FString& Path)
@@ -87,4 +91,30 @@ void UOC2Global::TravelServer(UWorld* World, const FString& LevelName)
 	UOC2Global::GetAssetPackageName(UWorld::StaticClass(), LevelName, LevelPath);
 
 	World->ServerTravel(LevelPath);
+}
+
+AIngredient* UOC2Global::SpawnIngredientActor(UWorld* World, EIngredientType IngredientType)
+{
+	ACookingGameMode* CookingGameMode = Cast<ACookingGameMode>(World->GetAuthGameMode());
+
+	if (nullptr == CookingGameMode)
+	{
+		UE_LOG(OVERCOOKED_LOG, Error, TEXT("Current Game mode is not a cooking game mode"));
+		return nullptr;
+	}
+
+	return CookingGameMode->SpawnIngredientActor(IngredientType);
+}
+
+APlate* UOC2Global::SpawnPlateActor(UWorld* World)
+{
+	ACookingGameMode* CookingGameMode = Cast<ACookingGameMode>(World->GetAuthGameMode());
+
+	if (nullptr == CookingGameMode)
+	{
+		UE_LOG(OVERCOOKED_LOG, Error, TEXT("Current Game mode is not a cooking game mode"));
+		return nullptr;
+	}
+
+	return CookingGameMode->SpawnPlateActor();
 }

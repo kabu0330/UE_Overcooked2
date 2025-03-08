@@ -2,10 +2,11 @@
 
 
 #include "Global/GameMode/CookingGameMode.h"
+
 #include "Global/OC2GameInstance.h"
-#include "Global/Data/IngredientDataTable.h"
 #include "Global/Component/OrderManageComponent.h"
-#include "Global/OC2Const.h"
+#include "Global/Component/SpawnManageComponent.h"
+#include "Global/Data/IngredientDataTable.h"
 #include "Global/Data/OC2GlobalData.h"
 
 #include "Kismet/GameplayStatics.h"
@@ -13,6 +14,7 @@
 ACookingGameMode::ACookingGameMode()
 {
 	OrderManager = CreateDefaultSubobject<UOrderManageComponent>(TEXT("OrderManager"));
+	SpawnManager = CreateDefaultSubobject<USpawnManageComponent>(TEXT("SpawnManager"));
 }
 
 void ACookingGameMode::BeginPlay()
@@ -118,6 +120,16 @@ void ACookingGameMode::ChangeState(ECookingGameModeState State)
 	default:
 		break;
 	}
+}
+
+AIngredient* ACookingGameMode::SpawnIngredientActor(EIngredientType IngredientType)
+{
+	return SpawnManager->SpawnIngredientActor(IngredientType, IngredientToSpawn);
+}
+
+APlate* ACookingGameMode::SpawnPlateActor()
+{
+	return SpawnManager->SpawnPlateActor(PlateToSpawn);
 }
 
 void ACookingGameMode::PrintDebugMessage()
