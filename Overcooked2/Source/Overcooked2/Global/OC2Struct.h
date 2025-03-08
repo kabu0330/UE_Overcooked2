@@ -57,13 +57,13 @@ struct FPlateInitData
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
-	UStaticMesh* StaticMesh;
+	UStaticMesh* StaticMesh = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
-	FVector OffsetLocation;
+	FVector OffsetLocation = FVector::ZeroVector;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
-	FRotator OffsetRotation;
+	FRotator OffsetRotation = FRotator::ZeroRotator;
 };
 
 /**

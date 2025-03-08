@@ -28,4 +28,7 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Network", meta = (AllowPrivateAccess = "true"))
 	FString Port = TEXT("30000");
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Network", meta = (AllowPrivateAccess = "true"))
+	FString LevelName = TEXT("LobbyLevel");
+
 };
