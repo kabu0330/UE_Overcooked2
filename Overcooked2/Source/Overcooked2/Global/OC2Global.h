@@ -39,7 +39,7 @@ public:
 	static void StartServer_Implementation(const UWorld* World, const FString& Port, const FString& LevelName);
 
 	UFUNCTION(BlueprintCallable)
-	static void ConnectServer(const UWorld* World, APlayerController* Controller, const FString& IP, const FString& Port);
+	static void ConnectServer(const UWorld* World, APlayerController* Controller, const FString& IP, const FString& Port, const FString& LevelName);
 
 	static void TravelServer(UWorld* World, const FString& LevelName);
 

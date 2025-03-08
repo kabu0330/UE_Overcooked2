@@ -16,7 +16,8 @@ class OVERCOOKED2_API ULobbyUserWidget : public UUserWidget
 
 private:
 	// Temp
-	const FString PLAY_LEVEL = "OC2CharacterDevLevel";
+	const FString LOBBY_LEVEL = "LobbyDevLevel";
+	const FString PLAY_LEVEL = "GlobalDevLevel";
 
 	UFUNCTION(BlueprintCallable, meta=(AllowPrivateAccess="true"))
 	void MoveToPlayLevel();

@@ -3,3 +3,15 @@
 
 #include "Lobby/LobbyPlayerController.h"
 
+#include "EnhancedInputComponent.h"
+#include "EnhancedInputSubsystems.h"
+
+void ALobbyPlayerController::BeginPlay()
+{
+	Super::BeginPlay();
+
+	FInputModeUIOnly Mode;
+	SetInputMode(Mode);
+
+	SetShowMouseCursor(true);
+}

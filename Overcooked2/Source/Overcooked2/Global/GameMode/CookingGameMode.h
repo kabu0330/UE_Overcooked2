@@ -58,6 +58,8 @@ public:
 	AIngredient* SpawnIngredientActor(EIngredientType Type);
 	APlate* SpawnPlateActor();
 
+	TArray<APlayerController*> PlayerControllers;
+
 private:
 	void PrintDebugMessage();
 
@@ -73,8 +75,6 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Spawning", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<APlate> PlateToSpawn;
-
-	TArray<APlayerController*> PlayerControllers;
 	
 	ECookingGameModeState CurState = ECookingGameModeState::ECS_None;
 
