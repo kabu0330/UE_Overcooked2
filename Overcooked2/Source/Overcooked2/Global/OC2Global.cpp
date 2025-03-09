@@ -74,9 +74,9 @@ void UOC2Global::StartServer_Implementation(const UWorld* World, const FString& 
 
 }
 
-void UOC2Global::ConnectServer(const UWorld* World, APlayerController* Controller, const FString& IP, const FString& Port)
+void UOC2Global::ConnectServer(const UWorld* World, APlayerController* Controller, const FString& IP, const FString& Port, const FString& LevelName)
 {
-	FString ConnectLevelName = FString::Printf(TEXT("%s:%s"), *IP, *Port);
+	FString ConnectLevelName = FString::Printf(TEXT("%s:%s/%s"), *IP, *Port, *LevelName);
 	//UGameplayStatics::OpenLevel(World, FName(*ConnectLevelName));
 
 	if (Controller != nullptr)
@@ -90,7 +90,7 @@ void UOC2Global::TravelServer(UWorld* World, const FString& LevelName)
 	FString LevelPath = TEXT("");
 	UOC2Global::GetAssetPackageName(UWorld::StaticClass(), LevelName, LevelPath);
 
-	World->ServerTravel(LevelPath);
+	World->ServerTravel(LevelPath + TEXT("?listen"));
 }
 
 AIngredient* UOC2Global::SpawnIngredientActor(UWorld* World, EIngredientType IngredientType)

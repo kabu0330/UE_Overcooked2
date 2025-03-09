@@ -13,6 +13,6 @@ void UTitleWidget::StartServer()
 void UTitleWidget::Connect()
 {
 	APlayerController* Controller = GetOwningLocalPlayer()->GetPlayerController(GetWorld());
-	UOC2Global::ConnectServer(GetWorld(), Controller, IP, Port);
+	UOC2Global::ConnectServer(GetWorld(), Controller, IP, Port, LevelName);
 }
 
