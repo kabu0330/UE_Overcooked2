@@ -4,11 +4,12 @@
 #include "Global/OC2GameInstance.h"
 #include "Overcooked2.h"
 
-#include "Global/OC2Enum.h"
-
 #include "Global/Data/RecipeDataTable.h"
 #include "Global/Data/IngredientDataTable.h"
 #include "Global/Data/OrderDataTable.h"
+
+#include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 UOC2GameInstance::UOC2GameInstance()
 {
@@ -17,6 +18,39 @@ UOC2GameInstance::UOC2GameInstance()
 
 UOC2GameInstance::~UOC2GameInstance()
 {
+}
+
+void UOC2GameInstance::CreateRoom()
+{
+	FString LobbyLevelName = LobbyLevel.GetLongPackageName();
+	FString OpenLevelName = FString::Printf(TEXT(":%s%s"), *Port, *LobbyLevelName);
+
+	if (false == LobbyLevelName.IsEmpty())
+	{
+		UGameplayStatics::OpenLevel(GetWorld(), *OpenLevelName, true, TEXT("listen"));
+	}
+	else
+	{
+		UE_LOG(OVERCOOKED_LOG, Warning, TEXT("Lobby Level not setting"));
+	}
+}
+
+void UOC2GameInstance::JoinRoom(FString IP, APlayerController* Controller)
+{
+	FString OpenLevelName = LobbyLevel.GetLongPackageName();
+	FString ConnectLevelName = FString::Printf(TEXT("%s:%s%s"), *IP, *Port, *OpenLevelName);
+
+	if (Controller != nullptr)
+	{
+		Controller->ClientTravel(ConnectLevelName, ETravelType::TRAVEL_Absolute);
+	}
+}
+
+void UOC2GameInstance::StartGame()
+{
+	FString OpenLevelPath = WorldLevel.GetLongPackageName();
+
+	GetWorld()->ServerTravel(OpenLevelPath + TEXT("?listen"));
 }
 
 EIngredientType UOC2GameInstance::GetIngredientType(const FString& RowName)

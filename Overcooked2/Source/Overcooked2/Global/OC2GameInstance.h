@@ -10,6 +10,7 @@
 #include "Global/Data/OrderDataTable.h"
 
 #include "Global/OC2Struct.h"
+#include "Global/OC2Enum.h"
 
 #include "OC2GameInstance.generated.h"
 
@@ -29,6 +30,12 @@ public:
 	UOC2GameInstance();
 	~UOC2GameInstance();
 
+public: /** 네트워크 관련 메소드 */
+	void CreateRoom();
+	void JoinRoom(FString IP, APlayerController* Controller);
+	void StartGame();
+
+public:
 	/**
 	 * 재료의 유형을 가져옵니다.
 	 * 
@@ -81,6 +88,19 @@ public:
 	bool FindRecipe(const FRecipeDataRow* RecipeDataRow, TArray<FRecipe>& Recipes);
 
 public:
+	UPROPERTY(EditAnywhere, Category = "Global|Level")
+	TSoftObjectPtr<UWorld> TitleLevel;
+
+	UPROPERTY(EditAnywhere, Category = "Global|Level")
+	TSoftObjectPtr<UWorld> LobbyLevel;
+
+	UPROPERTY(EditAnywhere, Category = "Global|Level")
+	TSoftObjectPtr<UWorld> WorldLevel;
+
+	UPROPERTY(EditAnywhere, Category = "Global|Level")
+	TSoftObjectPtr<UWorld> CookingLevel;
+
+public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
 	UDataTable* IngredientDataTable = nullptr;
 
@@ -89,4 +109,8 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
 	UDataTable* RecipeDataTable = nullptr;
+
+private:
+	UPROPERTY(EditAnywhere, Category = YGG)
+	FString Port = TEXT("3000");
 };
