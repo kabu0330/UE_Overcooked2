@@ -70,8 +70,6 @@ protected:
 
 	void Offset(FVector Pos, FRotator Rot);
 
-	void SetMesh();
-
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
 
 private:

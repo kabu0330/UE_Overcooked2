@@ -55,7 +55,8 @@ AIngredient* AIngredient::Init(EIngredientType Type)
 	}
 
 	// 2. Setting
-	StaticMeshComponent->SetStaticMesh(IngredientDataTable->BaseMesh);
+	StaticMeshComponent->SetStaticMesh(GameInst->GetIngredientStaticMesh(Name.ToString()));
+	//StaticMeshComponent->SetStaticMesh(IngredientDataTable->BaseMesh);
 	IngredientType = IngredientDataTable->IngredientType;
 	CurIngredientState = IngredientDataTable->StateRows[0].PrevIngredientState;
 
