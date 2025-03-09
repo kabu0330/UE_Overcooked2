@@ -3,6 +3,7 @@
 
 #include "LevelContent/Cook/Ingredient.h"
 #include "Kismet/GameplayStatics.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 AIngredient::AIngredient()
@@ -11,7 +12,6 @@ AIngredient::AIngredient()
 	PrimaryActorTick.bCanEverTick = true;
 
 	CookingType = ECookingType::ECT_INGREDIENT;
-
 
 }
 
@@ -62,6 +62,14 @@ void AIngredient::SetMesh()
 		FRotator Rotation = IngredientDataTable->Rotation;
 		Offset(Location, Rotation);
 	}
+}
+
+void AIngredient::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AIngredient, IngredientType);
+	DOREPLIFETIME(AIngredient, CurIngredientState);
 }
 
 void AIngredient::Offset(FVector Pos, FRotator Rot)

@@ -2,15 +2,13 @@
 
 
 #include "LevelContent/Cook/Cooking.h"
-#include <Global/Component/TimeEventComponent.h>
 
 // Sets default values
 ACooking::ACooking()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
-	TimeEvent = CreateDefaultSubobject<UTimeEventComponent>(TEXT("TimeEvent"));
+	bReplicates = true;
 
 	if (nullptr != StaticMeshComponent)
 	{

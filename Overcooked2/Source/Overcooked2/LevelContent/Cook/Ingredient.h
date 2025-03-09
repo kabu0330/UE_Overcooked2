@@ -21,6 +21,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	AIngredient* Init(EIngredientType Type);
 	
+	// 조리 완료 시
 	UFUNCTION(BlueprintCallable)
 	AIngredient* ChangeState(EIngredientState State);
 
@@ -75,15 +76,17 @@ protected:
 
 	void SetMesh();
 
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
+
 private:
 	void DeactivateHighlight();
 	void ActivateHighlight();
 
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	EIngredientType IngredientType = EIngredientType::EIT_NONE;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	EIngredientState CurIngredientState = EIngredientState::EIS_NONE;
 
 
