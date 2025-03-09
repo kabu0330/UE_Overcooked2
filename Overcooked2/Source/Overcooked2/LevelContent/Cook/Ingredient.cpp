@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+Ôªø// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "LevelContent/Cook/Ingredient.h"
@@ -10,6 +10,9 @@ AIngredient::AIngredient()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	bReplicates = true;
+	SetReplicates(true);
+	SetReplicateMovement(true);
 
 	CookingType = ECookingType::ECT_INGREDIENT;
 
@@ -19,6 +22,15 @@ AIngredient::AIngredient()
 void AIngredient::BeginPlay()
 {
 	ACooking::BeginPlay();
+
+	if (true == HasAuthority())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ÏÑúÎ≤ÑÏóêÏÑú Ïä§Ìè∞ ÏÑ±Í≥µ"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ÌÅ¥ÎùºÏù¥Ïñ∏Ìä∏ÏóêÏÑú Î≥µÏ†ú ÏÑ±Í≥µ"));
+	}
 
 }
 
@@ -34,7 +46,7 @@ AIngredient* AIngredient::Init(EIngredientType Type)
 	UOC2GameInstance* GameInst = Cast<UOC2GameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 	FName Name = GameInst->GetIngredientDataTableRowName(Type);
 
-	// 1. «ÿ¥Á ¿Á∑· ≈∏¿‘¿« µ•¿Ã≈Õ «‡ √ﬂ√‚
+	// 1. Ìï¥Îãπ Ïû¨Î£å ÌÉÄÏûÖÏùò Îç∞Ïù¥ÌÑ∞ Ìñâ Ï∂îÏ∂ú
 	// FIngredientDataRow IngredientDataTable
 	IngredientDataTable = &GameInst->GetIngredientDataRow(Name);
 	if (nullptr == IngredientDataTable)

@@ -14,7 +14,12 @@ AIngredient* ACookingDevGameMode::SpawnIngredient(EIngredientType Type)
 {
 	FTransform Trans;
 	AIngredient* Ingredient = GetWorld()->SpawnActorDeferred<AIngredient>(AIngredient::StaticClass(), Trans);
+
 	Ingredient->Init(Type);
+
+	FVector Location = FVector(0.0f, 0.0f, 100.0f);
+	Trans.SetLocation(Location);
+
 	Ingredient->FinishSpawning(Trans);
 
 	if (nullptr != Widget)

@@ -14,6 +14,7 @@ void UCookingDevUserWidget::ServerSpawnIngredient_Implementation(EIngredientType
 	{
 		int a = 0;
 	}
+
 	ACookingDevGameMode* GameMode = Cast<ACookingDevGameMode>(GetWorld()->GetAuthGameMode());
 	if (nullptr != GameMode)
 	{
