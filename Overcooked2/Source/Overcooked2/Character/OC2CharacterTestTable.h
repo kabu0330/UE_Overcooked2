@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "LevelContent/Table/CookingTable.h"
+#include "Character/OC2CharacterTestObject.h"
 #include "OC2CharacterTestTable.generated.h"
 
 UCLASS()
@@ -17,7 +18,7 @@ public:
 	AOC2CharacterTestTable();
 
 	virtual ACooking* Interact(AActor* ChefActor) override;
-	AIngredient* SpawnIngredient(AActor* ChefActor);
+	AOC2CharacterTestObject* SpawnIngredient(AActor* ChefActor);
 	virtual void PlaceItem(ACooking* Cook);
 protected:
 	// Called when the game starts or when spawned
@@ -34,4 +35,8 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input", meta = (AllowPrivateAccess = "true"))
 	EIngredientType IngredientType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<ACooking> ActorToSpawn;
+
 };

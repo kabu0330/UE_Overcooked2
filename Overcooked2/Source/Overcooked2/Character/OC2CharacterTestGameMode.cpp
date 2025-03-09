@@ -2,28 +2,32 @@
 
 
 #include "Character/OC2CharacterTestGameMode.h"
+#include "Character/TestItemManager.h"
+#include "Character/Oc2CharacterTestTable.h"
 #include "LevelContent/Cook/Ingredient.h"
 #include "Net/UnrealNetwork.h"
 
-void AOC2CharacterTestGameMode::ServerSpawnIngredient_Implementation()
+AOC2CharacterTestGameMode::AOC2CharacterTestGameMode()
+    :Super()
 {
-    if (HasAuthority()) // 서버에서만 실행
+    ItemManger = CreateDefaultSubobject<UTestItemManager>(TEXT("ItemManager"));
+}
+
+
+
+void AOC2CharacterTestGameMode::BeginPlay()
+{
+    Super::BeginPlay();
+
+    AActor* NewDropItem = ItemManger->CreateItem(EIngredientType::EIT_FISH);
+
+    if (nullptr != NewDropItem)
     {
-        FActorSpawnParameters SpawnParams;
-        SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-
-        FVector SpawnLocation = FVector(0, 0, 100);
-        FRotator SpawnRotation = FRotator::ZeroRotator;
-
-        AIngredient* NewIngredient = GetWorld()->SpawnActor<AIngredient>(AIngredient::StaticClass(), SpawnLocation, SpawnRotation, SpawnParams);
-        if (NewIngredient)
-        {
-            NewIngredient->SetReplicates(true); // 액터가 복제되도록 설정
-        }
+        NewDropItem->SetActorLocation(FVector(100, 100, 10.0));
     }
 }
 
-bool AOC2CharacterTestGameMode::ServerSpawnIngredient_Validate()
-{
-    return true;
-}
+
+
+
+

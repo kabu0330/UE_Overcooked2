@@ -24,9 +24,14 @@ public:
         CompleteOrderNum = num;
     }
 
+    UFUNCTION(BlueprintCallable, Category = "OC2UI")
+    int GetCompleteOrderNum()
+    {
+        return CompleteOrderNum;
+    }
 
     UFUNCTION(BlueprintCallable, Category = "OC2UI")
-    void OrderComplete();
+    void OrderComplete(int index);
 
     UFUNCTION(BlueprintCallable, Category = "OC2UI")
     void CreateNewOrder(struct FOrder& order);
@@ -49,13 +54,16 @@ public:
 
 protected:
     virtual void NativeOnInitialized() override;
-    virtual void NativeConstruct() override;
+    virtual void NativeTick(const FGeometry& MyGeometry, float DeltaTime) override;
+
 
 private:
     int CompleteOrderNum = 0;
     int NewOrderNum = 0;
 
     TArray <class UCanvasPanel*> Orders;
+    TArray <float> OrderTime;
+    int TimeLimit = 30.f;
 
     FTimerHandle OpacityTimerHandle;
     float OpacityOffset = 0.05f;
@@ -69,26 +77,28 @@ private:
     float IngredientTimeElapsed = 10.0f;
     float IngredientArrivePos = 100.f;
 
-    float ImageOffset = 20.0f;
+    float ImageOffset = 10.0f;
     float FinalPos = 0.0f;
     float ArrivePos = 0.0f;
     int CurOrderCount = 0;
 
-    float ImageSize = 180.0f;
 
-    int PrevIngredientNum = 3;
+    float ImageSize = 230.0f;
 
     void UpdateImageOpacity();
     void UpdateImagePosition();
     void UpdateIngredientImagePosition();
+    void UpdateOrderTime(int Index, float DeltaTime);
 
     void SettingIngredientImages(FOrder& order);
-    FVector2D IShortSize = { 56.0f, 60.f };
-    FVector2D ILongSize = {56.0f, 90.f};
-
+    FVector2D IShortSize = { 72.0f, 65.f };
+    FVector2D ILongSize = { 72.0f, 115.f };
 
     void MoveNewOrder();
 
+
+    template <typename T>
+    T* FindChildWidget(const FString& name, UCanvasPanel* canvas);
     class UImage* FindChildImage(const FString& name, class UCanvasPanel* canvasepanel);
     class UCanvasPanel* FindChildPanel(const FString& name, UCanvasPanel* canvase);
 
