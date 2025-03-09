@@ -68,6 +68,5 @@ protected:
 
 	const FIngredientDataRow* IngredientDataTable = nullptr;
 
-	class UPrimitiveComponent* PrimitiveComponent = nullptr;
 private:	
 };

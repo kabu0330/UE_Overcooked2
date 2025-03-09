@@ -57,6 +57,12 @@ public:
 		return CurIngredientState;
 	}
 
+	UFUNCTION(BlueprintCallable)
+	void SetCurIngredientState(EIngredientState State)
+	{
+		CurIngredientState = State;
+	}
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
