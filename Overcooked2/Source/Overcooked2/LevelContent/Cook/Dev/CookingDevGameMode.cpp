@@ -2,4 +2,35 @@
 
 
 #include "LevelContent/Cook/Dev/CookingDevGameMode.h"
+#include <LevelContent/Cook/Ingredient.h>
+#include <LevelContent/Cook/Dev/CookingDevHUD.h>
+#include <LevelContent/Cook/Dev/CookingDevUserWidget.h>
 
+ACookingDevGameMode::ACookingDevGameMode()
+{
+}
+
+AIngredient* ACookingDevGameMode::SpawnIngredient(EIngredientType Type)
+{
+	FTransform Trans;
+	AIngredient* Ingredient = GetWorld()->SpawnActorDeferred<AIngredient>(AIngredient::StaticClass(), Trans);
+	Ingredient->Init(Type);
+	Ingredient->FinishSpawning(Trans);
+
+	if (nullptr != Widget)
+	{
+		Widget->AddTargetActor(Ingredient);
+	}
+
+	return Ingredient;
+}
+
+void ACookingDevGameMode::BeginPlay()
+{
+	Super::BeginPlay();
+}
+
+void ACookingDevGameMode::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+}

@@ -16,6 +16,8 @@ public:
 	// Sets default values for this actor's properties
 	AIngredient();
 
+	// Network
+
 
 	// »óÀÚ¿¡¼­ ²¨³ÂÀ» ¶§
 	UFUNCTION(BlueprintCallable)
@@ -56,12 +58,6 @@ public:
 	EIngredientState GetCurIngredientState() const
 	{
 		return CurIngredientState;
-	}
-
-	UFUNCTION(BlueprintCallable)
-	void SetCurIngredientState(EIngredientState State)
-	{
-		CurIngredientState = State;
 	}
 
 protected:

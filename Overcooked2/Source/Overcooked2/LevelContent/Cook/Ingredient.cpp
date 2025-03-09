@@ -42,27 +42,19 @@ AIngredient* AIngredient::Init(EIngredientType Type)
 		return nullptr;
 	}
 
-	SetMesh();
+	// 2. Setting
+	StaticMeshComponent->SetStaticMesh(IngredientDataTable->BaseMesh);
+	IngredientType = IngredientDataTable->IngredientType;
+	CurIngredientState = IngredientDataTable->StateRows[0].PrevIngredientState;
+
+	// 3. Offset
+	FVector Location = IngredientDataTable->Location;
+	FRotator Rotation = IngredientDataTable->Rotation;
+	Offset(Location, Rotation);
 
 	return this;
 }
 
-// Init 함수 호출 이후 BeginPlay를 실행해야 정상적으로 메시를 입힐 수 있다.
-void AIngredient::SetMesh()
-{
-	// 2. Setting
-	if (nullptr != StaticMeshComponent)
-	{
-		StaticMeshComponent->SetStaticMesh(IngredientDataTable->BaseMesh);
-		IngredientType = IngredientDataTable->IngredientType;
-		CurIngredientState = IngredientDataTable->StateRows[0].PrevIngredientState;
-
-		// 3. Offset
-		FVector Location = IngredientDataTable->Location;
-		FRotator Rotation = IngredientDataTable->Rotation;
-		Offset(Location, Rotation);
-	}
-}
 
 void AIngredient::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
@@ -119,7 +111,7 @@ AIngredient* AIngredient::ChangeState(EIngredientState State)
 
 void AIngredient::DeactivateHighlight()
 {
-	if (bIsHighlighted)
+	if (true == bIsHighlighted)
 	{
 		RestoreMaterial();
 		for (int i = 0; i < StaticMeshComponent->GetNumMaterials(); i++)
@@ -132,7 +124,7 @@ void AIngredient::DeactivateHighlight()
 
 void AIngredient::ActivateHighlight()
 {
-	if (bIsHighlighted)
+	if (true == bIsHighlighted)
 	{
 		ApplyMaterialHighlight();
 	}

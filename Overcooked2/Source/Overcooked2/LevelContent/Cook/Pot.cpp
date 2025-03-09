@@ -72,6 +72,10 @@ bool APot::CanCook()
 	return true;
 }
 
+void APot::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+}
+
 bool APot::SetBoil(ACooking* Rice)
 {
 	if (false == bIsOnStove) // 1. 가스레인지 위에 있냐
@@ -102,7 +106,7 @@ bool APot::SetBoil(ACooking* Rice)
 
 AIngredient* APot::GetCookedIngredient()
 {
-	Ingredient->SetCurIngredientState(EIngredientState::EIS_BOILED);
+	Ingredient->ChangeState(EIngredientState::EIS_BOILED);
 
 	AIngredient* CookedIngredient = Ingredient;
 	Ingredient = nullptr;

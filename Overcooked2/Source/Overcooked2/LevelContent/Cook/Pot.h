@@ -54,6 +54,8 @@ protected:
 
 	bool CanCook();
 
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
+
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowprivateAccess = "true"))
 	USkeletalMeshComponent* SoupSkeletalMeshComponent = nullptr;

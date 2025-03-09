@@ -9,6 +9,9 @@ ACooking::ACooking()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	bReplicates = true;
+	SetReplicates(true);
+	SetReplicateMovement(true);
+
 
 	if (nullptr != StaticMeshComponent)
 	{
@@ -18,7 +21,6 @@ ACooking::ACooking()
 		StaticMeshComponent->SetCollisionProfileName(TEXT("PhysicsActor"));
 	}
 
-	bReplicates = true;
 }
 
 // Called when the game starts or when spawned
