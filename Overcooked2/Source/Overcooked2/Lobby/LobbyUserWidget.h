@@ -14,6 +14,22 @@ class OVERCOOKED2_API ULobbyUserWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
+public:
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
+	class UButton* StartGameButton;
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
+	class UButton* ReadyButton;
+
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
+	class UCanvasPanel* LobbyCanvasPanel;
+
+protected:
+	virtual void NativeConstruct() override;
+
+
+
 private:
 	// Temp
 	const FString LOBBY_LEVEL = "LobbyDevLevel";
@@ -23,14 +39,17 @@ private:
 	void MoveToPlayLevel();
 
 	UFUNCTION(BlueprintCallable, meta = (AllowPrivateAccess = "true"))
-	void StartServer();
+	void Ready();
 
-	UFUNCTION(BlueprintCallable, meta = (AllowPrivateAccess = "true"))
-	void ConnectServer();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Network", meta = (AllowPrivateAccess = "true"))
 	FString IP = TEXT("127.0.0.1");
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Network", meta = (AllowPrivateAccess = "true"))
 	FString Port = TEXT("30000");
+
+	template <typename T>
+	T* FindChildWidget(const FString& name, UCanvasPanel* canvas);
+
+
 };
