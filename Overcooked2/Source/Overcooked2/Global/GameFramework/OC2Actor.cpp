@@ -15,6 +15,10 @@ AOC2Actor::AOC2Actor()
 	StaticMeshComponent->SetupAttachment(RootComponent);
 }
 
+void AOC2Actor::InitOC2Actor()
+{
+}
+
 void AOC2Actor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);

@@ -15,6 +15,11 @@ class OVERCOOKED2_API AOC2Actor : public AActor//, public IInteractable
 public:
 	AOC2Actor();
 
+public:
+	virtual void InitOC2Actor();
+	
+public:
+
 	// 머티리얼 하이라이트 효과 적용
 	UFUNCTION(BlueprintCallable)
 	virtual void ApplyMaterialHighlight();
