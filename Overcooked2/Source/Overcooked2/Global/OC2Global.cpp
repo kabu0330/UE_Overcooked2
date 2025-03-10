@@ -52,45 +52,51 @@ TArray<FAssetData> UOC2Global::GetAssetDataArray(UClass* Class)
 	return MapList;
 }
 
-UOC2GameInstance* UOC2Global::GetOC2GameInstance(UWorld* World)
+UOC2GameInstance* UOC2Global::GetOC2GameInstance(const UWorld* World)
 {
 	return Cast<UOC2GameInstance>(UGameplayStatics::GetGameInstance(World));
 }
 
 void UOC2Global::StartServer(const UWorld* World, const FString& Port, const FString& LevelName)
 {
-	FString OpenLevel;
-	FString LevelPath = TEXT("");
+	//FString OpenLevel;
+	//FString LevelPath = TEXT("");
 
-	UOC2Global::GetAssetPackageName(UWorld::StaticClass(), LevelName, LevelPath);
-	OpenLevel = FString::Printf(TEXT(":%s%s"), *Port, *LevelPath);
+	//UOC2Global::GetAssetPackageName(UWorld::StaticClass(), LevelName, LevelPath);
+	//OpenLevel = FString::Printf(TEXT(":%s%s"), *Port, *LevelPath);
 
-	UGameplayStatics::OpenLevel(World, *OpenLevel, true, TEXT("listen"));
+	//UGameplayStatics::OpenLevel(World, *OpenLevel, true, TEXT("listen"));
+
+	UOC2Global::GetOC2GameInstance(World)->CreateRoom();
 }
 
-void UOC2Global::StartServer_Implementation(const UWorld* World, const FString& Port, const FString& LevelName)
+//void UOC2Global::StartServer_Implementation(const UWorld* World, const FString& Port, const FString& LevelName)
+//{
+//	StartServer(World, Port, LevelName);
+//
+//}
+
+void UOC2Global::ConnectServer(const UWorld* World, APlayerController* Controller, const FString& IP, const FString& Port, const FString& LevelName)
 {
-	StartServer(World, Port, LevelName);
+	//FString ConnectLevelName = FString::Printf(TEXT("%s:%s/%s"), *IP, *Port, *LevelName);
+	////UGameplayStatics::OpenLevel(World, FName(*ConnectLevelName));
 
-}
+	//if (Controller != nullptr)
+	//{
+	//	Controller->ClientTravel(ConnectLevelName, ETravelType::TRAVEL_Absolute);
+	//}
 
-void UOC2Global::ConnectServer(const UWorld* World, APlayerController* Controller, const FString& IP, const FString& Port)
-{
-	FString ConnectLevelName = FString::Printf(TEXT("%s:%s"), *IP, *Port);
-	//UGameplayStatics::OpenLevel(World, FName(*ConnectLevelName));
-
-	if (Controller != nullptr)
-	{
-		Controller->ClientTravel(ConnectLevelName, ETravelType::TRAVEL_Absolute);
-	}
+	UOC2Global::GetOC2GameInstance(World)->JoinRoom(IP, Controller);
 }
 
 void UOC2Global::TravelServer(UWorld* World, const FString& LevelName)
 {
-	FString LevelPath = TEXT("");
-	UOC2Global::GetAssetPackageName(UWorld::StaticClass(), LevelName, LevelPath);
+	//FString LevelPath = TEXT("");
+	//UOC2Global::GetAssetPackageName(UWorld::StaticClass(), LevelName, LevelPath);
 
-	World->ServerTravel(LevelPath);
+	//World->ServerTravel(LevelPath + TEXT("?listen"));
+
+	UOC2Global::GetOC2GameInstance(World)->StartGame();
 }
 
 AIngredient* UOC2Global::SpawnIngredientActor(UWorld* World, EIngredientType IngredientType)

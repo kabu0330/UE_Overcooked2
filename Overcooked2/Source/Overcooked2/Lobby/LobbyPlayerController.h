@@ -13,5 +13,8 @@ UCLASS()
 class OVERCOOKED2_API ALobbyPlayerController : public APlayerController
 {
 	GENERATED_BODY()
+
+protected:
+	virtual void BeginPlay() override;
 	
 };

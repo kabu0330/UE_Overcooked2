@@ -20,11 +20,14 @@ void ULobbyUserWidget::MoveToPlayLevel()
 
 void ULobbyUserWidget::StartServer()
 {
-	UOC2Global::StartServer(GetWorld(), Port, PLAY_LEVEL);
+	if (GetWorld()->GetAuthGameMode())
+	{
+		UOC2Global::StartServer(GetWorld(), Port, LOBBY_LEVEL);
+	}
 }
 
 void ULobbyUserWidget::ConnectServer()
 {
 	APlayerController* Controller = GetOwningLocalPlayer()->GetPlayerController(GetWorld());
-	UOC2Global::ConnectServer(GetWorld(), Controller, IP, Port);
+	UOC2Global::ConnectServer(GetWorld(), Controller, IP, Port, LOBBY_LEVEL);
 }
