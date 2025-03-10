@@ -17,7 +17,9 @@ public:
 	AIngredient();
 
 	// Network
-
+	UFUNCTION(BlueprintCallable, Reliable, Server)
+	void SetType(EIngredientType Type);
+	void SetType_Implementation(EIngredientType Type);
 
 	// »óÀÚ¿¡¼­ ²¨³ÂÀ» ¶§
 	UFUNCTION(BlueprintCallable)

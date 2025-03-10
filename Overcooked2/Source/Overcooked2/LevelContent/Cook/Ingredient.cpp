@@ -18,10 +18,17 @@ AIngredient::AIngredient()
 
 }
 
+void AIngredient::SetType_Implementation(EIngredientType Type)
+{
+	IngredientType = Type;
+}
+
 // Called when the game starts or when spawned
 void AIngredient::BeginPlay()
 {
 	ACooking::BeginPlay();
+
+	Init(IngredientType);
 
 	if (true == HasAuthority())
 	{
@@ -29,7 +36,7 @@ void AIngredient::BeginPlay()
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("클라이언트에서 복제 성공"));
+ 		UE_LOG(LogTemp, Warning, TEXT("클라이언트에서 복제 성공"));
 	}
 
 }
