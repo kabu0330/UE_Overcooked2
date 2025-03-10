@@ -12,8 +12,8 @@ AOC2CharacterTestTable::AOC2CharacterTestTable()
 
 	bReplicates = true;
 
-	MySceneComponent = CreateDefaultSubobject<USceneComponent>("Attach");
-	MySceneComponent->SetupAttachment(RootComponent);
+	WhyDetailsNotShowingAlways = CreateDefaultSubobject<USceneComponent>("Attach");
+	WhyDetailsNotShowingAlways->SetupAttachment(RootComponent);
 
 }
 
@@ -42,8 +42,8 @@ AOC2CharacterTestObject* AOC2CharacterTestTable::SpawnIngredient(AActor* ChefAct
 void AOC2CharacterTestTable::PlaceItem(ACooking* Cook)
 {
 	CurCook = Cook;
-	CurCook->AttachToComponent(MySceneComponent, FAttachmentTransformRules::KeepRelativeTransform);
-	CurCook->SetActorLocation(MySceneComponent->GetComponentLocation());
+	CurCook->AttachToComponent(WhyDetailsNotShowingAlways, FAttachmentTransformRules::KeepRelativeTransform);
+	CurCook->SetActorLocation(WhyDetailsNotShowingAlways->GetComponentLocation());
 }
 
 ACooking* AOC2CharacterTestTable::Interact(AActor* ChefActor)
@@ -56,7 +56,7 @@ ACooking* AOC2CharacterTestTable::Interact(AActor* ChefActor)
 		{
 			return nullptr;
 		}
-		return SpawnIngredient(ChefActor);
+		return UOC2Global::SpawnIngredientActor(GetWorld(), IngredientType);
 
 	}
 	else

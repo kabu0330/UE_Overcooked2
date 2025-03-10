@@ -31,7 +31,7 @@ public:
 	ACooking* CurCook = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UserComponents")
-	USceneComponent* MySceneComponent = nullptr;
+	USceneComponent* WhyDetailsNotShowingAlways = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input", meta = (AllowPrivateAccess = "true"))
 	EIngredientType IngredientType;
