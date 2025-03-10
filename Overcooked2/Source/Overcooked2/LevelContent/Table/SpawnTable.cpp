@@ -79,13 +79,13 @@ ACooking* ASpawnTable::Interact(AActor* ChefActor)
 	else
 	{
 		// 박스 위에 무언가가 있음
-		return PlacedItem;
 
 		//PlacedItem이 외부 Cooking과 상호작용 하는 경우
 		// 1. 조합 가능한 경우
 		// 2. 빈접시와 요리가 있는 접시의 경우
 	}
 
+		return PlacedItem;
 }
 
 void ASpawnTable::PlaceItem(ACooking* Item)
