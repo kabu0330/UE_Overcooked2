@@ -20,7 +20,25 @@ AIngredient::AIngredient()
 
 void AIngredient::SetType_Implementation(EIngredientType Type)
 {
+	// 3. SpawnActorDeferred 이후 BeginPlay 실행 이전 멤버변수는 변경
+	// Replicated이기 때문에, 서버에서 변경하면 클라도 다 같이 바뀐다.
 	IngredientType = Type;
+}
+
+void AIngredient::AttachToChef_Implementation(AActor* Player)
+{
+	StaticMeshComponent->SetSimulatePhysics(false);
+	StaticMeshComponent->SetCollisionProfileName(TEXT("NoCollision"));
+	StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	AttachToActor(Player, FAttachmentTransformRules::KeepRelativeTransform);
+}
+
+void AIngredient::DetachFromChef_Implementation(AActor* Player)
+{
+	StaticMeshComponent->SetSimulatePhysics(true);
+	StaticMeshComponent->SetCollisionProfileName(TEXT("Interactable"));
+	StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	DetachFromActor(FDetachmentTransformRules::KeepRelativeTransform);
 }
 
 // Called when the game starts or when spawned
@@ -28,16 +46,9 @@ void AIngredient::BeginPlay()
 {
 	ACooking::BeginPlay();
 
+	// 5. 서버에서 Spawn이 되면서 Init 함수 호출
 	Init(IngredientType);
 
-	if (true == HasAuthority())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("서버에서 스폰 성공"));
-	}
-	else
-	{
- 		UE_LOG(LogTemp, Warning, TEXT("클라이언트에서 복제 성공"));
-	}
 
 }
 
@@ -50,10 +61,13 @@ void AIngredient::Tick(float DeltaTime)
 
 AIngredient* AIngredient::Init(EIngredientType Type)
 {
+	// 6. 서버에서 한 번 호출, 클라에서도 각 한 번 씩 호출
+	// GameMode::SpawnActorDeferred -> AIngredinet::SetType -> AIngredinet::BeginPlay -> Init
+
 	UOC2GameInstance* GameInst = Cast<UOC2GameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 	FName Name = GameInst->GetIngredientDataTableRowName(Type);
 
-	// 1. 해당 재료 타입의 데이터 행 추출
+	// 1). 해당 재료 타입의 데이터 행 추출
 	// FIngredientDataRow IngredientDataTable
 	IngredientDataTable = &GameInst->GetIngredientDataRow(Name);
 	if (nullptr == IngredientDataTable)
@@ -61,16 +75,27 @@ AIngredient* AIngredient::Init(EIngredientType Type)
 		return nullptr;
 	}
 
-	// 2. Setting
+	// 2). Setting
 	StaticMeshComponent->SetStaticMesh(GameInst->GetIngredientStaticMesh(Name.ToString()));
 	//StaticMeshComponent->SetStaticMesh(IngredientDataTable->BaseMesh);
 	IngredientType = IngredientDataTable->IngredientType;
 	CurIngredientState = IngredientDataTable->StateRows[0].PrevIngredientState;
 
-	// 3. Offset
+	// 3). Offset
 	FVector Location = IngredientDataTable->Location;
 	FRotator Rotation = IngredientDataTable->Rotation;
 	Offset(Location, Rotation);
+
+
+	// Network Debug
+	if (true == HasAuthority())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("서버에서 스폰 성공"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("클라이언트에서 복제 성공"));
+	}
 
 	return this;
 }

@@ -21,6 +21,15 @@ public:
 	void SetType(EIngredientType Type);
 	void SetType_Implementation(EIngredientType Type);
 
+	// Interact
+	UFUNCTION(NetMulticast, Reliable)
+	void AttachToChef(AActor* Player);
+	void AttachToChef_Implementation(AActor* Player);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void DetachFromChef(AActor* Player);
+	void DetachFromChef_Implementation(AActor* Player);
+
 	// »óÀÚ¿¡¼­ ²¨³ÂÀ» ¶§
 	UFUNCTION(BlueprintCallable)
 	AIngredient* Init(EIngredientType Type);
