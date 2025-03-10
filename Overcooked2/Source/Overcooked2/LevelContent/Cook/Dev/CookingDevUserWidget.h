@@ -18,9 +18,8 @@ class OVERCOOKED2_API UCookingDevUserWidget : public UUserWidget
 	
 public:
 	// Network
-	UFUNCTION(BlueprintCallable, Reliable, Server)
+	UFUNCTION(BlueprintCallable)
 	void ServerSpawnIngredient(EIngredientType Type);
-	void ServerSpawnIngredient_Implementation(EIngredientType Type);
 
 
 	UFUNCTION(BlueprintCallable)
