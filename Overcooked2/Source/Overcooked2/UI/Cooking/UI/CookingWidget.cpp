@@ -18,12 +18,7 @@ void UCookingWidget::NativeOnInitialized()
     Orders.SetNum(5);
     OrderTime.SetNum(5);
 
-    Orders[0] = Order_0;
-    Orders[1] = Order_1;
-    Orders[2] = Order_2;
-    Orders[3] = Order_3;
-    Orders[4] = Order_4;
-
+    Orders = { Order_0, Order_1, Order_2, Order_3, Order_4 };
 
     // Test Setting
     CurOrderCount = 0;
@@ -420,12 +415,12 @@ void UCookingWidget::UpdateImagePosition()
 }
 
 template <typename T>
-T* UCookingWidget::FindChildWidget(const FString& name, UCanvasPanel* canvas)
+T* UCookingWidget::FindChildWidget(const FString& Name, UCanvasPanel* Canvas)
 {
-    if (!canvas) return nullptr;
+    if (!Canvas) return nullptr;
 
-    FString TargetPrefix = name;
-    TArray<UWidget*> Children = canvas->GetAllChildren();
+    FString TargetPrefix = Name;
+    TArray<UWidget*> Children = Canvas->GetAllChildren();
 
     for (UWidget* Child : Children)
     {
@@ -442,12 +437,12 @@ T* UCookingWidget::FindChildWidget(const FString& name, UCanvasPanel* canvas)
 }
 
 
-UImage* UCookingWidget::FindChildImage(const FString& name, UCanvasPanel* canvase)
+UImage* UCookingWidget::FindChildImage(const FString& Name, UCanvasPanel* Canvas)
 {
-    FString TargetPrefix = name;
+    FString TargetPrefix = Name;
 
     TArray<UWidget*> Children;
-    Children = canvase->GetAllChildren();
+    Children = Canvas->GetAllChildren();
 
     for (UWidget* Child : Children)
     {
@@ -464,12 +459,12 @@ UImage* UCookingWidget::FindChildImage(const FString& name, UCanvasPanel* canvas
     return nullptr;
 }
 
-UCanvasPanel* UCookingWidget::FindChildPanel(const FString& name, UCanvasPanel* canvase)
+UCanvasPanel* UCookingWidget::FindChildPanel(const FString& Name, UCanvasPanel* Canvase)
 {
-    FString TargetPrefix = name;
+    FString TargetPrefix = Name;
 
     TArray<UWidget*> Children;
-    Children = canvase->GetAllChildren();
+    Children = Canvase->GetAllChildren();
 
     for (UWidget* Child : Children)
     {

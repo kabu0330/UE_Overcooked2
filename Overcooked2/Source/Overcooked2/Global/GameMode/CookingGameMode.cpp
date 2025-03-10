@@ -4,6 +4,7 @@
 #include "Global/GameMode/CookingGameMode.h"
 
 #include "Global/OC2GameInstance.h"
+#include "Global/GameFramework/OC2Actor.h"
 #include "Global/Component/OrderManageComponent.h"
 #include "Global/Component/SpawnManageComponent.h"
 #include "Global/Data/IngredientDataTable.h"
@@ -120,6 +121,12 @@ void ACookingGameMode::ChangeState(ECookingGameModeState State)
 	default:
 		break;
 	}
+}
+
+AOC2Actor* ACookingGameMode::SpawnOC2Actor()
+{
+	return nullptr;
+	//return SpawnManager->SpawnOC2Actor(OC2ActorToSpawn);
 }
 
 AIngredient* ACookingGameMode::SpawnIngredientActor(EIngredientType IngredientType)

@@ -15,6 +15,7 @@ class UOrderManageComponent;
 class USpawnManageComponent;
 class AIngredient;
 class APlate;
+class AOC2Actor;
 
 UENUM(BlueprintType)
 enum class ECookingGameModeState : uint8
@@ -55,6 +56,7 @@ public:
 	void ChangeState(ECookingGameModeState State);
 
 public:
+	AOC2Actor* SpawnOC2Actor();
 	AIngredient* SpawnIngredientActor(EIngredientType Type);
 	APlate* SpawnPlateActor();
 
@@ -75,6 +77,9 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Spawning", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<APlate> PlateToSpawn;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Spawning", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<AOC2Actor> OC2ActorToSpawn;
 	
 	ECookingGameModeState CurState = ECookingGameModeState::ECS_None;
 
