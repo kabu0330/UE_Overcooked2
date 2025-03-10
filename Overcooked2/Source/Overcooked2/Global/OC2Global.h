@@ -12,6 +12,7 @@
 #include "OC2Global.generated.h"
 
 class UOC2GameInstance;
+class AOC2Actor;
 class AIngredient;
 class APlate;
 
@@ -44,6 +45,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	static void TravelServer(UWorld* World, const FString& LevelName);
 
+	static AOC2Actor* SpawnOC2Actor(UWorld* World);
 	static AIngredient* SpawnIngredientActor(UWorld* World, EIngredientType IngredientType);
 	static APlate* SpawnPlateActor(UWorld* World);
 };

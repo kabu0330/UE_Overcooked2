@@ -8,6 +8,7 @@
 #include "Global/OC2GameInstance.h"
 #include "LevelContent/Cook/Ingredient.h"
 #include "Global/GameMode/CookingGameMode.h"
+#include "Global/GameFramework/OC2Actor.h"
 #include "Kismet/GameplayStatics.h"
 
 void UOC2Global::GetAssetPackageName(UClass* Class, const FString& AssetName, FString& Path)
@@ -97,6 +98,19 @@ void UOC2Global::TravelServer(UWorld* World, const FString& LevelName)
 	//World->ServerTravel(LevelPath + TEXT("?listen"));
 
 	UOC2Global::GetOC2GameInstance(World)->StartGame();
+}
+
+AOC2Actor* UOC2Global::SpawnOC2Actor(UWorld* World)
+{
+	ACookingGameMode* CookingGameMode = Cast<ACookingGameMode>(World->GetAuthGameMode());
+
+	if (nullptr == CookingGameMode)
+	{
+		UE_LOG(OVERCOOKED_LOG, Error, TEXT("Current Game mode is not a cooking game mode"));
+		return nullptr;
+	}
+
+	return CookingGameMode->SpawnOC2Actor();
 }
 
 AIngredient* UOC2Global::SpawnIngredientActor(UWorld* World, EIngredientType IngredientType)
