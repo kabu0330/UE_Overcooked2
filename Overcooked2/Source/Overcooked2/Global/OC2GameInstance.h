@@ -88,6 +88,10 @@ public:
 	bool FindRecipe(const FRecipeDataRow* RecipeDataRow, TArray<FRecipe>& Recipes);
 
 public:
+	FString GetChefHeadName() const;
+	void SetChefHeadName(FString HeadName);
+
+public:
 	UPROPERTY(EditAnywhere, Category = "Global|Level")
 	TSoftObjectPtr<UWorld> TitleLevel;
 
@@ -111,6 +115,10 @@ public:
 	UDataTable* RecipeDataTable = nullptr;
 
 private:
-	UPROPERTY(EditAnywhere, Category = YGG)
+	UPROPERTY(EditAnywhere, Category = "Global|Data")
 	FString Port = TEXT("3000");
+
+private:
+	UPROPERTY(EditAnywhere, Category = "Global|Character")
+	FString ChefHeadName = "";
 };

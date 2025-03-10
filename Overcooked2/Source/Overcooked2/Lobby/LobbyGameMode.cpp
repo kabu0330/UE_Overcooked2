@@ -4,6 +4,10 @@
 #include "Lobby/LobbyGameMode.h"
 #include "Overcooked2.h"
 
+#include "Global/OC2GameInstance.h"
+#include "Global/OC2Global.h"
+#include "Global/OC2Const.h"
+
 ALobbyGameMode::ALobbyGameMode()
 {
 }
@@ -11,6 +15,11 @@ ALobbyGameMode::ALobbyGameMode()
 void ALobbyGameMode::BeginPlay()
 {
 	Super::BeginPlay();
+
+	ChefHeadNames.Add(UOC2Const::ChefEagleHeadName);
+	ChefHeadNames.Add(UOC2Const::ChefMouseHeadName);
+	ChefHeadNames.Add(UOC2Const::ChefPandaHeadName);
+	ChefHeadNames.Add(UOC2Const::ChefPigHeadName);
 }
 
 void ALobbyGameMode::Tick(float DeltaTime)
@@ -24,18 +33,15 @@ void ALobbyGameMode::PostLogin(APlayerController* NewPlayerController)
 
 	PlayerControllers.Push(NewPlayerController);
 
-	if (GetWorld()->GetAuthGameMode())
-	{
-		UE_LOG(OVERCOOKED_LOG, Warning, TEXT("Server Player %s has joined the game! Player count is %d"), *NewPlayerController->GetName(), PlayerControllers.Num());
-	}
-	else
-	{
-		//UE_LOG(OVERCOOKED_LOG, Warning, TEXT("Client Player %s has joined the game!"), *NewPlayerController->GetName());
-	}
+	// GameInstance 가져오기
+	UOC2GameInstance* GameInstance = Cast<UOC2GameInstance>(NewPlayerController->GetGameInstance());
 
-	if (4 == PlayerControllers.Num() && ELobbyGameModeState::ELS_Stay == CurState)
+	if (GameInstance != nullptr)
 	{
-		UE_LOG(OVERCOOKED_LOG, Error, TEXT("Player controller count is 4!!!!!!!!!!!!!!!!!!!!!!"), *NewPlayerController->GetName());
+		UE_LOG(LogTemp, Log, TEXT("GameInstance 가져오기 성공!"));
+
+		GameInstance->SetChefHeadName(ChefHeadNames[CurIdx]);
+		CurIdx++;
 	}
 }
 

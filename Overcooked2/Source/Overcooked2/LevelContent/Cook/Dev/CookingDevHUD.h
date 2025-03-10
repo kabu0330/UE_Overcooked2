@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/HUD.h"
+#include <Global/OC2Enum.h>
 #include "CookingDevHUD.generated.h"
 
 /**
@@ -23,6 +24,8 @@ public:
 		return Widget;
 	}
 
+	void ServerSpawnIngredient(EIngredientType Type);
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float _DeltaTime) override;
@@ -35,5 +38,7 @@ protected:
 
 private:
 	class UCookingDevUserWidget* Widget = nullptr;
+
+	class ASpawnManager* SpawnManager = nullptr;
 
 };

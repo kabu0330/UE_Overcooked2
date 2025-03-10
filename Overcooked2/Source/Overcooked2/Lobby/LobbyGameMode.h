@@ -37,5 +37,6 @@ public:
 private:
 	ELobbyGameModeState CurState = ELobbyGameModeState::ELS_None;
 	TArray<APlayerController*> PlayerControllers;
-
+	TArray<FString> ChefHeadNames;
+	int CurIdx = 0;
 };

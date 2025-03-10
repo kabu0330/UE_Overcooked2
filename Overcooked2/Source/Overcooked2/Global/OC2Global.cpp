@@ -115,7 +115,8 @@ AOC2Actor* UOC2Global::SpawnOC2Actor(UWorld* World)
 
 AIngredient* UOC2Global::SpawnIngredientActor(UWorld* World, EIngredientType IngredientType)
 {
-	ACookingGameMode* CookingGameMode = Cast<ACookingGameMode>(World->GetAuthGameMode());
+	AGameModeBase* TestGameMode = World->GetAuthGameMode();
+	ACookingGameMode* CookingGameMode = Cast<ACookingGameMode>(TestGameMode);
 
 	if (nullptr == CookingGameMode)
 	{

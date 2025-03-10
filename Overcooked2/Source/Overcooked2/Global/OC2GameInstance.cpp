@@ -228,3 +228,13 @@ bool UOC2GameInstance::FindRecipe(const FRecipeDataRow* RecipeDataRow, TArray<FR
 
 	return true;
 }
+
+FString UOC2GameInstance::GetChefHeadName() const
+{
+	return ChefHeadName;
+}
+
+void UOC2GameInstance::SetChefHeadName(FString HeadName)
+{
+	ChefHeadName = HeadName;
+}
