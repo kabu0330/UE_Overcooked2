@@ -32,10 +32,14 @@ void AOC2Character::MoveCharacter(const FInputActionValue& Value)
 {
 	FVector MovementInput = Value.Get<FVector>();
 
+	bIsCooking = false;
 
 	MovementInput.Normalize();
 
-	AddMovementInput(MovementInput);
+	if (bIsDashing == false)
+	{
+		AddMovementInput(MovementInput);
+	}
 
 	float CurrentYaw = GetActorRotation().Yaw;
 	float TargetYaw = MovementInput.Rotation().Yaw;
@@ -68,14 +72,27 @@ void AOC2Character::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (IsDashing)
-	{
-		Dash();
-	}
+	CheckDash(DeltaTime);
 
 	CheckInteract();
 
 	DrawDebugSphere(GetWorld(), GrabComponent->GetComponentLocation(), TraceRadius, 20, FColor::Green, false, 0.0f);
+}
+
+void AOC2Character::CheckDash_Implementation(float DeltaTime)
+{
+	if (bIsDashing)
+	{
+		DashTimer += DeltaTime;
+		if (DashTimer > DashDuration)
+		{
+			bIsDashing = false;
+		}
+		else
+		{
+			LaunchCharacter(GetActorForwardVector()*DashPower, true, false);
+		}
+	}
 }
 
 // Called to bind functionality to input
@@ -104,6 +121,10 @@ void AOC2Character::InitMesh()
 		{
 			FString Key = Name.RightChop(15);
 			CharacterHeadMap.Add(Key, FCharacterData(Materials[i], i));
+		}
+		if (Name.Contains("Knife"))
+		{
+			Knife = { i, Materials[i] };
 		}
 		// hat index
 		if (i == 36) continue;
@@ -161,7 +182,7 @@ void AOC2Character::Interact_Implementation()
 void AOC2Character::Grab_Implementation(ACooking* Cook)
 {
 	GrabbedObject = Cook;
-	Cast<AOC2CharacterTestObject>(GrabbedObject)->AttachToChef(this);
+	Cast<AIngredient>(GrabbedObject)->AttachToChef(this);
 
 	GrabbedObject->SetActorLocation(GrabComponent->GetComponentLocation());
 
@@ -229,8 +250,19 @@ void AOC2Character::Throwing_Implementation()
 
 }
 
-void AOC2Character::Cooking()
+void AOC2Character::Cooking_Implementation()
 {
+	bIsCooking = true;
+	GetMesh()->SetMaterial(Knife.Key, Knife.Value);
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance)
+	{
+		UAnimMontage* Montage = GetCurrentMontage();
+		if (Montage)
+		{
+			AnimInstance->Montage_SetPlayRate(Montage, 1.5f); // 애니메이션 속도를 1.5배로 변경
+		}
+	}
 	if (SelectedOC2Actor != nullptr)
 	{
 		return;
@@ -313,13 +345,19 @@ void AOC2Character::CheckInteract()
 
 void AOC2Character::Dash_Implementation()
 {
-	FVector DashDirection = GetActorForwardVector(); // 바라보는 방향
-	LaunchCharacter(DashDirection * DashPower, true, false); // 대시 실행
+	if (!bIsDashing)
+	{
+		bIsDashing = true;
+		DashTimer = 0.0f;
+	}
+	//FVector DashDirection = GetActorForwardVector(); // 바라보는 방향
+	//LaunchCharacter(DashDirection * DashPower, true, false); // 대시 실행
+
 }
 
 void AOC2Character::StopDash()
 {
-	IsDashing = false;
+	bIsDashing = false;
 	GetCharacterMovement()->StopMovementImmediately();
 }
 
@@ -328,6 +366,9 @@ void AOC2Character::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AOC2Character, GrabbedObject);
+	DOREPLIFETIME(AOC2Character, bIsDashing);
+	DOREPLIFETIME(AOC2Character, DashTimer);
+	DOREPLIFETIME(AOC2Character, bIsCooking);
 }
 
 void AOC2Character::SetCharacterHead(FString Name)
