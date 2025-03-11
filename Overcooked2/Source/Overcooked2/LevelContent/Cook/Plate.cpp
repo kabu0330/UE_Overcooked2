@@ -17,6 +17,9 @@ APlate::APlate()
 	CookingType = ECookingType::ECT_PLATE;
 
 	IngredientMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("IngredientMesh"));
+
+	FRotator Rotator = FRotator(0.0f, 0.0f, 90.0f);
+	StaticMeshComponent->SetRelativeRotation(FRotator(Rotator)); // y z x
 }
 
 void APlate::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

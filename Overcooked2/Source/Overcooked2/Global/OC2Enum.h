@@ -12,10 +12,10 @@ enum class EIngredientType : uint8
 {
 	EIT_NONE			UMETA(DisplayName = "None"),
 	EIT_FISH			UMETA(DisplayName = "생선"),
-	EIT_CABBAGE			UMETA(DisplayName = "양배추"),
+	//EIT_CABBAGE			UMETA(DisplayName = "양배추"),
 	EIT_PRAWN			UMETA(DisplayName = "새우"),
-	EIT_TOMATO			UMETA(DisplayName = "토마토"),
-	EIT_LAVER			UMETA(DisplayName = "김"),
+	//EIT_TOMATO			UMETA(DisplayName = "토마토"),
+	EIT_SEAWEED			UMETA(DisplayName = "김"),
 	EIT_RICE			UMETA(DisplayName = "쌀"),
 	EIT_CUCUMBER		UMETA(DisplayName = "오이"),
 };
