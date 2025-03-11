@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerState.h"
 #include <Global/OC2Enum.h>
+#include <LevelContent/Cook/Cooking.h>
 #include "CookingDevPlayerState.generated.h"
 
 /**
@@ -27,6 +28,26 @@ public:
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	class USpawnManagerComponent* SpawnManagerComponent = nullptr;
+
+
+
+
+	UFUNCTION(BlueprintCallable, Reliable, Server)
+	void ChangeState(EIngredientState State);
+	void ChangeState_Implementation(EIngredientState State);
+
+	void ChangeStateLogic(EIngredientState State);
+
+
+	UFUNCTION(BlueprintCallable, Reliable, Server)
+	void AddPlayerState();
+	void AddPlayerState_Implementation();
+
+	void AddCookingActor(ACooking* Actor)
+	{
+		CookingActor.Add(Actor);
+	}
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
@@ -37,4 +58,10 @@ protected:
 private:
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	EIngredientType IngredientType = EIngredientType::EIT_NONE;
+
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	TArray<ACooking*> CookingActor;
+
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	EIngredientState IngredientState = EIngredientState::EIS_NONE;
 };

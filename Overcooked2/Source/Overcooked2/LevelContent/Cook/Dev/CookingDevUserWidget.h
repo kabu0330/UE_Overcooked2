@@ -22,37 +22,20 @@ public:
 	void ServerSpawnIngredient(EIngredientType Type);
 
 
-	UFUNCTION(BlueprintCallable)
-	void AddTargetActor(ACooking* Actor)
-	{
-		if (false == CookingActor.IsEmpty())
-		{
-			ACooking* NewActor = CookingActor.Last();
-			FVector Offset = FVector(0.0f, 50.0f, 0.0f);
-			FVector AdjustLocation = Offset + NewActor->GetActorLocation();
-			Actor->SetActorLocation(AdjustLocation);
-		}
-	
-		CookingActor.Add(Actor);
-	}
+	//UFUNCTION(BlueprintCallable)
+	//TArray<ACooking*>& GetTargetActor()
+	//{
+	//	return CookingActor;
+	//}
 
-	UFUNCTION(BlueprintCallable)
-	TArray<ACooking*>& GetTargetActor()
-	{
-		return CookingActor;
-	}
+	//UFUNCTION(BlueprintCallable)
+	//ACooking* GetTargetActorIndex(int Index)
+	//{
+	//	return CookingActor[Index];
+	//}
 
-	UFUNCTION(BlueprintCallable)
-	ACooking* GetTargetActorIndex(int Index)
-	{
-		return CookingActor[Index];
-	}
-
-	UFUNCTION(BlueprintCallable)
-	void Reset()
-	{
-		CookingActor.Empty();
-	}
+	//UFUNCTION(BlueprintCallable)
+	//void Reset();
 
 	UFUNCTION(BlueprintCallable)
 	void ChangeState(EIngredientState State);
@@ -65,11 +48,7 @@ public:
 	void Connect();
 
 protected:
-
 private:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
-	TArray<ACooking*> CookingActor;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Network", meta = (AllowPrivateAccess = "true"))
 	FString IP = TEXT("127.0.0.1");
 
