@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -9,12 +9,10 @@
 UENUM(BlueprintType)
 enum class EPotState : uint8
 {
-	IDLE 		UMETA(DisplayName = "´ë±â"),
-	BOIL		UMETA(DisplayName = "Á¶¸® Áß"),
-	COOKED		UMETA(DisplayName = "Á¶¸® ¿Ï·á"),
-	BURNING		UMETA(DisplayName = "Å¸´Â Áß"),
-	OVERCOOKED	UMETA(DisplayName = "ÅÂ¿ò"),
-
+	IDLE 		UMETA(DisplayName = "ëŒ€ê¸°"),
+	BOILING		UMETA(DisplayName = "ì¡°ë¦¬ ì¤‘"),
+	COOKED		UMETA(DisplayName = "ì¡°ë¦¬ ì™„ë£Œ"),
+	OVERCOOKED	UMETA(DisplayName = "íƒœì›€"),
 };
 
 /**
@@ -28,15 +26,15 @@ class OVERCOOKED2_API APot : public ACooking
 public:
 	APot();
 
-	// Ã³À½ Àç·á°¡ µé¾î¿ÔÀ» ¶§ È£ÃâÇÒ ÇÔ¼ö
+	// ì²˜ìŒ ì¬ë£Œê°€ ë“¤ì–´ì™”ì„ ë•Œ í˜¸ì¶œí•  í•¨ìˆ˜
 	UFUNCTION(BlueprintCallable)
 	bool SetBoil(ACooking* Rice);
 
-	// Á¶¸®µÈ ¹äÀ» ¹Ş¾Æ¿À´Â ÇÔ¼ö
+	// ì¡°ë¦¬ëœ ë°¥ì„ ë°›ì•„ì˜¤ëŠ” í•¨ìˆ˜
 	UFUNCTION(BlueprintCallable)
 	class AIngredient* GetCookedIngredient();
 
-	// PotÀÌ ÇöÀç Å×ÀÌºí À§¿¡ ³õ¿© ÀÖ³Ä ¾Æ´Ï³Ä. ¸Å¹ø Table ÂÊ¿¡¼­ Ä³¸¯ÅÍ¿Í »óÈ£ÀÛ¿ëÇÒ ¶§ ³Ö¾îÁà¾ß ÇÏ³ª?
+	// Potì´ í˜„ì¬ í…Œì´ë¸” ìœ„ì— ë†“ì—¬ ìˆëƒ ì•„ë‹ˆëƒ. ë§¤ë²ˆ Table ìª½ì—ì„œ ìºë¦­í„°ì™€ ìƒí˜¸ì‘ìš©í•  ë•Œ ë„£ì–´ì¤˜ì•¼ í•˜ë‚˜?
 	UFUNCTION(BlueprintCallable)
 	void SetOnTable(bool Value)
 	{

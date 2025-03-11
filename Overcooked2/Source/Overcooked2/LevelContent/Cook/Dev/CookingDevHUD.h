@@ -24,21 +24,15 @@ public:
 		return Widget;
 	}
 
-	void ServerSpawnIngredient(EIngredientType Type);
-
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float _DeltaTime) override;
 
 	void HandleUIInput();
 
-
 	UPROPERTY(EditAnywhere, Category = "Cooking")
 	TSubclassOf<class UCookingDevUserWidget> WidgetSubclass = nullptr;
 
 private:
 	class UCookingDevUserWidget* Widget = nullptr;
-
-	class ASpawnManager* SpawnManager = nullptr;
-
 };

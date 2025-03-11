@@ -4,10 +4,13 @@
 #include "LevelContent/Cook/Dev/CookingDevGameState.h"
 #include <LevelContent/Cook/Dev/CookingDevGameMode.h>
 #include <Net/UnrealNetwork.h>
+#include <LevelContent/Cook/Dev/SpawnManagerComponent.h>
 
 ACookingDevGameState::ACookingDevGameState()
 {
 	bReplicates = true;
+	SpawnManagerComponent = CreateDefaultSubobject<USpawnManagerComponent>(TEXT("SpawnManagerComponent"));
+
 }
 
 void ACookingDevGameState::SetIngredientType(EIngredientType Type)

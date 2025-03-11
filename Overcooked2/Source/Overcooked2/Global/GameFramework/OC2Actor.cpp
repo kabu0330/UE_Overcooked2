@@ -9,10 +9,10 @@ AOC2Actor::AOC2Actor()
 	PrimaryActorTick.bCanEverTick = true;
 
 	SecenComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SecenComponent"));
-	RootComponent = SecenComponent;
-	
 	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
-	StaticMeshComponent->SetupAttachment(RootComponent);
+	RootComponent = StaticMeshComponent;
+	
+	//StaticMeshComponent->SetupAttachment(RootComponent);
 }
 
 void AOC2Actor::InitOC2Actor()
