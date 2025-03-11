@@ -26,6 +26,8 @@ AIngredient* USpawnManageComponent::SpawnIngredientActor(EIngredientType Ingredi
 		return nullptr;
 	}
 
+	//IngredientActor->SetType(IngredientType);
+
 	IngredientActor->FinishSpawning(IngredientTransform);
 
 	return IngredientActor;

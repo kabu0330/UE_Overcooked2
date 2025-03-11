@@ -42,6 +42,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	bool IsHolding() { return GrabbedObject != nullptr; }
+
+	UFUNCTION(BlueprintCallable)
+	bool IsCooking() { return bIsCooking; }
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -49,6 +52,9 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	UFUNCTION(Reliable, Server)
+	void CheckDash(float DeltaTime);
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -78,6 +84,8 @@ public:
 
 	UFUNCTION(Reliable, Server)
 	void Throwing();
+
+	UFUNCTION(Reliable, Server)
 	void Cooking();
 
 	UFUNCTION(Reliable, Server)
@@ -89,6 +97,7 @@ public:
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
 
 private :
+
 	// 이 함수는 캐릭터의 머리를 설정하는 함수읾
 	
 
@@ -136,17 +145,22 @@ private :
 	UPROPERTY(VisibleAnywhere, Replicated, BlueprintReadOnly, Category = "Grab", meta = (AllowPrivateAccess = "true"))
 	ACooking* GrabbedObject = nullptr;
 
+	TPair<int, UMaterialInterface*> Knife;
 
+	UPROPERTY(VisibleAnywhere, Replicated, BlueprintReadOnly, Category = "Grab", meta = (AllowPrivateAccess = "true"))
+	bool bIsCooking = false;
 	/// <summary>
 	/// Dash Variables
 	/// </summary>
 	/// 
 	/// Todo : 대쉬 제대로 안되는거 같아서 나중에 고쳐야 함
-	
-	bool IsDashing = false;
+	/// 
+	UPROPERTY(EditAnywhere, Replicated, BlueprintReadWrite, Category = "Dash", meta = (AllowPrivateAccess = "true"))
+	bool bIsDashing = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dash", meta = (AllowPrivateAccess = "true"))
-	float DashPower = 400.0f;
+	float DashPower = 100.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dash", meta = (AllowPrivateAccess = "true"))
 	float DashDuration = 0.5f;
-	FTimerHandle DashTimerHandle;
+	UPROPERTY(EditAnywhere, Replicated, BlueprintReadWrite, Category = "Dash", meta = (AllowPrivateAccess = "true"))
+	float DashTimer = 0.0f;
 };

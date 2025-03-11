@@ -6,20 +6,36 @@
 #include "Kismet/GameplayStatics.h"
 #include <LevelContent/Cook/Dev/CookingDevGameMode.h>
 #include <Global/OC2Global.h>
+#include <LevelContent/Cook/Dev/CookingDevGameState.h>
+#include <LevelContent/Cook/Dev/CookingDevHUD.h>
+#include <levelcontent/Cook/Dev/SpawnManagerComponent.h>
+#include <Character/OC2Character.h>
 
-void UCookingDevUserWidget::ServerSpawnIngredient_Implementation(EIngredientType Type)
+void UCookingDevUserWidget::ServerSpawnIngredient(EIngredientType Type)
 {
+
+	// HUD -> SpawnManager -> GameMode
 	APlayerController* Controller = GetOwningPlayer();
-	if (nullptr == Controller)
+	if (nullptr != Controller)
 	{
-		int a = 0;
+		AOC2Character* Pawn = Cast<AOC2Character>(Controller->GetPawn());
+		//Pawn->SpawnManager->SetIngredientType(Type);
+
 	}
 
-	ACookingDevGameMode* GameMode = Cast<ACookingDevGameMode>(GetWorld()->GetAuthGameMode());
-	if (nullptr != GameMode)
-	{
-		GameMode->SpawnIngredient(Type);
-	}
+	// GameState -> GameMode Fail
+	//ACookingDevGameState* GameState = Cast<ACookingDevGameState>(GetWorld()->GetGameState());
+	//if (nullptr != GameState)
+	//{
+	//	GameState->SetIngredientType(Type);
+	//}
+
+
+	//ACookingDevGameMode* GameMode = Cast<ACookingDevGameMode>(GetWorld()->GetAuthGameMode());
+	//if (nullptr != GameMode)
+	//{
+	//	GameMode->SpawnIngredient(Type);
+	//}
 }
 
 void UCookingDevUserWidget::ChangeState(EIngredientState State)
