@@ -43,12 +43,13 @@ private:
 
 	float InitZ = 0.f;
 
-	const float RADIUS = 57.5f;
+	const float RADIUS = 57.25f;
 	float MulRadius = 0.f;
 	float ElpasedSecs = 0.f;
 	float ElpasedRotateSecs = 0.f;
 
 	int RotateIdx = -1;
+	float AccumulatedX = 0.f;
 
 	UPROPERTY()
 	TMap<int8, FTileData> Tiles;
