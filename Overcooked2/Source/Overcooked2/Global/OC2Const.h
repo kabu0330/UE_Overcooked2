@@ -17,5 +17,10 @@ class OVERCOOKED2_API UOC2Const : public UObject
 public:
 	static float OrderSpawnDelay;
 	static float MaxOrderCount;
+
+	static FString ChefEagleHeadName;
+	static FString ChefMouseHeadName;
+	static FString ChefPandaHeadName;
+	static FString ChefPigHeadName;
 	
 };

@@ -18,8 +18,9 @@ class OVERCOOKED2_API ACookingDevGameMode : public AGameMode
 public:
 	ACookingDevGameMode();
 
-	UFUNCTION(BlueprintCallable)
-	class AIngredient* SpawnIngredient(EIngredientType Type);
+	UFUNCTION(BlueprintCallable/*, Reliable, NetMulticast*/)
+	void SpawnIngredient(EIngredientType Type);
+	//void SpawnIngredient_Implementation(EIngredientType Type);
 
 	UFUNCTION(BlueprintCallable)
 	class UCookingDevUserWidget* GetWidget()
