@@ -61,5 +61,6 @@ private:
 	TMap<FIntVector2, int8> GetSurroundedIdxs(const FIntVector2& _RowCol, uint8 _Size);
 
 	void CreateTiles(TMap<int8, FTileData>& _RefMap, int _Size);
+	void SetStaticMeshes(TMap<int8, FTileData>& _Tiles);
 	void SetTileMaterials(TMap<int8, FTileData>& _Tiles);
 };
