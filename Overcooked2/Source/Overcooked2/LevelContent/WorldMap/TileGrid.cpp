@@ -16,12 +16,6 @@ ATileGrid::ATileGrid()
 
 	// Temp 10
 	CreateTiles(Tiles, 10);
-
-	/*
-	* 생성과 동시에 머티리얼을 세팅하면 레벨 로드가 안되어서 머티리얼 로드가 안될 때
-	* MaterialInstnce가 생성되지 않아서 크래시가 나는 경우가 있어 별도로 세팅함
-	*/
-	SetTileMaterials(Tiles);
 	
 	MulRadius = RADIUS * FMath::Sqrt(3.f);
 }
@@ -226,15 +220,11 @@ void ATileGrid::BeginPlay()
 		}
 	}
 
-	for (TPair<int8, FTileData>& Elem : Tiles)
-	{
-		UInstancedStaticMeshComponent* TileInst = Elem.Value.TileInst;
-		UMaterialInstanceDynamic* MatInstD = Cast<UMaterialInstanceDynamic>(TileInst->GetMaterial(0));
-		if (MatInstD != nullptr)
-		{
-			MatInstD->SetScalarParameterValue("AlphaValue", 0.f);	// TODO: literal parameter -> Value
-		}
-	}
+	/*
+	* 생성과 동시에 머티리얼을 세팅하면 레벨 로드가 안되어서 머티리얼 로드가 안될 때
+	* MaterialInstnce가 생성되지 않아서 크래시가 나는 경우가 있어 별도로 세팅함
+	*/
+	SetTileMaterials(Tiles);
 }
 
 void ATileGrid::Tick(float DeltaTime)
