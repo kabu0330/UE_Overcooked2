@@ -12,10 +12,21 @@ APlate::APlate()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	bReplicates = true;
 
 	CookingType = ECookingType::ECT_PLATE;
 
 	IngredientMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("IngredientMesh"));
+}
+
+void APlate::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(APlate, Ingredients);
+	DOREPLIFETIME(APlate, IngredientMesh);
+	DOREPLIFETIME(APlate, PlateState);
+	DOREPLIFETIME(APlate, PrveState);
 }
 
 // Called when the game starts or when spawned
@@ -85,13 +96,6 @@ void APlate::CheckAndChangeState(AIngredient* Ingredient)
 			}
 		}
 	}
-}
-
-void APlate::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	DOREPLIFETIME(APlate, PlateState);
 }
 
 bool APlate::Add(AIngredient* Ingredient)

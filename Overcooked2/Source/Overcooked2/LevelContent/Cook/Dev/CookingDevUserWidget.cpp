@@ -10,31 +10,32 @@
 #include <LevelContent/Cook/Dev/CookingDevHUD.h>
 #include <levelcontent/Cook/Dev/SpawnManagerComponent.h>
 #include <Character/OC2Character.h>
+#include <LevelContent/Cook/Dev/CookingDevPlayerState.h>
 
 void UCookingDevUserWidget::ServerSpawnIngredient(EIngredientType Type)
 {
 
-	// HUD -> SpawnManager -> GameMode
-	APlayerController* Controller = GetOwningPlayer();
-	if (nullptr != Controller)
-	{
-		AOC2Character* Pawn = Cast<AOC2Character>(Controller->GetPawn());
-		//Pawn->SpawnManager->SetIngredientType(Type);
+	// Pawn에서 네트워크 동기화 성공HUD -> SpawnManager -> GameMode
+	//APlayerController* Controller = GetOwningPlayer();
+	//if (nullptr != Controller)
+	//{
+	//	AOC2Character* Pawn = Cast<AOC2Character>(Controller->GetPawn());
+	//	//Pawn->SpawnManager->SetIngredientType(Type);
+	//}
 
+	// PlayerState에서 네트워크 동기화 성공
+	APlayerController* Controller = GetOwningPlayer();
+	ACookingDevPlayerState* PlayerState = Controller->GetPlayerState<ACookingDevPlayerState>();
+	if (nullptr != PlayerState)
+	{
+		PlayerState->SpawnManagerComponent->SetIngredientType(Type);
 	}
 
-	// GameState -> GameMode Fail
+	// GameState에서 네트워크 동기화 실패
 	//ACookingDevGameState* GameState = Cast<ACookingDevGameState>(GetWorld()->GetGameState());
 	//if (nullptr != GameState)
 	//{
-	//	GameState->SetIngredientType(Type);
-	//}
-
-
-	//ACookingDevGameMode* GameMode = Cast<ACookingDevGameMode>(GetWorld()->GetAuthGameMode());
-	//if (nullptr != GameMode)
-	//{
-	//	GameMode->SpawnIngredient(Type);
+	//	GameState->SpawnManagerComponent->SetIngredientType(Type);
 	//}
 }
 

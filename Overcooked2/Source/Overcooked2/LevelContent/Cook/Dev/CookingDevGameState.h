@@ -25,6 +25,9 @@ public:
 	void RequestSpawnIngredient();
 	void RequestSpawnIngredient_Implementation();
 
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	class USpawnManagerComponent* SpawnManagerComponent = nullptr;
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
@@ -34,4 +37,7 @@ protected:
 private:
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	EIngredientType IngredientType = EIngredientType::EIT_NONE;
+
+
+	
 };

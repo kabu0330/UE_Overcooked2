@@ -39,11 +39,9 @@ void APot::ChangeAnimation()
 	{
 	case EPotState::IDLE:
 		break;
-	case EPotState::BOIL:
+	case EPotState::BOILING:
 		break;
 	case EPotState::COOKED:
-		break;
-	case EPotState::BURNING:
 		break;
 	case EPotState::OVERCOOKED:
 		break;
@@ -96,7 +94,7 @@ bool APot::SetBoil(ACooking* Rice)
 	// 예외처리를 통과할 수 있는 재료는 쌀 뿐이므로 여기까지 오면 조리가 되지 않은 쌀이다.
 
 	Ingredient = RawRice;
-	PotState = EPotState::BOIL;
+	PotState = EPotState::BOILING;
 
 
 	// 스켈레탈 메시에 조리 애니메이션 재생해야함
