@@ -25,22 +25,6 @@ void AIngredient::SetType_Implementation(EIngredientType Type)
 	IngredientType = Type;
 }
 
-void AIngredient::AttachToChef_Implementation(AActor* Player)
-{
-	StaticMeshComponent->SetSimulatePhysics(false);
-	StaticMeshComponent->SetCollisionProfileName(TEXT("NoCollision"));
-	StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	AttachToActor(Player, FAttachmentTransformRules::KeepRelativeTransform);
-}
-
-void AIngredient::DetachFromChef_Implementation(AActor* Player)
-{
-	StaticMeshComponent->SetSimulatePhysics(true);
-	StaticMeshComponent->SetCollisionProfileName(TEXT("Interactable"));
-	StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	DetachFromActor(FDetachmentTransformRules::KeepRelativeTransform);
-}
-
 // Called when the game starts or when spawned
 void AIngredient::BeginPlay()
 {
@@ -48,8 +32,6 @@ void AIngredient::BeginPlay()
 
 	// 5. 서버에서 Spawn이 되면서 Init 함수 호출
 	Init(IngredientType);
-
-
 }
 
 // Called every frame
@@ -143,6 +125,7 @@ AIngredient* AIngredient::ChangeState(EIngredientState State)
 	DeactivateHighlight();
 
 	CurIngredientState = State;
+	//StaticMeshComponent->SetStaticMesh(GameInst->GetIngredientStaticMesh(Name.ToString()));
 	StaticMeshComponent->SetStaticMesh(CookData->CookMesh);
 
 	ActivateHighlight();
@@ -180,4 +163,20 @@ void AIngredient::ActivateHighlight()
 			StaticMeshComponent->SetMaterial(i, nullptr);
 		}
 	}
+}
+
+void AIngredient::AttachToChef_Implementation(AActor* Player)
+{
+	StaticMeshComponent->SetSimulatePhysics(false);
+	StaticMeshComponent->SetCollisionProfileName(TEXT("NoCollision"));
+	StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	AttachToActor(Player, FAttachmentTransformRules::KeepRelativeTransform);
+}
+
+void AIngredient::DetachFromChef_Implementation(AActor* Player)
+{
+	StaticMeshComponent->SetSimulatePhysics(true);
+	StaticMeshComponent->SetCollisionProfileName(TEXT("Interactable"));
+	StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	DetachFromActor(FDetachmentTransformRules::KeepRelativeTransform);
 }

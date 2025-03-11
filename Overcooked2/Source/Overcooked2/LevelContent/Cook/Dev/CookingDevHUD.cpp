@@ -4,7 +4,6 @@
 #include "LevelContent/Cook/Dev/CookingDevHUD.h"
 #include <LevelContent/Cook/Dev/CookingDevUserWidget.h>
 #include <LevelContent/Cook/Dev/CookingDevGameMode.h>
-#include <LevelContent/Cook/Dev/SpawnManager.h>
 
 ACookingDevHUD::ACookingDevHUD()
 {
@@ -12,12 +11,6 @@ ACookingDevHUD::ACookingDevHUD()
 
 ACookingDevHUD::~ACookingDevHUD()
 {
-}
-
-void ACookingDevHUD::ServerSpawnIngredient(EIngredientType Type)
-{
-	SpawnManager = GetWorld()->SpawnActor<ASpawnManager>(ASpawnManager::StaticClass());
-	SpawnManager->SetIngredientType(GetWorld(), Type);
 }
 
 void ACookingDevHUD::BeginPlay()
