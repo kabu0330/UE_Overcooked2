@@ -49,7 +49,9 @@ public:
 		int a = 0;
 	}
 
+	//UFUNCTION(Reliable, NetMulticast)
 	void ChangeState(EIngredientState State);
+	//void ChangeState_Implementation(EIngredientState State);
 
 protected:
 	virtual void BeginPlay() override;
