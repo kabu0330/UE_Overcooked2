@@ -107,14 +107,14 @@ FName UOC2GameInstance::GetIngredientDataTableRowName(EIngredientType Ingredient
 	{
 	case EIngredientType::EIT_FISH:
 		return TEXT("Fish");
-	case EIngredientType::EIT_CABBAGE:
-		return TEXT("Cabbage");
+	//case EIngredientType::EIT_CABBAGE:
+	//	return TEXT("Cabbage");
 	case EIngredientType::EIT_PRAWN:
 		return TEXT("Prawn");
-	case EIngredientType::EIT_TOMATO:
-		return TEXT("Tomato");
-	case EIngredientType::EIT_LAVER:
-		return TEXT("Laver");
+	//case EIngredientType::EIT_TOMATO:
+	//	return TEXT("Tomato");
+	case EIngredientType::EIT_SEAWEED:
+		return TEXT("Seaweed");
 	case EIngredientType::EIT_RICE:
 		return TEXT("Rice");
 	case EIngredientType::EIT_CUCUMBER:

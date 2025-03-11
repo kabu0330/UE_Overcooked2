@@ -11,11 +11,11 @@
 UENUM(BlueprintType)
 enum class EPlateState : uint8
 {
-	NONE,
-	EMPTY,
-	OCCUPIED,
-	COMPLETED,
-	DIRTY,
+	NONE			UMETA(DisplayName = "None"),
+	EMPTY			UMETA(DisplayName = "빈 접시"),
+	OCCUPIED		UMETA(DisplayName = "요리 중"),
+	COMPLETED		UMETA(DisplayName = "요리 완성"),
+	DIRTY			UMETA(DisplayName = "세척 전 접시"),
 };
 
 // 접시 ~ 접시에 올라간 조리된 요리 ~ 요리들의 조합 ~ 완성된 요리

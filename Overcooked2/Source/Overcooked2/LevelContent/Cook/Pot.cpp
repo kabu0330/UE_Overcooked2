@@ -8,6 +8,9 @@ APot::APot()
 {
 	SoupSkeletalMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SoupSkeletalMeshComponent"));
 	SoupSkeletalMeshComponent->SetupAttachment(StaticMeshComponent);
+
+	FVector Pos = FVector(249, 1452, 60);
+	StaticMeshComponent->SetRelativeLocation(Pos);
 }
 
 void APot::BeginPlay()
