@@ -28,6 +28,9 @@ private:
 	TArray<AActor*> RoadActors;
 
 	UPROPERTY()
+	class ATileGrid* Tile1_1 = nullptr;
+
+	UPROPERTY()
 	bool IsOpen1_1 = false;
 
 	int IdxOpenRoad = -1;

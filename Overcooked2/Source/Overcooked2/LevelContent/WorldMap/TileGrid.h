@@ -29,6 +29,8 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 
+	bool IsEndTransition() const;
+
 protected:
 	virtual void BeginPlay() override;
 

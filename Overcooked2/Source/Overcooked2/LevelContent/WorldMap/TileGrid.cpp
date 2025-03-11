@@ -374,3 +374,8 @@ FIntVector2 ATileGrid::GetXY(int _IdxI, int _IdxJ)
 
 	return FIntVector2(X, Y);
 }
+
+bool ATileGrid::IsEndTransition() const
+{
+	return !PrimaryActorTick.bCanEverTick;
+}
