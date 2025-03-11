@@ -38,5 +38,5 @@ protected:
 private:
 	
 	EIngredientType IngredientType = EIngredientType::EIT_NONE;
-	ACooking* PlacedItem = nullptr;
+	ACooking* SPlacedItem = nullptr;
 };

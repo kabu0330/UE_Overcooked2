@@ -64,28 +64,28 @@ ACooking* ASpawnTable::Interact(AActor* ChefActor)
 	AOC2Character* Chef = Cast<AOC2Character>(ChefActor);
 	ACooking* TempCooking = nullptr;
 	
-	if (false == bIsOccupied)
+	if (false == bIsOccupied) // 테이블이 비어있다.
 	{
-		if (true == Chef->IsHolding())
-		{
-			// 박스 위는 비어있고 셰프는 무언가를 들고 있다. 
-			PlaceItem(TempCooking);
-		}
-		else
-		{
-			SpawnIngredient(ChefActor);
-		}
+		//if (true == Chef->IsHolding())
+		//{
+		//	// 박스 위는 비어있고 셰프는 무언가를 들고 있다. 
+		//	PlaceItem(TempCooking);
+		//}
+		//else
+		//{
+		//}
+
+		TempCooking = SpawnIngredient(ChefActor); //형변환?
 	}
 	else
 	{
-		// 박스 위에 무언가가 있음
-
+		TempCooking = SPlacedItem;
 		//PlacedItem이 외부 Cooking과 상호작용 하는 경우
 		// 1. 조합 가능한 경우
 		// 2. 빈접시와 요리가 있는 접시의 경우
 	}
 
-		return PlacedItem;
+	return TempCooking;
 }
 
 void ASpawnTable::PlaceItem(ACooking* Item)
@@ -102,4 +102,6 @@ void ASpawnTable::PlaceItem(ACooking* Item)
 	{
 
 	}*/
+
+	//Cooking 구분 및 스폰, 테이블 위에 위치
 }
