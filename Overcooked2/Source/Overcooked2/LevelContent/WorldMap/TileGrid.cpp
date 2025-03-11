@@ -16,7 +16,8 @@ ATileGrid::ATileGrid()
 
 	// Temp 10
 	CreateTiles(Tiles, 10);
-	
+	SetStaticMeshes(Tiles);
+
 	MulRadius = RADIUS * FMath::Sqrt(3.f);
 }
 
@@ -37,7 +38,7 @@ void ATileGrid::CreateTiles(TMap<int8, FTileData>& _RefMap, int _Size)
 	}
 }
 
-void ATileGrid::SetTileMaterials(TMap<int8, FTileData>& _Tiles)
+void ATileGrid::SetStaticMeshes(TMap<int8, FTileData>& _Tiles)
 {
 	FString MeshName = "Mesh_TileDesertGrassBlend";
 	FString MeshPath = "";
@@ -45,7 +46,7 @@ void ATileGrid::SetTileMaterials(TMap<int8, FTileData>& _Tiles)
 	UOC2Global::GetAssetPackageName(UStaticMesh::StaticClass(), MeshName, MeshPath);
 	if (!MeshPath.IsEmpty())
 	{
-		static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(*MeshPath);
+		ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(*MeshPath);
 		if (!MeshAsset.Succeeded())
 		{
 			UE_LOG(LogTemp, Fatal, TEXT("Check the mesh: %s"), *MeshName);
@@ -54,11 +55,17 @@ void ATileGrid::SetTileMaterials(TMap<int8, FTileData>& _Tiles)
 		for (TPair<int8, FTileData>& Elem : _Tiles)
 		{
 			Elem.Value.TileInst->SetStaticMesh(MeshAsset.Object);
-
-			UMaterialInstanceDynamic* MatInstD = UMaterialInstanceDynamic::Create(Elem.Value.TileInst->GetMaterial(0), this);
-			MatInstD->SetScalarParameterValue("AlphaValue", 0.0f);
-			Elem.Value.TileInst->SetMaterial(0, MatInstD);
 		}
+	}
+}
+
+void ATileGrid::SetTileMaterials(TMap<int8, FTileData>& _Tiles)
+{
+	for (TPair<int8, FTileData>& Elem : _Tiles)
+	{
+		UMaterialInstanceDynamic* MatInstD = UMaterialInstanceDynamic::Create(Elem.Value.TileInst->GetMaterial(0), this);
+		MatInstD->SetScalarParameterValue("AlphaValue", 0.0f);
+		Elem.Value.TileInst->SetMaterial(0, MatInstD);
 	}
 }
 
@@ -220,10 +227,6 @@ void ATileGrid::BeginPlay()
 		}
 	}
 
-	/*
-	* 생성과 동시에 머티리얼을 세팅하면 레벨 로드가 안되어서 머티리얼 로드가 안될 때
-	* MaterialInstnce가 생성되지 않아서 크래시가 나는 경우가 있어 별도로 세팅함
-	*/
 	SetTileMaterials(Tiles);
 }
 
@@ -310,10 +313,14 @@ void ATileGrid::Tick(float DeltaTime)
 					{
 						TileData.PrevAlpha = DegRatioF;
 
-						UMaterialInstanceDynamic* MatInstD = Cast<UMaterialInstanceDynamic>(TileInst->GetMaterial(0));
-						if (MatInstD != nullptr)
+						UMaterialInterface* MI = TileInst->GetMaterial(0);
+						if (MI != nullptr)
 						{
-							MatInstD->SetScalarParameterValue("AlphaValue", DegRatioF);
+							UMaterialInstanceDynamic* MatInstD = Cast<UMaterialInstanceDynamic>(MI);
+							if (MatInstD != nullptr)
+							{
+								MatInstD->SetScalarParameterValue("AlphaValue", DegRatioF);
+							}
 						}
 					}
 				}

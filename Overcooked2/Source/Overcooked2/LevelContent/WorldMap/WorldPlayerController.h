@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Global/GameMode/OC2GameMode.h"
-#include "FieldGameMode.generated.h"
+#include "GameFramework/PlayerController.h"
+#include "WorldPlayerController.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class OVERCOOKED2_API AFieldGameMode : public AOC2GameMode
+class OVERCOOKED2_API AWorldPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 	
