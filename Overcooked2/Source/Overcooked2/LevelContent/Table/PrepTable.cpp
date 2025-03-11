@@ -20,7 +20,7 @@ void APrepTable::Tick(float DeltaTime)
 
 ACooking* APrepTable::Interact(AActor* ChefActor)
 {
-	return nullptr;
+	return PPlacedItem;
 }
 
 // ACooking이 AIngredient인지 APlate인지 확인 가능해야 한다.
@@ -32,6 +32,22 @@ ACooking* APrepTable::Interact(AActor* ChefActor)
 //	NewCookingObj = GetWorld()->SpawnActor<ACooking>();
 //	NewCookingObj->SetActorLocation(CookingObjPos);
 //}
+
+void APrepTable::PlaceItem(ACooking* Item)
+{
+	/*ECookingType TempCookingType = TempCooking->GetCookingType();
+
+	if (ECookingType::ECT_INGREDIENT == TempCookingType)
+	{
+
+	}
+	else
+	{
+
+	}*/
+
+	//Cooking 구분 및 스폰, 테이블 위에 위치
+}
 
 void APrepTable::SetAndSpawnCooking(AActor* ChefActor, EIngredientType IngredientType)
 {
