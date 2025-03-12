@@ -21,6 +21,16 @@ public:
 	// Sets default values for this actor's properties
 	ACooking();
 
+	// Interact
+	UFUNCTION(NetMulticast, Reliable)
+	void AttachToChef(AActor* Player);
+	void AttachToChef_Implementation(AActor* Player);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void DetachFromChef(AActor* Player);
+	void DetachFromChef_Implementation(AActor* Player);
+
+
 	const FIngredientDataRow* const GetIngredientDataTable() const
 	{
 		return IngredientDataTable;

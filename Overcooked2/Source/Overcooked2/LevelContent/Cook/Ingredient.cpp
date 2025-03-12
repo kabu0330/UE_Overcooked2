@@ -164,19 +164,3 @@ void AIngredient::ActivateHighlight()
 		}
 	}
 }
-
-void AIngredient::AttachToChef_Implementation(AActor* Player)
-{
-	StaticMeshComponent->SetSimulatePhysics(false);
-	StaticMeshComponent->SetCollisionProfileName(TEXT("NoCollision"));
-	StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	AttachToActor(Player, FAttachmentTransformRules::KeepRelativeTransform);
-}
-
-void AIngredient::DetachFromChef_Implementation(AActor* Player)
-{
-	StaticMeshComponent->SetSimulatePhysics(true);
-	StaticMeshComponent->SetCollisionProfileName(TEXT("Interactable"));
-	StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	DetachFromActor(FDetachmentTransformRules::KeepRelativeTransform);
-}
