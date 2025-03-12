@@ -35,8 +35,9 @@ public:
 	AIngredient* Init(EIngredientType Type);
 	
 	// 조리 완료 시
-	UFUNCTION(BlueprintCallable)
-	AIngredient* ChangeState(EIngredientState State);
+	UFUNCTION(BlueprintCallable, Reliable, NetMulticast)
+	void ChangeState(EIngredientState State);
+	void ChangeState_Implementation(EIngredientState State);
 
 	// 도마에서 썰어야 하는 재료야?
 	UFUNCTION(BlueprintCallable)

@@ -35,6 +35,5 @@ protected:
 
 private:	
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
-	EIngredientType IngredientType = EIngredientType::EIT_NONE;
-		
+	EIngredientType IngredientType = EIngredientType::EIT_NONE;	
 };
