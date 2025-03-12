@@ -3,6 +3,7 @@
 
 #include "Character/TestItemManager.h"
 #include "Character/OC2CharacterTestObject.h"
+#include "Global/OC2Global.h"
 
 // Sets default values for this component's properties
 UTestItemManager::UTestItemManager()
@@ -27,15 +28,8 @@ void UTestItemManager::BeginPlay()
 AActor* UTestItemManager::CreateItem(EIngredientType Type)
 {
 	FTransform Trans;
-	AOC2CharacterTestObject* NewIngredient = GetWorld()->SpawnActorDeferred<AOC2CharacterTestObject>(AOC2CharacterTestObject::StaticClass(), Trans);
 
-	// 2. 메시를 찾아서
-	NewIngredient->SetIngredient(Type);
-
-	Trans.SetLocation(FVector(100.0f, 100.0f, 0.0f));
-	NewIngredient->FinishSpawning(Trans);
-
-	return NewIngredient;
+	return UOC2Global::SpawnIngredientActor(GetWorld(),Type);
 
 	//ItemActor->SetItemDataKey(_ItemName);
 	//// 디퍼드를 하면 왠만하면 이걸 호출해주는것이 좋습니다.

@@ -14,6 +14,7 @@
 
 #include "OC2GameInstance.generated.h"
 
+class AIngredient;
 struct FRecipeDataRow;
 
 /**
@@ -83,6 +84,10 @@ public:
 	 * @return FIngredientDataRow 해당 재료의 데이터 테이블 행 데이터입니다.
 	 */
 	const FIngredientDataRow& GetIngredientDataRow(EIngredientType IngredientType);
+
+
+	UFUNCTION(BlueprintCallable, Reliable, Server)
+	void SpawnIngredientActor(EIngredientType IngredientType);
 
 	TArray<FPlateInitData> GetPlateMesh(TArray<FRecipe>& Recipes);
 	bool FindRecipe(const FRecipeDataRow* RecipeDataRow, TArray<FRecipe>& Recipes);

@@ -22,7 +22,7 @@ class OVERCOOKED2_API USpawnManageComponent : public UActorComponent
 public:	
 	USpawnManageComponent();
 
-	AIngredient* SpawnIngredientActor(EIngredientType IngredientType, TSubclassOf<AIngredient> IngredientToSpawn);
+	AIngredient* SpawnIngredientActor(EIngredientType IngredientType);
 	APlate* SpawnPlateActor(TSubclassOf<APlate> PlateTopSpawn);
 
 protected:

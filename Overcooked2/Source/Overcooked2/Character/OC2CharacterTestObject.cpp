@@ -22,23 +22,10 @@ void AOC2CharacterTestObject::SetPhysics(bool Value, AActor* Player)
 
 }
 
-void AOC2CharacterTestObject::AttachToChef_Implementation(AActor* Player)
-{
-	StaticMeshComponent->SetSimulatePhysics(false);
-	StaticMeshComponent->SetCollisionProfileName(TEXT("NoCollision"));
-	StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	AttachToActor(Player, FAttachmentTransformRules::KeepRelativeTransform);
-}
 
 
-void AOC2CharacterTestObject::DetachFromChef_Implementation(AActor* Player)
-{
-	StaticMeshComponent->SetSimulatePhysics(true);
-	StaticMeshComponent->SetCollisionProfileName(TEXT("Interactable"));
-	StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	DetachFromActor(FDetachmentTransformRules::KeepRelativeTransform);
 
-}
+
 
 void AOC2CharacterTestObject::BeginPlay()
 {

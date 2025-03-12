@@ -7,7 +7,7 @@
 #include "AssetRegistry/AssetRegistryModule.h"
 #include "Global/OC2GameInstance.h"
 #include "LevelContent/Cook/Ingredient.h"
-#include "Global/GameMode/CookingGameMode.h"
+#include "Global/GameMode/OC2GameMode.h"
 #include "Global/GameFramework/OC2Actor.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -102,40 +102,25 @@ void UOC2Global::TravelServer(UWorld* World, const FString& LevelName)
 
 AOC2Actor* UOC2Global::SpawnOC2Actor(UWorld* World)
 {
-	ACookingGameMode* CookingGameMode = Cast<ACookingGameMode>(World->GetAuthGameMode());
+	UE_LOG(OVERCOOKED_LOG, Error, TEXT("이 함수는 개발중입니다!!!!!!!!!!!!!!!! 사용하지 마세요!!!!!!!!!!!!!!!!!!!!"));
 
-	if (nullptr == CookingGameMode)
-	{
-		UE_LOG(OVERCOOKED_LOG, Error, TEXT("Current Game mode is not a cooking game mode"));
-		return nullptr;
-	}
 
-	return CookingGameMode->SpawnOC2Actor();
+	return nullptr;
 }
 
-AIngredient* UOC2Global::SpawnIngredientActor(UWorld* World, EIngredientType IngredientType)
+void UOC2Global::SpawnIngredientActor(UWorld* World, EIngredientType IngredientType)
 {
-	AGameModeBase* TestGameMode = World->GetAuthGameMode();
-	ACookingGameMode* CookingGameMode = Cast<ACookingGameMode>(TestGameMode);
-
-	if (nullptr == CookingGameMode)
-	{
-		UE_LOG(OVERCOOKED_LOG, Error, TEXT("Current Game mode is not a cooking game mode"));
-		return nullptr;
-	}
-
-	return CookingGameMode->SpawnIngredientActor(IngredientType);
+	UOC2Global::GetOC2GameInstance(World)->SpawnIngredientActor(IngredientType);
 }
 
-APlate* UOC2Global::SpawnPlateActor(UWorld* World)
+void UOC2Global::SpawnPlateActor(UWorld* World)
 {
-	ACookingGameMode* CookingGameMode = Cast<ACookingGameMode>(World->GetAuthGameMode());
+	AOC2GameMode* OC2GameMode = Cast<AOC2GameMode>(World->GetAuthGameMode());
 
-	if (nullptr == CookingGameMode)
+	if (nullptr == OC2GameMode)
 	{
-		UE_LOG(OVERCOOKED_LOG, Error, TEXT("Current Game mode is not a cooking game mode"));
-		return nullptr;
+		UE_LOG(OVERCOOKED_LOG, Error, TEXT("현재 게임모드는 OC2 게임모드를 상속받지 않았습니다!!!!!!!!!!!!!!!!!!!"));
 	}
 
-	return CookingGameMode->SpawnPlateActor();
+	OC2GameMode->SpawnPlateActor();
 }

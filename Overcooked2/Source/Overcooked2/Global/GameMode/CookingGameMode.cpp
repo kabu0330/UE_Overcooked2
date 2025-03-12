@@ -15,7 +15,6 @@
 ACookingGameMode::ACookingGameMode()
 {
 	OrderManager = CreateDefaultSubobject<UOrderManageComponent>(TEXT("OrderManager"));
-	SpawnManager = CreateDefaultSubobject<USpawnManageComponent>(TEXT("SpawnManager"));
 }
 
 void ACookingGameMode::BeginPlay()
@@ -121,22 +120,6 @@ void ACookingGameMode::ChangeState(ECookingGameModeState State)
 	default:
 		break;
 	}
-}
-
-AOC2Actor* ACookingGameMode::SpawnOC2Actor()
-{
-	return nullptr;
-	//return SpawnManager->SpawnOC2Actor(OC2ActorToSpawn);
-}
-
-AIngredient* ACookingGameMode::SpawnIngredientActor(EIngredientType IngredientType)
-{
-	return SpawnManager->SpawnIngredientActor(IngredientType, IngredientToSpawn);
-}
-
-APlate* ACookingGameMode::SpawnPlateActor()
-{
-	return SpawnManager->SpawnPlateActor(PlateToSpawn);
 }
 
 void ACookingGameMode::PrintDebugMessage()

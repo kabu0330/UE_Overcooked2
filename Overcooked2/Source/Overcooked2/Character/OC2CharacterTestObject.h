@@ -21,12 +21,6 @@ public:
 	void SetIngredient(EIngredientType Type);
 
 	void SetPhysics(bool Value, AActor* Player);
-
-	UFUNCTION(NetMulticast, Reliable)
-	void AttachToChef(AActor* Player);
-
-	UFUNCTION(NetMulticast, Reliable)
-	void DetachFromChef(AActor* Player);
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

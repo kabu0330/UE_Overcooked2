@@ -8,6 +8,8 @@
 #include "Global/Data/IngredientDataTable.h"
 #include "Global/Data/OrderDataTable.h"
 
+#include "Global/GameMode/CookingGameMode.h"
+
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 
@@ -160,6 +162,21 @@ const FIngredientDataRow& UOC2GameInstance::GetIngredientDataRow(EIngredientType
 	}
 
 	return EmptyData;
+}
+
+void UOC2GameInstance::SpawnIngredientActor_Implementation(EIngredientType IngredientType)
+{
+	UWorld* TestWorld = GetWorld();
+	AGameModeBase* Test = GetWorld()->GetAuthGameMode();
+	AOC2GameMode* OC2GameMode = Cast<AOC2GameMode>(GetWorld()->GetAuthGameMode());
+
+	if (nullptr == OC2GameMode)
+	{
+		UE_LOG(OVERCOOKED_LOG, Error, TEXT("현재 게임모드는 OC2 게임모드를 상속받지 않았습니다!!!!!!!!!!!!!!!!!!!"));
+		return;
+	}
+
+	OC2GameMode->SpawnIngredientActor(IngredientType);
 }
 
 TArray<FPlateInitData> UOC2GameInstance::GetPlateMesh(TArray<FRecipe>& Recipes)

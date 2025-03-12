@@ -29,6 +29,8 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 
+	bool IsEndTransition() const;
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -50,6 +52,7 @@ private:
 
 	int RotateIdx = -1;
 	float AccumulatedX = 0.f;
+	bool IsAllEnd = false;
 
 	UPROPERTY()
 	TMap<int8, FTileData> Tiles;
