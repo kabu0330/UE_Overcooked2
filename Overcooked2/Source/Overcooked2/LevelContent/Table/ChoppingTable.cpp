@@ -20,5 +20,5 @@ void AChoppingTable::Tick(float DeltaTime)
 
 ACooking* AChoppingTable::Interact(AActor* ChefActor)
 {
-	return nullptr;
+	return CPlacedItem;
 }

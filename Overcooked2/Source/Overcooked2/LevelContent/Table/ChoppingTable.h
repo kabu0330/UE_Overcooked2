@@ -27,5 +27,5 @@ public:
 protected:
 
 private:
-	
+	ACooking* CPlacedItem = nullptr;
 };

@@ -13,5 +13,17 @@ UCLASS()
 class OVERCOOKED2_API ABurnerTable : public ACookingTable
 {
 	GENERATED_BODY()
-	
+
+public:
+	ABurnerTable();
+
+	virtual void BeginPlay() override;
+
+	virtual void Tick(float DeltaTime) override;
+
+	UFUNCTION(BlueprintCallable)
+	virtual ACooking* Interact(AActor* ChefActor) override;
+
+private:
+	ACooking* BPlacedItem = nullptr;
 };
