@@ -18,7 +18,7 @@ public:
 	AOC2CharacterTestTable();
 
 	virtual ACooking* Interact(AActor* ChefActor) override;
-	AOC2CharacterTestObject* SpawnIngredient(AActor* ChefActor);
+	AIngredient* SpawnIngredient(AActor* ChefActor);
 	virtual void PlaceItem(ACooking* Cook);
 protected:
 	// Called when the game starts or when spawned
