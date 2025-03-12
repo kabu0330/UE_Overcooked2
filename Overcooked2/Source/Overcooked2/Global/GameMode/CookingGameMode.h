@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameMode.h"
+#include "Global/GameMode/OC2GameMode.h"
 
 #include "Global/OC2Struct.h"
 #include "Global/OC2Enum.h"
@@ -29,7 +30,7 @@ enum class ECookingGameModeState : uint8
  * 
  */
 UCLASS()
-class OVERCOOKED2_API ACookingGameMode : public AGameMode
+class OVERCOOKED2_API ACookingGameMode : public AOC2GameMode
 {
 	GENERATED_BODY()
 
@@ -56,10 +57,6 @@ public:
 	void ChangeState(ECookingGameModeState State);
 
 public:
-	AOC2Actor* SpawnOC2Actor();
-	AIngredient* SpawnIngredientActor(EIngredientType Type);
-	APlate* SpawnPlateActor();
-
 	TArray<APlayerController*> PlayerControllers;
 
 private:
@@ -69,14 +66,6 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Order", meta = (AllowPrivateAccess = "true"))
 	UOrderManageComponent* OrderManager = nullptr;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Spawning", meta = (AllowPrivateAccess = "true"))
-	USpawnManageComponent* SpawnManager = nullptr;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Spawning", meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<AIngredient> IngredientToSpawn;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Spawning", meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<APlate> PlateToSpawn;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Spawning", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<AOC2Actor> OC2ActorToSpawn;
