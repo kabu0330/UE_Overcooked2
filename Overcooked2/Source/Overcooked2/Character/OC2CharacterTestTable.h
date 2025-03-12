@@ -20,6 +20,9 @@ public:
 	virtual ACooking* Interact(AActor* ChefActor) override;
 	AIngredient* SpawnIngredient(AActor* ChefActor);
 	virtual void PlaceItem(ACooking* Cook);
+
+	UFUNCTION(Server,Reliable)
+	void RequestSpawn();
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -39,4 +42,5 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<ACooking> ActorToSpawn;
 
+	AIngredient* SpawnedByServer;
 };

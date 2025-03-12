@@ -3,6 +3,8 @@
 
 #include "Character/OC2CharacterTestTable.h"
 #include "Character/OC2Character.h"
+#include "Global/GameMode/OC2GameMode.h"
+#include "LevelContent/Cook/Dev/CookingDevGameMode.h"
 
 // Sets default values
 AOC2CharacterTestTable::AOC2CharacterTestTable()
@@ -46,6 +48,15 @@ void AOC2CharacterTestTable::PlaceItem(ACooking* Cook)
 	CurCook->SetActorLocation(WhyDetailsNotShowingAlways->GetComponentLocation());
 }
 
+void AOC2CharacterTestTable::RequestSpawn_Implementation()
+{
+	auto GM = Cast<AOC2GameMode>(GetWorld()->GetAuthGameMode());
+	if (GM)
+	{
+		SpawnedByServer = GM->SpawnIngredientActor(IngredientType);
+	}
+}
+
 ACooking* AOC2CharacterTestTable::Interact(AActor* ChefActor)
 {
 	AOC2Character* Character = Cast<AOC2Character>(ChefActor);
@@ -56,7 +67,8 @@ ACooking* AOC2CharacterTestTable::Interact(AActor* ChefActor)
 		{
 			return nullptr;
 		}
-		return SpawnIngredient(ChefActor);
+		RequestSpawn();
+		return SpawnedByServer;
 	}
 	else
 	{

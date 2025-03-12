@@ -108,9 +108,17 @@ AOC2Actor* UOC2Global::SpawnOC2Actor(UWorld* World)
 	return nullptr;
 }
 
-void UOC2Global::SpawnIngredientActor(UWorld* World, EIngredientType IngredientType)
+AIngredient* UOC2Global::SpawnIngredientActor(UWorld* World, EIngredientType IngredientType)
 {
-	UOC2Global::GetOC2GameInstance(World)->SpawnIngredientActor(IngredientType);
+	AOC2GameMode* OC2GameMode = Cast<AOC2GameMode>(World->GetAuthGameMode());
+
+	if (nullptr == OC2GameMode)
+	{
+		UE_LOG(OVERCOOKED_LOG, Error, TEXT("현재 게임모드는 OC2 게임모드를 상속받지 않았습니다!!!!!!!!!!!!!!!!!!!"));
+		return nullptr;
+	}
+
+	return OC2GameMode->SpawnIngredientActor(IngredientType);
 }
 
 void UOC2Global::SpawnPlateActor(UWorld* World)

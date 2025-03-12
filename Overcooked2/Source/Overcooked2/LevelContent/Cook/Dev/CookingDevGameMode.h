@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameMode.h"
+#include <Global/GameMode/OC2GameMode.h>
 #include <Global/OC2Enum.h>
 #include <LevelContent/Cook/Dev/CookingDevPlayerState.h>
 #include "CookingDevGameMode.generated.h"
@@ -12,7 +13,7 @@
  * 
  */
 UCLASS()
-class OVERCOOKED2_API ACookingDevGameMode : public AGameMode
+class OVERCOOKED2_API ACookingDevGameMode : public AOC2GameMode
 {
 	GENERATED_BODY()
 	
