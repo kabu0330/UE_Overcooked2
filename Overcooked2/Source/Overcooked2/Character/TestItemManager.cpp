@@ -25,25 +25,18 @@ void UTestItemManager::BeginPlay()
 	
 }
 
-AActor* UTestItemManager::CreateItem(EIngredientType Type)
+AIngredient* UTestItemManager::CreateIngredient(EIngredientType Type)
 {
 	FTransform Trans;
+	AIngredient* NewIngredient = GetWorld()->SpawnActorDeferred<AIngredient>(AIngredient::StaticClass(), Trans);
 
-	//return UOC2Global::SpawnIngredientActor(GetWorld(),Type);
+	// 2. 메시를 찾아서
+	NewIngredient->SetType(Type);
 
-	return nullptr;
+	Trans.SetLocation(FVector(100.0f, 100.0f, 0.0f));
+	NewIngredient->FinishSpawning(Trans);
 
-	//ItemActor->SetItemDataKey(_ItemName);
-	//// 디퍼드를 하면 왠만하면 이걸 호출해주는것이 좋습니다.
-	//// 생성과정을 완전히 끝내고 월드에 제대로 편입시키는 함수입니다.
-	//ItemActor->FinishSpawning(Trans);
-
-	// 안되는 방법들
-	// NetMultiCast 함수를 써서 
-	// ItemActor->DataSetting();
-
-
-	//return ItemActor;
+	return NewIngredient;
 }
 
 

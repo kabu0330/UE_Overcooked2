@@ -18,7 +18,7 @@ ACooking::ACooking()
 		StaticMeshComponent->SetMobility(EComponentMobility::Movable);
 		StaticMeshComponent->SetSimulatePhysics(true);
 		StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
-		StaticMeshComponent->SetCollisionProfileName(TEXT("PhysicsActor"));
+		StaticMeshComponent->SetCollisionProfileName(TEXT("Interactable"));
 	}
 
 }
