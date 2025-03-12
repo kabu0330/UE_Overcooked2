@@ -30,7 +30,7 @@ private:
 	TArray<AActor*> ActorsChangingVisibility;
 
 	UPROPERTY()
-	TArray<AActor*> RoadActors;
+	TArray<AActor*> ActorsChangingScaleY;
 
 	UPROPERTY()
 	class ATileGrid* Tile1_1 = nullptr;

@@ -11,7 +11,7 @@ void AWorldGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
-	UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), AStaticMeshActor::StaticClass(), TEXT("WorldRoad"), RoadActors);
+	UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), AStaticMeshActor::StaticClass(), TEXT("WorldRoad"), ActorsChangingScaleY);
 	UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), AActor::StaticClass(), TEXT("Building1"), ActorsChangingScale3D);
 	UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), AActor::StaticClass(), TEXT("Stone1"), ActorsChangingVisibility);	// TODO: merge
 
@@ -44,16 +44,16 @@ void AWorldGameMode::Tick(float _DeltaTime)
 	}
 
 	// TODO: Move to function
-	if (IdxOpenRoad >= 0 && IdxOpenRoad < RoadActors.Num())
+	if (IdxOpenRoad >= 0 && IdxOpenRoad < ActorsChangingScaleY.Num())
 	{
-		float X = RoadActors[IdxOpenRoad]->GetActorScale().X;
+		float X = ActorsChangingScaleY[IdxOpenRoad]->GetActorScale().X;
 		if (FMath::IsNearlyEqual(X, 1.0, 1e-2))
 		{
 			IdxOpenRoad = -1;
 			return;
 		}
 
-		RoadActors[IdxOpenRoad]->SetActorRelativeScale3D(FVector(X + 0.05f, 1.f, 1.f));
+		ActorsChangingScaleY[IdxOpenRoad]->SetActorRelativeScale3D(FVector(X + 0.05f, 1.f, 1.f));
 	}
 	
 	// TODO: Move to function
