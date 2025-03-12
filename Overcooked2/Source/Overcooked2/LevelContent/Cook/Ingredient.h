@@ -11,8 +11,8 @@ UCLASS()
 class OVERCOOKED2_API AIngredient : public ACooking
 {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 	// Sets default values for this actor's properties
 	AIngredient();
 
@@ -23,12 +23,11 @@ public:
 
 
 
-
 	// 상자에서 꺼냈을 때
 	UFUNCTION(BlueprintCallable)
 	AIngredient* Init(EIngredientType Type);
-	
-	// 조리 완료 시
+
+	// 조리 완료 시, 캐릭터(Server RPC 함수) -> 테이블 -> 재료순 호출
 	UFUNCTION(BlueprintCallable, Reliable, NetMulticast)
 	void ChangeState(EIngredientState State);
 	void ChangeState_Implementation(EIngredientState State);
@@ -55,7 +54,7 @@ public:
 	}
 
 	UFUNCTION(BlueprintCallable)
-	EIngredientType GetIngredientType() const 
+	EIngredientType GetIngredientType() const
 	{
 		return IngredientType;
 	}
@@ -89,4 +88,6 @@ private:
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	EIngredientState CurIngredientState = EIngredientState::EIS_NONE;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<AIngredient> Subclass;
 };

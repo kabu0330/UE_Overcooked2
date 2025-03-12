@@ -16,6 +16,8 @@ AIngredient::AIngredient()
 
 	CookingType = ECookingType::ECT_INGREDIENT;
 
+
+
 }
 
 void AIngredient::SetType_Implementation(EIngredientType Type)
@@ -43,8 +45,8 @@ void AIngredient::Tick(float DeltaTime)
 
 AIngredient* AIngredient::Init(EIngredientType Type)
 {
-	// 6. 서버에서 한 번 호출, 클라에서도 각 한 번 씩 호출
-	// GameMode::SpawnActorDeferred -> AIngredinet::SetType -> AIngredinet::BeginPlay -> Init
+	// 6. 서버에서 한 번 호출, 클라에서도 각 한 번씩 호출
+	// GameMode::SpawnActorDeferred -> AIngredinet::SetType -> GameMode::FinishSpawning -> AIngredinet::BeginPlay -> Init
 
 	UOC2GameInstance* GameInst = Cast<UOC2GameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 	FName Name = GameInst->GetIngredientDataTableRowName(Type);
