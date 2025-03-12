@@ -46,6 +46,6 @@ public:
 	static void TravelServer(UWorld* World, const FString& LevelName);
 
 	static AOC2Actor* SpawnOC2Actor(UWorld* World);
-	static AIngredient* SpawnIngredientActor(UWorld* World, EIngredientType IngredientType);
-	static APlate* SpawnPlateActor(UWorld* World);
+	static void SpawnIngredientActor(UWorld* World, EIngredientType IngredientType);
+	static void SpawnPlateActor(UWorld* World);
 };

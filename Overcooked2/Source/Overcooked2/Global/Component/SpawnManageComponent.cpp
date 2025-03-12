@@ -14,11 +14,11 @@ USpawnManageComponent::USpawnManageComponent()
 	// ...
 }
 
-AIngredient* USpawnManageComponent::SpawnIngredientActor(EIngredientType IngredientType, TSubclassOf<AIngredient> IngredientToSpawn)
+AIngredient* USpawnManageComponent::SpawnIngredientActor(EIngredientType IngredientType)
 {
 	FTransform IngredientTransform;
-	AIngredient* IngredientActor = GetWorld()->SpawnActorDeferred<AIngredient>(IngredientToSpawn, IngredientTransform);
-
+	AIngredient* IngredientActor = GetWorld()->SpawnActorDeferred<AIngredient>(AIngredient::StaticClass(), IngredientTransform);
+	
 	if (nullptr == IngredientActor)
 	{
 		UE_LOG(OVERCOOKED_LOG, Error, TEXT("Ingredient actor spawn failed"));
@@ -26,7 +26,10 @@ AIngredient* USpawnManageComponent::SpawnIngredientActor(EIngredientType Ingredi
 		return nullptr;
 	}
 
-	//IngredientActor->SetType(IngredientType);
+	IngredientActor->SetType(IngredientType);
+
+	FVector IngredientLocation = FVector(0.0f, 0.0f, 100.0f);
+	IngredientTransform.SetLocation(IngredientLocation);
 
 	IngredientActor->FinishSpawning(IngredientTransform);
 
