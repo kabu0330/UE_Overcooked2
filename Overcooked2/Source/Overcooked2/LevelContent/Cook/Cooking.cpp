@@ -23,6 +23,22 @@ ACooking::ACooking()
 
 }
 
+void ACooking::AttachToChef_Implementation(AActor* Player)
+{
+	StaticMeshComponent->SetSimulatePhysics(false);
+	StaticMeshComponent->SetCollisionProfileName(TEXT("NoCollision"));
+	StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	AttachToActor(Player, FAttachmentTransformRules::KeepRelativeTransform);
+}
+
+void ACooking::DetachFromChef_Implementation(AActor* Player)
+{
+	StaticMeshComponent->SetSimulatePhysics(true);
+	StaticMeshComponent->SetCollisionProfileName(TEXT("Interactable"));
+	StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	DetachFromActor(FDetachmentTransformRules::KeepRelativeTransform);
+}
+
 // Called when the game starts or when spawned
 void ACooking::BeginPlay()
 {
