@@ -13,13 +13,18 @@ AOC2CharacterTestGameMode::AOC2CharacterTestGameMode()
     ItemManger = CreateDefaultSubobject<UTestItemManager>(TEXT("ItemManager"));
 }
 
+AIngredient* AOC2CharacterTestGameMode::SpawnIngredient(EIngredientType Type)
+{
+    return ItemManger->CreateIngredient(EIngredientType::EIT_FISH);
+}
+
 
 
 void AOC2CharacterTestGameMode::BeginPlay()
 {
     Super::BeginPlay();
 
-    AActor* NewDropItem = ItemManger->CreateItem(EIngredientType::EIT_FISH);
+    AActor* NewDropItem = ItemManger->CreateIngredient(EIngredientType::EIT_FISH);
 
     if (nullptr != NewDropItem)
     {

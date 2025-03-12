@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameMode.h"
+#include "LevelContent/Cook/Ingredient.h"
 #include "OC2CharacterTestGameMode.generated.h"
 
 /**
@@ -16,7 +17,7 @@ class OVERCOOKED2_API AOC2CharacterTestGameMode : public AGameMode
 public:
     AOC2CharacterTestGameMode();
 
-
+    AIngredient* SpawnIngredient(EIngredientType Type);
 
 protected:
     void BeginPlay() override;

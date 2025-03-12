@@ -17,7 +17,7 @@ public:
 	// Sets default values for this component's properties
 	UTestItemManager();
 
-	AActor* CreateItem(const EIngredientType Type);
+	AIngredient* CreateIngredient(const EIngredientType Type);
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
