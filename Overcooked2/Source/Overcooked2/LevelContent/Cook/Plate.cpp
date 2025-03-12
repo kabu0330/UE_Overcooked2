@@ -95,7 +95,7 @@ void APlate::CheckAndChangeState(AIngredient* Ingredient)
 			{
 				Ingredient->GetStaticMeshComponent()->SetStaticMesh(CookingDataTable[i].CookMesh);
 				Ingredient->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
-				Ingredient->SetActorLocation(FVector(0.0f, 0.0f, 0.0f));
+				Ingredient->AddActorLocalOffset(FVector(0.0f, 0.0f, 10.0f));
 			}
 		}
 	}
