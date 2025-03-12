@@ -85,8 +85,8 @@ public:
 	UFUNCTION(Reliable, Server)
 	void Throwing();
 
-	UFUNCTION(Reliable, Server)
-	void Cooking();
+	UFUNCTION(Reliable, NetMulticast)
+	void Chopping(bool State);
 
 	UFUNCTION(Reliable, Server)
 	void Dash();
@@ -147,7 +147,7 @@ private :
 
 	TPair<int, UMaterialInterface*> Knife;
 
-	UPROPERTY(VisibleAnywhere, Replicated, BlueprintReadOnly, Category = "Grab", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, Replicated, BlueprintReadOnly, Category = "Cook", meta = (AllowPrivateAccess = "true"))
 	bool bIsCooking = false;
 	/// <summary>
 	/// Dash Variables

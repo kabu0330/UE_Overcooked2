@@ -32,14 +32,17 @@ void AOC2Character::MoveCharacter(const FInputActionValue& Value)
 {
 	FVector MovementInput = Value.Get<FVector>();
 
-	bIsCooking = false;
-
 	MovementInput.Normalize();
 
 	if (bIsDashing == false)
 	{
 		AddMovementInput(MovementInput);
 	}
+	//if (bIsDashing == false)
+	//{
+	//	GetMovementComponent()->AddInputVector(MovementInput);
+	//}
+
 
 	float CurrentYaw = GetActorRotation().Yaw;
 	float TargetYaw = MovementInput.Rotation().Yaw;
@@ -73,6 +76,11 @@ void AOC2Character::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	CheckDash(DeltaTime);
+
+	if (GetVelocity().Size() > 0.0)
+	{
+		Chopping(false);
+	}
 
 	CheckInteract();
 
@@ -218,7 +226,7 @@ void AOC2Character::DoSth_Implementation()
 	}
 	else
 	{
-		Cooking();
+		Chopping(true);
 	}
 
 
@@ -250,19 +258,18 @@ void AOC2Character::Throwing_Implementation()
 
 }
 
-void AOC2Character::Cooking_Implementation()
+void AOC2Character::Chopping_Implementation(bool State)
 {
-	bIsCooking = true;
-	GetMesh()->SetMaterial(Knife.Key, Knife.Value);
-	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-	if (AnimInstance)
+	bIsCooking = State;
+	if (bIsCooking)
 	{
-		UAnimMontage* Montage = GetCurrentMontage();
-		if (Montage)
-		{
-			AnimInstance->Montage_SetPlayRate(Montage, 1.5f); // 애니메이션 속도를 1.5배로 변경
-		}
+		GetMesh()->SetMaterial(Knife.Key, Knife.Value);
 	}
+	else
+	{
+		GetMesh()->SetMaterial(Knife.Key, TransparentMat);
+	}
+
 	if (SelectedOC2Actor != nullptr)
 	{
 		return;
