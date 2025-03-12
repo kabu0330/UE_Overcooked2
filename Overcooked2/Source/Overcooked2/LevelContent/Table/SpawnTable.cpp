@@ -57,6 +57,8 @@ AIngredient* ASpawnTable::SpawnIngredient(AActor* ChefActor/*, EIngredientType I
 	}
 
 	return NewIngredient;
+
+	// 애니메이션 재생 필요
 }
 
 ACooking* ASpawnTable::Interact(AActor* ChefActor)
