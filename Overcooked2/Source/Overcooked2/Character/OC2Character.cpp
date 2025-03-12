@@ -264,7 +264,7 @@ void AOC2Character::Chopping_Implementation(bool State)
 	if (bIsCooking)
 	{
 		GetMesh()->SetMaterial(Knife.Key, Knife.Value);
-	}
+	}	
 	else
 	{
 		GetMesh()->SetMaterial(Knife.Key, TransparentMat);
