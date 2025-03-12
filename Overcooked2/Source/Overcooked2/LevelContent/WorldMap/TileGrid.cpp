@@ -237,33 +237,28 @@ void ATileGrid::Tick(float DeltaTime)
 	ElpasedSecs += DeltaTime;
 	ElpasedRotateSecs += DeltaTime;
 	
-	bool IsAllEnd = true;
 	if (ElpasedSecs > .01f)
 	{
 		ElpasedSecs = 0.f;
 		FQuat NewRot = FQuat(FVector(1, 0, 0), FMath::DegreesToRadians(5)) * DeltaTime;
 		NewRot.Normalize();
 
+		bool _IsAllEnd = true;
 		for (TPair<int8, FTileData>& Elem : Tiles)
 		{
 			int8 Order = Elem.Key;
 			FTileData& TileData = Elem.Value;
+			UInstancedStaticMeshComponent* TileInst = TileData.TileInst;
+			int Cnt = TileInst->GetInstanceCount();
 
-			if (TileData.IsFinishedAnim)
+			if (Cnt == 0 || TileData.IsFinishedAnim)
 			{
 				continue;
 			}
 			
-			IsAllEnd = false;
-			UInstancedStaticMeshComponent* TileInst = TileData.TileInst;
+			_IsAllEnd = false;
 			if (Order < RotateIdx)
 			{
-				int Cnt = TileInst->GetInstanceCount();
-				if (Cnt == 0)
-				{
-					continue;
-				}
-
 				bool isRotated = false;
 				float Rad = 0.f;
 				FVector Axis;
@@ -336,9 +331,17 @@ void ATileGrid::Tick(float DeltaTime)
 						trfm.SetRotation(FQuat::Identity);	// 180 deg?
 						TileInst->UpdateInstanceTransform(i, trfm, false);
 					}
+
 					TileData.IsFinishedAnim = true;
 				}
 			}
+		}
+
+		if (_IsAllEnd)
+		{
+			UE_LOG(LogTemp, Log, TEXT("IsAllEnd!!!!!!!"));
+			IsAllEnd = true;
+			SetActorTickEnabled(false);
 		}
 	}
 
@@ -350,11 +353,6 @@ void ATileGrid::Tick(float DeltaTime)
 		{
 			++RotateIdx;
 		}
-	}
-
-	if (IsAllEnd)
-	{
-		PrimaryActorTick.bCanEverTick = false;
 	}
 }
 
@@ -377,5 +375,5 @@ FIntVector2 ATileGrid::GetXY(int _IdxI, int _IdxJ)
 
 bool ATileGrid::IsEndTransition() const
 {
-	return !PrimaryActorTick.bCanEverTick;
+	return IsAllEnd;
 }

@@ -52,6 +52,7 @@ private:
 
 	int RotateIdx = -1;
 	float AccumulatedX = 0.f;
+	bool IsAllEnd = false;
 
 	UPROPERTY()
 	TMap<int8, FTileData> Tiles;
