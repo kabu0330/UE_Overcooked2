@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/GameMode.h"
 #include <Global/OC2Enum.h>
+#include <LevelContent/Cook/Dev/CookingDevPlayerState.h>
 #include "CookingDevGameMode.generated.h"
 
 /**
@@ -18,9 +19,11 @@ class OVERCOOKED2_API ACookingDevGameMode : public AGameMode
 public:
 	ACookingDevGameMode();
 
-	UFUNCTION(BlueprintCallable/*, Reliable, NetMulticast*/)
+	UFUNCTION(BlueprintCallable)
 	void SpawnIngredient(EIngredientType Type);
-	//void SpawnIngredient_Implementation(EIngredientType Type);
+
+	UFUNCTION(BlueprintCallable)
+	void SpawnPlate();
 
 	UFUNCTION(BlueprintCallable)
 	class UCookingDevUserWidget* GetWidget()
@@ -33,11 +36,29 @@ public:
 		Widget = UserWidget;
 	}
 
+	void AddPlayerState(ACookingDevPlayerState* State)
+	{
+		for (int i = 0; i < PlayerState.Num(); i++)
+		{
+			if (State->GetName() == PlayerState[i]->GetName())
+			{
+				return;
+			}
+		}
+		PlayerState.Add(State);
+		int a = 0;
+	}
+
+	//UFUNCTION(Reliable, NetMulticast)
+	void ChangeState(EIngredientState State);
+	//void ChangeState_Implementation(EIngredientState State);
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;	
 
 private:
 	class UCookingDevUserWidget* Widget = nullptr;
+	TArray<ACookingDevPlayerState*> PlayerState;
 	
 };

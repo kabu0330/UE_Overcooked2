@@ -6,6 +6,7 @@
 #include <LevelContent/Cook/Dev/CookingDevHUD.h>
 #include <LevelContent/Cook/Dev/CookingDevUserWidget.h>
 #include <Global/OC2Global.h>
+#include <LevelContent/Cook/Plate.h>
 
 ACookingDevGameMode::ACookingDevGameMode()
 {
@@ -26,13 +27,25 @@ void ACookingDevGameMode::SpawnIngredient(EIngredientType Type)
 
 	Ingredient->FinishSpawning(Trans); // 4. BeginPlay »£√‚
 
-	//AIngredient* Ingredient = UOC2Global::SpawnIngredientActor(GetWorld(), Type);
-
-	if (nullptr != Widget)
+	for (int i = 0; i < PlayerState.Num(); i++)
 	{
-		Widget->AddTargetActor(Ingredient);
+		PlayerState[i]->AddCookingActor(Ingredient);
 	}
 
+}
+
+void ACookingDevGameMode::SpawnPlate()
+{
+	APlate* Plate = GetWorld()->SpawnActor<APlate>(APlate::StaticClass());
+
+}
+
+void ACookingDevGameMode::ChangeState(EIngredientState State)
+{
+	for (int i = 0; i < PlayerState.Num(); i++)
+	{
+		PlayerState[i]->ChangeStateLogic(State);
+	}
 }
 
 void ACookingDevGameMode::BeginPlay()

@@ -15,7 +15,7 @@
 void UCookingDevUserWidget::ServerSpawnIngredient(EIngredientType Type)
 {
 
-	// Pawn에서 네트워크 동기화 성공HUD -> SpawnManager -> GameMode
+	// Pawn에서 네트워크 동기화 성공 HUD -> SpawnManager -> GameMode
 	//APlayerController* Controller = GetOwningPlayer();
 	//if (nullptr != Controller)
 	//{
@@ -41,22 +41,11 @@ void UCookingDevUserWidget::ServerSpawnIngredient(EIngredientType Type)
 
 void UCookingDevUserWidget::ChangeState(EIngredientState State)
 {
-	if (true == CookingActor.IsEmpty())
+	APlayerController* Controller = GetOwningPlayer();
+	ACookingDevPlayerState* PlayerState = Controller->GetPlayerState<ACookingDevPlayerState>();
+	if (nullptr != PlayerState)
 	{
-		return;
-	}
-
-	for (int i = 0; i < CookingActor.Num(); i++)
-	{
-		AIngredient* Ingredient = Cast<AIngredient>(CookingActor[i]);
-		if (State == Ingredient->GetCurIngredientState())
-		{
-			return;
-		}
-		else
-		{
-			Ingredient->ChangeState(State);
-		}
+		PlayerState->ChangeState(State);
 	}
 }
 
