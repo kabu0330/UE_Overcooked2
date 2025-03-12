@@ -113,13 +113,13 @@ const FIngredientCookDataRow& AIngredient::CheckState(EIngredientState State)
 	return *Result;
 }
 
-AIngredient* AIngredient::ChangeState(EIngredientState State)
+void AIngredient::ChangeState_Implementation(EIngredientState State)
 {
 	const FIngredientCookDataRow* CookData = &CheckState(State);
 
 	if (nullptr == CookData)
 	{
-		return nullptr;
+		return;
 	}
 
 	DeactivateHighlight();
@@ -134,7 +134,7 @@ AIngredient* AIngredient::ChangeState(EIngredientState State)
 	FRotator Rotation = CookData->Rotation;
 	Offset(Location, Rotation);
 
-	return this;
+	return;
 }
 
 void AIngredient::DeactivateHighlight()
