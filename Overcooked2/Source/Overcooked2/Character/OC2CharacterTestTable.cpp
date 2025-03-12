@@ -17,27 +17,27 @@ AOC2CharacterTestTable::AOC2CharacterTestTable()
 
 }
 
-//AOC2CharacterTestObject* AOC2CharacterTestTable::SpawnIngredient(AActor* ChefActor)
-//{
-//	FActorSpawnParameters SpawnParameters; // 적절한 오버로딩 함수 호출을 위해(회전값 추가), FActorSpawnParameters 사용
-//	FVector Location = FVector();
-//	if (nullptr != ChefActor)
-//	{
-//		Location = GetActorLocation() + FVector(0.0f, 0.0f, 100.0f);
-//	}
-//	FRotator Rotator = FRotator::ZeroRotator;
-//
-//	// 1. 재료를 월드에 스폰한다.
-//	// Transform은 있지만 메시도 없는 빈 껍데기 상태
-//	AOC2CharacterTestObject* NewIngredient = GetWorld()->SpawnActorDeferred<>(ActorToSpawn, FTransform());
-//
-//	// 2. 메시를 찾아서
-//	NewIngredient->SetIngredient(IngredientType);
-//
-//	NewIngredient->FinishSpawning(FTransform());
-//
-//	return NewIngredient;
-//}
+AIngredient* AOC2CharacterTestTable::SpawnIngredient(AActor* ChefActor)
+{
+	FActorSpawnParameters SpawnParameters; // 적절한 오버로딩 함수 호출을 위해(회전값 추가), FActorSpawnParameters 사용
+	FVector Location = FVector();
+	if (nullptr != ChefActor)
+	{
+		Location = GetActorLocation() + FVector(0.0f, 0.0f, 100.0f);
+	}
+	FRotator Rotator = FRotator::ZeroRotator;
+
+	// 1. 재료를 월드에 스폰한다.
+	// Transform은 있지만 메시도 없는 빈 껍데기 상태
+	AIngredient* NewIngredient = GetWorld()->SpawnActorDeferred<AIngredient>(ActorToSpawn, FTransform());
+
+	// 2. 메시를 찾아서
+	NewIngredient->SetType(IngredientType);
+
+	NewIngredient->FinishSpawning(FTransform());
+
+	return NewIngredient;
+}
 
 void AOC2CharacterTestTable::PlaceItem(ACooking* Cook)
 {
@@ -56,7 +56,7 @@ ACooking* AOC2CharacterTestTable::Interact(AActor* ChefActor)
 		{
 			return nullptr;
 		}
-		return UOC2Global::SpawnIngredientActor(GetWorld(), IngredientType);
+		return SpawnIngredient(ChefActor);
 	}
 	else
 	{

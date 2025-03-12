@@ -204,7 +204,7 @@ void AOC2Character::Drop_Implementation()
 		UPrimitiveComponent* PrimitiveComp = Cast<UPrimitiveComponent>(GrabbedObject->GetRootComponent());
 		UE_LOG(LogTemp, Log, TEXT("Drop"));
 		// 들고 있는 물체에 대해 상호작용을 실행한다. 바닥에 내려놓는다는 뜻.
-		Cast<AOC2CharacterTestObject>(GrabbedObject)->DetachFromChef(this);
+		Cast<AIngredient>(GrabbedObject)->DetachFromChef(this);
 
 		GrabbedObject->SetActorLocation(GrabComponent->GetComponentLocation());
 		GrabbedObject->SetActorRotation(GetActorRotation());
