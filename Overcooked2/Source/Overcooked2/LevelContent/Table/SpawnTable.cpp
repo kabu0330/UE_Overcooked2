@@ -4,6 +4,7 @@
 #include "LevelContent/Table/SpawnTable.h"
 #include <Global/Data/IngredientDataTable.h>
 #include "Kismet/GameplayStatics.h"
+#include "Global/GameMode/OC2GameMode.h"
 #include <Character/OC2Character.h>
 
 ASpawnTable::ASpawnTable()
@@ -27,39 +28,6 @@ void ASpawnTable::SetIngredient(EIngredientType IngredientTypeSetting)
 }
 
 
-AIngredient* ASpawnTable::SpawnIngredient(AActor* ChefActor/*, EIngredientType IngredientType*/)
-{
-
-	FActorSpawnParameters SpawnParameters; // 적절한 오버로딩 함수 호출을 위해(회전값 추가), FActorSpawnParameters 사용
-	FVector Location = FVector();
-	/*if (nullptr != ChefActor)
-	{
-		Location = GetActorLocation() + FVector(0.0f, 0.0f, 100.0f);
-	}*/
-	Location = GetActorLocation() + FVector(0.0f, 0.0f, 100.0f);
-	FRotator Rotator = FRotator::ZeroRotator;
-
-	AIngredient* NewIngredient = GetWorld()->SpawnActor<AIngredient>(AIngredient::StaticClass(), Location, Rotator, SpawnParameters);
-	NewIngredient->Init(IngredientType);
-
-	//재료 월드에 스폰, Init
-
-	// 액터에 부착
-	if (nullptr != ChefActor)
-	{
-		//NewIngredient->Interact(ChefActor);
-	}
-
-	if (nullptr == NewIngredient)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("액터 스폰에 실패했습니다."));
-		return nullptr;
-	}
-
-	return NewIngredient;
-
-	// 애니메이션 재생 필요
-}
 
 ACooking* ASpawnTable::Interact(AActor* ChefActor)
 {
@@ -68,16 +36,8 @@ ACooking* ASpawnTable::Interact(AActor* ChefActor)
 	
 	if (false == bIsOccupied) // 테이블이 비어있다.
 	{
-		//if (true == Chef->IsHolding())
-		//{
-		//	// 박스 위는 비어있고 셰프는 무언가를 들고 있다. 
-		//	PlaceItem(TempCooking);
-		//}
-		//else
-		//{
-		//}
-
-		TempCooking = SpawnIngredient(ChefActor); //형변환?
+		RequestSpawn();
+		return SpawnedIngredient;
 	}
 	else
 	{
@@ -90,20 +50,19 @@ ACooking* ASpawnTable::Interact(AActor* ChefActor)
 	return TempCooking;
 }
 
+void ASpawnTable::RequestSpawn_Implementation()
+{
+	auto GM = Cast<AOC2GameMode>(GetWorld()->GetAuthGameMode());
+	if (GM)
+	{
+		SpawnedIngredient = GM->SpawnIngredientActor(IngredientType);
+	}
+}
+
 void ASpawnTable::PlaceItem(ACooking* Item)
 {
 	ACooking* TempCooking = Item;
 	
-	/*ECookingType TempCookingType = TempCooking->GetCookingType();
-
-	if (ECookingType::ECT_INGREDIENT == TempCookingType)
-	{
-
-	}
-	else
-	{
-
-	}*/
-
-	//Cooking 구분 및 스폰, 테이블 위에 위치
+	FVector OnTheTable = GetActorLocation() + FVector{ (0.0f, 0.0f, 100.0f) };
+	TempCooking->SetActorLocation(OnTheTable);
 }
