@@ -29,7 +29,9 @@ AActor* UTestItemManager::CreateItem(EIngredientType Type)
 {
 	FTransform Trans;
 
-	return UOC2Global::SpawnIngredientActor(GetWorld(),Type);
+	//return UOC2Global::SpawnIngredientActor(GetWorld(),Type);
+
+	return nullptr;
 
 	//ItemActor->SetItemDataKey(_ItemName);
 	//// 디퍼드를 하면 왠만하면 이걸 호출해주는것이 좋습니다.
