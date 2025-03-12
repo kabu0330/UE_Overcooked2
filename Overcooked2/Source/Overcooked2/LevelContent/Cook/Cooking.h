@@ -11,7 +11,8 @@
 #include <Global/Interface/Interactable.h>
 #include "Cooking.generated.h"
 
-// Ingredient(요리 재료)와 Plate(요리)의 최상위 클래스 
+// Ingredient(요리 재료)와 Plate(요리)의 최상위 클래스
+// 캐릭터가 Grab할 수 있는 모든 맵 오브젝트들의 최상위 클래스
 UCLASS()
 class OVERCOOKED2_API ACooking : public AOC2Actor
 {
