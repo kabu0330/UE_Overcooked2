@@ -25,11 +25,14 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetIngredient(EIngredientType IngredientTypeSetting);
 
-	UFUNCTION(BlueprintCallable)
-	class AIngredient* SpawnIngredient(AActor* ChefActor/*, EIngredientType Ingredient*/);
+	//UFUNCTION(BlueprintCallable)
+	//class AIngredient* SpawnIngredient(AActor* ChefActor/*, EIngredientType Ingredient*/);
 
 	UFUNCTION(BlueprintCallable)
 	virtual ACooking* Interact(AActor* ChefActor) override;
+
+	UFUNCTION(Server, Reliable)
+	void RequestSpawn();
 
 	UFUNCTION(BlueprintCallable)
 	virtual void PlaceItem(ACooking* Item) override;
@@ -38,5 +41,8 @@ protected:
 private:
 	
 	EIngredientType IngredientType = EIngredientType::EIT_NONE;
+
 	ACooking* SPlacedItem = nullptr;
+
+	AIngredient* SpawnedIngredient = nullptr;
 };
