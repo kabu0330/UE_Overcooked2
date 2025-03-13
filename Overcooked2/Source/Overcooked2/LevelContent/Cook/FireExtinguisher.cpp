@@ -5,14 +5,21 @@
 
 AFireExtinguisher::AFireExtinguisher()
 {
+	PrimaryActorTick.bCanEverTick = true;
+	bReplicates = true;
+	SetReplicateMovement(true);
+
+	CookingType = ECookingType::ECT_FIREEXTINGUISHER;
 }
 
 void AFireExtinguisher::BeginPlay()
 {
 	ACooking::BeginPlay();
+
 }
 
 void AFireExtinguisher::Tick(float DeltaTime)
 {
 	ACooking::Tick(DeltaTime);
+
 }

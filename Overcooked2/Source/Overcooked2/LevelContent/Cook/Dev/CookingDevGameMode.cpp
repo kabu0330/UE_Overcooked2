@@ -34,11 +34,10 @@ void ACookingDevGameMode::SpawnIngredient(EIngredientType Type)
 
 }
 
-void ACookingDevGameMode::SpawnPlate()
-{
-	APlate* Plate = GetWorld()->SpawnActor<APlate>(APlate::StaticClass());
-
-}
+//void ACookingDevGameMode::SpawnPlate()
+//{
+//	APlate* Plate = GetWorld()->SpawnActor<APlate>(APlate::StaticClass());
+//}
 
 void ACookingDevGameMode::ChangeState(EIngredientState State)
 {

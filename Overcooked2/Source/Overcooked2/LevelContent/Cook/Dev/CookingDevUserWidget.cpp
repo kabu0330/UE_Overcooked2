@@ -30,13 +30,16 @@ void UCookingDevUserWidget::ServerSpawnIngredient(EIngredientType Type)
 	{
 		PlayerState->SpawnManagerComponent->SetIngredientType(Type);
 	}
+}
 
-	// GameState에서 네트워크 동기화 실패
-	//ACookingDevGameState* GameState = Cast<ACookingDevGameState>(GetWorld()->GetGameState());
-	//if (nullptr != GameState)
-	//{
-	//	GameState->SpawnManagerComponent->SetIngredientType(Type);
-	//}
+void UCookingDevUserWidget::SpawnPlate()
+{
+	APlayerController* Controller = GetOwningPlayer();
+	ACookingDevPlayerState* PlayerState = Controller->GetPlayerState<ACookingDevPlayerState>();
+	if (nullptr != PlayerState)
+	{
+		PlayerState->SpawnPlate();
+	}
 }
 
 void UCookingDevUserWidget::ChangeState(EIngredientState State)
@@ -46,6 +49,16 @@ void UCookingDevUserWidget::ChangeState(EIngredientState State)
 	if (nullptr != PlayerState)
 	{
 		PlayerState->ChangeState(State);
+	}
+}
+
+void UCookingDevUserWidget::PlaceOnthePlate()
+{
+	APlayerController* Controller = GetOwningPlayer();
+	ACookingDevPlayerState* PlayerState = Controller->GetPlayerState<ACookingDevPlayerState>();
+	if (nullptr != PlayerState)
+	{
+		PlayerState->PlaceOnthePlate();
 	}
 }
 

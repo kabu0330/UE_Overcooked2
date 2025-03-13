@@ -43,7 +43,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetPlateState(EPlateState State);
 
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -67,9 +66,10 @@ private:
 	UStaticMeshComponent* IngredientMesh = nullptr; // 재료
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
-	EPlateState PlateState = EPlateState::NONE;
-
-	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	EIngredientState PrveState = EIngredientState::EIS_NONE;
+
+	// 접시 상태
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	EPlateState PlateState = EPlateState::EMPTY;
 
 };
