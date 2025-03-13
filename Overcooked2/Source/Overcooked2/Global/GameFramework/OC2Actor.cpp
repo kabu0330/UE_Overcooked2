@@ -47,11 +47,17 @@ void AOC2Actor::ApplyMaterialHighlight()
 	}
 
 	float HighlightValue = 5.0f;
-	for (int i = 0; i < StaticMeshComponent->GetNumMaterials(); i++)
+	UMeshComponent* Mesh = nullptr;
+	if (nullptr == (Mesh = FindComponentByClass<USkeletalMeshComponent>()))
 	{
-		if (StaticMeshComponent->GetMaterials().IsValidIndex(i) && StaticMeshComponent->GetMaterials()[i] != nullptr)
+		Mesh = StaticMeshComponent;
+	}
+
+	for (int i = 0; i < Mesh->GetNumMaterials(); i++)
+	{
+		if (Mesh->GetMaterials().IsValidIndex(i) && Mesh->GetMaterials()[i] != nullptr)
 		{
-			UMaterialInstanceDynamic* ExistingDynamicMaterial = Cast<UMaterialInstanceDynamic>(StaticMeshComponent->GetMaterials()[i]);
+			UMaterialInstanceDynamic* ExistingDynamicMaterial = Cast<UMaterialInstanceDynamic>(Mesh->GetMaterials()[i]);
 			if (ExistingDynamicMaterial)
 			{
 				// 이미 존재하는 다이나믹 머티리얼이 있으면 값을 변경
@@ -61,7 +67,7 @@ void AOC2Actor::ApplyMaterialHighlight()
 		}
 
 		// 1. 메시의 머티리얼을 모두 가져온다.
-		UMaterialInterface* Material = StaticMeshComponent->GetMaterial(i);
+		UMaterialInterface* Material = Mesh->GetMaterial(i);
 		if (nullptr != Material)
 		{
 			// 2. 동적 머티리얼 인스턴스를 생성한다.
@@ -76,7 +82,7 @@ void AOC2Actor::ApplyMaterialHighlight()
 
 				// 4. 다이나믹 머티리얼로 교체한다.
 				DynamicMaterial->SetScalarParameterValue(FName("DiffuseColorMapWeight"), HighlightValue);
-				StaticMeshComponent->SetMaterial(i, DynamicMaterial);
+				Mesh->SetMaterial(i, DynamicMaterial);
 			}
 		}
 	}
@@ -85,31 +91,40 @@ void AOC2Actor::ApplyMaterialHighlight()
 
 void AOC2Actor::RestoreMaterial()
 {
-	// 1. 머티리얼을 원래대로 되돌리고
-	for (int i = 0; i < StaticMeshComponent->GetNumMaterials(); i++)
+	UMeshComponent* Mesh = nullptr;
+	if (nullptr == (Mesh = GetComponentByClass<USkeletalMeshComponent>()))
 	{
-		if (StaticMeshComponent->GetMaterials().IsValidIndex(i) && StaticMeshComponent->GetMaterials()[i] != nullptr)
-		{
-			UMaterialInstanceDynamic* ExistingDynamicMaterial = Cast<UMaterialInstanceDynamic>(StaticMeshComponent->GetMaterials()[i]);
-			if (ExistingDynamicMaterial)
-			{
-				// 이미 존재하는 다이나믹 머티리얼이 있으면 값을 변경
-				ExistingDynamicMaterial->SetScalarParameterValue(FName("DiffuseColorMapWeight"), DiffuseColorMapWeight);
-				continue;
-			}
-		}
+		Mesh = StaticMeshComponent;
+	}
 
-		UMaterialInterface* Material = Materials[i];
-		if (nullptr != Material)
+	if (Mesh != nullptr)
+	{
+		for (int i = 0; i < Mesh->GetNumMaterials(); i++)
 		{
-			UMaterialInstanceDynamic* DynamicMaterial = UMaterialInstanceDynamic::Create(Material, this);
-			if (nullptr != DynamicMaterial)
+			if (Mesh->GetMaterials().IsValidIndex(i) && Mesh->GetMaterials()[i] != nullptr)
 			{
-				DynamicMaterial->SetScalarParameterValue(FName("DiffuseColorMapWeight"), DiffuseColorMapWeight);
-				StaticMeshComponent->SetMaterial(i, DynamicMaterial);
+				UMaterialInstanceDynamic* ExistingDynamicMaterial = Cast<UMaterialInstanceDynamic>(Mesh->GetMaterials()[i]);
+				if (ExistingDynamicMaterial)
+				{
+					// 이미 존재하는 다이나믹 머티리얼이 있으면 값을 변경
+					ExistingDynamicMaterial->SetScalarParameterValue(FName("DiffuseColorMapWeight"), DiffuseColorMapWeight);
+					continue;
+				}
+			}
+
+			UMaterialInterface* Material = Materials[i];
+			if (nullptr != Material)
+			{
+				UMaterialInstanceDynamic* DynamicMaterial = UMaterialInstanceDynamic::Create(Material, this);
+				if (nullptr != DynamicMaterial)
+				{
+					DynamicMaterial->SetScalarParameterValue(FName("DiffuseColorMapWeight"), DiffuseColorMapWeight);
+					Mesh->SetMaterial(i, DynamicMaterial);
+				}
 			}
 		}
 	}
+	
 
 	// 2. 저장해둔 머티리얼은 초기화
 	Materials.Empty();

@@ -23,7 +23,7 @@ public:
 	USpawnManageComponent();
 
 	AIngredient* SpawnIngredientActor(EIngredientType IngredientType);
-	APlate* SpawnPlateActor(TSubclassOf<APlate> PlateTopSpawn);
+	APlate* SpawnPlateActor(TSubclassOf<APlate> PlateTopSpawn, EPlateState PlateState);
 
 protected:
 	virtual void BeginPlay() override;

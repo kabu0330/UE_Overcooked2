@@ -4,6 +4,7 @@
 #include "Character/OC2Character.h"
 #include "EnhancedInputComponent.h"
 #include "OC2CharacterTestTable.h"
+#include "OC2CharacterTestChoppingTable.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Net/UnrealNetwork.h"
 
@@ -15,12 +16,10 @@ AOC2Character::AOC2Character()
 	PrimaryActorTick.bCanEverTick = true;
 
 	bReplicates = true;
-	//bUseControllerRotationYaw = false;
-
-	GetCharacterMovement()->SetPlaneConstraintEnabled(true);
-	GetCharacterMovement()->SetPlaneConstraintNormal(FVector(0, 0, 1));
+	bUseControllerRotationYaw = false;
 
 	GetMesh()->Mobility = EComponentMobility::Movable;
+	GetMesh()->SetIsReplicated(true);
 
 	GrabComponent = CreateDefaultSubobject<USceneComponent>("GrabPosition");
 	GrabComponent->SetupAttachment(RootComponent);
@@ -34,30 +33,9 @@ void AOC2Character::MoveCharacter(const FInputActionValue& Value)
 
 	MovementInput.Normalize();
 
-	if (bIsDashing == false)
-	{
-		AddMovementInput(MovementInput);
-	}
-	//if (bIsDashing == false)
-	//{
-	//	GetMovementComponent()->AddInputVector(MovementInput);
-	//}
+	AddMovementInput(MovementInput);
 
-
-	float CurrentYaw = GetActorRotation().Yaw;
-	float TargetYaw = MovementInput.Rotation().Yaw;
-
-	float InterpSpeed = 10.0f; // 회전 속도 조절 가능
-	float NewYaw = FMath::FInterpTo(CurrentYaw, TargetYaw, GetWorld()->GetDeltaSeconds(), InterpSpeed);
-
-	float YawDelta = FMath::FindDeltaAngleDegrees(CurrentYaw, NewYaw);
-
-	AddControllerYawInput(YawDelta);
-
-	//FQuat ActorRot =  GetActorForwardVector().Rotation().Quaternion();
-	//FQuat TargetRot = FRotationMatrix::MakeFromX(MovementInput).Rotator().Quaternion();
-
-	//SetActorRotation(FQuat::Slerp(ActorRot, TargetRot, Alpha).Rotator());
+	Rotate(MovementInput);
 }
 
 // Called when the game starts or when spawned
@@ -68,6 +46,7 @@ void AOC2Character::BeginPlay()
 	InitMesh();
 	// 임시 :
 	//SetCharacterHead("Alien_Green");
+
 }
 
 // Called every frame
@@ -77,14 +56,17 @@ void AOC2Character::Tick(float DeltaTime)
 
 	CheckDash(DeltaTime);
 
-	if (GetVelocity().Size() > 0.0)
-	{
-		Chopping(false);
-	}
-
 	CheckInteract();
 
 	DrawDebugSphere(GetWorld(), GrabComponent->GetComponentLocation(), TraceRadius, 20, FColor::Green, false, 0.0f);
+}
+
+void AOC2Character::Rotate_Implementation(FVector MovementInput)
+{
+	FQuat ActorRot = GetActorForwardVector().Rotation().Quaternion();
+	FQuat TargetRot = FRotationMatrix::MakeFromX(MovementInput).Rotator().Quaternion();
+
+	SetActorRotation(FQuat::Slerp(ActorRot, TargetRot, Alpha).Rotator());
 }
 
 void AOC2Character::CheckDash_Implementation(float DeltaTime)
@@ -112,16 +94,32 @@ void AOC2Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 
 	EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AOC2Character::MoveCharacter);
 	EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Started, this, &AOC2Character::Interact);
-	EnhancedInputComponent->BindAction(CharacterAction, ETriggerEvent::Started, this, &AOC2Character::DoSth);
-	EnhancedInputComponent->BindAction(CharacterAction, ETriggerEvent::Completed, this, &AOC2Character::DoSth);
+	EnhancedInputComponent->BindAction(CharacterAction, ETriggerEvent::Started, this, &AOC2Character::DoAction);
+	EnhancedInputComponent->BindAction(CharacterAction, ETriggerEvent::Completed, this, &AOC2Character::DoAction);
 	EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Started, this, &AOC2Character::Dash);
 
 }
 
+void AOC2Character::SetCharacterName_Implementation(const FString& Name)
+{
+	if (CharacterHeadMap.Contains(Name))
+		CharacterName = Name;
+}
+
+void AOC2Character::OnRep_ChangeCharacter()
+{
+	ClearMaterials();
+	FCharacterData Data = CharacterHeadMap[CharacterName];
+	GetMesh()->SetMaterial(Data.MaterialIndex, Data.Material);
+	
+}
+
 void AOC2Character::InitMesh()
 {
+	//Temp
+
 	TArray<UMaterialInterface*> Materials = GetMesh()->GetMaterials();
-	//0 is ChefBody
+	ClearMaterials();
 	for (int32 i = 1; i < Materials.Num(); i++)
 	{
 		FString Name = Materials[i]->GetName();
@@ -129,22 +127,33 @@ void AOC2Character::InitMesh()
 		{
 			FString Key = Name.RightChop(15);
 			CharacterHeadMap.Add(Key, FCharacterData(Materials[i], i));
+			IndexToName.Add(Key);
 		}
 		if (Name.Contains("Knife"))
 		{
 			Knife = { i, Materials[i] };
 		}
+	}
+}
+
+void AOC2Character::ClearMaterials()
+{
+	//0 is ChefBody
+	TArray<UMaterialInterface*> Materials = GetMesh()->GetMaterials();
+	for (int32 i = 1; i < Materials.Num(); i++)
+	{
+		FString Name = Materials[i]->GetName();
 		// hat index
 		if (i == 36) continue;
 		GetMesh()->SetMaterial(i, TransparentMat);
 	}
-
-	//SetHeadMaterial(FMath::RandRange(0, HeadMaterials.Num() - 1));
 }
 
 //상호작용 : Space Key
 void AOC2Character::Interact_Implementation()
 {
+	SetCharacterName(IndexToName[FMath::RandRange(0, CharacterHeadMap.Num() - 1)]);
+	OnRep_ChangeCharacter();
 	// 만약 지금 상호작용을 시도할 수 있는 개체가 있으면
 	if (SelectedOC2Actor != nullptr)
 	{
@@ -191,9 +200,7 @@ void AOC2Character::Grab_Implementation(ACooking* Cook)
 {
 	GrabbedObject = Cook;
 	Cast<AIngredient>(GrabbedObject)->AttachToChef(this);
-
 	GrabbedObject->SetActorLocation(GrabComponent->GetComponentLocation());
-
 }
 
 void AOC2Character::Drop_Implementation()
@@ -214,7 +221,7 @@ void AOC2Character::Drop_Implementation()
 	}
 }
 
-void AOC2Character::DoSth_Implementation()
+void AOC2Character::DoAction_Implementation()
 {
 	if (GrabbedObject == nullptr && SelectedOC2Actor == nullptr)
 	{
@@ -222,14 +229,19 @@ void AOC2Character::DoSth_Implementation()
 	}
 	if (GrabbedObject != nullptr)
 	{
-		Throwing();
+		if (!SelectedOC2Actor->IsA(APlate::StaticClass()))
+		{
+			Throwing();
+		}
 	}
 	else
 	{
-		Chopping(true);
+		if (SelectedOC2Actor->IsA(AOC2CharacterTestChoppingTable::StaticClass()))
+		{
+			auto Table = Cast<AOC2CharacterTestChoppingTable>(SelectedOC2Actor);
+			Chopping(true);
+		}
 	}
-
-
 }
 
 void AOC2Character::Throwing_Implementation()
@@ -260,22 +272,13 @@ void AOC2Character::Throwing_Implementation()
 
 void AOC2Character::Chopping_Implementation(bool State)
 {
-	bIsCooking = State;
-	if (bIsCooking)
-	{
-		GetMesh()->SetMaterial(Knife.Key, Knife.Value);
-	}	
-	else
-	{
-		GetMesh()->SetMaterial(Knife.Key, TransparentMat);
-	}
+	bIsChopping = State;
+	OnRep_KnifeSet();
 
 	if (SelectedOC2Actor != nullptr)
 	{
 		return;
 	}
-
-
 }
 
 void AOC2Character::CheckInteract()
@@ -362,6 +365,18 @@ void AOC2Character::Dash_Implementation()
 
 }
 
+void AOC2Character::OnRep_KnifeSet()
+{
+	if (bIsChopping)
+	{
+		GetMesh()->SetMaterial(Knife.Key, Knife.Value);
+	}
+	else
+	{
+		GetMesh()->SetMaterial(Knife.Key, TransparentMat);
+	}
+}
+
 void AOC2Character::StopDash()
 {
 	bIsDashing = false;
@@ -375,16 +390,10 @@ void AOC2Character::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	DOREPLIFETIME(AOC2Character, GrabbedObject);
 	DOREPLIFETIME(AOC2Character, bIsDashing);
 	DOREPLIFETIME(AOC2Character, DashTimer);
-	DOREPLIFETIME(AOC2Character, bIsCooking);
+	DOREPLIFETIME(AOC2Character, bIsChopping);
+	DOREPLIFETIME(AOC2Character, CharacterName);
 }
 
-void AOC2Character::SetCharacterHead(FString Name)
-{
-	if (CharacterHeadMap.Contains(Name))
-	{
-		FCharacterData Data = CharacterHeadMap[Name];
-		GetMesh()->SetMaterial(Data.MaterialIndex, Data.Material);
-	}
-}
+
 
 
