@@ -11,12 +11,10 @@ AIngredient::AIngredient()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	bReplicates = true;
-	SetReplicates(true);
+	//SetReplicates(true);
 	SetReplicateMovement(true);
 
 	CookingType = ECookingType::ECT_INGREDIENT;
-
-
 
 }
 

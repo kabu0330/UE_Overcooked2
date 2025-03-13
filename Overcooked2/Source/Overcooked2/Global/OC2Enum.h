@@ -6,6 +6,26 @@
 #include "UObject/NoExportTypes.h"
 #include "OC2Enum.generated.h"
 
+UENUM(BlueprintType)
+enum class EPlateState : uint8
+{
+	NONE			UMETA(DisplayName = "None"),
+	EMPTY			UMETA(DisplayName = "빈 접시"),
+	OCCUPIED		UMETA(DisplayName = "요리 중"),
+	COMPLETED		UMETA(DisplayName = "요리 완성"),
+	DIRTY			UMETA(DisplayName = "세척 전 접시"),
+};
+
+UENUM(BlueprintType)
+enum class EOC2Stage : uint8
+{
+	EOS_None		UMETA(DisplayName = "None"),
+	EOS_Sushi_1_1	UMETA(DisplayName = "스시레벨 1 - 1"),
+	EOS_Sushi_1_2	UMETA(DisplayName = "스시레벨 1 - 2"),
+	EOS_Sushi_1_3	UMETA(DisplayName = "스시레벨 1 - 3"),
+	EOS_Sushi_1_4	UMETA(DisplayName = "스시레벨 1 - 4"),
+	EOS_Sushi_1_5	UMETA(DisplayName = "스시레벨 1 - 5"),
+};
 
 UENUM(BlueprintType)
 enum class EIngredientType : uint8
@@ -40,9 +60,11 @@ enum class EIngredientState : uint8
 UENUM(BlueprintType)
 enum class ECookingType : uint8
 {
-	ECT_NONE			UMETA(DisplayName = "None"),
-	ECT_INGREDIENT		UMETA(DisplayName = "재료"),
-	ECT_PLATE			UMETA(DisplayName = "요리"),
+	ECT_NONE				UMETA(DisplayName = "None"),
+	ECT_INGREDIENT			UMETA(DisplayName = "재료"),
+	ECT_PLATE				UMETA(DisplayName = "요리"),
+	ECT_POT					UMETA(DisplayName = "냄비"),
+	ECT_FIREEXTINGUISHER	UMETA(DisplayName = "소화기"),
 };
 
 /**

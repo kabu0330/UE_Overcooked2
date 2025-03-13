@@ -23,8 +23,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SpawnIngredient(EIngredientType Type);
 
-	UFUNCTION(BlueprintCallable)
-	void SpawnPlate();
 
 	UFUNCTION(BlueprintCallable)
 	class UCookingDevUserWidget* GetWidget()

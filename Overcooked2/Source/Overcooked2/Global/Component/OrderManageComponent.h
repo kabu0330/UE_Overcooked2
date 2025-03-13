@@ -4,6 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+
+#include "Global/OC2Const.h"
+#include "Global/OC2Enum.h"
+#include "Global/OC2Struct.h"
+
 #include "OrderManageComponent.generated.h"
 
 //class AIngredient;
@@ -14,16 +19,16 @@ class OVERCOOKED2_API UOrderManageComponent : public UActorComponent
 	GENERATED_BODY()
 
 public:	
-	// Sets default values for this component's properties
 	UOrderManageComponent();
 
 protected:
-	// Called when the game starts
 	virtual void BeginPlay() override;
 
 public:	
-	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_CreateNewOrder(FOrder Order);
 
 private:
 	//TArray<FRecipe> OrderList;
