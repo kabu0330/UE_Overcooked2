@@ -15,6 +15,9 @@ public:
 	// Sets default values for this pawn's properties
 	ABusCharacter();
 
+	UFUNCTION(BlueprintCallable)
+	void OnMove(const FVector2D& _Vec);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

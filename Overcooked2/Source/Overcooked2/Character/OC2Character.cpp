@@ -253,7 +253,7 @@ void AOC2Character::Throwing_Implementation()
 
 		if (PrimitiveComp)
 		{
-			Cast<AOC2CharacterTestObject>(GrabbedObject)->DetachFromChef(this);
+			Cast<AIngredient>(GrabbedObject)->DetachFromChef(this);
 			GrabbedObject->SetActorLocation(GrabComponent->GetComponentLocation());
 
 			// 4️⃣ 던질 방향과 세기 설정

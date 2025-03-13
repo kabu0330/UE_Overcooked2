@@ -12,39 +12,49 @@ ACookingDevGameMode::ACookingDevGameMode()
 {
 }
 
-void ACookingDevGameMode::SpawnIngredient(EIngredientType Type)
-{
-	// 2. 서버에서 스폰한다.
-	//UWorld* World = GetWorld();
-	FTransform Trans;
-	AIngredient* Ingredient = GetWorld()->SpawnActorDeferred<AIngredient>(AIngredient::StaticClass(), Trans);
-	
-	// 3. 월드에 편입하여 BeginPlay 호출 전에 기본 설정을 해준다.
-	Ingredient->SetType(Type);
-
-	FVector Location = FVector(0.0f, 0.0f, 100.0f);
-	Trans.SetLocation(Location);
-
-	Ingredient->FinishSpawning(Trans); // 4. BeginPlay 호출
-
-	for (int i = 0; i < PlayerState.Num(); i++)
-	{
-		PlayerState[i]->AddCookingActor(Ingredient);
-	}
-
-}
-
-//void ACookingDevGameMode::SpawnPlate()
-//{
-//	APlate* Plate = GetWorld()->SpawnActor<APlate>(APlate::StaticClass());
-//}
-
 void ACookingDevGameMode::ChangeState(EIngredientState State)
 {
-	for (int i = 0; i < PlayerState.Num(); i++)
+	if (true == Ingredients.IsEmpty())
 	{
-		PlayerState[i]->ChangeStateLogic(State);
+		return;
 	}
+
+	EIngredientState IngredientState = State;
+	for (int i = 0; i < Ingredients.Num(); i++)
+	{
+		AIngredient* Ingredient = Cast<AIngredient>(Ingredients[i]);
+		if (IngredientState == Ingredient->GetCurIngredientState())
+		{
+			continue;
+		}
+		else
+		{
+			Ingredient->ChangeState(IngredientState);
+		}
+	}
+}
+
+void ACookingDevGameMode::PlaceOnthePlate()
+{
+	if (true == Ingredients.IsEmpty())
+	{
+		return;
+	}
+	AIngredient* TargetIngredient = Ingredients[0];
+	if (false == TargetIngredient->IsCooked())
+	{
+		return;
+	}
+	if (true == Plates[0]->Add(TargetIngredient)) 
+	{
+		// 재료 추가 성공 시
+		Ingredients.RemoveAt(0);
+		return;
+	}
+
+	// 재료 추가 실패 시
+	int a = 0;
+	
 }
 
 void ACookingDevGameMode::BeginPlay()

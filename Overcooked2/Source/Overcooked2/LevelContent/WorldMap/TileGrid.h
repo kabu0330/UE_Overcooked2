@@ -31,6 +31,8 @@ public:
 
 	bool IsEndTransition() const;
 
+	bool IsStarted = false;	// Temp
+
 protected:
 	virtual void BeginPlay() override;
 

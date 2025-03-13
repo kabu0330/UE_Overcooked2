@@ -6,6 +6,8 @@
 #include "GameFramework/GameMode.h"
 #include <Global/GameMode/OC2GameMode.h>
 #include <Global/OC2Enum.h>
+#include <LevelContent/Cook/Ingredient.h>
+#include <LevelContent/Cook/Plate.h>
 #include <LevelContent/Cook/Dev/CookingDevPlayerState.h>
 #include "CookingDevGameMode.generated.h"
 
@@ -20,9 +22,6 @@ class OVERCOOKED2_API ACookingDevGameMode : public AOC2GameMode
 public:
 	ACookingDevGameMode();
 
-	UFUNCTION(BlueprintCallable)
-	void SpawnIngredient(EIngredientType Type);
-
 
 	UFUNCTION(BlueprintCallable)
 	class UCookingDevUserWidget* GetWidget()
@@ -35,22 +34,33 @@ public:
 		Widget = UserWidget;
 	}
 
-	void AddPlayerState(ACookingDevPlayerState* State)
+	void AddIngredient(AIngredient* Ingredient)
 	{
-		for (int i = 0; i < PlayerState.Num(); i++)
-		{
-			if (State->GetName() == PlayerState[i]->GetName())
-			{
-				return;
-			}
-		}
-		PlayerState.Add(State);
-		int a = 0;
+		Ingredients.Add(Ingredient);
 	}
 
-	//UFUNCTION(Reliable, NetMulticast)
+	void AddPlate(APlate* Plate)
+	{
+		Plates.Add(Plate);
+	}
+
+	void Reset()
+	{
+		for (AIngredient* Ingredient : Ingredients)
+		{
+			Ingredient->Destroy();
+		}
+		for (APlate* Plate : Plates)
+		{
+			Plate->Destroy();
+		}
+		Ingredients.Empty();
+		Plates.Empty();
+	}
+
 	void ChangeState(EIngredientState State);
-	//void ChangeState_Implementation(EIngredientState State);
+
+	void PlaceOnthePlate();
 
 protected:
 	virtual void BeginPlay() override;
@@ -58,6 +68,12 @@ protected:
 
 private:
 	class UCookingDevUserWidget* Widget = nullptr;
-	TArray<ACookingDevPlayerState*> PlayerState;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	TArray<AIngredient*> Ingredients;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	TArray<APlate*> Plates;
+
+	TArray<APlate*> Dish;
 };

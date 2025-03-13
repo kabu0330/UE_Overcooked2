@@ -21,12 +21,6 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 
-	/*UFUNCTION(BlueprintCallable)
-	virtual void SetAndSpawnCooking(AActor* ChefActor, ACooking* CookingObj);*/
-
-	UFUNCTION(BlueprintCallable)
-	void SetAndSpawnCooking(AActor* ChefActor, EIngredientType IngredientType);
-
 	UFUNCTION(BlueprintCallable)
 	virtual ACooking* Interact(AActor* ChefActor) override;
 

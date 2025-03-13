@@ -234,6 +234,11 @@ void ATileGrid::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (!IsStarted)
+	{
+		return;
+	}
+
 	ElpasedSecs += DeltaTime;
 	ElpasedRotateSecs += DeltaTime;
 	
