@@ -44,7 +44,7 @@ public:
 	bool IsHolding() { return GrabbedObject != nullptr; }
 
 	UFUNCTION(BlueprintCallable)
-	bool IsCooking() { return bIsCooking; }
+	bool IsCooking() { return bIsChopping; }
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -53,17 +53,25 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UFUNCTION(Reliable,Server)
+	void Rotate(FVector MovementInput);
+
 	UFUNCTION(Reliable, Server)
 	void CheckDash(float DeltaTime);
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	UFUNCTION(BlueprintCallable)
-	void SetCharacterHead(FString Name);
+	UFUNCTION(BlueprintCallable, Reliable, Server)
+	void SetCharacterName(const FString& Name);
+
+	UFUNCTION()
+	void OnRep_ChangeCharacter();
 
 	UFUNCTION(BlueprintCallable)
 	void InitMesh();
+
+	void ClearMaterials();
 
 	UFUNCTION(BlueprintCallable)
 	void CheckInteract();
@@ -80,13 +88,17 @@ public:
 
 	// 캐릭터의 행동(요리하기, 던지기 등)
 	UFUNCTION(BlueprintCallable, Reliable, Server)
-	void DoSth();
+	void DoAction();
 
 	UFUNCTION(Reliable, Server)
 	void Throwing();
 
-	UFUNCTION(Reliable, NetMulticast)
+	UFUNCTION(Reliable, Server)
 	void Chopping(bool State);
+
+	UFUNCTION()
+	void OnRep_KnifeSet();
+
 
 	UFUNCTION(Reliable, Server)
 	void Dash();
@@ -128,6 +140,8 @@ private :
 	// 캐릭터 머리 정보
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UserInput", meta = (AllowPrivateAccess = "true"))
 	TMap<FString, FCharacterData> CharacterHeadMap;
+	TArray<FString> IndexToName;
+
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Grab", meta = (AllowPrivateAccess = "true"))
 	UTimeEventComponent* TimeEvent;
@@ -147,14 +161,15 @@ private :
 
 	TPair<int, UMaterialInterface*> Knife;
 
-	UPROPERTY(VisibleAnywhere, Replicated, BlueprintReadOnly, Category = "Cook", meta = (AllowPrivateAccess = "true"))
-	bool bIsCooking = false;
-	/// <summary>
+	UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_ChangeCharacter, BlueprintReadOnly, Category = "Grab", meta = (AllowPrivateAccess = "true"))
+	FString CharacterName;
+
+	UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_KnifeSet, BlueprintReadOnly, Category = "Cook", meta = (AllowPrivateAccess = "true"))
+	bool bIsChopping = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UserInput", meta = (AllowPrivateAccess = "true"))
+	float CharacterSpeed = 10.0f;
 	/// Dash Variables
-	/// </summary>
-	/// 
-	/// Todo : 대쉬 제대로 안되는거 같아서 나중에 고쳐야 함
-	/// 
 	UPROPERTY(EditAnywhere, Replicated, BlueprintReadWrite, Category = "Dash", meta = (AllowPrivateAccess = "true"))
 	bool bIsDashing = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dash", meta = (AllowPrivateAccess = "true"))
