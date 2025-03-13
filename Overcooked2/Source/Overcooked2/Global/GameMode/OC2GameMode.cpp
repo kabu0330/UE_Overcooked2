@@ -32,7 +32,7 @@ AIngredient* AOC2GameMode::SpawnIngredientActor(EIngredientType IngredientType)
 	return SpawnManager->SpawnIngredientActor(IngredientType);
 }
 
-APlate* AOC2GameMode::SpawnPlateActor()
+APlate* AOC2GameMode::SpawnPlateActor(EPlateState PlateState)
 {
-	return SpawnManager->SpawnPlateActor(PlateToSpawn);
+	return SpawnManager->SpawnPlateActor(PlateToSpawn, PlateState);
 }

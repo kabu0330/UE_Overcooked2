@@ -36,7 +36,8 @@ AIngredient* USpawnManageComponent::SpawnIngredientActor(EIngredientType Ingredi
 	return IngredientActor;
 }
 
-APlate* USpawnManageComponent::SpawnPlateActor(TSubclassOf<APlate> PlateTopSpawn)
+
+APlate* USpawnManageComponent::SpawnPlateActor(TSubclassOf<APlate> PlateTopSpawn, EPlateState PlateState)
 {
 	FTransform PlateTransform;
 	APlate* PlateActor = GetWorld()->SpawnActorDeferred<APlate>(PlateTopSpawn, PlateTransform);
@@ -47,6 +48,8 @@ APlate* USpawnManageComponent::SpawnPlateActor(TSubclassOf<APlate> PlateTopSpawn
 
 		return nullptr;
 	}
+
+	PlateActor->SetPlateState(PlateState);
 
 	PlateActor->FinishSpawning(PlateTransform);
 
