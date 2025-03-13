@@ -84,6 +84,9 @@ void UCookingWidget::OrderComplete(int index)
 
 void UCookingWidget::CreateNewOrder(FOrder& order)
 {
+    int Test1 = CurOrderCount;
+    int Test2 = Orders.Num();
+
     if (CurOrderCount >= Orders.Num()) return;
 
     if (GetWorld()->GetTimerManager().IsTimerActive(MoveTimerHandle)) return;

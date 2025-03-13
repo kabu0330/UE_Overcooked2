@@ -6,10 +6,10 @@
 
 void UGlobalTestUserWidget::CreateIngredientActor()
 {
-	UOC2Global::SpawnIngredientActor(GetWorld(), EIngredientType::EIT_FISH);
+	//UOC2Global::SpawnIngredientActor(GetWorld(), EIngredientType::EIT_FISH);
 }
 
 void UGlobalTestUserWidget::CreatePlateActor()
 {
-	UOC2Global::SpawnPlateActor(GetWorld());
+	//UOC2Global::SpawnPlateActor(GetWorld());
 }

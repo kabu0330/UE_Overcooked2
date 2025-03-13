@@ -6,6 +6,8 @@
 #include "GameFramework/HUD.h"
 #include "CookingHUD.generated.h"
 
+class UCookingWidget;
+
 /**
  * 
  */
@@ -13,5 +15,14 @@ UCLASS()
 class OVERCOOKED2_API ACookingHUD : public AHUD
 {
 	GENERATED_BODY()
+
+protected:
+	virtual void BeginPlay() override;
+
+public:
+	UPROPERTY(EditAnywhere, Category = "UI|Cooking")
+	UCookingWidget* CookWidget = nullptr;
 	
+	UPROPERTY(EditAnywhere, Category = "UI|Cooking")
+	TSubclassOf<UCookingWidget> CookWidgetObject;
 };

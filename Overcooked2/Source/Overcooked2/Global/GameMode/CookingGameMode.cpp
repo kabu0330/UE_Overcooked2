@@ -10,6 +10,9 @@
 #include "Global/Data/IngredientDataTable.h"
 #include "Global/Data/OC2GlobalData.h"
 
+#include "UI/Cooking/CookingHUD.h"
+#include "UI/Cooking/UI/CookingWidget.h"
+
 #include "Kismet/GameplayStatics.h"
 
 ACookingGameMode::ACookingGameMode()
@@ -83,7 +86,8 @@ void ACookingGameMode::Stage(float DeltaTime)
 
 	if (CheckTime >= UOC2Const::OrderSpawnDelay)
 	{
-		
+		FOrder Order;
+		OrderManager->Multicast_CreateNewOrder(Order);
 	}
 }
 

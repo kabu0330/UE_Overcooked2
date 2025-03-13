@@ -3,6 +3,11 @@
 
 #include "Global/Component/OrderManageComponent.h"
 
+#include "UI/Cooking/CookingHUD.h"
+#include "UI/Cooking/UI/CookingWidget.h"
+
+#include "Kismet/GameplayStatics.h"
+
 // Sets default values for this component's properties
 UOrderManageComponent::UOrderManageComponent()
 {
@@ -32,3 +37,16 @@ void UOrderManageComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 	// ...
 }
 
+void UOrderManageComponent::Multicast_CreateNewOrder_Implementation(FOrder Order)
+{
+	// 모든 클라이언트에서 실행됨
+	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
+	if (PlayerController)
+	{
+		ACookingHUD* CookingHUD = Cast<ACookingHUD>(PlayerController->GetHUD());
+		if (CookingHUD && CookingHUD->CookWidget)
+		{
+			CookingHUD->CookWidget->CreateNewOrder(Order);
+		}
+	}
+}
