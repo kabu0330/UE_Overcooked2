@@ -6,6 +6,12 @@
 
 APot::APot()
 {
+	PrimaryActorTick.bCanEverTick = true;
+	bReplicates = true;
+	SetReplicateMovement(true);
+
+	CookingType = ECookingType::ECT_POT;
+
 	SoupSkeletalMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SoupSkeletalMeshComponent"));
 	SoupSkeletalMeshComponent->SetupAttachment(StaticMeshComponent);
 

@@ -8,16 +8,6 @@
 
 #include "Plate.generated.h"
 
-UENUM(BlueprintType)
-enum class EPlateState : uint8
-{
-	NONE			UMETA(DisplayName = "None"),
-	EMPTY			UMETA(DisplayName = "빈 접시"),
-	OCCUPIED		UMETA(DisplayName = "요리 중"),
-	COMPLETED		UMETA(DisplayName = "요리 완성"),
-	DIRTY			UMETA(DisplayName = "세척 전 접시"),
-};
-
 // 접시 ~ 접시에 올라간 조리된 요리 ~ 요리들의 조합 ~ 완성된 요리
 UCLASS()
 class OVERCOOKED2_API APlate : public ACooking
@@ -43,7 +33,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetPlateState(EPlateState State);
 
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -67,9 +56,10 @@ private:
 	UStaticMeshComponent* IngredientMesh = nullptr; // 재료
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
-	EPlateState PlateState = EPlateState::NONE;
-
-	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	EIngredientState PrveState = EIngredientState::EIS_NONE;
+
+	// 접시 상태
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	EPlateState PlateState = EPlateState::EMPTY;
 
 };

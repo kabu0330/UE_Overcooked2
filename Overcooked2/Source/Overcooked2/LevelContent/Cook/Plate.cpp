@@ -17,6 +17,7 @@ APlate::APlate()
 	CookingType = ECookingType::ECT_PLATE;
 
 	IngredientMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("IngredientMesh"));
+	IngredientMesh->SetIsReplicated(true); // 컴포넌트 네트워크 동기화
 
 	FRotator Rotator = FRotator(0.0f, 0.0f, 90.0f);
 	StaticMeshComponent->SetRelativeRotation(FRotator(Rotator)); // y z x
@@ -103,8 +104,16 @@ void APlate::CheckAndChangeState(AIngredient* Ingredient)
 
 bool APlate::Add(AIngredient* Ingredient)
 {
-	if (EIngredientState::EIS_NONE == Ingredient->GetCurIngredientState())
+	if (ECookingType::ECT_INGREDIENT != Ingredient->GetCookingType())
 	{
+		return false;
+	}
+	if (EPlateState::COMPLETED == PlateState || EPlateState::DIRTY == PlateState)
+	{	// 이미 완성된 요리나 세척 전의 접시는 재료를 올릴 수 없다.
+		return false;
+	}
+	if (EIngredientState::EIS_NONE == Ingredient->GetCurIngredientState())
+	{	// 손질되지 않은 재료는 접시에 올릴 수 없다.
 		return false;
 	}
 	if (nullptr == StaticMeshComponent)

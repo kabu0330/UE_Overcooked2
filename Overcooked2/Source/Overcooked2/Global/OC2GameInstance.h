@@ -96,6 +96,9 @@ public:
 	FString GetChefHeadName() const;
 	void SetChefHeadName(FString HeadName);
 
+	EOC2Stage GetCurStage() const;
+	void SetCurStage(EOC2Stage ChangeStage);
+
 public:
 	UPROPERTY(EditAnywhere, Category = "Global|Level")
 	TSoftObjectPtr<UWorld> TitleLevel;
@@ -126,4 +129,8 @@ private:
 private:
 	UPROPERTY(EditAnywhere, Category = "Global|Character")
 	FString ChefHeadName = "";
+
+	UPROPERTY(EditAnywhere, Category = "Global|Stage")
+	EOC2Stage CurStage = EOC2Stage::EOS_Sushi_1_1;
+
 };

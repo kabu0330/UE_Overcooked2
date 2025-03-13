@@ -3,7 +3,7 @@
 
 #include "Global/OC2Const.h"
 
-float UOC2Const::OrderSpawnDelay = 10.0f;
+float UOC2Const::OrderSpawnDelay = 3.0f;
 float UOC2Const::MaxOrderCount = 5;
 
 FString UOC2Const::ChefEagleHeadName	= "Eagle";

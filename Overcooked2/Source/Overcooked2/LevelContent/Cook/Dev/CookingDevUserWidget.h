@@ -21,24 +21,14 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void ServerSpawnIngredient(EIngredientType Type);
 
-
-	//UFUNCTION(BlueprintCallable)
-	//TArray<ACooking*>& GetTargetActor()
-	//{
-	//	return CookingActor;
-	//}
-
-	//UFUNCTION(BlueprintCallable)
-	//ACooking* GetTargetActorIndex(int Index)
-	//{
-	//	return CookingActor[Index];
-	//}
-
-	//UFUNCTION(BlueprintCallable)
-	//void Reset();
+	UFUNCTION(BlueprintCallable)
+	void SpawnPlate();
 
 	UFUNCTION(BlueprintCallable)
 	void ChangeState(EIngredientState State);
+
+	UFUNCTION(BlueprintCallable)
+	void PlaceOnthePlate();
 
 
 	UFUNCTION(BlueprintCallable)
