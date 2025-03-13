@@ -87,7 +87,4 @@ private:
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	EIngredientState CurIngredientState = EIngredientState::EIS_NONE;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<AIngredient> Subclass;
 };
