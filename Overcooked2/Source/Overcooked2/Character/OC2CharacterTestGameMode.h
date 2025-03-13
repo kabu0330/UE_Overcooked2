@@ -19,6 +19,7 @@ public:
 
     AIngredient* SpawnIngredient(EIngredientType Type);
 
+
 protected:
     void BeginPlay() override;
 
