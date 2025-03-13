@@ -28,6 +28,15 @@ void ACookingDevPlayerState::RequestSpawnIngredient_Implementation()
 	}
 }
 
+void ACookingDevPlayerState::SpawnPlate_Implementation()
+{
+	ACookingDevGameMode* GameMode = Cast<ACookingDevGameMode>(GetWorld()->GetAuthGameMode());
+	if (nullptr != GameMode)
+	{
+		GameMode->SpawnPlateActor();
+	}
+}
+
 void ACookingDevPlayerState::ChangeState_Implementation(EIngredientState State)
 {
 	ACookingDevGameMode* GameMode = Cast<ACookingDevGameMode>(GetWorld()->GetAuthGameMode());
@@ -66,6 +75,10 @@ void ACookingDevPlayerState::AddPlayerState_Implementation()
 	{
 		GameMode->AddPlayerState(this);
 	}
+}
+
+void ACookingDevPlayerState::PlaceOnthePlate_Implementation()
+{
 }
 
 void ACookingDevPlayerState::BeginPlay()
