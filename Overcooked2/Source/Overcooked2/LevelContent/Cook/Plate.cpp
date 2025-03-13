@@ -21,6 +21,9 @@ APlate::APlate()
 
 	FRotator Rotator = FRotator(0.0f, 0.0f, 90.0f);
 	StaticMeshComponent->SetRelativeRotation(FRotator(Rotator)); // y z x
+
+	FVector Scale = FVector(2.0f, 2.0f, 2.0f);
+	StaticMeshComponent->SetRelativeScale3D(Scale);
 }
 
 void APlate::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -30,14 +33,15 @@ void APlate::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimePr
 	DOREPLIFETIME(APlate, Ingredients);
 	DOREPLIFETIME(APlate, IngredientMesh);
 	DOREPLIFETIME(APlate, PlateState);
-	DOREPLIFETIME(APlate, PrveState);
+	//DOREPLIFETIME(APlate, PrveState);
 }
 
 // Called when the game starts or when spawned
 void APlate::BeginPlay()
 {
 	ACooking::BeginPlay();
-
+	
+	SetActorLocation(FVector(0.0f, -200.0f, 10.0f));
 }
 
 // Called every frame
@@ -57,7 +61,7 @@ bool APlate::IsDirtyPlate()
 	return PlateState == EPlateState::DIRTY;
 }
 
-void APlate::WashPlate()
+void APlate::WashPlate_Implementation()
 {
 	if (true == IsDirtyPlate())
 	{
@@ -65,41 +69,9 @@ void APlate::WashPlate()
 	}
 }
 
-void APlate::SetPlateState(EPlateState State)
+void APlate::SetPlateState_Implementation(EPlateState State)
 {
 	PlateState = State;
-}
-
-void APlate::LoadDataTable(AIngredient* Ingredient)
-{
-	if (nullptr == IngredientDataTable)
-	{
-		IngredientDataTable = Ingredient->GetIngredientDataTable();
-	}
-	if (true == CookingDataTable.IsEmpty())
-	{
-		UOC2GameInstance* GameInst = Cast<UOC2GameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
-		FName Name = GameInst->GetIngredientDataTableRowName(Ingredient->GetIngredientType());
-		CookingDataTable = GameInst->GetIngredientCookDataRows(Name.ToString());
-	}
-}
-
-void APlate::CheckAndChangeState(AIngredient* Ingredient)
-{
-	if (PrveState != Ingredient->GetCurIngredientState())
-	{
-		PrveState = Ingredient->GetCurIngredientState();
-
-		for (int i = 0; i < CookingDataTable.Num(); i++)
-		{
-			if (Ingredient->GetCurIngredientState() == CookingDataTable[i].IngredientState)
-			{
-				Ingredient->GetStaticMeshComponent()->SetStaticMesh(CookingDataTable[i].CookMesh);
-				Ingredient->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
-				Ingredient->AddActorLocalOffset(FVector(0.0f, 0.0f, 10.0f));
-			}
-		}
-	}
 }
 
 bool APlate::Add(AIngredient* Ingredient)
@@ -121,23 +93,38 @@ bool APlate::Add(AIngredient* Ingredient)
 		return false;
 	}
 
-	// 1. DataTable이 null이면 세팅
-	LoadDataTable(Ingredient);
-
-	// 2. IngredinetType이 바뀌었는지 체크하고 메시 변환
-	CheckAndChangeState(Ingredient);
-
+	// 1. 손질된 재료를 추가한다.
 	Ingredients.Add(Ingredient);
 
+	// 2. RecipeDataTable과 비교하여 데이터 테이블에 해당 재료조합이 존재하는지 확인
 	TArray<FPlateInitData> InitData = UOC2GlobalData::GetPlateMesh(GetWorld(), Ingredients);
-	if (true == InitData.IsEmpty()) // 실패처리
+
+	// 3-1. 데이터를 획득하는데 실패했다면
+	if (true == InitData.IsEmpty()) 
 	{
-		Ingredients.Pop(); 
+		Ingredients.Pop(); // 재료 자료구조에서 제거하고 실패 반환
 		return false;
 	}
-	else
+	else // 3-2. 데이터를 획득하는데 성공했다면 
 	{
-		return true;
-	}
+		IngredientMesh->SetStaticMesh(InitData[0].StaticMesh); // 메시 변경
+		if (nullptr != IngredientMesh)
+		{
+			// 3-3. 물리 잠시 끄고
+			SetSimulatePhysics(false); // 컴포넌트와 충돌로 날아가는 움직이는 것을 방지하기 위해 물리를 잠시 끈다.
+			IngredientMesh->AttachToComponent(StaticMeshComponent, FAttachmentTransformRules::KeepRelativeTransform);
 
+			// 3-4. Offset
+			IngredientMesh->AddLocalOffset(InitData[0].OffsetLocation);
+			IngredientMesh->SetRelativeRotation(InitData[0].OffsetRotation);
+
+			FVector Scale = FVector(0.5f, 0.5f, 0.5f); // 추후 Data에 편입한 Scale을 사용할 예정
+			IngredientMesh->SetRelativeScale3D(Scale);
+
+			// 3-5. 물리 다시 켜고
+			SetSimulatePhysics(true);
+			return true;
+		}
+	}
+	return false;
 }

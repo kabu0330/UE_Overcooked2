@@ -30,6 +30,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void PlaceOnthePlate();
 
+	UFUNCTION(BlueprintCallable)
+	void Reset();
+
 
 	UFUNCTION(BlueprintCallable)
 	void StartServer();

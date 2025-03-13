@@ -22,16 +22,18 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool Add(class AIngredient* Ingredient);
 
+
 	UFUNCTION(BlueprintCallable)
 	bool IsDirtyPlate();
 
-
 	// 설거지 성공 시 호출
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
 	void WashPlate();
+	void WashPlate_Implementation();
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
 	void SetPlateState(EPlateState State);
+	void SetPlateState_Implementation(EPlateState State);
 
 protected:
 	// Called when the game starts or when spawned
@@ -40,23 +42,17 @@ protected:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	void LoadDataTable(class AIngredient* Ingredient);
-
-	void CheckAndChangeState(class AIngredient* Ingredient);
-
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
 
 private:
-	TArray<FIngredientCookDataRow> CookingDataTable;
-
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	TArray<class AIngredient*> Ingredients;
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* IngredientMesh = nullptr; // 재료
 
-	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
-	EIngredientState PrveState = EIngredientState::EIS_NONE;
+	//UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	//EIngredientState PrveState = EIngredientState::EIS_NONE;
 
 	// 접시 상태
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
