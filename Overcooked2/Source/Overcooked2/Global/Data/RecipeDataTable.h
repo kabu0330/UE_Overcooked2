@@ -30,6 +30,9 @@ struct FRecipeDataRow : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
 	FRotator OffsetRotation = FRotator::ZeroRotator;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
+	FVector OffsetScale = FVector(0.5f, 0.5f, 0.5f);
 };
 
 /**

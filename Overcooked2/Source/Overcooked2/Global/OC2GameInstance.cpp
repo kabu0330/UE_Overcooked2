@@ -255,3 +255,13 @@ void UOC2GameInstance::SetChefHeadName(FString HeadName)
 {
 	ChefHeadName = HeadName;
 }
+
+EOC2Stage UOC2GameInstance::GetCurStage() const
+{
+	return CurStage;
+}
+
+void UOC2GameInstance::SetCurStage(EOC2Stage ChangeStage)
+{
+	CurStage = ChangeStage;
+}
