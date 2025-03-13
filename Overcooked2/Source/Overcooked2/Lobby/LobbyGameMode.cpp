@@ -10,16 +10,16 @@
 
 ALobbyGameMode::ALobbyGameMode()
 {
+	ChefHeadNames.Add(UOC2Const::ChefEagleHeadName);
+	ChefHeadNames.Add(UOC2Const::ChefMouseHeadName);
+	ChefHeadNames.Add(UOC2Const::ChefPandaHeadName);
+	ChefHeadNames.Add(UOC2Const::ChefPigHeadName);
 }
 
 void ALobbyGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
-	ChefHeadNames.Add(UOC2Const::ChefEagleHeadName);
-	ChefHeadNames.Add(UOC2Const::ChefMouseHeadName);
-	ChefHeadNames.Add(UOC2Const::ChefPandaHeadName);
-	ChefHeadNames.Add(UOC2Const::ChefPigHeadName);
 }
 
 void ALobbyGameMode::Tick(float DeltaTime)
