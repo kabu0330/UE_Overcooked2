@@ -40,9 +40,11 @@ enum class EIngredientState : uint8
 UENUM(BlueprintType)
 enum class ECookingType : uint8
 {
-	ECT_NONE			UMETA(DisplayName = "None"),
-	ECT_INGREDIENT		UMETA(DisplayName = "재료"),
-	ECT_PLATE			UMETA(DisplayName = "요리"),
+	ECT_NONE				UMETA(DisplayName = "None"),
+	ECT_INGREDIENT			UMETA(DisplayName = "재료"),
+	ECT_PLATE				UMETA(DisplayName = "요리"),
+	ECT_POT					UMETA(DisplayName = "냄비"),
+	ECT_FIREEXTINGUISHER	UMETA(DisplayName = "소화기"),
 };
 
 /**

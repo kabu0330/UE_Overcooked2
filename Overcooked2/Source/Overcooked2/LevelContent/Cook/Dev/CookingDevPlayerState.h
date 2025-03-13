@@ -29,7 +29,9 @@ public:
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	class USpawnManagerComponent* SpawnManagerComponent = nullptr;
 
-
+	UFUNCTION(BlueprintCallable, Reliable, Server)
+	void SpawnPlate();
+	void SpawnPlate_Implementation();
 
 
 	UFUNCTION(BlueprintCallable, Reliable, Server)
@@ -42,6 +44,10 @@ public:
 	UFUNCTION(BlueprintCallable, Reliable, Server)
 	void AddPlayerState();
 	void AddPlayerState_Implementation();
+
+	UFUNCTION(BlueprintCallable, Reliable, Server)
+	void PlaceOnthePlate();
+	void PlaceOnthePlate_Implementation();
 
 	void AddCookingActor(ACooking* Actor)
 	{
