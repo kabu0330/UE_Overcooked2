@@ -34,7 +34,7 @@ protected:
 
 public:
 	AIngredient* SpawnIngredientActor(EIngredientType Type);
-	APlate* SpawnPlateActor();
+	APlate* SpawnPlateActor(EPlateState PlateState = EPlateState::EMPTY);
 
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Spawning", meta = (AllowPrivateAccess = "true"))
