@@ -25,6 +25,32 @@ void AIngredient::SetType_Implementation(EIngredientType Type)
 	IngredientType = Type;
 }
 
+bool AIngredient::IsCooked()
+{
+	switch (CurIngredientState)
+	{
+	case EIngredientState::EIS_FINISHED:
+	case EIngredientState::EIS_CHOPPED:
+	case EIngredientState::EIS_GRILLED:
+	case EIngredientState::EIS_FRYABED:
+	case EIngredientState::EIS_BOILED:
+		return true;
+
+	case EIngredientState::EIS_CHOPPABLE:
+	case EIngredientState::EIS_GRILLABLE:
+	case EIngredientState::EIS_FRYABLE:
+	case EIngredientState::EIS_BOILABLE:
+	case EIngredientState::EIS_NONE:
+	case EIngredientState::EIS_OVERCOOKED:
+	case EIngredientState::EIS_MAX:
+		return false;
+
+	default:
+		break;
+	}
+	return false;
+}
+
 // Called when the game starts or when spawned
 void AIngredient::BeginPlay()
 {
@@ -125,7 +151,6 @@ void AIngredient::ChangeState_Implementation(EIngredientState State)
 	DeactivateHighlight();
 
 	CurIngredientState = State;
-	//StaticMeshComponent->SetStaticMesh(GameInst->GetIngredientStaticMesh(Name.ToString()));
 	StaticMeshComponent->SetStaticMesh(CookData->CookMesh);
 
 	ActivateHighlight();

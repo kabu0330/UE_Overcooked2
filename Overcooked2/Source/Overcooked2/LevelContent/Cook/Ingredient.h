@@ -65,6 +65,9 @@ public:
 		return CurIngredientState;
 	}
 
+	UFUNCTION(BlueprintCallable)
+	bool IsCooked();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

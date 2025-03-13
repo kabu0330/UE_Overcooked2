@@ -6,9 +6,7 @@
 #include "Kismet/GameplayStatics.h"
 #include <LevelContent/Cook/Dev/CookingDevGameMode.h>
 #include <Global/OC2Global.h>
-#include <LevelContent/Cook/Dev/CookingDevGameState.h>
 #include <LevelContent/Cook/Dev/CookingDevHUD.h>
-#include <levelcontent/Cook/Dev/SpawnManagerComponent.h>
 #include <Character/OC2Character.h>
 #include <LevelContent/Cook/Dev/CookingDevPlayerState.h>
 
@@ -28,7 +26,7 @@ void UCookingDevUserWidget::ServerSpawnIngredient(EIngredientType Type)
 	ACookingDevPlayerState* PlayerState = Controller->GetPlayerState<ACookingDevPlayerState>();
 	if (nullptr != PlayerState)
 	{
-		PlayerState->SpawnManagerComponent->SetIngredientType(Type);
+		PlayerState->SetIngredientType(Type);
 	}
 }
 
@@ -59,6 +57,16 @@ void UCookingDevUserWidget::PlaceOnthePlate()
 	if (nullptr != PlayerState)
 	{
 		PlayerState->PlaceOnthePlate();
+	}
+}
+
+void UCookingDevUserWidget::Reset()
+{
+	APlayerController* Controller = GetOwningPlayer();
+	ACookingDevPlayerState* PlayerState = Controller->GetPlayerState<ACookingDevPlayerState>();
+	if (nullptr != PlayerState)
+	{
+		PlayerState->Reset();
 	}
 }
 
