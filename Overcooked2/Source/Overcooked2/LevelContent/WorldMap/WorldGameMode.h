@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameMode.h"
+#include "LevelContent/WorldMap/WorldMapData.h"
 #include "WorldGameMode.generated.h"
 
 /**
@@ -13,6 +14,8 @@ UCLASS()
 class OVERCOOKED2_API AWorldGameMode : public AGameMode
 {
 	GENERATED_BODY()
+
+public:
 
 protected:
 	void BeginPlay() override;
@@ -41,4 +44,9 @@ private:
 	// Temp
 	bool IsBuildingShow1_1 = false;
 	int IdxOpenRoad = -1;
+
+	EStageState CurStageState = EStageState::None;
+
+	UPROPERTY()
+	TObjectPtr<AActor> FocusCamera = nullptr;
 };

@@ -21,7 +21,7 @@ ABusCharacter::ABusCharacter()
 	BoxComponent->bDynamicObstacle = true;
 	RootComponent = BoxComponent;
 
-	CharacterMovement = CreateDefaultSubobject<UCharacterMovementComponent>(TEXT("CharMoveComp"));
+	CharacterMovement = CreateDefaultSubobject<UCharacterMovementComponent>(TEXT("CharMoveComp"));	// TODO
 	if (CharacterMovement)
 	{
 		CharacterMovement->UpdatedComponent = BoxComponent;
@@ -49,3 +49,7 @@ void ABusCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 
 }
 
+void ABusCharacter::OnMove(const FVector2D& _Vec)
+{
+	AddMovementInput(FVector(_Vec.X, _Vec.Y, 0.f));
+}

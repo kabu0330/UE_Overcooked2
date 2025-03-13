@@ -3,10 +3,14 @@
 
 #include "LevelContent/WorldMap/WorldGameMode.h"
 #include "LevelContent/WorldMap/TileGrid.h"
+#include "LevelContent/WorldMap/WorldPlayer.h"
+#include "Global/OC2GameInstance.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/StaticMeshActor.h"
+#include "Camera/CameraComponent.h"
 
 // TODO: literal -> variable
+// TODO: change to manager
 void AWorldGameMode::BeginPlay()
 {
 	Super::BeginPlay();
@@ -27,16 +31,35 @@ void AWorldGameMode::BeginPlay()
 	{
 		ActorsChangingVisibility[i]->SetActorHiddenInGame(true);
 	}
+
+	RootComponent->SetVisibility(false);
 }
 
 void AWorldGameMode::Tick(float _DeltaTime)
 {
 	Super::Tick(_DeltaTime);
 
-	int a = 0;
-
-	if (Tile1_1->IsEndTransition())
+	UOC2GameInstance* GameInst = GetWorld()->GetGameInstance<UOC2GameInstance>();
+	if (!GameInst)
 	{
+		return;
+	}
+
+	EOC2Stage StageState = GameInst->GetCurStage();
+	if (StageState < EOC2Stage::EOS_Sushi_1_2)
+	{
+		return;
+	}
+
+	if (!Tile1_1->IsStarted)
+	{
+		Tile1_1->IsStarted = true;	// Temp
+	}
+
+	if (Tile1_1->IsEndTransition() && IsOpen1_1 == false)	// IsOpen1_1: Temp
+	{
+		IsOpen1_1 = true;
+
 		// Temp
 		OpenRoad1_1(0);
 		ShowBuilding1_1();
@@ -55,7 +78,7 @@ void AWorldGameMode::Tick(float _DeltaTime)
 
 		ActorsChangingScaleY[IdxOpenRoad]->SetActorRelativeScale3D(FVector(X + 0.05f, 1.f, 1.f));
 	}
-	
+
 	// TODO: Move to function
 	if (IsBuildingShow1_1)
 	{
@@ -63,6 +86,9 @@ void AWorldGameMode::Tick(float _DeltaTime)
 		if (FMath::IsNearlyEqual(Scale.X, 1.0, 1e-2))
 		{
 			IsBuildingShow1_1 = false;
+
+			// Temp
+			GameInst->SetCurStage(EOC2Stage::EOS_Sushi_1_1);
 			return;
 		}
 
