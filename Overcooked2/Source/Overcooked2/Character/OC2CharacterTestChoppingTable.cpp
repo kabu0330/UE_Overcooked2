@@ -2,6 +2,7 @@
 
 
 #include "Character/OC2CharacterTestChoppingTable.h"
+#include "OC2Character.h"
 
 // Sets default values
 AOC2CharacterTestChoppingTable::AOC2CharacterTestChoppingTable()
@@ -24,6 +25,31 @@ void AOC2CharacterTestChoppingTable::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 }
+
+ACooking* AOC2CharacterTestChoppingTable::Interact(AActor* ChefActor)
+{
+	AOC2Character* Character = Cast<AOC2Character>(ChefActor);
+
+	if (CurCook == nullptr)
+	{
+		return nullptr;
+	}
+	else
+	{
+		ACooking* Ret = CurCook;
+		CurCook = nullptr;
+		return Ret;
+	}
+}
+
+void AOC2CharacterTestChoppingTable::PlaceItem(ACooking* Cook)
+{
+	CurCook = Cook;
+	CurCook->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
+	CurCook->SetActorLocation(GetActorLocation() + FVector(0,0,100));
+}
+
+
 
 void AOC2CharacterTestChoppingTable::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {

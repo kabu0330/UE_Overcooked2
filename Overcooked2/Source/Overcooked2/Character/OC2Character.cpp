@@ -16,7 +16,7 @@ AOC2Character::AOC2Character()
 	PrimaryActorTick.bCanEverTick = true;
 
 	bReplicates = true;
-	bUseControllerRotationYaw = false;
+	//bUseControllerRotationYaw = false;
 
 	GetMesh()->Mobility = EComponentMobility::Movable;
 	GetMesh()->SetIsReplicated(true);
@@ -33,9 +33,32 @@ void AOC2Character::MoveCharacter(const FInputActionValue& Value)
 
 	MovementInput.Normalize();
 
-	AddMovementInput(MovementInput);
+	if (bIsChopping == true)
+	{
+		Chopping(false);
+	}
 
-	Rotate(MovementInput);
+	if (bIsDashing == false)
+	{
+		AddMovementInput(MovementInput);
+	}
+	//if (bIsDashing == false)
+	//{
+	//	GetMovementComponent()->AddInputVector(MovementInput);
+	//}
+
+
+	float CurrentYaw = GetActorRotation().Yaw;
+	float TargetYaw = MovementInput.Rotation().Yaw;
+
+	float InterpSpeed = 10.0f; // 회전 속도 조절 가능
+	float NewYaw = FMath::FInterpTo(CurrentYaw, TargetYaw, GetWorld()->GetDeltaSeconds(), InterpSpeed);
+
+	float YawDelta = FMath::FindDeltaAngleDegrees(CurrentYaw, NewYaw);
+
+	AddControllerYawInput(YawDelta);
+
+	
 }
 
 // Called when the game starts or when spawned
@@ -59,14 +82,6 @@ void AOC2Character::Tick(float DeltaTime)
 	CheckInteract();
 
 	DrawDebugSphere(GetWorld(), GrabComponent->GetComponentLocation(), TraceRadius, 20, FColor::Green, false, 0.0f);
-}
-
-void AOC2Character::Rotate_Implementation(FVector MovementInput)
-{
-	FQuat ActorRot = GetActorForwardVector().Rotation().Quaternion();
-	FQuat TargetRot = FRotationMatrix::MakeFromX(MovementInput).Rotator().Quaternion();
-
-	SetActorRotation(FQuat::Slerp(ActorRot, TargetRot, Alpha).Rotator());
 }
 
 void AOC2Character::CheckDash_Implementation(float DeltaTime)
@@ -199,7 +214,7 @@ void AOC2Character::Interact_Implementation()
 void AOC2Character::Grab_Implementation(ACooking* Cook)
 {
 	GrabbedObject = Cook;
-	Cast<AIngredient>(GrabbedObject)->AttachToChef(this);
+	GrabbedObject->AttachToChef(this);
 	GrabbedObject->SetActorLocation(GrabComponent->GetComponentLocation());
 }
 
@@ -211,7 +226,7 @@ void AOC2Character::Drop_Implementation()
 		UPrimitiveComponent* PrimitiveComp = Cast<UPrimitiveComponent>(GrabbedObject->GetRootComponent());
 		UE_LOG(LogTemp, Log, TEXT("Drop"));
 		// 들고 있는 물체에 대해 상호작용을 실행한다. 바닥에 내려놓는다는 뜻.
-		Cast<AIngredient>(GrabbedObject)->DetachFromChef(this);
+		GrabbedObject->DetachFromChef(this);
 
 		GrabbedObject->SetActorLocation(GrabComponent->GetComponentLocation());
 		GrabbedObject->SetActorRotation(GetActorRotation());
@@ -229,7 +244,7 @@ void AOC2Character::DoAction_Implementation()
 	}
 	if (GrabbedObject != nullptr)
 	{
-		if (!SelectedOC2Actor->IsA(APlate::StaticClass()))
+		if (!GrabbedObject->IsA(APlate::StaticClass()))
 		{
 			Throwing();
 		}
@@ -246,14 +261,14 @@ void AOC2Character::DoAction_Implementation()
 
 void AOC2Character::Throwing_Implementation()
 {
-	if (GrabbedObject)
+	if (GrabbedObject && GrabbedObject->IsA(AIngredient::StaticClass()))
 	{
 		// 1️⃣ 액터의 루트 컴포넌트를 가져오기
 		UPrimitiveComponent* PrimitiveComp = Cast<UPrimitiveComponent>(GrabbedObject->GetRootComponent());
 
 		if (PrimitiveComp)
 		{
-			Cast<AIngredient>(GrabbedObject)->DetachFromChef(this);
+			GrabbedObject->DetachFromChef(this);
 			GrabbedObject->SetActorLocation(GrabComponent->GetComponentLocation());
 
 			// 4️⃣ 던질 방향과 세기 설정
