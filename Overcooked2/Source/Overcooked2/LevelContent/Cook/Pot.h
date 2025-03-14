@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "LevelContent/Cook/Cooking.h"
+#include <LevelContent/Cook/Soup.h>
 #include "Pot.generated.h"
 
 UENUM(BlueprintType)
@@ -55,8 +56,8 @@ protected:
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
 
 private:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowprivateAccess = "true"))
-	USkeletalMeshComponent* SoupSkeletalMeshComponent = nullptr;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowprivateAccess = "true"))
+	//USkeletalMeshComponent* SoupSkeletalMeshComponent = nullptr;
 
 	class AIngredient* Ingredient = nullptr;
 
@@ -66,5 +67,7 @@ private:
 	float TimeElapsed = 0.0f;
 
 	bool bIsOnStove = false;
+
+	ASoup* Soup = nullptr;
 
 };
