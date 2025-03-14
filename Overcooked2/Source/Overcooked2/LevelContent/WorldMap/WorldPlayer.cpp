@@ -10,12 +10,14 @@
 #include "Camera/CameraActor.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/SpringArmComponent.h"
 
 // Sets default values
 AWorldPlayer::AWorldPlayer()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	bReplicates = true;
 
 	DefaultGravity = GetCharacterMovement()->GravityScale;
 }
@@ -24,37 +26,44 @@ void AWorldPlayer::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// Change Camera
-	TArray<AActor*> Actors;
-	UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), AActor::StaticClass(), TEXT("FocusCamera"), Actors);
-
-	if (Actors.Num() > 0)
-	{
-		FocusCameraActor = Actors[0];
-		APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
-		PlayerController->SetViewTargetWithBlend(FocusCameraActor, 0.0f);
-	}
-
 	InitParentSceneComp();
-	Hide();
 
-	if (GetWorld()->GetAuthGameMode())
+	if (GetWorld()->IsNetMode(NM_ListenServer))
 	{
-		ChangeState_Implementation(EStageState::ShowStage1_1);
+		int a = 0;
 	}
+	else if (GetWorld()->IsNetMode(NM_Client))
+	{
+		SetActorHiddenInGame(true);
+		SetActorEnableCollision(false);
+		SetReplicates(false);
+		bOnlyRelevantToOwner = true;
+	}
+
+	/*if (HasAuthority() == false)
+	{
+		Hide();
+	}*/
+
+	SetActorLocation(FVector(-100.f, 150.f, 100.f));
+
+	ChangeState(EStageState::ShowStage1_1);
 }
 
 void AWorldPlayer::Tick(float DeltaTime)
 {
+	if (Controller)
+	{
+		AActor* CurrentViewTarget = Controller->GetViewTarget();
+		UE_LOG(LogTemp, Warning, TEXT("1. Current View Target: %s"), *CurrentViewTarget->GetName());
+	}
+
 	Super::Tick(DeltaTime);
 
-	if (CurStageState == EStageState::ShowStage1_1)
+	if (Controller)
 	{
-		RunStageShowing();
-	}
-	else if (CurStageState == EStageState::HideStage1_1)
-	{
-		RunStageHide();
+		AActor* CurrentViewTarget = Controller->GetViewTarget();
+		UE_LOG(LogTemp, Warning, TEXT("2. Current View Target: %s"), *CurrentViewTarget->GetName());
 	}
 }
 
@@ -83,7 +92,20 @@ void AWorldPlayer::InitParentSceneComp()
 	}
 }
 
-void AWorldPlayer::Show()
+void AWorldPlayer::ChangeState(EStageState _State)
+//void AWorldPlayer::ChangeState_Implementation(EStageState _State)
+{
+	CurStageState = _State;
+}
+
+void AWorldPlayer::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	//DOREPLIFETIME(AWorldPlayer, CurStageState);
+}
+
+void AWorldPlayer::Show_Implementation()
 {
 	// Temp
 	UCapsuleComponent* CapComponent = GetCapsuleComponent();
@@ -100,9 +122,8 @@ void AWorldPlayer::Show()
 	GetCharacterMovement()->GravityScale = DefaultGravity;
 }
 
-void AWorldPlayer::Hide()
+void AWorldPlayer::Hide_Implementation()
 {
-	// Temp
 	UCapsuleComponent* CapComponent = GetCapsuleComponent();
 	CapComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	/*CapComponent->SetVisibility(false);
@@ -115,83 +136,4 @@ void AWorldPlayer::Hide()
 	}
 
 	GetCharacterMovement()->GravityScale = 0.0f;
-}
-
-void AWorldPlayer::RunStageShowing()
-{
-	FVector CurLoc = FocusCameraActor->GetActorLocation();
-	FVector DestLoc(-320.f, 420.f, CurLoc.Z);	// Temp
-
-	float Dist = FVector::Dist(DestLoc, CurLoc);
-	if (Dist < 2.f)	// Temp
-	{
-		CurStageState = EStageState::HideStage1_1;
-		UOC2GameInstance* GameInst = GetWorld()->GetGameInstance<UOC2GameInstance>();
-		if (GameInst)
-		{
-			GameInst->SetCurStage(EOC2Stage::EOS_Sushi_1_2);	// Temp
-		}
-		FocusCameraActor->SetActorLocation(DestLoc);
-		return;
-	}
-
-	FVector Dir = DestLoc - CurLoc;
-	Dir.Normalize();
-	Dir *= 2.f;
-	FVector LocVec = CurLoc + Dir;
-	FocusCameraActor->SetActorLocation(FVector(LocVec.X, LocVec.Y, CurLoc.Z));
-}
-
-void AWorldPlayer::RunStageHide()
-{
-	UOC2GameInstance* GameInst = GetWorld()->GetGameInstance<UOC2GameInstance>();
-	if (!GameInst)
-	{
-		return;
-	}
-
-	if (GameInst->GetCurStage() != EOC2Stage::EOS_Sushi_1_1)		// Temp
-	{
-		return;
-	}
-
-	FVector CurLoc = FocusCameraActor->GetActorLocation();
-	FVector DestLoc(-100.f, 150.f, CurLoc.Z);	// Temp
-
-	float Dist = FVector::Dist(DestLoc, CurLoc);
-	if (Dist < 2.f)	// Temp
-	{
-		CurStageState = EStageState::None;
-		//GameInst->SetStageState(4);	// Temp
-		FocusCameraActor->SetActorLocation(DestLoc);
-		Show();
-
-		// Change Camera
-		UCameraComponent* CurrentCameraComponent = FindComponentByClass<UCameraComponent>();
-		if (CurrentCameraComponent)
-		{
-			APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
-			PlayerController->SetViewTargetWithBlend(this, 0.0f);
-		}
-
-		return;
-	}
-
-	FVector Dir = DestLoc - CurLoc;
-	Dir.Normalize();
-	Dir *= 2.f;
-	FVector LocVec = CurLoc + Dir;
-	FocusCameraActor->SetActorLocation(FVector(LocVec.X, LocVec.Y, CurLoc.Z));
-}
-
-void AWorldPlayer::ChangeState_Implementation(EStageState _State)
-{
-	CurStageState = _State;
-}
-
-void AWorldPlayer::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	DOREPLIFETIME(AWorldPlayer, CurStageState);
 }

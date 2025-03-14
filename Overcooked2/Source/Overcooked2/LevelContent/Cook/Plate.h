@@ -26,6 +26,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool IsDirtyPlate();
 
+	// 서버(GameMode)에서 호출해야만 적용되는 함수들!!!
 	// 설거지 성공 시 호출
 	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
 	void WashPlate();
@@ -34,6 +35,7 @@ public:
 	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
 	void SetPlateState(EPlateState State);
 	void SetPlateState_Implementation(EPlateState State);
+	// ------------------------------------------------------
 
 protected:
 	// Called when the game starts or when spawned
@@ -44,6 +46,9 @@ protected:
 
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
 
+	void SetMesh();
+	void SetMaterialTexture(UTexture* Texture);
+
 private:
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	TArray<class AIngredient*> Ingredients;
@@ -51,11 +56,14 @@ private:
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* IngredientMesh = nullptr; // 재료
 
-	//UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
-	//EIngredientState PrveState = EIngredientState::EIS_NONE;
-
 	// 접시 상태
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	EPlateState PlateState = EPlateState::EMPTY;
 
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	UTexture* CleanTexture;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	UTexture* DirtyTexture;
 };

@@ -22,6 +22,7 @@ public:
 	void Connect();
 
 
+protected:
 
 private:
 
@@ -33,5 +34,8 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Network", meta = (AllowPrivateAccess = "true"))
 	FString LevelName = TEXT("LobbyLevel");
+
+
+
 
 };

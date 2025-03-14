@@ -61,6 +61,7 @@ void AOC2Actor::ApplyMaterialHighlight()
 			if (ExistingDynamicMaterial)
 			{
 				// 이미 존재하는 다이나믹 머티리얼이 있으면 값을 변경
+				Mesh->GetMaterial(0)->GetScalarParameterValue(FName("DiffuseColorMapWeight"), DiffuseColorMapWeight);
 				ExistingDynamicMaterial->SetScalarParameterValue(FName("DiffuseColorMapWeight"), HighlightValue);
 				continue;
 			}

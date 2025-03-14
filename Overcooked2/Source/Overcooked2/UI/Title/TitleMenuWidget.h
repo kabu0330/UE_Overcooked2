@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/GameMode.h"
-#include "TableTestGameMode.generated.h"
+#include "UI/Title/TitleWidget.h"
+#include "TitleMenuWidget.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class OVERCOOKED2_API ATableTestGameMode : public AGameMode
+class OVERCOOKED2_API UTitleMenuWidget : public UTitleWidget
 {
 	GENERATED_BODY()
 	
