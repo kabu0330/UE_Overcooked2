@@ -22,13 +22,20 @@ public:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	UFUNCTION(Reliable, Server)
-	void Show();
-	void Show_Implementation();
+	UFUNCTION(Reliable, NetMulticast)
+	void UpdateBusLocation(FVector _Loc);
+	void UpdateBusLocation_Implementation(FVector _Loc);
 
-	UFUNCTION(Reliable, Server)
+	UFUNCTION(Reliable, Client)
+	void Show_Client();
+	void Show_Client_Implementation();
+
+	UFUNCTION(Reliable, Client)
+	void Hide_Client();
+	void Hide_Client_Implementation();
+
+	void Show();
 	void Hide();
-	void Hide_Implementation();
 
 	void ChangeState(EStageState _State);
 
@@ -38,13 +45,16 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-	void InitParentSceneComp();
-
 	TObjectPtr<USceneComponent> MeshWrapper = nullptr;
 
 	float DefaultGravity = 0.f;
 
-	//UPROPERTY(VisibleAnywhere, Replicated, BlueprintReadOnly, Category = "StageState", meta = (AllowPrivateAccess = "true"))
+	// Temp
+	const FVector START_LOC = FVector(-100.f, 150.f, 100.f);
+
+	UPROPERTY(Replicated)
+	FVector WorldPlayerLocation = START_LOC;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "StageState", meta = (AllowPrivateAccess = "true"))
 	EStageState CurStageState = EStageState::None;
 };
