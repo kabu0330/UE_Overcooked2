@@ -49,7 +49,7 @@ void AChoppingTable::ChopIngredient(AActor* ChefActor)
 			{
 				Timer = 3.0f;
 
-				While(Timer > 0)
+				while(Timer > 0)
 				{
 					bTimerActivated = true;
 				}
