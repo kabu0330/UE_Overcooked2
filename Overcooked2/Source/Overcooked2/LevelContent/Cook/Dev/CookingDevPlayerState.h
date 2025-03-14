@@ -29,8 +29,8 @@ public:
 	void RequestSpawnIngredient_Implementation();
 
 	UFUNCTION(BlueprintCallable, Reliable, Server)
-	void SpawnPlate();
-	void SpawnPlate_Implementation();
+	void SpawnPlate(bool bIsClean);
+	void SpawnPlate_Implementation(bool bIsClean);
 
 	UFUNCTION(BlueprintCallable, Reliable, Server)
 	void ChangeState(EIngredientState State);
@@ -57,5 +57,7 @@ private:
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	EIngredientState IngredientState = EIngredientState::EIS_NONE;
 
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	EPlateState PlateState = EPlateState::EMPTY;
 
 };

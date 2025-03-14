@@ -27,12 +27,16 @@ void ACookingDevPlayerState::RequestSpawnIngredient_Implementation()
 	}
 }
 
-void ACookingDevPlayerState::SpawnPlate_Implementation()
+void ACookingDevPlayerState::SpawnPlate_Implementation(bool bIsClean)
 {
+	if (false == bIsClean)
+	{
+		PlateState = EPlateState::DIRTY;
+	}
 	ACookingDevGameMode* GameMode = Cast<ACookingDevGameMode>(GetWorld()->GetAuthGameMode());
 	if (nullptr != GameMode)
 	{
-		APlate* NewPlate = GameMode->SpawnPlateActor();
+		APlate* NewPlate = GameMode->SpawnPlateActor(PlateState);
 		GameMode->AddPlate(NewPlate);
 	}
 }

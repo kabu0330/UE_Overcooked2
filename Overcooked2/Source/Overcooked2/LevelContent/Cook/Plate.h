@@ -35,6 +35,8 @@ public:
 	void SetPlateState(EPlateState State);
 	void SetPlateState_Implementation(EPlateState State);
 
+	void SetMesh();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -58,4 +60,10 @@ private:
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	EPlateState PlateState = EPlateState::EMPTY;
 
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	UTexture* CleanTexture;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	UTexture* DirtyTexture;
 };

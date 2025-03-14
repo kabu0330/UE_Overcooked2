@@ -24,6 +24,8 @@ APlate::APlate()
 
 	FVector Scale = FVector(2.0f, 2.0f, 2.0f);
 	StaticMeshComponent->SetRelativeScale3D(Scale);
+
+	SetActorLocation(FVector(0.0f, -200.0f, 10.0f));
 }
 
 void APlate::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -41,7 +43,7 @@ void APlate::BeginPlay()
 {
 	ACooking::BeginPlay();
 	
-	SetActorLocation(FVector(0.0f, -200.0f, 10.0f));
+	//SetMesh();
 }
 
 // Called every frame
@@ -72,6 +74,28 @@ void APlate::WashPlate_Implementation()
 void APlate::SetPlateState_Implementation(EPlateState State)
 {
 	PlateState = State;
+	SetMesh();
+}
+
+void APlate::SetMesh()
+{
+	if (EPlateState::DIRTY == PlateState)
+	{
+		UMaterialInterface* Material = StaticMeshComponent->GetMaterial(0);
+		if (nullptr != Material)
+		{
+			UMaterialInstanceDynamic* DynamicMaterial = UMaterialInstanceDynamic::Create(Material, this);
+			if (nullptr != DynamicMaterial)
+			{
+				// 바꿀 머티리얼
+				if (nullptr != DirtyTexture)
+				{
+					DynamicMaterial->SetTextureParameterValue(FName(TEXT("DiffuseColorMap")), DirtyTexture);
+					StaticMeshComponent->SetMaterial(0, DynamicMaterial);
+				}
+			}
+		}
+	}
 }
 
 bool APlate::Add(AIngredient* Ingredient)

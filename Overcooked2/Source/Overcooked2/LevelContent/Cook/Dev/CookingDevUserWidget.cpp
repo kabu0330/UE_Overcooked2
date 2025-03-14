@@ -30,13 +30,13 @@ void UCookingDevUserWidget::ServerSpawnIngredient(EIngredientType Type)
 	}
 }
 
-void UCookingDevUserWidget::SpawnPlate()
+void UCookingDevUserWidget::SpawnPlate(bool bIsClean)
 {
 	APlayerController* Controller = GetOwningPlayer();
 	ACookingDevPlayerState* PlayerState = Controller->GetPlayerState<ACookingDevPlayerState>();
 	if (nullptr != PlayerState)
 	{
-		PlayerState->SpawnPlate();
+		PlayerState->SpawnPlate(bIsClean);
 	}
 }
 

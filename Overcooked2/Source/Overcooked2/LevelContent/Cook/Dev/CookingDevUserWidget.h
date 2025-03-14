@@ -22,7 +22,7 @@ public:
 	void ServerSpawnIngredient(EIngredientType Type);
 
 	UFUNCTION(BlueprintCallable)
-	void SpawnPlate();
+	void SpawnPlate(bool bIsClean);
 
 	UFUNCTION(BlueprintCallable)
 	void ChangeState(EIngredientState State);
