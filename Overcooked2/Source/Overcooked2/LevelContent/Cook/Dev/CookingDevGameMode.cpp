@@ -10,10 +10,13 @@
 
 ACookingDevGameMode::ACookingDevGameMode()
 {
+	CookingObjectManager = CreateDefaultSubobject<UCookingObjectManager>(TEXT("CookingObjectManager"));
 }
 
 void ACookingDevGameMode::ChangeState(EIngredientState State)
 {
+	TArray<AIngredient*>& Ingredients = CookingObjectManager->GetIngredients();
+
 	if (true == Ingredients.IsEmpty())
 	{
 		return;
@@ -36,15 +39,19 @@ void ACookingDevGameMode::ChangeState(EIngredientState State)
 
 void ACookingDevGameMode::PlaceOnthePlate()
 {
+	TArray<AIngredient*>& Ingredients = CookingObjectManager->GetIngredients();
+
 	if (true == Ingredients.IsEmpty())
 	{
 		return;
 	}
 	AIngredient* TargetIngredient = Ingredients[0];
+
 	if (false == TargetIngredient->IsCooked())
 	{
 		return;
 	}
+	TArray<APlate*>& Plates = CookingObjectManager->GetPlates();
 	if (true == Plates[0]->Add(TargetIngredient)) 
 	{
 		// 재료 추가 성공 시
