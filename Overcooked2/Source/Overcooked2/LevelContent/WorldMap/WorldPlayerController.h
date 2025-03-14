@@ -18,6 +18,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void AddInputMappingContext(UInputMappingContext* _Context);
 
+	UFUNCTION(Server, Reliable)
+	void Server_SetViewTarget(AActor* NewCamera);
+
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
+
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadwrite, Category="Controller", meta=(AllowPrivateAccess=true))
 	UInputMappingContext* MappingContext = nullptr;

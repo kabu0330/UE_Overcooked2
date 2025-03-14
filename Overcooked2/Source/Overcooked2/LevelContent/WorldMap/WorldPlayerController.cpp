@@ -15,3 +15,16 @@ void AWorldPlayerController::AddInputMappingContext(UInputMappingContext* _Conte
 	InputSystem->ClearAllMappings();
 	InputSystem->AddMappingContext(_Context, 0);
 }
+
+void AWorldPlayerController::Server_SetViewTarget_Implementation(AActor* NewCamera)
+{
+    if (NewCamera)
+    {
+        SetViewTargetWithBlend(NewCamera, 1.0f);
+    }
+}
+
+void AWorldPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+}
