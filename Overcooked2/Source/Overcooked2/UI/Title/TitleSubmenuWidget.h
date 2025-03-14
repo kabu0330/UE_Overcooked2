@@ -4,18 +4,31 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "UI/Title/TitleWidget.h"
 #include "TitleSubmenuWidget.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class OVERCOOKED2_API UTitleSubmenuWidget : public UUserWidget
+class OVERCOOKED2_API UTitleSubmenuWidget : public UTitleWidget
 {
 	GENERATED_BODY()
-public:
 
+public:
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
+	class UCanvasPanel* IP_Panel;
+	UFUNCTION(BlueprintCallable, Category = "OC2UI")
+	void MoveBanner();
+protected:
+	virtual void NativeOnInitialized() override;
 
 private:
+	// TimerHandle
+	FTimerHandle MoveTimerHandle;
+	float MoveYOffset = 0.0f;
+
+	void UpdateBannerPosition();
+
 
 };
