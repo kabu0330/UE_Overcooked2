@@ -22,5 +22,7 @@ protected:
 	void Tick(float _DeltaTime) override;
 
 private:
+	void HideAllClientCharacters();
+
 	TObjectPtr<class AWorldManager> WorldManager = nullptr;
 };

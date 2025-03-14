@@ -22,20 +22,22 @@ public:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	void DisableSpringArm();
+	UFUNCTION(Reliable, Server)
+	void Show();
+	void Show_Implementation();
 
-	//UFUNCTION(BlueprintCallable, Reliable, Server)
+	UFUNCTION(Reliable, Server)
+	void Hide();
+	void Hide_Implementation();
+
 	void ChangeState(EStageState _State);
-	//void ChangeState_Implementation(EStageState _State);
 
-	//void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
 
 protected:
 	virtual void BeginPlay() override;
 
 private:
-	void Show();
-	void Hide();
 	void InitParentSceneComp();
 
 	TObjectPtr<USceneComponent> MeshWrapper = nullptr;

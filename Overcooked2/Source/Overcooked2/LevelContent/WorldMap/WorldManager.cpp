@@ -53,6 +53,7 @@ void AWorldManager::BeginPlay()
 	}
 
 	ChangeCameraToWorld();
+	//SetPlayersToSpectators();
 
 	ChangeState(EWorldState::ShowStage1_1);
 }
@@ -87,9 +88,18 @@ void AWorldManager::ChangeState(EWorldState _State)
 		{
 			OnShowEnvs1_1();
 		}
+		else if (_State == EWorldState::Idle)
+		{
+			OnIdle();
+		}
 	}
 
 	StageState = _State;
+}
+
+void AWorldManager::OnIdle()
+{
+	ChangeCameraToPlayer();
 }
 
 void AWorldManager::OnShowEnvs1_1()
@@ -132,11 +142,8 @@ void AWorldManager::RunShowSavedLoc(float _DeltaTime)
 	float Dist = FVector::Dist(DestLoc, CurLoc);
 	if (Dist < 2.f)	// Temp
 	{
-		ChangeState(EWorldState::Idle);
 		WorldCamera->SetActorLocation(DestLoc);
-
-		// TODO: Show player
-		ChangeCameraToPlayer();
+		ChangeState(EWorldState::Idle);
 		return;
 	}
 
@@ -232,5 +239,41 @@ void AWorldManager::ChangeCameraToPlayer()
 		{
 			PC->SetViewTargetWithBlend(PlayerPawn, 0.0f);
 		}
+	}
+}
+
+void AWorldManager::SetPlayersToSpectators()
+{
+	if (HasAuthority())
+	{
+		for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
+		{
+			APlayerController* PC = It->Get();
+			if (PC && !PC->IsLocalController())
+			{
+				PC->ChangeState(NAME_Spectating);
+			}
+		}
+	}
+}
+
+void AWorldManager::ShowPlayer()
+{
+	APlayerController* PC = GetWorld()->GetFirstPlayerController();
+	if (PC == nullptr)
+	{
+		return;
+	}
+
+	APawn* PlayerPawn = PC->GetPawn();
+	if (PlayerPawn == nullptr)
+	{
+		return;
+	}
+
+	AWorldPlayer* Player = Cast<AWorldPlayer>(PlayerPawn);
+	if (Player != nullptr)
+	{
+		Player->Show();
 	}
 }

@@ -32,10 +32,13 @@ public:
 
 private:
 	void ChangeState(EWorldState _State);
+	void SetPlayersToSpectators();
+	void ShowPlayer();
 
 	void ChangeCameraToWorld();
 	void ChangeCameraToPlayer();
 
+	void OnIdle();
 	void OnShowEnvs1_1();
 
 	void RunShowStage1_1(float _DeltaTime);

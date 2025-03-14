@@ -17,6 +17,7 @@ AWorldPlayer::AWorldPlayer()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	bReplicates = true;
 
 	DefaultGravity = GetCharacterMovement()->GravityScale;
 }
@@ -26,12 +27,27 @@ void AWorldPlayer::BeginPlay()
 	Super::BeginPlay();
 
 	InitParentSceneComp();
-	Hide();
 
-	SetActorLocation(FVector(-100.f, 150.f, 65.f));
+	if (GetWorld()->IsNetMode(NM_ListenServer))
+	{
+		int a = 0;
+	}
+	else if (GetWorld()->IsNetMode(NM_Client))
+	{
+		SetActorHiddenInGame(true);
+		SetActorEnableCollision(false);
+		SetReplicates(false);
+		bOnlyRelevantToOwner = true;
+	}
+
+	/*if (HasAuthority() == false)
+	{
+		Hide();
+	}*/
+
+	SetActorLocation(FVector(-100.f, 150.f, 100.f));
 
 	ChangeState(EStageState::ShowStage1_1);
-	//ChangeState_Implementation(EStageState::ShowStage1_1);
 }
 
 void AWorldPlayer::Tick(float DeltaTime)
@@ -76,7 +92,20 @@ void AWorldPlayer::InitParentSceneComp()
 	}
 }
 
-void AWorldPlayer::Show()
+void AWorldPlayer::ChangeState(EStageState _State)
+//void AWorldPlayer::ChangeState_Implementation(EStageState _State)
+{
+	CurStageState = _State;
+}
+
+void AWorldPlayer::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	//DOREPLIFETIME(AWorldPlayer, CurStageState);
+}
+
+void AWorldPlayer::Show_Implementation()
 {
 	// Temp
 	UCapsuleComponent* CapComponent = GetCapsuleComponent();
@@ -93,9 +122,8 @@ void AWorldPlayer::Show()
 	GetCharacterMovement()->GravityScale = DefaultGravity;
 }
 
-void AWorldPlayer::Hide()
+void AWorldPlayer::Hide_Implementation()
 {
-	// Temp
 	UCapsuleComponent* CapComponent = GetCapsuleComponent();
 	CapComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	/*CapComponent->SetVisibility(false);
@@ -109,28 +137,3 @@ void AWorldPlayer::Hide()
 
 	GetCharacterMovement()->GravityScale = 0.0f;
 }
-
-void AWorldPlayer::ChangeState(EStageState _State)
-//void AWorldPlayer::ChangeState_Implementation(EStageState _State)
-{
-	CurStageState = _State;
-}
-
-void AWorldPlayer::DisableSpringArm()
-{
-	USpringArmComponent* CameraBoom = GetComponentByClass<USpringArmComponent>();
-	if (CameraBoom)
-	{
-		CameraBoom->bEnableCameraLag = false;  // 카메라 지연 효과 제거
-		CameraBoom->bEnableCameraRotationLag = false; // 회전 지연 효과 제거
-		CameraBoom->bUsePawnControlRotation = false;  // 캐릭터 회전에 따라 카메라 회전 X
-		CameraBoom->TargetArmLength = 0.0f; // SpringArm을 없애버림
-	}
-}
-
-//void AWorldPlayer::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-//{
-//	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-//
-//	DOREPLIFETIME(AWorldPlayer, CurStageState);
-//}
