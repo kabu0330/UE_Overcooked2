@@ -24,6 +24,9 @@ APlate::APlate()
 
 	FVector Scale = FVector(2.0f, 2.0f, 2.0f);
 	StaticMeshComponent->SetRelativeScale3D(Scale);
+
+	// Debug
+	SetActorLocation(FVector(0.0f, -200.0f, 10.0f));
 }
 
 void APlate::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -41,7 +44,6 @@ void APlate::BeginPlay()
 {
 	ACooking::BeginPlay();
 	
-	SetActorLocation(FVector(0.0f, -200.0f, 10.0f));
 }
 
 // Called every frame
@@ -66,12 +68,60 @@ void APlate::WashPlate_Implementation()
 	if (true == IsDirtyPlate())
 	{
 		PlateState = EPlateState::EMPTY;
+		SetMesh();
 	}
 }
 
 void APlate::SetPlateState_Implementation(EPlateState State)
 {
 	PlateState = State;
+	SetMesh();
+}
+
+void APlate::SetMesh()
+{
+	UTexture* Texture = nullptr;
+	if (EPlateState::DIRTY == PlateState)
+	{
+		Texture = DirtyTexture;
+	}
+	else
+	{
+		Texture = CleanTexture;
+	}
+	SetMaterialTexture(Texture);
+}
+
+void APlate::SetMaterialTexture(UTexture* Texture)
+{
+	// 1. 스태틱 메시의 머티리얼을 바꿀건데
+
+	// 2. 이미 동적으로 생성한 머티리얼 인스턴스 다이나믹이 존재하면 
+	UMaterialInstanceDynamic* MaterialInstanceDynamic = Cast<UMaterialInstanceDynamic>(StaticMeshComponent->GetMaterial(0));
+	if (nullptr != MaterialInstanceDynamic)
+	{
+		// 3. 기존 머티리얼 인스턴스 다이나믹을 그대로 사용하고
+		MaterialInstanceDynamic->SetTextureParameterValue(FName(TEXT("DiffuseColorMap")), Texture);
+		StaticMeshComponent->SetMaterial(0, MaterialInstanceDynamic);
+		return;
+	}
+
+	// 4. 기존에 만들어진 머티리얼 인스턴스 다이나믹이 없다면 == SetMaterial이 처음이라면
+	UMaterialInterface* Material = StaticMeshComponent->GetMaterial(0);
+	if (nullptr != Material)
+	{
+		// 5. 이제 기존의 머티리얼은 안쓰고 머티리얼 인스턴스 다이나믹을 만들어서 쓸 것이다.
+		UMaterialInstanceDynamic* DynamicMaterial = UMaterialInstanceDynamic::Create(Material, this);
+		if (nullptr != DynamicMaterial)
+		{
+			// 6. 바꿀 텍스처를 에디터에서 설정해줬다면 그걸로 바꿔라.
+			if (nullptr != Texture)
+			{
+				DynamicMaterial->SetTextureParameterValue(FName(TEXT("DiffuseColorMap")), Texture);
+				StaticMeshComponent->SetMaterial(0, DynamicMaterial);
+			}
+		}
+	}
 }
 
 bool APlate::Add(AIngredient* Ingredient)

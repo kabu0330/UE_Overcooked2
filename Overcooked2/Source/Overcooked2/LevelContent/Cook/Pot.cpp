@@ -12,8 +12,8 @@ APot::APot()
 
 	CookingType = ECookingType::ECT_POT;
 
-	SoupSkeletalMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SoupSkeletalMeshComponent"));
-	SoupSkeletalMeshComponent->SetupAttachment(StaticMeshComponent);
+	//SoupSkeletalMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SoupSkeletalMeshComponent"));
+	//SoupSkeletalMeshComponent->SetupAttachment(StaticMeshComponent);
 
 	FVector Pos = FVector(249, 1452, 60);
 	StaticMeshComponent->SetRelativeLocation(Pos);
@@ -22,6 +22,11 @@ APot::APot()
 void APot::BeginPlay()
 {
 	ACooking::BeginPlay();
+
+	Soup = GetWorld()->SpawnActor<ASoup>(ASoup::StaticClass());
+	FVector Pos = FVector(845, 236, -65);
+	Soup->SetActorRelativeLocation(Pos);
+	Soup->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
 }
 
 void APot::Tick(float DeltaTime)

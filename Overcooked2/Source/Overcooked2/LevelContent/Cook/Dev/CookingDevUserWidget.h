@@ -22,13 +22,19 @@ public:
 	void ServerSpawnIngredient(EIngredientType Type);
 
 	UFUNCTION(BlueprintCallable)
-	void SpawnPlate();
+	void SpawnPlate(bool bIsClean);
 
 	UFUNCTION(BlueprintCallable)
 	void ChangeState(EIngredientState State);
 
+	// Plate에서 Add 함수 호출하여 Ingredient 추가
 	UFUNCTION(BlueprintCallable)
 	void PlaceOnthePlate();
+
+	UFUNCTION(BlueprintCallable)
+	void Wash();
+
+
 
 	UFUNCTION(BlueprintCallable)
 	void Reset();

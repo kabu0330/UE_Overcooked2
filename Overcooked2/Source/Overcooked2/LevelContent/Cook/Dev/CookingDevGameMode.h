@@ -9,6 +9,7 @@
 #include <LevelContent/Cook/Ingredient.h>
 #include <LevelContent/Cook/Plate.h>
 #include <LevelContent/Cook/Dev/CookingDevPlayerState.h>
+#include <LevelContent/Cook/Dev/CookingObjectManager.h>
 #include "CookingDevGameMode.generated.h"
 
 /**
@@ -27,40 +28,33 @@ public:
 	class UCookingDevUserWidget* GetWidget()
 	{
 		return Widget;
-	}
+	} 
 
 	void SetWidget(class UCookingDevUserWidget* UserWidget)
 	{
 		Widget = UserWidget;
 	}
 
+	void ChangeState(EIngredientState State);
+
+	void PlaceOnthePlate();
+
 	void AddIngredient(AIngredient* Ingredient)
 	{
-		Ingredients.Add(Ingredient);
+		CookingObjectManager->GetIngredients().Add(Ingredient);
 	}
 
 	void AddPlate(APlate* Plate)
 	{
-		Plates.Add(Plate);
+		CookingObjectManager->GetPlates().Add(Plate);
 	}
+
+	void Wash();
 
 	void Reset()
 	{
-		for (AIngredient* Ingredient : Ingredients)
-		{
-			Ingredient->Destroy();
-		}
-		for (APlate* Plate : Plates)
-		{
-			Plate->Destroy();
-		}
-		Ingredients.Empty();
-		Plates.Empty();
+		CookingObjectManager->Reset();
 	}
-
-	void ChangeState(EIngredientState State);
-
-	void PlaceOnthePlate();
 
 protected:
 	virtual void BeginPlay() override;
@@ -68,12 +62,7 @@ protected:
 
 private:
 	class UCookingDevUserWidget* Widget = nullptr;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
-	TArray<AIngredient*> Ingredients;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
-	TArray<APlate*> Plates;
+	UCookingObjectManager* CookingObjectManager = nullptr;
 
-	TArray<APlate*> Dish;
 };
