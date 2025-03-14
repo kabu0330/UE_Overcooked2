@@ -25,6 +25,7 @@ APlate::APlate()
 	FVector Scale = FVector(2.0f, 2.0f, 2.0f);
 	StaticMeshComponent->SetRelativeScale3D(Scale);
 
+	// Debug
 	SetActorLocation(FVector(0.0f, -200.0f, 10.0f));
 }
 
@@ -43,7 +44,6 @@ void APlate::BeginPlay()
 {
 	ACooking::BeginPlay();
 	
-	//SetMesh();
 }
 
 // Called every frame
