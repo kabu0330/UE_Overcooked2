@@ -6,6 +6,14 @@
 #include "GameFramework/Actor.h"
 #include "TileGrid.generated.h"
 
+UENUM()
+enum class ETileState
+{
+	Closed = 0,
+	Opening,
+	Opened,
+};
+
 USTRUCT(BlueprintType)
 struct FTileData
 {
@@ -28,10 +36,11 @@ public:
 	ATileGrid();
 
 	virtual void Tick(float DeltaTime) override;
-
 	bool IsEndTransition() const;
+	void Flip();
 
-	bool IsStarted = false;	// Temp
+	bool IsStartedFlip() const;
+	bool IsFliped() const;
 
 protected:
 	virtual void BeginPlay() override;
@@ -54,11 +63,12 @@ private:
 
 	int RotateIdx = -1;
 	float AccumulatedX = 0.f;
-	bool IsAllEnd = false;
 
 	UPROPERTY()
 	TMap<int8, FTileData> Tiles;
 	TMap<FIntVector2, int8> OrderMap;
+
+	ETileState State = ETileState::Closed;
 
 	FIntVector2 GetXY(int _IdxI, int _IdxJ);
 	bool IsExclude(int _i, int _j);
@@ -68,4 +78,7 @@ private:
 	void CreateTiles(TMap<int8, FTileData>& _RefMap, int _Size);
 	void SetStaticMeshes(TMap<int8, FTileData>& _Tiles);
 	void SetTileMaterials(TMap<int8, FTileData>& _Tiles);
+
+	void ChangeState(ETileState _State);
+	void RunFlip(float _DeltaTime);
 };

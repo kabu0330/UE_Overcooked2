@@ -22,11 +22,13 @@ public:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	UFUNCTION(BlueprintCallable, Reliable, Server)
-	void ChangeState(EStageState _State);
-	void ChangeState_Implementation(EStageState _State);
+	void DisableSpringArm();
 
-	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
+	//UFUNCTION(BlueprintCallable, Reliable, Server)
+	void ChangeState(EStageState _State);
+	//void ChangeState_Implementation(EStageState _State);
+
+	//void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
 
 protected:
 	virtual void BeginPlay() override;
@@ -35,16 +37,12 @@ private:
 	void Show();
 	void Hide();
 	void InitParentSceneComp();
-	void RunStageShowing();
-	void RunStageHide();
 
 	TObjectPtr<USceneComponent> MeshWrapper = nullptr;
 
 	float DefaultGravity = 0.f;
 
-	UPROPERTY(VisibleAnywhere, Replicated, BlueprintReadOnly, Category = "StageState", meta = (AllowPrivateAccess = "true"))
+	//UPROPERTY(VisibleAnywhere, Replicated, BlueprintReadOnly, Category = "StageState", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "StageState", meta = (AllowPrivateAccess = "true"))
 	EStageState CurStageState = EStageState::None;
-
-	UPROPERTY()
-	AActor* FocusCameraActor = nullptr;
 };

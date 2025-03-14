@@ -230,22 +230,62 @@ void ATileGrid::BeginPlay()
 	SetTileMaterials(Tiles);
 }
 
-void ATileGrid::Tick(float DeltaTime)
+void ATileGrid::Tick(float _DeltaTime)
 {
-	Super::Tick(DeltaTime);
+	Super::Tick(_DeltaTime);
 
-	if (!IsStarted)
+	if (State == ETileState::Opening)
 	{
-		return;
+		RunFlip(_DeltaTime);
+	}
+}
+
+void ATileGrid::Flip()
+{
+	ChangeState(ETileState::Opening);
+}
+
+bool ATileGrid::IsStartedFlip() const
+{
+	return (State > ETileState::Closed);
+}
+
+bool ATileGrid::IsFliped() const
+{
+	return (State == ETileState::Opened);
+}
+
+FIntVector2 ATileGrid::GetXY(int _IdxI, int _IdxJ)
+{
+	float X = RADIUS * 2.f * 0.75f * _IdxJ;
+	float Y = 0.f;
+
+	if (_IdxJ % 2 == 0)
+	{
+		Y = MulRadius / 2 + MulRadius * _IdxI;
+	}
+	else
+	{
+		Y = MulRadius * _IdxI;
 	}
 
-	ElpasedSecs += DeltaTime;
-	ElpasedRotateSecs += DeltaTime;
-	
+	return FIntVector2(X, Y);
+}
+
+void ATileGrid::ChangeState(ETileState _State)
+{
+	State = _State;
+}
+
+void ATileGrid::RunFlip(float _DeltaTime)
+{
+	ElpasedSecs += _DeltaTime;
+	ElpasedRotateSecs += _DeltaTime;
+
 	if (ElpasedSecs > .01f)
 	{
 		ElpasedSecs = 0.f;
-		FQuat NewRot = FQuat(FVector(1, 0, 0), FMath::DegreesToRadians(5)) * DeltaTime;
+		FQuat NewRot = FQuat(FVector(1, 0, 0), FMath::DegreesToRadians(5)) * _DeltaTime;
 		NewRot.Normalize();
 
 		bool _IsAllEnd = true;
@@ -260,7 +300,7 @@ void ATileGrid::Tick(float DeltaTime)
 			{
 				continue;
 			}
-			
+
 			_IsAllEnd = false;
 			if (Order < RotateIdx)
 			{
@@ -307,7 +347,7 @@ void ATileGrid::Tick(float DeltaTime)
 					float Deg = FMath::RadiansToDegrees(Rad);
 					int DegRatioI = static_cast<int>(Deg / 180.f * 10.f) + 1;
 					float DegRatioF = DegRatioI / 10.f;
-					//UE_LOG(LogTemp, Log, TEXT("DIV: %f"), Div);
+					//UE_LOG(LogTemp, Log, TEXT("DIV: %f"), DegRatioF);
 
 					if (!FMath::IsNearlyEqual(TileData.PrevAlpha, DegRatioF, 1e-2))
 					{
@@ -345,7 +385,7 @@ void ATileGrid::Tick(float DeltaTime)
 		if (_IsAllEnd)
 		{
 			UE_LOG(LogTemp, Log, TEXT("IsAllEnd!!!!!!!"));
-			IsAllEnd = true;
+			ChangeState(ETileState::Opened);
 			SetActorTickEnabled(false);
 		}
 	}
@@ -359,26 +399,4 @@ void ATileGrid::Tick(float DeltaTime)
 			++RotateIdx;
 		}
 	}
-}
-
-FIntVector2 ATileGrid::GetXY(int _IdxI, int _IdxJ)
-{
-	float X = RADIUS * 2.f * 0.75f * _IdxJ;
-	float Y = 0.f;
-
-	if (_IdxJ % 2 == 0)
-	{
-		Y = MulRadius / 2 + MulRadius * _IdxI;
-	}
-	else
-	{
-		Y = MulRadius * _IdxI;
-	}
-
-	return FIntVector2(X, Y);
-}
-
-bool ATileGrid::IsEndTransition() const
-{
-	return IsAllEnd;
 }

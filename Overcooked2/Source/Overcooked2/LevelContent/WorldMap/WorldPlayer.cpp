@@ -10,6 +10,7 @@
 #include "Camera/CameraActor.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/SpringArmComponent.h"
 
 // Sets default values
 AWorldPlayer::AWorldPlayer()
@@ -24,37 +25,29 @@ void AWorldPlayer::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// Change Camera
-	TArray<AActor*> Actors;
-	UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), AActor::StaticClass(), TEXT("FocusCamera"), Actors);
-
-	if (Actors.Num() > 0)
-	{
-		FocusCameraActor = Actors[0];
-		APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
-		PlayerController->SetViewTargetWithBlend(FocusCameraActor, 0.0f);
-	}
-
 	InitParentSceneComp();
 	Hide();
 
-	if (GetWorld()->GetAuthGameMode())
-	{
-		ChangeState_Implementation(EStageState::ShowStage1_1);
-	}
+	SetActorLocation(FVector(-100.f, 150.f, 65.f));
+
+	ChangeState(EStageState::ShowStage1_1);
+	//ChangeState_Implementation(EStageState::ShowStage1_1);
 }
 
 void AWorldPlayer::Tick(float DeltaTime)
 {
+	if (Controller)
+	{
+		AActor* CurrentViewTarget = Controller->GetViewTarget();
+		UE_LOG(LogTemp, Warning, TEXT("1. Current View Target: %s"), *CurrentViewTarget->GetName());
+	}
+
 	Super::Tick(DeltaTime);
 
-	if (CurStageState == EStageState::ShowStage1_1)
+	if (Controller)
 	{
-		RunStageShowing();
-	}
-	else if (CurStageState == EStageState::HideStage1_1)
-	{
-		RunStageHide();
+		AActor* CurrentViewTarget = Controller->GetViewTarget();
+		UE_LOG(LogTemp, Warning, TEXT("2. Current View Target: %s"), *CurrentViewTarget->GetName());
 	}
 }
 
@@ -117,81 +110,27 @@ void AWorldPlayer::Hide()
 	GetCharacterMovement()->GravityScale = 0.0f;
 }
 
-void AWorldPlayer::RunStageShowing()
-{
-	FVector CurLoc = FocusCameraActor->GetActorLocation();
-	FVector DestLoc(-320.f, 420.f, CurLoc.Z);	// Temp
-
-	float Dist = FVector::Dist(DestLoc, CurLoc);
-	if (Dist < 2.f)	// Temp
-	{
-		CurStageState = EStageState::HideStage1_1;
-		UOC2GameInstance* GameInst = GetWorld()->GetGameInstance<UOC2GameInstance>();
-		if (GameInst)
-		{
-			GameInst->SetCurStage(EOC2Stage::EOS_Sushi_1_2);	// Temp
-		}
-		FocusCameraActor->SetActorLocation(DestLoc);
-		return;
-	}
-
-	FVector Dir = DestLoc - CurLoc;
-	Dir.Normalize();
-	Dir *= 2.f;
-	FVector LocVec = CurLoc + Dir;
-	FocusCameraActor->SetActorLocation(FVector(LocVec.X, LocVec.Y, CurLoc.Z));
-}
-
-void AWorldPlayer::RunStageHide()
-{
-	UOC2GameInstance* GameInst = GetWorld()->GetGameInstance<UOC2GameInstance>();
-	if (!GameInst)
-	{
-		return;
-	}
-
-	if (GameInst->GetCurStage() != EOC2Stage::EOS_Sushi_1_1)		// Temp
-	{
-		return;
-	}
-
-	FVector CurLoc = FocusCameraActor->GetActorLocation();
-	FVector DestLoc(-100.f, 150.f, CurLoc.Z);	// Temp
-
-	float Dist = FVector::Dist(DestLoc, CurLoc);
-	if (Dist < 2.f)	// Temp
-	{
-		CurStageState = EStageState::None;
-		//GameInst->SetStageState(4);	// Temp
-		FocusCameraActor->SetActorLocation(DestLoc);
-		Show();
-
-		// Change Camera
-		UCameraComponent* CurrentCameraComponent = FindComponentByClass<UCameraComponent>();
-		if (CurrentCameraComponent)
-		{
-			APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
-			PlayerController->SetViewTargetWithBlend(this, 0.0f);
-		}
-
-		return;
-	}
-
-	FVector Dir = DestLoc - CurLoc;
-	Dir.Normalize();
-	Dir *= 2.f;
-	FVector LocVec = CurLoc + Dir;
-	FocusCameraActor->SetActorLocation(FVector(LocVec.X, LocVec.Y, CurLoc.Z));
-}
-
-void AWorldPlayer::ChangeState_Implementation(EStageState _State)
+void AWorldPlayer::ChangeState(EStageState _State)
+//void AWorldPlayer::ChangeState_Implementation(EStageState _State)
 {
 	CurStageState = _State;
 }
 
-void AWorldPlayer::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+void AWorldPlayer::DisableSpringArm()
 {
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	DOREPLIFETIME(AWorldPlayer, CurStageState);
+	USpringArmComponent* CameraBoom = GetComponentByClass<USpringArmComponent>();
+	if (CameraBoom)
+	{
+		CameraBoom->bEnableCameraLag = false;  // 카메라 지연 효과 제거
+		CameraBoom->bEnableCameraRotationLag = false; // 회전 지연 효과 제거
+		CameraBoom->bUsePawnControlRotation = false;  // 캐릭터 회전에 따라 카메라 회전 X
+		CameraBoom->TargetArmLength = 0.0f; // SpringArm을 없애버림
+	}
 }
+
+//void AWorldPlayer::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+//{
+//	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+//
+//	DOREPLIFETIME(AWorldPlayer, CurStageState);
+//}
