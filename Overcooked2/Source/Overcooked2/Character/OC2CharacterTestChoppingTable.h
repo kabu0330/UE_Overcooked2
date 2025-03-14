@@ -16,6 +16,8 @@ public:
 	// Sets default values for this actor's properties
 	AOC2CharacterTestChoppingTable();
 
+	virtual ACooking* Interact(AActor* ChefActor) override;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -28,6 +30,7 @@ public:
 
 private:
 	ACooking* CurCook;
+	virtual void PlaceItem(ACooking* Cook);
 
 	UPROPERTY(VisibleAnywhere)
 	bool IsChopping;

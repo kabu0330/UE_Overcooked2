@@ -53,9 +53,6 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UFUNCTION(Reliable,Server)
-	void Rotate(FVector MovementInput);
-
 	UFUNCTION(Reliable, Server)
 	void CheckDash(float DeltaTime);
 
