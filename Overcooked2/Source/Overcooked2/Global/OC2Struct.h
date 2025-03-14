@@ -64,6 +64,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
 	FRotator OffsetRotation = FRotator::ZeroRotator;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
+	FVector OffsetScale = FVector::OneVector;
 };
 
 /**

@@ -117,9 +117,7 @@ bool APlate::Add(AIngredient* Ingredient)
 			// 3-4. Offset
 			IngredientMesh->AddLocalOffset(InitData[0].OffsetLocation);
 			IngredientMesh->SetRelativeRotation(InitData[0].OffsetRotation);
-
-			FVector Scale = FVector(0.5f, 0.5f, 0.5f); // 추후 Data에 편입한 Scale을 사용할 예정
-			IngredientMesh->SetRelativeScale3D(Scale);
+			IngredientMesh->SetRelativeScale3D(InitData[0].OffsetScale);
 
 			// 3-5. 물리 다시 켜고
 			SetSimulatePhysics(true);

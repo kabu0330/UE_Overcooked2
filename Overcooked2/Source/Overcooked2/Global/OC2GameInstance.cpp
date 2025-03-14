@@ -203,6 +203,7 @@ TArray<FPlateInitData> UOC2GameInstance::GetPlateMesh(TArray<FRecipe>& Recipes)
 				PlateInitData.StaticMesh = RecipeData->FoodMesh;
 				PlateInitData.OffsetLocation = RecipeData->OffsetLocation;
 				PlateInitData.OffsetRotation = RecipeData->OffsetRotation;
+				PlateInitData.OffsetScale = RecipeData->OffsetScale;
 				
 				Result.Add(PlateInitData);
 			}
