@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/GameMode.h"
-#include "TableTestGameMode.generated.h"
+#include "Global/GameMode/OC2GameMode.h"
+#include "TableGameMode.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class OVERCOOKED2_API ATableTestGameMode : public AGameMode
+class OVERCOOKED2_API ATableGameMode : public AOC2GameMode
 {
 	GENERATED_BODY()
 	
