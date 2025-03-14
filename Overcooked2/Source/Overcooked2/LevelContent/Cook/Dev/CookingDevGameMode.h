@@ -49,6 +49,8 @@ public:
 		CookingObjectManager->GetPlates().Add(Plate);
 	}
 
+	void Wash();
+
 	void Reset()
 	{
 		CookingObjectManager->Reset();

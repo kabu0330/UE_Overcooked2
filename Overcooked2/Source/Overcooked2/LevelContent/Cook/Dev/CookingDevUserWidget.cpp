@@ -60,6 +60,16 @@ void UCookingDevUserWidget::PlaceOnthePlate()
 	}
 }
 
+void UCookingDevUserWidget::Wash()
+{
+	APlayerController* Controller = GetOwningPlayer();
+	ACookingDevPlayerState* PlayerState = Controller->GetPlayerState<ACookingDevPlayerState>();
+	if (nullptr != PlayerState)
+	{
+		PlayerState->Wash();
+	}
+}
+
 void UCookingDevUserWidget::Reset()
 {
 	APlayerController* Controller = GetOwningPlayer();

@@ -64,6 +64,12 @@ void ACookingDevGameMode::PlaceOnthePlate()
 	
 }
 
+void ACookingDevGameMode::Wash()
+{
+	TArray<APlate*>& Plates = CookingObjectManager->GetPlates();
+	Plates[0]->WashPlate();
+}
+
 void ACookingDevGameMode::BeginPlay()
 {
 	Super::BeginPlay();
