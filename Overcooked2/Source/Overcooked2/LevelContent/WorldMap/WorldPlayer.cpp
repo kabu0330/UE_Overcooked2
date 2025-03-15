@@ -17,7 +17,7 @@ AWorldPlayer::AWorldPlayer()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	bReplicates = true;
+	SetReplicates(true);
 
 	DefaultGravity = GetCharacterMovement()->GravityScale;
 }
@@ -26,44 +26,36 @@ void AWorldPlayer::BeginPlay()
 {
 	Super::BeginPlay();
 
-	InitParentSceneComp();
+	Hide();
 
-	if (GetWorld()->IsNetMode(NM_ListenServer))
+	if (HasAuthority())
 	{
-		int a = 0;
+		if (Controller != nullptr)	// Server side Server
+		{
+			Show_Client();
+		}
 	}
-	else if (GetWorld()->IsNetMode(NM_Client))
+	else
 	{
-		SetActorHiddenInGame(true);
-		SetActorEnableCollision(false);
-		SetReplicates(false);
-		bOnlyRelevantToOwner = true;
+		if (Controller == nullptr)	// Client Side Server
+		{
+			Show_Client();
+		}
 	}
 
-	/*if (HasAuthority() == false)
-	{
-		Hide();
-	}*/
-
-	SetActorLocation(FVector(-100.f, 150.f, 100.f));
+	SetActorLocation(START_LOC);
 
 	ChangeState(EStageState::ShowStage1_1);
 }
 
 void AWorldPlayer::Tick(float DeltaTime)
 {
-	if (Controller)
-	{
-		AActor* CurrentViewTarget = Controller->GetViewTarget();
-		UE_LOG(LogTemp, Warning, TEXT("1. Current View Target: %s"), *CurrentViewTarget->GetName());
-	}
-
 	Super::Tick(DeltaTime);
 
-	if (Controller)
+	if (Controller && HasAuthority() == false)
 	{
-		AActor* CurrentViewTarget = Controller->GetViewTarget();
-		UE_LOG(LogTemp, Warning, TEXT("2. Current View Target: %s"), *CurrentViewTarget->GetName());
+		SetActorLocation(WorldPlayerLocation);
+		UE_LOG(LogTemp, Warning, TEXT("################## Tick!! %f %f %f"), WorldPlayerLocation.X, WorldPlayerLocation.Y, WorldPlayerLocation.Z);
 	}
 }
 
@@ -75,20 +67,11 @@ void AWorldPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 void AWorldPlayer::OnMove(const FVector2D& _Vec)
 {
 	AddMovementInput(FVector(_Vec.X * 0.5f, _Vec.Y * 0.5f, 0.f));
-}
 
-void AWorldPlayer::InitParentSceneComp()
-{
-	TArray<USceneComponent*> Components;
-	GetComponents<USceneComponent>(Components);
-
-	for (USceneComponent* Comp : Components)
+	// TODO
+	if (Controller && HasAuthority())
 	{
-		// Temp literal
-		if (Comp->GetName().Equals("MeshWrapper"))
-		{
-			MeshWrapper = Comp;
-		}
+		UpdateBusLocation(GetActorLocation());
 	}
 }
 
@@ -102,38 +85,62 @@ void AWorldPlayer::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLife
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	//DOREPLIFETIME(AWorldPlayer, CurStageState);
+	DOREPLIFETIME(AWorldPlayer, WorldPlayerLocation);
 }
 
-void AWorldPlayer::Show_Implementation()
+void AWorldPlayer::Show_Client_Implementation()
 {
-	// Temp
-	UCapsuleComponent* CapComponent = GetCapsuleComponent();
-	CapComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	/*CapComponent->SetVisibility(true);
-	CapComponent->SetComponentTickEnabled(true);
-	CapComponent->SetActive(true);*/
+	Show();
+}
 
-	if (MeshWrapper != nullptr)
-	{
-		MeshWrapper->SetVisibility(true, true);
-	}
+void AWorldPlayer::Hide_Client_Implementation()
+{
+	Hide();
+}
 
+void AWorldPlayer::Show()
+{
+	SetActorHiddenInGame(false);
+	SetActorEnableCollision(true);
+	//SetReplicates(true);
 	GetCharacterMovement()->GravityScale = DefaultGravity;
+
+	if (Controller)
+	{
+		APlayerController* PC = Cast<APlayerController>(Controller);
+		if (PC)
+		{
+			EnableInput(PC);
+		}
+	}
 }
 
-void AWorldPlayer::Hide_Implementation()
+void AWorldPlayer::Hide()
 {
-	UCapsuleComponent* CapComponent = GetCapsuleComponent();
-	CapComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	/*CapComponent->SetVisibility(false);
-	CapComponent->SetComponentTickEnabled(false);
-	CapComponent->SetActive(false);*/
-
-	if (MeshWrapper != nullptr)
-	{
-		MeshWrapper->SetVisibility(false, true);
-	}
-
+	SetActorHiddenInGame(true);
+	SetActorEnableCollision(false);
+	//SetReplicates(false);
 	GetCharacterMovement()->GravityScale = 0.0f;
+
+	if (Controller)
+	{
+		APlayerController* PC = Cast<APlayerController>(Controller);
+		if (PC)
+		{
+			DisableInput(PC);
+		}
+	}
+}
+
+void AWorldPlayer::UpdateBusLocation_Implementation(FVector _Loc)
+{
+	if (HasAuthority())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("################## HasAuth!! %f %f %f"), WorldPlayerLocation.X, WorldPlayerLocation.Y, WorldPlayerLocation.Z);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("################## NO HasAuth!! %f %f %f"), WorldPlayerLocation.X, WorldPlayerLocation.Y, WorldPlayerLocation.Z);
+	}
+	WorldPlayerLocation = _Loc;
 }
