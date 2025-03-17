@@ -52,12 +52,18 @@ void ACookingDevGameMode::PlaceOnthePlate()
 		return;
 	}
 	TArray<APlate*>& Plates = CookingObjectManager->GetPlates();
-	if (true == Plates[0]->Add(TargetIngredient)) 
+	if (true ==  Plates.IsEmpty())
 	{
-		// 재료 추가 성공 시
-		Ingredients.RemoveAt(0);
 		return;
 	}
+	Plates[0]->Add(TargetIngredient);
+	Ingredients.RemoveAt(0);
+	//if (true == ) 
+	//{
+	//	// 재료 추가 성공 시
+	//	Ingredients.RemoveAt(0);
+	//	return;
+	//}
 
 	// 재료 추가 실패 시
 	int a = 0;

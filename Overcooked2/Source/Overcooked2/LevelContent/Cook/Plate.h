@@ -19,8 +19,9 @@ public:
 	APlate();
 
 	// 접시 위에 재료를 쌓는 모든 과정
-	UFUNCTION(BlueprintCallable)
-	bool Add(class AIngredient* Ingredient);
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	void Add(class AIngredient* Ingredient);
+	void Add_Implementation(class AIngredient* Ingredient);
 
 
 	UFUNCTION(BlueprintCallable)
@@ -66,4 +67,10 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	UTexture* DirtyTexture;
+
+	UPROPERTY(Replicated)
+	FVector Position = FVector::ZeroVector;
+
+	UPROPERTY(Replicated)
+	FRotator Rotation = FRotator::ZeroRotator;
 };

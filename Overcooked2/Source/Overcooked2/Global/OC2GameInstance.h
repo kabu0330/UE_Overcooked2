@@ -85,12 +85,10 @@ public:
 	 */
 	const FIngredientDataRow& GetIngredientDataRow(EIngredientType IngredientType);
 
-
-	UFUNCTION(BlueprintCallable, Reliable, Server)
-	void SpawnIngredientActor(EIngredientType IngredientType);
-
 	TArray<FPlateInitData> GetPlateMesh(TArray<FRecipe>& Recipes);
 	bool FindRecipe(const FRecipeDataRow* RecipeDataRow, TArray<FRecipe>& Recipes);
+
+	FOrder GetOrderByStageAndIndex(EOC2Stage OC2Stage, int Index);
 
 public:
 	FString GetChefHeadName() const;
@@ -118,6 +116,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
 	UDataTable* OrderDataTable = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
+	TMap<EOC2Stage, UDataTable*> OrderDataTableMap;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
 	UDataTable* RecipeDataTable = nullptr;

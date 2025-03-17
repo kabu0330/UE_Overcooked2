@@ -126,3 +126,17 @@ TArray<FPlateInitData> UOC2GlobalData::GetPlateMesh(UWorld* World, const TArray<
 
 	return EmptyArray;
 }
+
+FOrder UOC2GlobalData::GetOrderByStageAndIndex(UWorld* World, EOC2Stage CurStage, int Index)
+{
+	static FOrder Empty;
+
+	UOC2GameInstance* GameInstance = UOC2Global::GetOC2GameInstance(World);
+
+	if (nullptr != GameInstance)
+	{
+		return GameInstance->GetOrderByStageAndIndex(CurStage, Index);
+	}
+
+	return Empty;
+}

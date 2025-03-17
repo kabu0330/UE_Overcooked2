@@ -28,7 +28,7 @@ void ACooking::AttachToChef_Implementation(AActor* Player)
 	StaticMeshComponent->SetSimulatePhysics(false);
 	StaticMeshComponent->SetCollisionProfileName(TEXT("NoCollision"));
 	StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	AttachToActor(Player, FAttachmentTransformRules::KeepRelativeTransform);
+	AttachToActor(Player, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 }
 
 void ACooking::DetachFromChef_Implementation(AActor* Player)

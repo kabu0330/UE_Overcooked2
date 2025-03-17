@@ -11,8 +11,6 @@
 
 #include "OrderManageComponent.generated.h"
 
-//class AIngredient;
-
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class OVERCOOKED2_API UOrderManageComponent : public UActorComponent
 {
@@ -20,6 +18,9 @@ class OVERCOOKED2_API UOrderManageComponent : public UActorComponent
 
 public:	
 	UOrderManageComponent();
+
+private:
+	int FindOrderIndex(FOrder& Order);
 
 protected:
 	virtual void BeginPlay() override;
@@ -30,6 +31,9 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_CreateNewOrder(FOrder Order);
 
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_CompleteOrder(FOrder Order);
+
 private:
-	//TArray<FRecipe> OrderList;
+	TArray<FOrder> OrderList;
 };

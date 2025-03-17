@@ -47,7 +47,7 @@ protected:
 	virtual void Tick(float DeltaTime) override;
 
 	TArray<UMaterialInterface*> Materials;
-	float DiffuseColorMapWeight = 0.0f;
+	TArray<float> DiffuseColorMapWeights;
 	bool bIsHighlighted = false;
 
 	UPROPERTY(EditAnywhere, Replicated, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
