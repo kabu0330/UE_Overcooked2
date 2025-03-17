@@ -57,17 +57,15 @@ void ACookingDevGameMode::PlaceOnthePlate()
 		return;
 	}
 	Plates[0]->Add(TargetIngredient);
-	Ingredients.RemoveAt(0);
-	//if (true == ) 
-	//{
-	//	// 재료 추가 성공 시
-	//	Ingredients.RemoveAt(0);
-	//	return;
-	//}
+	if (true == Plates[0]->IsCombinationSuccessful())
+	{
+		// 재료 추가 성공 시
+		Ingredients.RemoveAt(0);
+		return;
+	}
 
 	// 재료 추가 실패 시
 	int a = 0;
-	
 }
 
 void ACookingDevGameMode::Wash()

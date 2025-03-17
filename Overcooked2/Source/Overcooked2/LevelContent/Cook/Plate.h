@@ -23,6 +23,11 @@ public:
 	void Add(class AIngredient* Ingredient);
 	void Add_Implementation(class AIngredient* Ingredient);
 
+	bool IsCombinationSuccessful() const
+	{
+		return bIsCombinationSuccessful;
+	}
+
 
 	UFUNCTION(BlueprintCallable)
 	bool IsDirtyPlate();
@@ -73,4 +78,8 @@ private:
 
 	UPROPERTY(Replicated)
 	FRotator Rotation = FRotator::ZeroRotator;
+
+	UPROPERTY(Replicated)
+	bool bIsCombinationSuccessful = false;
+
 };
