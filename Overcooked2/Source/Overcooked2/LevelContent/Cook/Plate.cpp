@@ -101,7 +101,7 @@ void APlate::SetMaterialTexture(UTexture* Texture)
 	if (nullptr != MaterialInstanceDynamic)
 	{
 		// 3. 기존 머티리얼 인스턴스 다이나믹을 그대로 사용하고
-		MaterialInstanceDynamic->SetTextureParameterValue(FName(TEXT("DiffuseColorMap")), Texture);
+		MaterialInstanceDynamic->SetTextureParameterValue(FName(TEXT("DiffuseAdd")), Texture);
 		StaticMeshComponent->SetMaterial(0, MaterialInstanceDynamic);
 		return;
 	}
@@ -117,30 +117,30 @@ void APlate::SetMaterialTexture(UTexture* Texture)
 			// 6. 바꿀 텍스처를 에디터에서 설정해줬다면 그걸로 바꿔라.
 			if (nullptr != Texture)
 			{
-				DynamicMaterial->SetTextureParameterValue(FName(TEXT("DiffuseColorMap")), Texture);
+				DynamicMaterial->SetTextureParameterValue(FName(TEXT("DiffuseAdd")), Texture);
 				StaticMeshComponent->SetMaterial(0, DynamicMaterial);
 			}
 		}
 	}
 }
 
-bool APlate::Add(AIngredient* Ingredient)
+void APlate::Add_Implementation(AIngredient* Ingredient)
 {
 	if (ECookingType::ECT_INGREDIENT != Ingredient->GetCookingType())
 	{
-		return false;
+		return;
 	}
 	if (EPlateState::COMPLETED == PlateState || EPlateState::DIRTY == PlateState)
 	{	// 이미 완성된 요리나 세척 전의 접시는 재료를 올릴 수 없다.
-		return false;
+		return;
 	}
 	if (EIngredientState::EIS_NONE == Ingredient->GetCurIngredientState())
 	{	// 손질되지 않은 재료는 접시에 올릴 수 없다.
-		return false;
+		return;
 	}
 	if (nullptr == StaticMeshComponent)
 	{
-		return false;
+		return;
 	}
 
 	// 1. 손질된 재료를 추가한다.
@@ -153,7 +153,7 @@ bool APlate::Add(AIngredient* Ingredient)
 	if (true == InitData.IsEmpty()) 
 	{
 		Ingredients.Pop(); // 재료 자료구조에서 제거하고 실패 반환
-		return false;
+		return;
 	}
 	else // 3-2. 데이터를 획득하는데 성공했다면 
 	{
@@ -165,14 +165,18 @@ bool APlate::Add(AIngredient* Ingredient)
 			IngredientMesh->AttachToComponent(StaticMeshComponent, FAttachmentTransformRules::KeepRelativeTransform);
 
 			// 3-4. Offset
-			IngredientMesh->AddLocalOffset(InitData[0].OffsetLocation);
-			IngredientMesh->SetRelativeRotation(InitData[0].OffsetRotation);
+			Position = InitData[0].OffsetLocation;
+			Rotation = InitData[0].OffsetRotation;
+			IngredientMesh->AddLocalOffset(Position);
+			IngredientMesh->SetRelativeRotation(Rotation);
+			// IngredientMesh->AddLocalOffset(InitData[0].OffsetLocation);
+			// IngredientMesh->SetRelativeRotation(InitData[0].OffsetRotation);
 			IngredientMesh->SetRelativeScale3D(InitData[0].OffsetScale);
 
 			// 3-5. 물리 다시 켜고
 			SetSimulatePhysics(true);
-			return true;
+			return;
 		}
 	}
-	return false;
+	return;
 }
