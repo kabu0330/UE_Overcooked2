@@ -9,6 +9,7 @@
 #include "Global/Component/SpawnManageComponent.h"
 #include "Global/Data/IngredientDataTable.h"
 #include "Global/Data/OC2GlobalData.h"
+#include "Global/OC2Global.h"
 
 #include "UI/Cooking/CookingHUD.h"
 #include "UI/Cooking/UI/CookingWidget.h"
@@ -86,8 +87,16 @@ void ACookingGameMode::Stage(float DeltaTime)
 
 	if (CheckTime >= UOC2Const::OrderSpawnDelay)
 	{
-		FOrder Order;
+		FOrder Order = UOC2GlobalData::GetOrderByStageAndIndex(GetWorld(), UOC2Global::GetOC2GameInstance(GetWorld())->GetCurStage(), 1);
+
 		OrderManager->Multicast_CreateNewOrder(Order);
+	}
+
+	if (CheckTime >= 6.0f)
+	{
+		FOrder Order = UOC2GlobalData::GetOrderByStageAndIndex(GetWorld(), UOC2Global::GetOC2GameInstance(GetWorld())->GetCurStage(), 1);
+		OrderManager->Multicast_CompleteOrder(Order);
+		CheckTime = 0.0f;
 	}
 }
 
