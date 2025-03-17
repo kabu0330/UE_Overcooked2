@@ -49,10 +49,11 @@ void UCookingWidget::NativeTick(const FGeometry& MyGeometry, float DeltaTime)
 }
 
 
-void UCookingWidget::OrderComplete(int index)
+void UCookingWidget::OrderComplete(int Index)
 {
+    if (Index >= Orders.Num()) return;
 
-    CompleteOrderNum = index;
+    CompleteOrderNum = Index;
 
     if (Orders[CompleteOrderNum] == nullptr) return;
 
@@ -82,7 +83,7 @@ void UCookingWidget::OrderComplete(int index)
 
 }
 
-void UCookingWidget::CreateNewOrder(FOrder& order)
+void UCookingWidget::CreateNewOrder(FOrder& Order)
 {
     int Test1 = CurOrderCount;
     int Test2 = Orders.Num();
@@ -112,9 +113,9 @@ void UCookingWidget::CreateNewOrder(FOrder& order)
         UImage* dishimage = FindChildImage("Dish_", Orders[NewOrderNum]);
         if (dishimage == nullptr) return;
 
-        if (order.OrderTexutre != nullptr)
+        if (Order.OrderTexutre != nullptr)
         {
-            dishimage->SetBrushFromTexture(order.OrderTexutre);
+            dishimage->SetBrushFromTexture(Order.OrderTexutre);
         }
         else
         {
@@ -126,7 +127,7 @@ void UCookingWidget::CreateNewOrder(FOrder& order)
 
     }
 
-    SettingIngredientImages(order);
+    SettingIngredientImages(Order);
 
     GetWorld()->GetTimerManager().ClearTimer(MoveTimerHandle);
     GetWorld()->GetTimerManager().SetTimer(MoveTimerHandle, this, &UCookingWidget::MoveNewOrder, 0.01f, true);
@@ -191,9 +192,9 @@ void UCookingWidget::MoveNewOrder()
     MoveTimeElapsed += 0.1f;
 }
 
-void UCookingWidget::SettingIngredientImages(FOrder& order)
+void UCookingWidget::SettingIngredientImages(FOrder& Order)
 {
-    if (order.RequireIngredients.IsEmpty())
+    if (Order.RequireIngredients.IsEmpty())
     {
         return;
     }
@@ -217,7 +218,7 @@ void UCookingWidget::SettingIngredientImages(FOrder& order)
 
 
     //for (int i = 0; i < testnum; i++)
-    for (int i = 0; i < order.RequireIngredients.Num(); i++)
+    for (int i = 0; i < Order.RequireIngredients.Num(); i++)
     {
         TArray<UWidget*> backpanelchind = ibackpanel->GetAllChildren();
         UWidget* ibackimg = backpanelchind[i];
@@ -243,7 +244,7 @@ void UCookingWidget::SettingIngredientImages(FOrder& order)
             timeimg->SetRenderTranslation({ 0.f, 0.0f });
 
             //if (i == 1)
-            if (order.RequireIngredients[i].IngredientState == EIngredientState::EIS_BOILABLE)
+            if (Order.RequireIngredients[i].IngredientState == EIngredientState::EIS_BOILABLE)
             {
                 UImage* toolimg = FindChildImage("Tool_", imgpanel);
                 toolimg->SetVisibility(ESlateVisibility::Visible);
@@ -251,9 +252,9 @@ void UCookingWidget::SettingIngredientImages(FOrder& order)
             }
 
             
-            if (order.RequireIngredients[i].IngredientTexture != nullptr)
+            if (Order.RequireIngredients[i].IngredientTexture != nullptr)
             {
-                img->SetBrushFromTexture(order.RequireIngredients[i].IngredientTexture);
+                img->SetBrushFromTexture(Order.RequireIngredients[i].IngredientTexture);
             }
             else
             {
@@ -266,10 +267,10 @@ void UCookingWidget::SettingIngredientImages(FOrder& order)
     }
 
     //if (testnum < 3)
-    if (order.RequireIngredients.Num() < 3)
+    if (Order.RequireIngredients.Num() < 3)
     {
         //for (int i = testnum; i < 3; i++)
-        for (int i = order.RequireIngredients.Num() - 1; i < 3; i++)
+        for (int i = Order.RequireIngredients.Num() - 1; i < 3; i++)
         {
             UImage* img = FindChildImage("IngredientImg" + FString::FromInt(i), imgpanel);
             UImage* bimg = FindChildImage("BIngredient" + FString::FromInt(i), ibackpanel);
