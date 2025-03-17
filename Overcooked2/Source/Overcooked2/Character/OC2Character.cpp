@@ -18,13 +18,16 @@ AOC2Character::AOC2Character()
 	bReplicates = true;
 	//bUseControllerRotationYaw = false;
 
-	GetMesh()->Mobility = EComponentMobility::Movable;
 	GetMesh()->SetIsReplicated(true);
+
 
 	GrabComponent = CreateDefaultSubobject<USceneComponent>("GrabPosition");
 	GrabComponent->SetupAttachment(RootComponent);
 
 	TimeEvent = CreateDefaultSubobject<UTimeEventComponent>("EventTimer");
+
+	Plane = CreateDefaultSubobject<UStaticMeshComponent>("Plane");
+	Plane->SetupAttachment(RootComponent);
 }
 
 void AOC2Character::MoveCharacter(const FInputActionValue& Value)
@@ -38,7 +41,7 @@ void AOC2Character::MoveCharacter(const FInputActionValue& Value)
 		Chopping(false);
 	}
 
-	if (bIsDashing == false)
+	if (bIsDashing == false && bCanThrowing == false)
 	{
 		AddMovementInput(MovementInput);
 	}
@@ -77,6 +80,8 @@ void AOC2Character::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	//	GEngine->AddOnScreenDebugMessage(-1, 5.0, FColor::Green, FString::Printf(TEXT("Bool: %s"), bCanThrowing ? TEXT("true") : TEXT("false")));
+
 	CheckDash(DeltaTime);
 
 	CheckInteract();
@@ -109,12 +114,13 @@ void AOC2Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 
 	EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AOC2Character::MoveCharacter);
 	EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Started, this, &AOC2Character::Interact);
-	EnhancedInputComponent->BindAction(CharacterAction, ETriggerEvent::Started, this, &AOC2Character::DoAction);
-	EnhancedInputComponent->BindAction(CharacterAction, ETriggerEvent::Completed, this, &AOC2Character::DoAction);
+	EnhancedInputComponent->BindAction(CharacterAction, ETriggerEvent::Started, this, &AOC2Character::DoActionPress);
+	EnhancedInputComponent->BindAction(CharacterAction, ETriggerEvent::Completed, this, &AOC2Character::DoActionRelease);
 	EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Started, this, &AOC2Character::Dash);
 
 }
 
+// 반드시 연결이 다 된 상태에서 호출할 것 BeginPlay() x
 void AOC2Character::SetCharacterName_Implementation(const FString& Name)
 {
 	if (CharacterHeadMap.Contains(Name))
@@ -149,6 +155,8 @@ void AOC2Character::InitMesh()
 			Knife = { i, Materials[i] };
 		}
 	}
+
+	GetMesh()->SetMaterial(CharacterHeadMap["Alien_Green"].MaterialIndex, CharacterHeadMap["Alien_Green"].Material);
 }
 
 void AOC2Character::ClearMaterials()
@@ -167,8 +175,9 @@ void AOC2Character::ClearMaterials()
 //상호작용 : Space Key
 void AOC2Character::Interact_Implementation()
 {
-	SetCharacterName(IndexToName[FMath::RandRange(0, CharacterHeadMap.Num() - 1)]);
-	OnRep_ChangeCharacter();
+	/*SetCharacterName(IndexToName[FMath::RandRange(0, CharacterHeadMap.Num() - 1)]);
+	OnRep_ChangeCharacter();*/
+
 	// 만약 지금 상호작용을 시도할 수 있는 개체가 있으면
 	if (SelectedOC2Actor != nullptr)
 	{
@@ -236,7 +245,7 @@ void AOC2Character::Drop_Implementation()
 	}
 }
 
-void AOC2Character::DoAction_Implementation()
+void AOC2Character::DoActionPress_Implementation()
 {
 	if (GrabbedObject == nullptr && SelectedOC2Actor == nullptr)
 	{
@@ -246,7 +255,7 @@ void AOC2Character::DoAction_Implementation()
 	{
 		if (!GrabbedObject->IsA(APlate::StaticClass()))
 		{
-			Throwing();
+			bCanThrowing = true;
 		}
 	}
 	else
@@ -258,6 +267,16 @@ void AOC2Character::DoAction_Implementation()
 		}
 	}
 }
+
+void AOC2Character::DoActionRelease_Implementation()
+{
+	if (bCanThrowing == true)
+	{
+		Throwing();
+	}
+}
+
+
 
 void AOC2Character::Throwing_Implementation()
 {
@@ -280,6 +299,8 @@ void AOC2Character::Throwing_Implementation()
 		}
 
 		// 6️⃣ 잡고 있던 객체 초기화
+		
+		bCanThrowing = false;
 		GrabbedObject = nullptr;
 	}
 
@@ -404,6 +425,7 @@ void AOC2Character::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 
 	DOREPLIFETIME(AOC2Character, GrabbedObject);
 	DOREPLIFETIME(AOC2Character, bIsDashing);
+	DOREPLIFETIME(AOC2Character, bCanThrowing);
 	DOREPLIFETIME(AOC2Character, DashTimer);
 	DOREPLIFETIME(AOC2Character, bIsChopping);
 	DOREPLIFETIME(AOC2Character, CharacterName);
