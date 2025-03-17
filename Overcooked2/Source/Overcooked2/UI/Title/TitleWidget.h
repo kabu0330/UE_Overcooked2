@@ -24,6 +24,7 @@ public:
 
 protected:
 
+
 private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Network", meta = (AllowPrivateAccess = "true"))

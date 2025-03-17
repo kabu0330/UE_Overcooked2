@@ -164,21 +164,6 @@ const FIngredientDataRow& UOC2GameInstance::GetIngredientDataRow(EIngredientType
 	return EmptyData;
 }
 
-void UOC2GameInstance::SpawnIngredientActor_Implementation(EIngredientType IngredientType)
-{
-	UWorld* TestWorld = GetWorld();
-	AGameModeBase* Test = GetWorld()->GetAuthGameMode();
-	AOC2GameMode* OC2GameMode = Cast<AOC2GameMode>(GetWorld()->GetAuthGameMode());
-
-	if (nullptr == OC2GameMode)
-	{
-		UE_LOG(OVERCOOKED_LOG, Error, TEXT("현재 게임모드는 OC2 게임모드를 상속받지 않았습니다!!!!!!!!!!!!!!!!!!!"));
-		return;
-	}
-
-	OC2GameMode->SpawnIngredientActor(IngredientType);
-}
-
 TArray<FPlateInitData> UOC2GameInstance::GetPlateMesh(TArray<FRecipe>& Recipes)
 {
 	static TArray<FPlateInitData> EmptyArray;
@@ -245,6 +230,42 @@ bool UOC2GameInstance::FindRecipe(const FRecipeDataRow* RecipeDataRow, TArray<FR
 	}
 
 	return true;
+}
+
+FOrder UOC2GameInstance::GetOrderByStageAndIndex(EOC2Stage OC2Stage, int Index)
+{
+	FOrder Result;
+
+	if (nullptr != OrderDataTableMap.Find(OC2Stage))
+	{
+		UDataTable** FoundTable = OrderDataTableMap.Find(OC2Stage);
+
+		UDataTable* CurOrderDataTable = *FoundTable;
+
+		TArray<FName> RowNames = CurOrderDataTable->GetRowNames();
+
+		if (false == RowNames.IsValidIndex(Index))
+		{
+			UE_LOG(OVERCOOKED_LOG, Error, TEXT("Order return is failed data table row name is undefined"));
+			return Result;
+		}
+
+		FName RowName = RowNames[Index];
+
+		FOrderDataRow* OrderData = CurOrderDataTable->FindRow<FOrderDataRow>(RowName, nullptr);
+
+		if (nullptr == OrderData)
+		{
+			UE_LOG(OVERCOOKED_LOG, Error, TEXT("Order data cast is failed check struct type"));
+		}
+		else
+		{
+			Result.OrderTexutre = OrderData->OrderTexutre;
+			Result.RequireIngredients = OrderData->RequireIngredients;
+		}
+	}
+
+	return Result;
 }
 
 FString UOC2GameInstance::GetChefHeadName() const

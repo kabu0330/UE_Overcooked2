@@ -2,8 +2,9 @@
 
 
 #include "Global/GameMode/OC2GameMode.h"
-
 #include "Global/Component/SpawnManageComponent.h"
+#include "Global/GameFramework/OC2Actor.h"
+
 #include "LevelContent/Cook/Ingredient.h"
 #include "LevelContent/Cook/Plate.h"
 
@@ -35,4 +36,9 @@ AIngredient* AOC2GameMode::SpawnIngredientActor(EIngredientType IngredientType)
 APlate* AOC2GameMode::SpawnPlateActor(EPlateState PlateState)
 {
 	return SpawnManager->SpawnPlateActor(PlateToSpawn, PlateState);
+}
+
+void AOC2GameMode::DestroyOC2Actor(AOC2Actor* OC2Actor)
+{
+	OC2Actor->Destroy();
 }

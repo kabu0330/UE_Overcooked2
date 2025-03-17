@@ -85,7 +85,10 @@ public:
 
 	// 캐릭터의 행동(요리하기, 던지기 등)
 	UFUNCTION(BlueprintCallable, Reliable, Server)
-	void DoAction();
+	void DoActionPress();
+
+	UFUNCTION(BlueprintCallable, Reliable, Server)
+	void DoActionRelease();
 
 	UFUNCTION(Reliable, Server)
 	void Throwing();
@@ -148,6 +151,9 @@ private :
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Grab", meta = (AllowPrivateAccess = "true"))
 	USceneComponent* GrabComponent;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Grab", meta = (AllowPrivateAccess = "true"))
+	UStaticMeshComponent* Plane;
+
 	// 현재 내가 상호작용할 수 있는 객체의 정보 ( 테이블이나 음식이나 소화기나.. 등등)
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Grab", meta = (AllowPrivateAccess = "true"))
 	AOC2Actor* SelectedOC2Actor = nullptr;
@@ -156,6 +162,10 @@ private :
 	UPROPERTY(VisibleAnywhere, Replicated, BlueprintReadOnly, Category = "Grab", meta = (AllowPrivateAccess = "true"))
 	ACooking* GrabbedObject = nullptr;
 
+	UPROPERTY(EditAnywhere, Replicated, BlueprintReadWrite, Category = "Dash", meta = (AllowPrivateAccess = "true"))
+	bool bCanThrowing = false;
+
+	
 	TPair<int, UMaterialInterface*> Knife;
 
 	UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_ChangeCharacter, BlueprintReadOnly, Category = "Grab", meta = (AllowPrivateAccess = "true"))
