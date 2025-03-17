@@ -66,4 +66,10 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	UTexture* DirtyTexture;
+
+	UPROPERTY(Replicated)
+	FVector Position = FVector::ZeroVector;
+
+	UPROPERTY(Replicated)
+	FRotator Rotation = FRotator::ZeroRotator;
 };

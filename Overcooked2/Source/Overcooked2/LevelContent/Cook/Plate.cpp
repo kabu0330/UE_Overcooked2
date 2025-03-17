@@ -162,13 +162,17 @@ bool APlate::Add(AIngredient* Ingredient)
 		{
 			// 3-3. 물리 잠시 끄고
 			SetSimulatePhysics(false); // 컴포넌트와 충돌로 날아가는 움직이는 것을 방지하기 위해 물리를 잠시 끈다.
-			IngredientMesh->AttachToComponent(StaticMeshComponent, FAttachmentTransformRules::KeepRelativeTransform);
 
 			// 3-4. Offset
-			IngredientMesh->AddLocalOffset(InitData[0].OffsetLocation);
-			IngredientMesh->SetRelativeRotation(InitData[0].OffsetRotation);
+			Position = InitData[0].OffsetLocation;
+			Rotation = InitData[0].OffsetRotation;
+			IngredientMesh->AddLocalOffset(Position);
+			IngredientMesh->SetRelativeRotation(Rotation);
+			// IngredientMesh->AddLocalOffset(InitData[0].OffsetLocation);
+			// IngredientMesh->SetRelativeRotation(InitData[0].OffsetRotation);
 			IngredientMesh->SetRelativeScale3D(InitData[0].OffsetScale);
 
+			IngredientMesh->AttachToComponent(StaticMeshComponent, FAttachmentTransformRules::KeepRelativeTransform);
 			// 3-5. 물리 다시 켜고
 			SetSimulatePhysics(true);
 			return true;

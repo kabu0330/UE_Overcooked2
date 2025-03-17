@@ -68,6 +68,9 @@ private:
 
 	bool bIsOnStove = false;
 
-	ASoup* Soup = nullptr;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowprivateAccess = "true"))
+	USkeletalMeshComponent* SoupSkeletalMeshComponent = nullptr;
+
+	//ASoup* Soup = nullptr;
 
 };
