@@ -141,20 +141,23 @@ void APlate::Add_Implementation(AIngredient* Ingredient)
 	}
 
 	// 1. 손질된 재료를 추가한다.
-	Ingredients.Add(Ingredient);
+	FRecipe Recipe;
+	Recipe.IngredientType = Ingredient->GetIngredientType();
+	Recipe.IngredientState = Ingredient->GetCurIngredientState();
+	Ingredients.Add(Recipe);
 
 	// 2. RecipeDataTable과 비교하여 데이터 테이블에 해당 재료조합이 존재하는지 확인
-	TArray<FPlateInitData> InitData = UOC2GlobalData::GetPlateMesh(GetWorld(), Ingredients);
+	FPlateInitData InitData = UOC2GlobalData::GetPlateMesh(GetWorld(), Ingredients);
 
 	// 3-1. 데이터를 획득하는데 실패했다면
-	if (true == InitData.IsEmpty()) 
+	if (nullptr == InitData.StaticMesh) 
 	{
 		Ingredients.Pop(); // 재료 자료구조에서 제거하고 실패 반환
 		return;
 	}
 	else // 3-2. 데이터를 획득하는데 성공했다면 
 	{
-		IngredientMesh->SetStaticMesh(InitData[0].StaticMesh); // 메시 변경
+		IngredientMesh->SetStaticMesh(InitData.StaticMesh); // 메시 변경
 		if (nullptr != IngredientMesh)
 		{
 			// 3-3. 물리 잠시 끄고
@@ -167,13 +170,17 @@ void APlate::Add_Implementation(AIngredient* Ingredient)
 			IngredientMesh->SetSimulatePhysics(false);
 
 			// 3-5. Offset
-			IngredientMesh->SetRelativeLocation(InitData[0].OffsetLocation); // 수정 필요 Add -> Set
-			IngredientMesh->SetRelativeRotation(InitData[0].OffsetRotation);
-			IngredientMesh->SetRelativeScale3D(InitData[0].OffsetScale);
+			IngredientMesh->SetRelativeLocation(InitData.OffsetLocation); // 수정 필요 Add -> Set
+			IngredientMesh->SetRelativeRotation(InitData.OffsetRotation);
+			IngredientMesh->SetRelativeScale3D(InitData.OffsetScale);
 
 			// 3-6. 물리 다시 켜고
 			SetSimulatePhysics(true);
 			bIsCombinationSuccessful = true;
+
+			// 3-7. 기존에 존재하는 재료는 월드에서 삭제
+			Ingredient->RequestOC2ActorDestroy();
+
 			return;
 		}
 	}
