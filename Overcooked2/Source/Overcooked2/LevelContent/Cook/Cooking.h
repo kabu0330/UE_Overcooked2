@@ -56,6 +56,10 @@ public:
 		return Type == CookingType;
 	}
 
+	UFUNCTION(NetMulticast, Reliable)
+	virtual void SetCookingTable(class ACookingTable* Table);
+	virtual void SetCookingTable_Implementation(class ACookingTable* Table) {};
+
 	// 템플릿은 BP에서 호출할 수 없다.
 	template<typename T>
 	T* GetChild(T* Cooking)

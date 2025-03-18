@@ -43,6 +43,8 @@ public:
 
 	virtual void DetachFromChef_Implementation(AActor* Player) override;
 
+	virtual void SetCookingTable_Implementation(class ACookingTable* Table) override;
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
@@ -69,6 +71,6 @@ private:
 
 	bool bIsOnStove = false;
 
-
+	class ACookingTable* CookingTable = nullptr;
 
 };

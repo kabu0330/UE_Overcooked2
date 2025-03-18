@@ -30,14 +30,15 @@ void APot::DetachFromChef_Implementation(AActor* Player)
 	
 }
 
+void APot::SetCookingTable_Implementation(ACookingTable* Table)
+{
+	CookingTable = Table;
+}
+
 void APot::BeginPlay()
 {
 	ACooking::BeginPlay();
 
-	//Soup = GetWorld()->SpawnActor<ASoup>(ASoup::StaticClass());
-	//FVector Pos = FVector(845, 236, -65);
-	//Soup->SetActorRelativeLocation(Pos);
-	//Soup->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
 }
 
 void APot::Tick(float DeltaTime)
