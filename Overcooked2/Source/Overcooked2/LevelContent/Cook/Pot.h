@@ -41,6 +41,8 @@ public:
 		bIsOnStove = Value;
 	}
 
+	virtual void DetachFromChef_Implementation(AActor* Player) override;
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;

@@ -74,12 +74,6 @@ private:
 	UTexture* DirtyTexture;
 
 	UPROPERTY(Replicated)
-	FVector Position = FVector::ZeroVector;
-
-	UPROPERTY(Replicated)
-	FRotator Rotation = FRotator::ZeroRotator;
-
-	UPROPERTY(Replicated)
 	bool bIsCombinationSuccessful = false;
 
 };

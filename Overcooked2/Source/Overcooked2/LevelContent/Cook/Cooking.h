@@ -28,8 +28,8 @@ public:
 	void AttachToChef_Implementation(AActor* Player);
 
 	UFUNCTION(NetMulticast, Reliable)
-	void DetachFromChef(AActor* Player);
-	void DetachFromChef_Implementation(AActor* Player);
+	virtual void DetachFromChef(AActor* Player);
+	virtual void DetachFromChef_Implementation(AActor* Player);
 
 
 	const FIngredientDataRow* const GetIngredientDataTable() const

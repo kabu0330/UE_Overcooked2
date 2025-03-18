@@ -71,6 +71,10 @@ void ACookingDevGameMode::PlaceOnthePlate()
 void ACookingDevGameMode::Wash()
 {
 	TArray<APlate*>& Plates = CookingObjectManager->GetPlates();
+	if (true == Plates.IsEmpty())
+	{
+		return;
+	}
 	Plates[0]->WashPlate();
 }
 
