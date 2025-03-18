@@ -19,6 +19,27 @@ void AOC2Actor::InitOC2Actor()
 {
 }
 
+void AOC2Actor::RequestOC2ActorDestroy()
+{
+	if (false == HasAuthority())  // 클라이언트에서 실행 중인지 확인
+	{
+		Server_DestroyOC2Actor();  // 서버에게 삭제 요청
+	}
+	else
+	{
+		Destroy();  // 이미 서버라면 직접 삭제
+	}
+}
+
+void AOC2Actor::Server_DestroyOC2Actor_Implementation()
+{
+}
+
+bool AOC2Actor::Server_DestroyOC2Actor_Validate()
+{
+	return true;
+}
+
 void AOC2Actor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
