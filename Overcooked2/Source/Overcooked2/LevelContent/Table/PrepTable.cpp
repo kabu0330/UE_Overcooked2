@@ -25,15 +25,19 @@ ACooking* APrepTable::Interact(AActor* ChefActor)
 
 	if (false == bIsOccupied) // 테이블이 비어있다.
 	{
-		PPlacedItem = nullptr;
+		CookingPtr = nullptr;
 	}
-	return PPlacedItem;
+
+	return CookingPtr;
 }
 
 void APrepTable::PlaceItem(ACooking* Item)
 {
-	PPlacedItem = Item;
-	FVector OnTheTable = GetActorLocation() + FVector{ (0.0f, 0.0f, 100.0f) };
+	CookingPtr = Item;
+	//PPlacedItem = Item;
 
-	PPlacedItem->SetActorLocation(OnTheTable);
+	FVector OnTheTable = GetActorLocation() + FVector{ (0.0f, 0.0f, 100.0f) };
+	CookingPtr->SetActorLocation(OnTheTable);
+
+	//PPlacedItem->SetActorLocation(OnTheTable);
 }

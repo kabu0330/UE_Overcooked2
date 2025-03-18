@@ -42,7 +42,7 @@ private:
 	
 	EIngredientType IngredientType = EIngredientType::EIT_NONE;
 
-	ACooking* SPlacedItem = nullptr;
+	//ACooking* SPlacedItem = nullptr;
 
 	AIngredient* SpawnedIngredient = nullptr;
 };

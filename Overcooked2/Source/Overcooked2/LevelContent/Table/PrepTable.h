@@ -29,6 +29,6 @@ public:
 
 private:
 
-	ACooking* PPlacedItem = nullptr;
+	//ACooking* PPlacedItem = nullptr;
 
 };

@@ -27,36 +27,52 @@ void AChoppingTable::Tick(float DeltaTime)
 
 ACooking* AChoppingTable::Interact(AActor* ChefActor)
 {
-	AOC2Character* Chef = Cast<AOC2Character>(ChefActor);
+	//AOC2Character* Chef = Cast<AOC2Character>(ChefActor);
 
 	if (false == bIsOccupied) // 테이블이 비어있다.
 	{
-		CPlacedItem = nullptr;
+		CookingPtr = nullptr;
+		//CPlacedItem = nullptr;
 	}
-	
-	return CPlacedItem;
+	else
+	{
+		ChopIngredient(ChefActor);
+	}
+
+	return CookingPtr;
+}
+
+void AChoppingTable::PlaceItem(ACooking* Item)
+{
+	ACooking* TempCooking = Item;
+
+	FVector OnTheTable = GetActorLocation() + FVector{ (0.0f, 0.0f, 100.0f) };
+	TempCooking->SetActorLocation(OnTheTable);
+
+	CookingPtr = TempCooking;
+	//CPlacedItem = TempCooking;
 }
 
 void AChoppingTable::ChopIngredient(AActor* ChefActor)
 {
 	if (nullptr != ChefActor)
 	{
-		if (true == CPlacedItem->IsCookingType(ECookingType::ECT_INGREDIENT))
+		if (true == CookingPtr->IsCookingType(ECookingType::ECT_INGREDIENT))
 		{
-			AIngredient* PlacedIngredient = Cast<AIngredient>(CPlacedItem);
+			AIngredient* PlacedIngredient = Cast<AIngredient>(CookingPtr);
 
 			if (true == PlacedIngredient->IsChoppable())
 			{
 				Timer = 3.0f;
 
-				while(Timer > 0)
+				while (Timer > 0)
 				{
 					bTimerActivated = true;
 				}
 
 				bTimerActivated = false;
 				PlacedIngredient->ChangeState(EIngredientState::EIS_CHOPPED);
-				CPlacedItem = Cast<ACooking>(PlacedIngredient);
+				CookingPtr = Cast<ACooking>(PlacedIngredient);
 			}
 		}
 	}
