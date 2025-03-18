@@ -24,6 +24,10 @@ AOC2Character::AOC2Character()
 	GrabComponent = CreateDefaultSubobject<USceneComponent>("GrabPosition");
 	GrabComponent->SetupAttachment(RootComponent);
 
+	CheckOverlap = CreateDefaultSubobject<USphereComponent>("CheckOverlap");
+	CheckOverlap->SetupAttachment(RootComponent);
+	CheckOverlap->InitSphereRadius(100.0f);
+
 	TimeEvent = CreateDefaultSubobject<UTimeEventComponent>("EventTimer");
 
 	Plane = CreateDefaultSubobject<UStaticMeshComponent>("Plane");
@@ -70,6 +74,9 @@ void AOC2Character::BeginPlay()
 	Super::BeginPlay();
 
 	InitMesh();
+	
+	//CheckOverlap->OnComponentHit.AddDynamic(this, &AOC2Character::OnHit);
+	CheckOverlap->OnComponentBeginOverlap.AddDynamic(this, &AOC2Character::OnOverlapCheck);
 	// 임시 :
 	//SetCharacterHead("Alien_Green");
 
@@ -206,11 +213,16 @@ void AOC2Character::Interact_Implementation()
 			{
 				Grab(Cook);
 			}
+			// 잡은 물건이 있는데 테이블이 비어있으면
 			else if (GrabbedObject != nullptr && Cook == nullptr)
 			{
 				// 다른 액터에 Attach하게 되면 수동으로 Detach할 필요 X
 				Table->PlaceItem(GrabbedObject);
 				GrabbedObject = nullptr;
+			}
+			else if(GrabbedObject != nullptr && Cook != nullptr)
+			{
+				Table->PlaceItem(Cook);
 			}
 		}
 	}
@@ -417,6 +429,34 @@ void AOC2Character::StopDash()
 {
 	bIsDashing = false;
 	GetCharacterMovement()->StopMovementImmediately();
+}
+
+void AOC2Character::OnOverlapCheck(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (OtherActor)
+	{
+//			GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Green, "Hit");
+		AIngredient* Ingredient = Cast<AIngredient>(OtherActor);
+		if (Ingredient) // 캡슐과 충돌한 경우
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Green, "Hit");
+
+			//Ingredient->AttachToActor(this);
+		}
+	}
+}
+
+void AOC2Character::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
+	if (OtherActor)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Green, "Hit");
+		AIngredient* Ingredient = Cast<AIngredient>(OtherActor);
+		if (Ingredient) // 캡슐과 충돌한 경우
+		{
+
+		}
+	}
 }
 
 void AOC2Character::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
