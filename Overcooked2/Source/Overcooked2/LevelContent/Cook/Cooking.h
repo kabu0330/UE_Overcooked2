@@ -28,8 +28,10 @@ public:
 	void AttachToChef_Implementation(AActor* Player);
 
 	UFUNCTION(NetMulticast, Reliable)
-	virtual void DetachFromChef(AActor* Player);
-	virtual void DetachFromChef_Implementation(AActor* Player);
+	void DetachFromChef(AActor* Player);
+	void DetachFromChef_Implementation(AActor* Player);
+
+	virtual void DetachAction() {};
 
 
 	const FIngredientDataRow* const GetIngredientDataTable() const
@@ -57,8 +59,8 @@ public:
 	}
 
 	UFUNCTION(NetMulticast, Reliable)
-	virtual void SetCookingTable(class ACookingTable* Table);
-	virtual void SetCookingTable_Implementation(class ACookingTable* Table) {};
+	void SetCookingTable(class ACookingTable* Table);
+	void SetCookingTable_Implementation(class ACookingTable* Table);
 
 	// 템플릿은 BP에서 호출할 수 없다.
 	template<typename T>
@@ -75,6 +77,9 @@ protected:
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	virtual void ForwardCookingTable(class ACookingTable* Table) {};
+	virtual void ForwardAttachToChef() {};
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	ECookingType CookingType = ECookingType::ECT_NONE;

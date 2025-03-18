@@ -29,6 +29,8 @@ void ACooking::AttachToChef_Implementation(AActor* Player)
 	StaticMeshComponent->SetCollisionProfileName(TEXT("NoCollision"));
 	StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	AttachToActor(Player, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+
+	ForwardAttachToChef();
 }
 
 void ACooking::DetachFromChef_Implementation(AActor* Player)
@@ -37,6 +39,8 @@ void ACooking::DetachFromChef_Implementation(AActor* Player)
 	StaticMeshComponent->SetCollisionProfileName(TEXT("Interactable"));
 	StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	DetachFromActor(FDetachmentTransformRules::KeepRelativeTransform);
+
+	DetachAction();
 }
 
 // Called when the game starts or when spawned
@@ -51,5 +55,10 @@ void ACooking::Tick(float DeltaTime)
 {
 	AOC2Actor::Tick(DeltaTime);
 
+}
+
+void ACooking::SetCookingTable_Implementation(ACookingTable* Table)
+{
+	ForwardCookingTable(Table);
 }
 

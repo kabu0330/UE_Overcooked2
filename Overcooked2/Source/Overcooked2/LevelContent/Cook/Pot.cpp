@@ -3,6 +3,7 @@
 
 #include "LevelContent/Cook/Pot.h"
 #include <LevelContent/Cook/Ingredient.h>
+#include <LevelContent/Table/BurnerTable.h>
 
 APot::APot()
 {
@@ -17,22 +18,6 @@ APot::APot()
 
 	FVector Pos = FVector(249, 1452, 60);
 	StaticMeshComponent->SetRelativeLocation(Pos);
-}
-
-void APot::DetachFromChef_Implementation(AActor* Player)
-{
-	ACooking::DetachFromChef(Player);
-	//StaticMeshComponent->SetSimulatePhysics(true);
-	//StaticMeshComponent->SetCollisionProfileName(TEXT("Interactable"));
-	//StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	//DetachFromActor(FDetachmentTransformRules::KeepRelativeTransform);
-
-	
-}
-
-void APot::SetCookingTable_Implementation(ACookingTable* Table)
-{
-	CookingTable = Table;
 }
 
 void APot::BeginPlay()
@@ -51,6 +36,10 @@ void APot::Tick(float DeltaTime)
 
 void APot::Cook(float DeltaTime)
 {
+	if (false == bIsBoiling)
+	{
+		return;
+	}
 	TimeElapsed += DeltaTime;
 }
 
@@ -83,10 +72,6 @@ void APot::ChangeMaterialColor()
 // Pot은 조리를 할 모든 요건이 갖춰졌는가?
 bool APot::CanCook()
 {
-	if (false == bIsOnStove) // 1. 가스레인지 위에 있냐
-	{
-		return false;
-	}
 
 	if (nullptr == Ingredient) // 2. 재료가 있냐
 	{
@@ -100,21 +85,36 @@ void APot::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProp
 {
 }
 
-bool APot::SetBoil(ACooking* Rice)
+void APot::ForwardCookingTable(ACookingTable* Table)
 {
-	if (false == bIsOnStove) // 1. 가스레인지 위에 있냐
+	CookingTable = Table;
+}
+
+void APot::ForwardAttachToChef()
+{
+	CookingTable = nullptr;
+}
+
+void APot::SetBoil(ACooking* Rice)
+{
+	if (nullptr == CookingTable)
 	{
-		return false; // 가장 먼저 Ingredient를 넣는 함수이므로 CanCook 함수로 체크하지 않는다.
+		return;
+	}
+	ABurnerTable* BurnerTable =  Cast<ABurnerTable>(CookingTable);
+	if (nullptr == BurnerTable) // 1. 버너 위에 있냐
+	{
+		return; // 가장 먼저 Ingredient를 넣는 함수이므로 CanCook 함수로 체크하지 않는다.
 	}
 
 	AIngredient* RawRice = Cast<AIngredient>(Rice);
 	if (nullptr == RawRice) // 2. 재료가 쌀이냐
 	{
-		return false;
+		return;
 	}
 	if (EIngredientState::EIS_BOILABLE != RawRice->GetCurIngredientState()) // 3. Boil 할 수 있고, 조리가 안 된 상태가 맞냐
 	{
-		return false;
+		return;
 	}
 
 	// 예외처리를 통과할 수 있는 재료는 쌀 뿐이므로 여기까지 오면 조리가 되지 않은 쌀이다.
@@ -122,10 +122,12 @@ bool APot::SetBoil(ACooking* Rice)
 	Ingredient = RawRice;
 	PotState = EPotState::BOILING;
 
+	bIsBoiling = true;
+
 
 	// 스켈레탈 메시에 조리 애니메이션 재생해야함
 
-	return true;
+	return;
 }
 
 AIngredient* APot::GetCookedIngredient()
