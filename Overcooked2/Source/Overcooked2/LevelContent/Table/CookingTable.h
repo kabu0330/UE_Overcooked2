@@ -34,7 +34,8 @@ public:
 	
 	virtual void PlaceItem(ACooking* Item)
 	{
-
+		//Item->SetCookingTable(this); merge후 주석 해제
+		bIsOccupied = true;
 	}
 
 	UFUNCTION(BlueprintCallable)
@@ -63,6 +64,8 @@ protected:
 
 	bool bIsOccupied = false;
 
+	class ACooking* CookingPtr = nullptr;
+
 private:	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	float CookingTime = 0.0f;
@@ -73,7 +76,6 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	bool bCanOvercook = false;
 
-	class ACooking* CookingPtr = nullptr;
 	
 	// 테이블이 사용 가능한가?
 

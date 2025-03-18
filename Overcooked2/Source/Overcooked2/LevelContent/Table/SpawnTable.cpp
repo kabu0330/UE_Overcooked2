@@ -41,7 +41,8 @@ ACooking* ASpawnTable::Interact(AActor* ChefActor)
 	}
 	else
 	{
-		TempCooking = SPlacedItem;
+		//TempCooking = SPlacedItem;
+		TempCooking = CookingPtr;
 		//PlacedItem이 외부 Cooking과 상호작용 하는 경우
 		// 1. 조합 가능한 경우
 		// 2. 빈접시와 요리가 있는 접시의 경우
@@ -61,8 +62,8 @@ void ASpawnTable::RequestSpawn_Implementation()
 
 void ASpawnTable::PlaceItem(ACooking* Item)
 {
-	ACooking* TempCooking = Item;
+	CookingPtr = Item;
 	
 	FVector OnTheTable = GetActorLocation() + FVector{ (0.0f, 0.0f, 100.0f) };
-	TempCooking->SetActorLocation(OnTheTable);
+	CookingPtr->SetActorLocation(OnTheTable);
 }
