@@ -85,7 +85,7 @@ public:
 	 */
 	const FIngredientDataRow& GetIngredientDataRow(EIngredientType IngredientType);
 
-	TArray<FPlateInitData> GetPlateMesh(TArray<FRecipe>& Recipes);
+	FPlateInitData GetPlateMesh(TArray<FRecipe>& Recipes);
 	bool FindRecipe(const FRecipeDataRow* RecipeDataRow, TArray<FRecipe>& Recipes);
 
 	FOrder GetOrderByStageAndIndex(EOC2Stage OC2Stage, int Index);

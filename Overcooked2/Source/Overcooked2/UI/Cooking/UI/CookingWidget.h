@@ -25,6 +25,10 @@ public:
     UFUNCTION(BlueprintCallable, Category = "OC2UI")
     void CreateNewOrder(struct FOrder& Order);
 
+    UFUNCTION(BlueprintCallable, Category = "OC2UI")
+    void WrongOrder();
+
+
     // UI 바인딩 (총 5개의 주문 슬롯)
     UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
     class UCanvasPanel* Order_0;
@@ -40,6 +44,7 @@ public:
 
     UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
     class UCanvasPanel* Order_4;
+
 
 protected:
     virtual void NativeOnInitialized() override;
@@ -76,6 +81,7 @@ private:
     FTimerHandle MoveTimerHandle;
     FTimerHandle IngredientTimerHandle;
 
+
     // 내부 함수
     void UpdateImageOpacity();
     void UpdateImagePosition();
@@ -83,6 +89,10 @@ private:
     void UpdateOrderTime(int Index, float DeltaTime);
     void SettingIngredientImages(FOrder& order);
     void MoveNewOrder();
+
+    void FindOrderImgRecursive(class UWidget* Widget, const FLinearColor& Color);
+    void UpdateImgColor(class UImage* Image, const FLinearColor& Color);
+
 
     template <typename T>
     T* FindChildWidget(const FString& name, UCanvasPanel* canvas);

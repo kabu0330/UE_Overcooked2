@@ -10,6 +10,7 @@ UENUM(BlueprintType)
 enum class EPotState : uint8
 {
 	IDLE 		UMETA(DisplayName = "대기"),
+	HEATING		UMETA(DisplayName = "가열 중"),
 	BOILING		UMETA(DisplayName = "조리 중"),
 	COOKED		UMETA(DisplayName = "조리 완료"),
 	OVERCOOKED	UMETA(DisplayName = "태움"),
@@ -28,20 +29,12 @@ public:
 
 	// 처음 재료가 들어왔을 때 호출할 함수
 	UFUNCTION(BlueprintCallable)
-	bool SetBoil(ACooking* Rice);
+	void SetBoil(ACooking* Rice);
 
 	// 조리된 밥을 받아오는 함수
 	UFUNCTION(BlueprintCallable)
 	class AIngredient* GetCookedIngredient();
 
-	// Pot이 현재 테이블 위에 놓여 있냐 아니냐. 매번 Table 쪽에서 캐릭터와 상호작용할 때 넣어줘야 하나?
-	UFUNCTION(BlueprintCallable)
-	void SetOnTable(bool Value)
-	{
-		bIsOnStove = Value;
-	}
-
-	virtual void DetachFromChef_Implementation(AActor* Player) override;
 
 protected:
 	virtual void BeginPlay() override;
@@ -56,6 +49,9 @@ protected:
 
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
 
+	virtual void ForwardCookingTable(class ACookingTable* Table) override;
+	virtual void ForwardAttachToChef() override;
+
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowprivateAccess = "true"))
 	USkeletalMeshComponent* SoupSkeletalMeshComponent = nullptr;
@@ -67,8 +63,10 @@ private:
 
 	float TimeElapsed = 0.0f;
 
-	bool bIsOnStove = false;
+	UPROPERTY(Replicated)
+	class ACookingTable* CookingTable = nullptr;
 
-
+	UPROPERTY(Replicated)
+	bool bIsBoiling = false;
 
 };

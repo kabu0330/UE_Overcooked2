@@ -57,7 +57,7 @@ protected:
 
 private:
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
-	TArray<class AIngredient*> Ingredients;
+	TArray<FRecipe> Ingredients;
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* IngredientMesh = nullptr; // Àç·á

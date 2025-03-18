@@ -67,9 +67,9 @@ public:
 
 	static const FIngredientDataRow& GetIngredientDataRow(UWorld* World, EIngredientType IngredientType);
 
-	static TArray<FPlateInitData> GetPlateMesh(UWorld* World, TArray<FRecipe>& Recipes);
+	static FPlateInitData GetPlateMesh(UWorld* World, TArray<FRecipe>& Recipes);
 
-	static TArray<FPlateInitData> GetPlateMesh(UWorld* World, const TArray<class AIngredient*>& Ingredients);
+	static FPlateInitData GetPlateMesh(UWorld* World, const TArray<class AIngredient*>& Ingredients);
 
 	static FOrder GetOrderByStageAndIndex(UWorld* World, EOC2Stage CurStage, int Index);
 };

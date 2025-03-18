@@ -26,34 +26,4 @@ void AWorldGameMode::BeginPlay()
 void AWorldGameMode::Tick(float _DeltaTime)
 {
 	Super::Tick(_DeltaTime);
-
-	/*static bool test = true;
-
-	if (test)
-	{
-		test = false;
-		HideAllClientCharacters();
-	}*/
-}
-
-void AWorldGameMode::HideAllClientCharacters()
-{
-	for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
-	{
-		APlayerController* PC = It->Get();
-		if (PC)
-		{
-			APawn* PlayerPawn = PC->GetPawn();
-			if (PlayerPawn == nullptr)
-			{
-				continue;
-			}
-
-			if (!PlayerPawn->HasAuthority())
-			{
-				PlayerPawn->SetActorHiddenInGame(true);
-				PlayerPawn->SetActorEnableCollision(false);
-			}
-		}
-	}
 }

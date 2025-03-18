@@ -87,9 +87,9 @@ const FIngredientDataRow& UOC2GlobalData::GetIngredientDataRow(UWorld* World, EI
 	return EmptyData;
 }
 
-TArray<FPlateInitData> UOC2GlobalData::GetPlateMesh(UWorld* World, TArray<FRecipe>& Recipes)
+FPlateInitData UOC2GlobalData::GetPlateMesh(UWorld* World, TArray<FRecipe>& Recipes)
 {
-	static TArray<FPlateInitData> EmptyArray;
+	static FPlateInitData EmptyArray;
 
 	UOC2GameInstance* GameInstance = UOC2Global::GetOC2GameInstance(World);
 
@@ -101,9 +101,9 @@ TArray<FPlateInitData> UOC2GlobalData::GetPlateMesh(UWorld* World, TArray<FRecip
 	return EmptyArray;
 }
 
-TArray<FPlateInitData> UOC2GlobalData::GetPlateMesh(UWorld* World, const TArray<class AIngredient*>& Ingredients)
+FPlateInitData UOC2GlobalData::GetPlateMesh(UWorld* World, const TArray<class AIngredient*>& Ingredients)
 {
-	static TArray<FPlateInitData> EmptyArray;
+	static FPlateInitData EmptyArray;
 
 	TArray<FRecipe> Recipes;
 

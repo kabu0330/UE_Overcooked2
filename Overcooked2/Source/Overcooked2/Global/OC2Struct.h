@@ -60,6 +60,9 @@ public:
 	UStaticMesh* StaticMesh = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
+	TArray<UTexture*> IngredientTextures;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
 	FVector OffsetLocation = FVector::ZeroVector;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
