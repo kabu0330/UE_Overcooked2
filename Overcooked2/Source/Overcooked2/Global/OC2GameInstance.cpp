@@ -184,6 +184,12 @@ FPlateInitData UOC2GameInstance::GetPlateMesh(TArray<FRecipe>& Recipes)
 			PlateInitData.OffsetLocation = RecipeData->OffsetLocation;
 			PlateInitData.OffsetRotation = RecipeData->OffsetRotation;
 			PlateInitData.OffsetScale = RecipeData->OffsetScale;
+
+			for (int j = 0; j < RecipeData->RequireIngredients.Num(); j++)
+			{
+				PlateInitData.IngredientTextures.Push(RecipeData->RequireIngredients[j].IngredientTexture);
+			}
+
 			return PlateInitData;
 		}
 	}

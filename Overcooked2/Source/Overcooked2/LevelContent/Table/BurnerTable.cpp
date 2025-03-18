@@ -43,7 +43,7 @@ void ABurnerTable::PlaceItem(ACooking* Item)
 		CookingPtr = TempCooking;
 
 		APot* TempPot = Cast<APot>(CookingPtr);
-		TempPot->SetOnTable(true);
+		//TempPot->SetOnTable(true);
 	}
 }
 
