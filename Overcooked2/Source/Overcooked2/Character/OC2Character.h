@@ -9,6 +9,7 @@
 #include "LevelContent/Cook/Cooking.h"
 #include "LevelContent/Table/CookingTable.h"
 #include "Global/Component/TimeEventComponent.h"
+#include "Components/SphereComponent.h"
 #include "OC2Character.generated.h"
 
 USTRUCT(BlueprintType)
@@ -106,8 +107,13 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void StopDash();
 
-	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
+	UFUNCTION()
+	void OnOverlapCheck(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
+	UFUNCTION()
+	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
 private :
 
 	// 이 함수는 캐릭터의 머리를 설정하는 함수읾
@@ -153,6 +159,9 @@ private :
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Grab", meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* Plane;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Grab", meta = (AllowPrivateAccess = "true"))
+	USphereComponent* CheckOverlap;
 
 	// 현재 내가 상호작용할 수 있는 객체의 정보 ( 테이블이나 음식이나 소화기나.. 등등)
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Grab", meta = (AllowPrivateAccess = "true"))

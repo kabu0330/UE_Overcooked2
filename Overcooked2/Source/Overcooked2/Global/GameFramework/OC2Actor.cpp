@@ -70,7 +70,6 @@ void AOC2Actor::ApplyMaterialHighlight()
 		return;
 	}
 
-	DiffuseColorMapWeights.SetNumZeroed(10);
 	float HighlightValue = 5.0f;
 	int Count = 0;
 
@@ -104,7 +103,9 @@ void AOC2Actor::ApplyMaterialHighlight()
 				UMaterialInstanceDynamic* DynamicMaterial = UMaterialInstanceDynamic::Create(Material, this);
 				if (nullptr != DynamicMaterial)
 				{
-					Mesh->GetMaterials()[i]->GetScalarParameterValue(FName("DiffuseAdd"), DiffuseColorMapWeights[Count]);
+					float Temp;
+					Mesh->GetMaterials()[i]->GetScalarParameterValue(FName("DiffuseAdd"), Temp);
+					DiffuseColorMapWeights.Add(Temp);
 					DynamicMaterial->SetScalarParameterValue(FName("DiffuseAdd"), HighlightValue);
 					Mesh->SetMaterial(i, DynamicMaterial);
 					++Count;
@@ -150,7 +151,5 @@ void AOC2Actor::RestoreMaterial()
 	}
 
 	// 2. 저장해둔 머티리얼은 초기화
-	Materials.Empty();
-	DiffuseColorMapWeights.Empty();
 	bIsHighlighted = false;
 }

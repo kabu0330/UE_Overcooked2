@@ -17,7 +17,6 @@ public:
 	AOC2CharacterTestChoppingTable();
 
 	virtual ACooking* Interact(AActor* ChefActor) override;
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
