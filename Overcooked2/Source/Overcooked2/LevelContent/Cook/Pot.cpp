@@ -19,6 +19,17 @@ APot::APot()
 	StaticMeshComponent->SetRelativeLocation(Pos);
 }
 
+void APot::DetachFromChef_Implementation(AActor* Player)
+{
+	ACooking::DetachFromChef(Player);
+	//StaticMeshComponent->SetSimulatePhysics(true);
+	//StaticMeshComponent->SetCollisionProfileName(TEXT("Interactable"));
+	//StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	//DetachFromActor(FDetachmentTransformRules::KeepRelativeTransform);
+
+	
+}
+
 void APot::BeginPlay()
 {
 	ACooking::BeginPlay();

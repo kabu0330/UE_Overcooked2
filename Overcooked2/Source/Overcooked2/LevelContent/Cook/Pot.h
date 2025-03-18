@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "LevelContent/Cook/Cooking.h"
-#include <LevelContent/Cook/Soup.h>
 #include "Pot.generated.h"
 
 UENUM(BlueprintType)
@@ -42,6 +41,8 @@ public:
 		bIsOnStove = Value;
 	}
 
+	virtual void DetachFromChef_Implementation(AActor* Player) override;
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
@@ -56,21 +57,18 @@ protected:
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
 
 private:
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowprivateAccess = "true"))
-	//USkeletalMeshComponent* SoupSkeletalMeshComponent = nullptr;
-
-	class AIngredient* Ingredient = nullptr;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowprivateAccess = "true"))
+	USkeletalMeshComponent* SoupSkeletalMeshComponent = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowprivateAccess = "true"))
 	EPotState PotState = EPotState::IDLE;
+
+	class AIngredient* Ingredient = nullptr;
 
 	float TimeElapsed = 0.0f;
 
 	bool bIsOnStove = false;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowprivateAccess = "true"))
-	USkeletalMeshComponent* SoupSkeletalMeshComponent = nullptr;
 
-	//ASoup* Soup = nullptr;
 
 };

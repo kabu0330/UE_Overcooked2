@@ -19,9 +19,6 @@ APlate::APlate()
 	IngredientMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("IngredientMesh"));
 	IngredientMesh->SetIsReplicated(true); // 컴포넌트 네트워크 동기화
 
-	FRotator Rotator = FRotator(0.0f, 0.0f, 90.0f);
-	StaticMeshComponent->SetRelativeRotation(FRotator(Rotator)); // y z x
-
 	FVector Scale = FVector(2.0f, 2.0f, 2.0f);
 	StaticMeshComponent->SetRelativeScale3D(Scale);
 
@@ -36,7 +33,6 @@ void APlate::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimePr
 	DOREPLIFETIME(APlate, Ingredients);
 	DOREPLIFETIME(APlate, IngredientMesh);
 	DOREPLIFETIME(APlate, PlateState);
-	//DOREPLIFETIME(APlate, PrveState);
 }
 
 // Called when the game starts or when spawned
@@ -126,6 +122,7 @@ void APlate::SetMaterialTexture(UTexture* Texture)
 
 void APlate::Add_Implementation(AIngredient* Ingredient)
 {
+	bIsCombinationSuccessful = false;
 	if (ECookingType::ECT_INGREDIENT != Ingredient->GetCookingType())
 	{
 		return;
@@ -162,19 +159,21 @@ void APlate::Add_Implementation(AIngredient* Ingredient)
 		{
 			// 3-3. 물리 잠시 끄고
 			SetSimulatePhysics(false); // 컴포넌트와 충돌로 날아가는 움직이는 것을 방지하기 위해 물리를 잠시 끈다.
-			IngredientMesh->AttachToComponent(StaticMeshComponent, FAttachmentTransformRules::KeepRelativeTransform);
 
-			// 3-4. Offset
-			Position = InitData[0].OffsetLocation;
-			Rotation = InitData[0].OffsetRotation;
-			IngredientMesh->AddLocalOffset(Position);
-			IngredientMesh->SetRelativeRotation(Rotation);
-			// IngredientMesh->AddLocalOffset(InitData[0].OffsetLocation);
-			// IngredientMesh->SetRelativeRotation(InitData[0].OffsetRotation);
+			// 3-4. IngredientMesh의 충돌체와 물리를 끈다.
+			IngredientMesh->AttachToComponent(StaticMeshComponent, FAttachmentTransformRules::KeepRelativeTransform);
+			IngredientMesh->SetCollisionProfileName(TEXT("NoCollision"));
+			IngredientMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+			IngredientMesh->SetSimulatePhysics(false);
+
+			// 3-5. Offset
+			IngredientMesh->SetRelativeLocation(InitData[0].OffsetLocation); // 수정 필요 Add -> Set
+			IngredientMesh->SetRelativeRotation(InitData[0].OffsetRotation);
 			IngredientMesh->SetRelativeScale3D(InitData[0].OffsetScale);
 
-			// 3-5. 물리 다시 켜고
+			// 3-6. 물리 다시 켜고
 			SetSimulatePhysics(true);
+			bIsCombinationSuccessful = true;
 			return;
 		}
 	}
