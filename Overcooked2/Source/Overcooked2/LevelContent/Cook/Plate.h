@@ -23,6 +23,11 @@ public:
 	void Add(class AIngredient* Ingredient);
 	void Add_Implementation(class AIngredient* Ingredient);
 
+	bool IsCombinationSuccessful() const
+	{
+		return bIsCombinationSuccessful;
+	}
+
 
 	UFUNCTION(BlueprintCallable)
 	bool IsDirtyPlate();
@@ -69,8 +74,6 @@ private:
 	UTexture* DirtyTexture;
 
 	UPROPERTY(Replicated)
-	FVector Position = FVector::ZeroVector;
+	bool bIsCombinationSuccessful = false;
 
-	UPROPERTY(Replicated)
-	FRotator Rotation = FRotator::ZeroRotator;
 };
