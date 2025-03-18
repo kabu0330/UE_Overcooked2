@@ -164,9 +164,9 @@ const FIngredientDataRow& UOC2GameInstance::GetIngredientDataRow(EIngredientType
 	return EmptyData;
 }
 
-TArray<FPlateInitData> UOC2GameInstance::GetPlateMesh(TArray<FRecipe>& Recipes)
+FPlateInitData UOC2GameInstance::GetPlateMesh(TArray<FRecipe>& Recipes)
 {
-	static TArray<FPlateInitData> EmptyArray;
+	static FPlateInitData EmptyArray;
 	TArray<FRecipeDataRow*> FindRecipes;
 	
 	TArray<FName> RowNames = RecipeDataTable->GetRowNames();
@@ -179,26 +179,12 @@ TArray<FPlateInitData> UOC2GameInstance::GetPlateMesh(TArray<FRecipe>& Recipes)
 		if (RecipeData->RequireIngredients.Num() == Recipes.Num()
 			&& true == FindRecipe(RecipeData, Recipes))
 		{
-			TArray<FPlateInitData> Result;
-
-			for (int i = 0; i < RecipeData->RequireIngredients.Num(); i++)
-			{
-				FPlateInitData PlateInitData;
-				
-				PlateInitData.StaticMesh = RecipeData->FoodMesh;
-				PlateInitData.OffsetLocation = RecipeData->OffsetLocation;
-				PlateInitData.OffsetRotation = RecipeData->OffsetRotation;
-				PlateInitData.OffsetScale = RecipeData->OffsetScale;
-
-				for (int j = 0; j < RecipeData->RequireIngredients.Num(); j++)
-				{
-					PlateInitData.IngredientTextures.Push(RecipeData->RequireIngredients[j].IngredientTexture);
-				}
-				
-				Result.Add(PlateInitData);
-			}
-
-			return Result;
+			FPlateInitData PlateInitData;
+			PlateInitData.StaticMesh = RecipeData->FoodMesh;
+			PlateInitData.OffsetLocation = RecipeData->OffsetLocation;
+			PlateInitData.OffsetRotation = RecipeData->OffsetRotation;
+			PlateInitData.OffsetScale = RecipeData->OffsetScale;
+			return PlateInitData;
 		}
 	}
 
