@@ -84,7 +84,11 @@ void AWorldManager::ChangeState(EWorldState _State)
 {
 	if (StageState != _State)
 	{
-		if (_State == EWorldState::ShowEnvs1_1)
+		if (_State == EWorldState::ShowStage1_1)
+		{
+			OnShowStage1_1();
+		}
+		else if (_State == EWorldState::ShowEnvs1_1)
 		{
 			OnShowEnvs1_1();
 		}
@@ -100,6 +104,12 @@ void AWorldManager::ChangeState(EWorldState _State)
 void AWorldManager::OnIdle()
 {
 	ChangeCameraToPlayer();
+	ToggleAllPlayersController(true);
+}
+
+void AWorldManager::OnShowStage1_1()
+{
+	ToggleAllPlayersController(false);
 }
 
 void AWorldManager::OnShowEnvs1_1()
@@ -242,6 +252,39 @@ void AWorldManager::ChangeCameraToPlayer()
 	}
 }
 
+void AWorldManager::ToggleAllPlayersController(bool _IsOn)
+{
+	UWorld* Level = GetWorld();
+	if (Level == nullptr)
+	{
+		return;
+	}
+
+	FConstPlayerControllerIterator iter = Level->GetPlayerControllerIterator();
+	for (; iter; ++iter)
+	{
+		APlayerController* PC = Cast<APlayerController>(iter->Get());
+		if (PC == nullptr)
+		{
+			continue;
+		}
+
+		APawn* PlayerPawn = PC->GetPawn();
+		if (PlayerPawn == nullptr)
+		{
+			continue;
+		}
+
+		AWorldPlayer* Player = Cast<AWorldPlayer>(PlayerPawn);
+		if (Player == nullptr)
+		{
+			continue;
+		}
+
+		Player->ToggleController(_IsOn);
+	}
+}
+
 void AWorldManager::SetPlayersToSpectators()
 {
 	if (HasAuthority())
@@ -254,26 +297,5 @@ void AWorldManager::SetPlayersToSpectators()
 				PC->ChangeState(NAME_Spectating);
 			}
 		}
-	}
-}
-
-void AWorldManager::ShowPlayer()
-{
-	APlayerController* PC = GetWorld()->GetFirstPlayerController();
-	if (PC == nullptr)
-	{
-		return;
-	}
-
-	APawn* PlayerPawn = PC->GetPawn();
-	if (PlayerPawn == nullptr)
-	{
-		return;
-	}
-
-	AWorldPlayer* Player = Cast<AWorldPlayer>(PlayerPawn);
-	if (Player != nullptr)
-	{
-		Player->Show();
 	}
 }

@@ -16,11 +16,13 @@ public:
 	AWorldPlayer();
 
 	virtual void Tick(float DeltaTime) override;
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	UFUNCTION(BlueprintCallable)
 	void OnMove(const FVector2D& _Vec);
 
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	UFUNCTION(BlueprintCallable)
+	void OnSelectMap();
 
 	UFUNCTION(Reliable, NetMulticast)
 	void UpdateBusLocation(FVector _Loc);
@@ -37,8 +39,7 @@ public:
 	void Show();
 	void Hide();
 
-	void ChangeState(EStageState _State);
-
+	void ToggleController(bool _IsOn);
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
 
 protected:
@@ -49,12 +50,5 @@ private:
 
 	float DefaultGravity = 0.f;
 
-	// Temp
-	const FVector START_LOC = FVector(-100.f, 150.f, 100.f);
-
-	UPROPERTY(Replicated)
-	FVector WorldPlayerLocation = START_LOC;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "StageState", meta = (AllowPrivateAccess = "true"))
-	EStageState CurStageState = EStageState::None;
+	static FVector WorldPlayerLocation;
 };

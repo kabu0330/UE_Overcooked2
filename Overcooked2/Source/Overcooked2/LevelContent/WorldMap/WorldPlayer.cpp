@@ -2,6 +2,7 @@
 
 
 #include "LevelContent/WorldMap/WorldPlayer.h"
+#include "LevelContent/WorldMap/WorldMapData.h"
 #include "Global/OC2GameInstance.h"
 #include "Components/CapsuleComponent.h"
 #include "Engine/SkeletalMesh.h"
@@ -11,6 +12,8 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+
+FVector AWorldPlayer::WorldPlayerLocation = UWorldMapData::START_LOC;
 
 // Sets default values
 AWorldPlayer::AWorldPlayer()
@@ -43,19 +46,16 @@ void AWorldPlayer::BeginPlay()
 		}
 	}
 
-	SetActorLocation(START_LOC);
-
-	ChangeState(EStageState::ShowStage1_1);
+	SetActorLocation(UWorldMapData::START_LOC);
 }
 
 void AWorldPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (Controller && HasAuthority() == false)
+	if (Controller && HasAuthority() == false)	// Client Side Client
 	{
 		SetActorLocation(WorldPlayerLocation);
-		UE_LOG(LogTemp, Warning, TEXT("################## Tick!! %f %f %f"), WorldPlayerLocation.X, WorldPlayerLocation.Y, WorldPlayerLocation.Z);
 	}
 }
 
@@ -66,26 +66,49 @@ void AWorldPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 void AWorldPlayer::OnMove(const FVector2D& _Vec)
 {
-	AddMovementInput(FVector(_Vec.X * 0.5f, _Vec.Y * 0.5f, 0.f));
-
-	// TODO
 	if (Controller && HasAuthority())
 	{
+		AddMovementInput(FVector(_Vec.X * 0.5f, _Vec.Y * 0.5f, 0.f));
 		UpdateBusLocation(GetActorLocation());
 	}
 }
 
-void AWorldPlayer::ChangeState(EStageState _State)
-//void AWorldPlayer::ChangeState_Implementation(EStageState _State)
+void AWorldPlayer::OnSelectMap()
 {
-	CurStageState = _State;
+	if (Controller && HasAuthority())
+	{
+		
+	}
+}
+
+void AWorldPlayer::ToggleController(bool _IsOn)
+{
+	if (Controller == nullptr)
+	{
+		return;
+	}
+
+	APlayerController* PC = Cast<APlayerController>(Controller);
+	if (PC == nullptr)
+	{
+		return;
+	}
+
+	if (_IsOn)
+	{
+		EnableInput(PC);
+	}
+	else
+	{
+		DisableInput(PC);
+	}
 }
 
 void AWorldPlayer::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(AWorldPlayer, WorldPlayerLocation);
+	//DOREPLIFETIME(AWorldPlayer, WorldPlayerLocation);
 }
 
 void AWorldPlayer::Show_Client_Implementation()
@@ -104,15 +127,6 @@ void AWorldPlayer::Show()
 	SetActorEnableCollision(true);
 	//SetReplicates(true);
 	GetCharacterMovement()->GravityScale = DefaultGravity;
-
-	if (Controller)
-	{
-		APlayerController* PC = Cast<APlayerController>(Controller);
-		if (PC)
-		{
-			EnableInput(PC);
-		}
-	}
 }
 
 void AWorldPlayer::Hide()
@@ -121,26 +135,9 @@ void AWorldPlayer::Hide()
 	SetActorEnableCollision(false);
 	//SetReplicates(false);
 	GetCharacterMovement()->GravityScale = 0.0f;
-
-	if (Controller)
-	{
-		APlayerController* PC = Cast<APlayerController>(Controller);
-		if (PC)
-		{
-			DisableInput(PC);
-		}
-	}
 }
 
 void AWorldPlayer::UpdateBusLocation_Implementation(FVector _Loc)
 {
-	if (HasAuthority())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("################## HasAuth!! %f %f %f"), WorldPlayerLocation.X, WorldPlayerLocation.Y, WorldPlayerLocation.Z);
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("################## NO HasAuth!! %f %f %f"), WorldPlayerLocation.X, WorldPlayerLocation.Y, WorldPlayerLocation.Z);
-	}
 	WorldPlayerLocation = _Loc;
 }
