@@ -52,6 +52,42 @@ void AOC2Actor::BeginPlay()
 {
 	Super::BeginPlay();
 
+	TArray<UMeshComponent*> MeshComponents;
+	GetComponents<UMeshComponent>(MeshComponents);
+
+	if (true == MeshComponents.IsEmpty())
+	{
+		return;
+	}
+
+	float HighlightValue = 5.0f;
+	int Count = 0;
+
+	for (UMeshComponent* Mesh : MeshComponents)
+	{
+		if (nullptr == Mesh)
+		{
+			continue;
+		}
+
+		for (int i = 0; i < Mesh->GetNumMaterials(); i++)
+		{
+			// 최초 하이라이트
+			UMaterialInterface* Material = Mesh->GetMaterials()[i];
+			if (nullptr != Material)
+			{
+				UMaterialInstanceDynamic* DynamicMaterial = UMaterialInstanceDynamic::Create(Material, this);
+				if (nullptr != DynamicMaterial)
+				{
+					float Temp;
+					Mesh->GetMaterials()[i]->GetScalarParameterValue(FName("DiffuseAdd"), Temp);
+					DiffuseColorMapWeights.Add(Temp);
+					++Count;
+				}
+			}
+		}
+	}
+
 }
 
 void AOC2Actor::Tick(float DeltaTime)
@@ -60,7 +96,7 @@ void AOC2Actor::Tick(float DeltaTime)
 
 }
 
-void AOC2Actor::ApplyMaterialHighlight()
+void AOC2Actor::ApplyMaterialHighlight_Implementation()
 {
 	TArray<UMeshComponent*> MeshComponents;
 	GetComponents<UMeshComponent>(MeshComponents);
@@ -117,7 +153,7 @@ void AOC2Actor::ApplyMaterialHighlight()
 	bIsHighlighted = true;
 }
 
-void AOC2Actor::RestoreMaterial()
+void AOC2Actor::RestoreMaterial_Implementation()
 {
 	TArray<UMeshComponent*> MeshComponents;
 	GetComponents<UMeshComponent>(MeshComponents);

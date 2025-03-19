@@ -22,11 +22,11 @@ public:
 
 public:
     /** 머티리얼 하이라이트 효과 적용 */
-    UFUNCTION(BlueprintCallable)
+    UFUNCTION(BlueprintCallable, Reliable, NetMulticast)
     virtual void ApplyMaterialHighlight();
 
     /** 머티리얼 하이라이트 효과 제거 */
-    UFUNCTION(BlueprintCallable)
+    UFUNCTION(BlueprintCallable, Reliable, NetMulticast)
     virtual void RestoreMaterial();
 
     /**
