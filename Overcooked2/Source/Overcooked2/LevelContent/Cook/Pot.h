@@ -51,7 +51,6 @@ protected:
 	void ChangeAnimation();
 	void ChangeMaterialColor();
 
-	bool CanCook();
 
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
 
@@ -62,6 +61,7 @@ private:
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowprivateAccess = "true"))
 	USkeletalMeshComponent* SoupSkeletalMeshComponent = nullptr;
 
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowprivateAccess = "true"))
 	TArray<UMaterialInstanceDynamic*> SoupDynamicMaterial;
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowprivateAccess = "true"))

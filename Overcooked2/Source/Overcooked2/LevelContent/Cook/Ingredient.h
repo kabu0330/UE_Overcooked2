@@ -68,23 +68,30 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool IsCooked();
 
+
+	UFUNCTION(NetMulticast, Reliable)
+	void SetThrowing(bool IsThrowing);
+	void SetThrowing_Implementation(bool IsThrowing)
+	{
+		bIsThrowing = IsThrowing;
+	}
+
 	bool IsThrowing() const
 	{
 		return bIsThrowing;
 	}
-	void SetThrowing(bool IsThrowing)
+
+
+	UFUNCTION(NetMulticast, Reliable)
+	void SetThrower(AActor* Actor);
+	void SetThrower_Implementation(AActor* Actor)
 	{
-		bIsThrowing = IsThrowing;
+		Thrower = Actor;
 	}
 
 	AActor* GetThrower() const
 	{
 		return Thrower;
-	}
-
-	void SetThrower(AActor* Actor)
-	{
-		Thrower = Actor;
 	}
 
 
