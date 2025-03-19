@@ -77,12 +77,12 @@ public:
 		bIsThrowing = IsThrowing;
 	}
 
-	AOC2Actor* GetThrower() const
+	AActor* GetThrower() const
 	{
 		return Thrower;
 	}
 
-	void SetThrower(AOC2Actor* Actor)
+	void SetThrower(AActor* Actor)
 	{
 		Thrower = Actor;
 	}
@@ -115,6 +115,6 @@ private:
 	bool bIsThrowing = false;
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
-	AOC2Actor* Thrower = nullptr;
+	AActor* Thrower = nullptr;
 
 };
