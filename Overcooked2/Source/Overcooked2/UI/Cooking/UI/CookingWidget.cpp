@@ -11,6 +11,7 @@
 #include "Global/Data/OrderDataTable.h"
 
 
+
 void UCookingWidget::NativeOnInitialized()
 {
     Super::NativeOnInitialized();
@@ -38,10 +39,13 @@ void UCookingWidget::NativeOnInitialized()
     }
 }
 
+
+
 void UCookingWidget::NativeTick(const FGeometry& MyGeometry, float DeltaTime)
 {
     Super::NativeTick(MyGeometry, DeltaTime);
-
+    WrongOrderTimeline.TickTimeline(DeltaTime);
+    CompleteOrderTimeline.TickTimeline(DeltaTime);
     for (int i = 0; i < CurOrderCount; i++)
     {
         UpdateOrderTime(i, DeltaTime);
@@ -51,18 +55,16 @@ void UCookingWidget::NativeTick(const FGeometry& MyGeometry, float DeltaTime)
 
 void UCookingWidget::OrderComplete(int Index)
 {
+    if (!ColorCurve) return;
     if (Index >= Orders.Num()) return;
 
     CompleteOrderNum = Index;
-
     if (Orders[CompleteOrderNum] == nullptr) return;
 
     if (GetWorld()->GetTimerManager().IsTimerActive(OpacityTimerHandle)) return;
 
     if (Orders[CompleteOrderNum]->GetVisibility() != ESlateVisibility::Collapsed)
     {
-        CurOrderCount -= 1;
-
         UCanvasPanel* Panel = FindChildPanel("IngredientPanel_", Orders[CompleteOrderNum]);
         UCanvasPanel* ImgPanel = FindChildPanel("I_Img_", Panel);
         UCanvasPanel* IBackPanel = FindChildPanel("IBackImg_", Panel);
@@ -78,6 +80,20 @@ void UCookingWidget::OrderComplete(int Index)
 
         Panel->SetRenderTranslation({ 0.0f, -IngredientArrivePos });
 
+        {
+
+            FOnTimelineFloat ProgressFunction;
+            ProgressFunction.BindUFunction(this, FName("UpdateCompleteOrderColor"));
+            CompleteOrderTimeline.AddInterpFloat(ColorCurve, ProgressFunction);
+
+            CompleteOrderTimeline.SetLooping(false);
+            CompleteOrderTimeline.SetPlayRate(1.0f / 0.5f);
+
+            CompleteOrderTimeline.Stop();
+            CompleteOrderTimeline.PlayFromStart();
+        }
+
+
         GetWorld()->GetTimerManager().SetTimer(OpacityTimerHandle, this, &UCookingWidget::UpdateImageOpacity, 0.01f, true);
     }
 
@@ -89,6 +105,7 @@ void UCookingWidget::CreateNewOrder(FOrder& Order)
     if (CurOrderCount >= Orders.Num()) return;
 
     if (GetWorld()->GetTimerManager().IsTimerActive(MoveTimerHandle)) return;
+    if (GetWorld()->GetTimerManager().IsTimerActive(OpacityTimerHandle)) return;
 
     NewOrderNum = CurOrderCount;
 
@@ -131,57 +148,82 @@ void UCookingWidget::CreateNewOrder(FOrder& Order)
     GetWorld()->GetTimerManager().SetTimer(MoveTimerHandle, this, &UCookingWidget::MoveNewOrder, 0.01f, true);
 }
 
-void UCookingWidget::FindOrderImgRecursive(UWidget* Widget, const FLinearColor& Color)
+void UCookingWidget::FindOrderImgRecursive(UWidget* Widget, const FLinearColor& _TargetColor)
 {
     if (!Widget) return;
 
     if (UImage* ImageWidget = Cast<UImage>(Widget))
     {
-        ImageWidget->SetBrushTintColor(FSlateColor(Color));
-        //UpdateImgColor(ImageWidget, Color);
 
+        UpdateImgColor(ImageWidget, _TargetColor);
         return;
     }
-
-    if (UCanvasPanel* CanvasPanel = Cast<UCanvasPanel>(Widget))
+    else if (UCanvasPanel* CanvasPanel = Cast<UCanvasPanel>(Widget))
     {
         TArray<UWidget*> Children = CanvasPanel->GetAllChildren();
         for (UWidget* Child : Children)
         {
-            FindOrderImgRecursive(Child, Color);
+            FindOrderImgRecursive(Child, _TargetColor);
         }
     }
 }
 
 void UCookingWidget::UpdateImgColor(UImage* Image, const FLinearColor& Color)
 {
-    if (nullptr == Image) return;
+    if (!Image) return;
+
+    Image->SetColorAndOpacity(Color);
+}
+
+//void UCookingWidget::SubmitWrongOrder()
+void UCookingWidget::WrongOrder()
+{
+    if (!ColorCurve) return;
+
+    FOnTimelineFloat ProgressFunction;
+    ProgressFunction.BindUFunction(this, FName("UpdateAllOrderColor"));
+    WrongOrderTimeline.AddInterpFloat(ColorCurve, ProgressFunction);
+
+    FOnTimelineEvent FinishEvent;
+    FinishEvent.BindUFunction(this, FName("ResetColor"));
+    WrongOrderTimeline.SetTimelineFinishedFunc(FinishEvent);
+
+    WrongOrderTimeline.SetLooping(false);
+    WrongOrderTimeline.SetPlayRate(1.0f / 0.5f);
+
+    WrongOrderTimeline.Stop();
 
 
+    WrongOrderTimeline.PlayFromStart();
 }
 
 
-void UCookingWidget::WrongOrder()
+void UCookingWidget::UpdateAllOrderColor(float Value)
 {
+    TargetColor = FLinearColor::Red;
+    FLinearColor CurrentColor = FMath::Lerp(OriginalColor, TargetColor, Value);
+
     for (UCanvasPanel* Order : Orders)
     {
         if (!Order) continue;
-
-        FindOrderImgRecursive(Order, FLinearColor::Red);
+        FindOrderImgRecursive(Order, CurrentColor);
     }
-
-    FTimerHandle TimerHandle;
-    GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this]()
-        {
-            for (UCanvasPanel* Order : Orders)
-            {
-                if (!Order) continue;
-
-                FindOrderImgRecursive(Order, FLinearColor::White);
-            }
-        }, 0.5f, false);
 }
 
+void UCookingWidget::ResetColor()
+{
+    WrongOrderTimeline.Reverse();
+}
+
+
+void UCookingWidget::UpdateCompleteOrderColor(float Value)
+{
+    TargetColor = FLinearColor::Green;
+    FLinearColor CurrentColor = FMath::Lerp(OriginalColor, TargetColor, Value);
+
+    FindOrderImgRecursive(Orders[CompleteOrderNum], CurrentColor);
+
+}
 
 
 void UCookingWidget::MoveNewOrder()
@@ -391,10 +433,14 @@ void UCookingWidget::UpdateIngredientImagePosition()
 void UCookingWidget::UpdateImageOpacity()
 {
 
-    if (Orders[CompleteOrderNum]->GetRenderOpacity() <= 0.0f)
+    if (Orders[CompleteOrderNum]->GetRenderOpacity() <= 0.0f && GetWorld()->GetTimerManager().IsTimerActive(MoveTimerHandle) == false)
     {
         Orders[CompleteOrderNum]->SetVisibility(ESlateVisibility::Collapsed);
+        FindOrderImgRecursive(Orders[CompleteOrderNum], OriginalColor);
+        CompleteOrderTimeline.Stop();
+        CurOrderCount -= 1;
         UpdateImagePosition();
+
 
         GetWorld()->GetTimerManager().ClearTimer(OpacityTimerHandle);
         return;
