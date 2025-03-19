@@ -185,6 +185,8 @@ void AOC2Character::Interact_Implementation()
 	// 만약 지금 상호작용을 시도할 수 있는 개체가 있으면
 	if (SelectedOC2Actor != nullptr)
 	{
+		if (bIsChopping)
+			Chopping(false);
 		////만약 이 액터가 재료나 요리 접시인 경우
 		//if (SelectedOC2Actor->IsA(ACooking::StaticClass()))
 		//{
@@ -269,6 +271,10 @@ void AOC2Character::Grab_Implementation(ACooking* Cook)
 {
 	GrabbedObject = Cook;
 	GrabbedObject->AttachToChef(this);
+
+	auto DataTable = GrabbedObject->GetIngredientDataTable();
+	
+	GrabbedObject->SetActorRotation(DataTable->Rotation);
 	GrabbedObject->SetActorLocation(GrabComponent->GetComponentLocation());
 }
 
@@ -324,7 +330,8 @@ void AOC2Character::DoActionRelease_Implementation()
 
 void AOC2Character::Throwing_Implementation()
 {
-	if (GrabbedObject && GrabbedObject->IsA(AIngredient::StaticClass()))
+	AIngredient* ThrowingObject = Cast<AIngredient>(GrabbedObject);
+	if (GrabbedObject && ThrowingObject)
 	{
 		// 1️⃣ 액터의 루트 컴포넌트를 가져오기
 		UPrimitiveComponent* PrimitiveComp = Cast<UPrimitiveComponent>(GrabbedObject->GetRootComponent());
@@ -333,6 +340,8 @@ void AOC2Character::Throwing_Implementation()
 		{
 			GrabbedObject->DetachFromChef(this);
 			GrabbedObject->SetActorLocation(GrabComponent->GetComponentLocation());
+			ThrowingObject->SetThrower(this);
+			ThrowingObject->SetThrowing(true);
 
 			// 4️⃣ 던질 방향과 세기 설정
 			FVector ThrowDirection = GetActorForwardVector();  // 캐릭터가 바라보는 방향
@@ -343,9 +352,9 @@ void AOC2Character::Throwing_Implementation()
 		}
 
 		// 6️⃣ 잡고 있던 객체 초기화
-
 		bCanThrowing = false;
 		GrabbedObject = nullptr;
+		
 	}
 
 }
@@ -463,17 +472,27 @@ void AOC2Character::StopDash()
 	GetCharacterMovement()->StopMovementImmediately();
 }
 
-void AOC2Character::OnOverlapCheck(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void AOC2Character::OnOverlapCheck_Implementation(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (OtherActor)
+	if (OtherActor && HasAuthority())
 	{
 		//			GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Green, "Hit");
 		AIngredient* Ingredient = Cast<AIngredient>(OtherActor);
 		if (Ingredient) // 캡슐과 충돌한 경우
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Green, "Hit");
-
-			//Ingredient->AttachToActor(this);
+			if (Ingredient->IsThrowing() && Ingredient->GetThrower() != this)
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Green, "Hit");
+				Ingredient->AttachToChef(this);
+				Ingredient->SetActorLocation(GrabComponent->GetComponentLocation());
+				Ingredient->SetThrowing(false);
+				GrabbedObject = Ingredient;
+				FVector Dir = SweepResult.ImpactPoint - GetActorLocation();
+				Dir.Z = 0;
+				
+				SetActorRotation(-GetActorRotation().Quaternion());
+				
+			}
 		}
 	}
 }
