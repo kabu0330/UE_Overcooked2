@@ -14,10 +14,10 @@ USpawnManageComponent::USpawnManageComponent()
 	// ...
 }
 
-AIngredient* USpawnManageComponent::SpawnIngredientActor(EIngredientType IngredientType)
+AIngredient* USpawnManageComponent::SpawnIngredientActor(TSubclassOf<AIngredient> IngredientToSpawn, EIngredientType IngredientType)
 {
 	FTransform IngredientTransform;
-	AIngredient* IngredientActor = GetWorld()->SpawnActorDeferred<AIngredient>(AIngredient::StaticClass(), IngredientTransform);
+	AIngredient* IngredientActor = GetWorld()->SpawnActorDeferred<AIngredient>(IngredientToSpawn, IngredientTransform);
 	
 	if (nullptr == IngredientActor)
 	{

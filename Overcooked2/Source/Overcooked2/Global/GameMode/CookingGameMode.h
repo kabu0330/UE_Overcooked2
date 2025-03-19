@@ -65,10 +65,6 @@ private:
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Order", meta = (AllowPrivateAccess = "true"))
 	UOrderManageComponent* OrderManager = nullptr;
-
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Spawning", meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<AOC2Actor> OC2ActorToSpawn;
 	
 	ECookingGameModeState CurState = ECookingGameModeState::ECS_None;
 
