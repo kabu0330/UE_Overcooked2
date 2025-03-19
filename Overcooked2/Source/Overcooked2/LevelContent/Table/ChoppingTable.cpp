@@ -27,30 +27,14 @@ void AChoppingTable::Tick(float DeltaTime)
 
 ACooking* AChoppingTable::Interact(AActor* ChefActor)
 {
-	//AOC2Character* Chef = Cast<AOC2Character>(ChefActor);
+	AOC2Character* Chef = Cast<AOC2Character>(ChefActor);
 
-	if (false == bIsOccupied) // 테이블이 비어있다.
+	if (CookingPtr != nullptr && false == Chef->IsHolding()) // 테이블이 비어있다.
 	{
-		CookingPtr = nullptr;
-		//CPlacedItem = nullptr;
-	}
-	else
-	{
-		ChopIngredient(ChefActor);
+		//ChopIngredient(ChefActor);
 	}
 
 	return CookingPtr;
-}
-
-void AChoppingTable::PlaceItem(ACooking* Item)
-{
-	ACooking* TempCooking = Item;
-
-	FVector OnTheTable = GetActorLocation() + FVector{ (0.0f, 0.0f, 100.0f) };
-	TempCooking->SetActorLocation(OnTheTable);
-
-	CookingPtr = TempCooking;
-	//CPlacedItem = TempCooking;
 }
 
 void AChoppingTable::ChopIngredient(AActor* ChefActor)

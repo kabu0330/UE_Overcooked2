@@ -9,6 +9,10 @@ ACookingTable::ACookingTable()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	bReplicates = true;
+
+	ComponentForCooking = CreateDefaultSubobject<USceneComponent>("Attachment");
+	ComponentForCooking->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
@@ -22,5 +26,15 @@ void ACookingTable::BeginPlay()
 void ACookingTable::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
 
+void ACookingTable::PlaceItem(ACooking* ReceivedCooking)
+{
+	CookingPtr = ReceivedCooking;
+
+	//Cooking을 Attach 시킬것
+	CookingPtr->AttachToComponent(ComponentForCooking, FAttachmentTransformRules::KeepRelativeTransform);
+	CookingPtr->SetActorLocation(ComponentForCooking->GetComponentLocation());
+
+	bIsOccupied = true;
 }
