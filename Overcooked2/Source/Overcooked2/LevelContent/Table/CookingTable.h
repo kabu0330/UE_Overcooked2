@@ -32,11 +32,7 @@ public:
 
 	}*/
 	
-	virtual void PlaceItem(ACooking* Item)
-	{
-		//Item->SetCookingTable(this); merge후 주석 해제
-		bIsOccupied = true;
-	}
+	virtual void PlaceItem(ACooking* ReceivedCooking);
 
 	UFUNCTION(BlueprintCallable)
 	bool IsInteracting() const
@@ -76,8 +72,8 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	bool bCanOvercook = false;
 
-	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	USceneComponent* ComponentForCooking = nullptr;
 	// 테이블이 사용 가능한가?
-
 
 };
