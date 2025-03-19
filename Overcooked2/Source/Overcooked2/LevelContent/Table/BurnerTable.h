@@ -31,5 +31,5 @@ public:
 	void BoilThePot(AActor* ChefActor);*/
 
 private:
-	//ACooking* BPlacedItem = nullptr;
+
 };

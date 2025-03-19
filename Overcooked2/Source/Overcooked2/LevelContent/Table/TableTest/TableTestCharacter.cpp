@@ -2,6 +2,9 @@
 
 
 #include "LevelContent/Table/TableTest/TableTestCharacter.h"
+#include <LevelContent/Cook/Ingredient.h>
+#include <LevelContent/Cook/Plate.h>
+#include <LevelContent/Table/CookingTable.h>
 
 // Sets default values
 ATableTestCharacter::ATableTestCharacter()
@@ -32,3 +35,17 @@ void ATableTestCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 
 }
 
+void ATableTestCharacter::TestInteract(AIngredient* Ingredient)
+{
+	TestTable->Interact(this);
+}
+
+void ATableTestCharacter::TestPlaceItem(AIngredient* Ingredient)
+{
+	TestTable->PlaceItem(TestCooking);
+}
+
+//void ATableTestCharacter::MakeIngredient(EIngredientType IngredientTypeSetting)
+//{
+//	IngredientType = IngredientTypeSetting;
+//}
