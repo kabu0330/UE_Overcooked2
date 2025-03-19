@@ -31,7 +31,9 @@ public:
 	void DetachFromChef(AActor* Player);
 	void DetachFromChef_Implementation(AActor* Player);
 
-	virtual void DetachAction() {};
+	UFUNCTION(NetMulticast, Reliable)
+	void SetCookingTable(class ACookingTable* Table);
+	void SetCookingTable_Implementation(class ACookingTable* Table);
 
 
 	const FIngredientDataRow* const GetIngredientDataTable() const
@@ -58,9 +60,7 @@ public:
 		return Type == CookingType;
 	}
 
-	UFUNCTION(NetMulticast, Reliable)
-	void SetCookingTable(class ACookingTable* Table);
-	void SetCookingTable_Implementation(class ACookingTable* Table);
+
 
 	// 템플릿은 BP에서 호출할 수 없다.
 	template<typename T>
@@ -69,7 +69,6 @@ public:
 		T* NewCooking = Cast<T>(Cooking);
 		return NewCooking;
 	}
-
 
 protected:
 	// Called when the game starts or when spawned

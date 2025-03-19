@@ -30,7 +30,7 @@ void ACooking::AttachToChef_Implementation(AActor* Player)
 	StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	AttachToActor(Player, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 
-	ForwardAttachToChef();
+	ForwardAttachToChef(); // 캐릭터가 집으면 테이블 정보를 nullptr로 만든다.
 }
 
 void ACooking::DetachFromChef_Implementation(AActor* Player)
@@ -40,7 +40,7 @@ void ACooking::DetachFromChef_Implementation(AActor* Player)
 	StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	DetachFromActor(FDetachmentTransformRules::KeepRelativeTransform);
 
-	DetachAction();
+	// 놓이면 Table에서 SetCookingTable 함수 호출해서 테이블 정보를 넣어준다.
 }
 
 // Called when the game starts or when spawned

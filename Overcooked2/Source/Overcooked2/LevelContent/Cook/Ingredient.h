@@ -68,6 +68,33 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool IsCooked();
 
+
+	UFUNCTION(NetMulticast, Reliable)
+	void SetThrowing(bool IsThrowing);
+	void SetThrowing_Implementation(bool IsThrowing)
+	{
+		bIsThrowing = IsThrowing;
+	}
+
+	bool IsThrowing() const
+	{
+		return bIsThrowing;
+	}
+
+
+	UFUNCTION(NetMulticast, Reliable)
+	void SetThrower(AActor* Actor);
+	void SetThrower_Implementation(AActor* Actor)
+	{
+		Thrower = Actor;
+	}
+
+	AActor* GetThrower() const
+	{
+		return Thrower;
+	}
+
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -90,4 +117,11 @@ private:
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	EIngredientState CurIngredientState = EIngredientState::EIS_NONE;
+
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	bool bIsThrowing = false;
+
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	AActor* Thrower = nullptr;
+
 };
