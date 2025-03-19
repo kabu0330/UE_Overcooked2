@@ -96,6 +96,7 @@ void ACookingGameMode::Stage(float DeltaTime)
 	{
 		FOrder Order = UOC2GlobalData::GetOrderByStageAndIndex(GetWorld(), UOC2Global::GetOC2GameInstance(GetWorld())->GetCurStage(), 1);
 		OrderManager->Multicast_CompleteOrder(Order);
+		OrderManager->Multicast_BlinkOrderUI();
 		CheckTime = 0.0f;
 	}
 }
