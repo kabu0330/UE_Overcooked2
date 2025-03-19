@@ -65,7 +65,7 @@ void AOC2Character::MoveCharacter(const FInputActionValue& Value)
 
 	AddControllerYawInput(YawDelta);
 
-	
+
 }
 
 // Called when the game starts or when spawned
@@ -74,7 +74,7 @@ void AOC2Character::BeginPlay()
 	Super::BeginPlay();
 
 	InitMesh();
-	
+
 	//CheckOverlap->OnComponentHit.AddDynamic(this, &AOC2Character::OnHit);
 	CheckOverlap->OnComponentBeginOverlap.AddDynamic(this, &AOC2Character::OnOverlapCheck);
 	// 임시 :
@@ -107,7 +107,7 @@ void AOC2Character::CheckDash_Implementation(float DeltaTime)
 		}
 		else
 		{
-			LaunchCharacter(GetActorForwardVector()*DashPower, true, false);
+			LaunchCharacter(GetActorForwardVector() * DashPower, true, false);
 		}
 	}
 }
@@ -139,13 +139,10 @@ void AOC2Character::OnRep_ChangeCharacter()
 	ClearMaterials();
 	FCharacterData Data = CharacterHeadMap[CharacterName];
 	GetMesh()->SetMaterial(Data.MaterialIndex, Data.Material);
-	
 }
 
 void AOC2Character::InitMesh()
 {
-	//Temp
-
 	TArray<UMaterialInterface*> Materials = GetMesh()->GetMaterials();
 	ClearMaterials();
 	for (int32 i = 1; i < Materials.Num(); i++)
@@ -188,25 +185,61 @@ void AOC2Character::Interact_Implementation()
 	// 만약 지금 상호작용을 시도할 수 있는 개체가 있으면
 	if (SelectedOC2Actor != nullptr)
 	{
-		//만약 이 액터가 재료나 요리 접시인 경우
-		if (SelectedOC2Actor->IsA(ACooking::StaticClass()))
+		////만약 이 액터가 재료나 요리 접시인 경우
+		//if (SelectedOC2Actor->IsA(ACooking::StaticClass()))
+		//{
+		//	if (GrabbedObject == nullptr)
+		//	{
+		//		UE_LOG(LogTemp, Log, TEXT("Hold"));
+		//		// 그냥 든다.
+		//		Grab(Cast<ACooking>(SelectedOC2Actor));
+		//	}
+		//	else
+		//	{
+		//		Drop();
+		//	}
+		//}
+
+		// 컴포넌트로 뺄지 안뺄지 모르겠음.
+		// 일단 Plate인 경우
+		if (auto Plate = Cast<APlate>(SelectedOC2Actor))
 		{
-			if (GrabbedObject == nullptr)
+			// 내가 들고 있는게 재료라면
+			if (auto Ingredient = Cast<AIngredient>(GrabbedObject))
 			{
-				UE_LOG(LogTemp, Log, TEXT("Hold"));
-				// 그냥 든다.
-				Grab(Cast<ACooking>(SelectedOC2Actor));
+				//Plate에 Ingredient추가를 시도한다.
+				Plate->Add(Ingredient);
+				//성공하면 GrabbedObject를 null로 만든다.
+				if (Plate->IsCombinationSuccessful())
+				{
+					GrabbedObject = nullptr;
+				}
 			}
-			else
+			// 내가 들고 있는게 없으면 잡는다.
+			else if (GrabbedObject == nullptr)
+			{
+				Grab(Plate);
+			}
+		}
+		//상호작용 할 녀석이 재료 라면 
+		else if (auto Ingredient = Cast<AIngredient>(SelectedOC2Actor))
+		{
+			// 잡고 있는게 있으면 그냥 떨어뜨리고
+			if (GrabbedObject)
 			{
 				Drop();
 			}
+			// 없으면 그 재료를 집는다.
+			else
+			{
+				Grab(Ingredient);
+			}
 		}
-		//만약 이 액터가 테이블인 경우
+		//만약 이 액터가 테이블인 경우 ???(여기가 제일 어려움)
 		if (SelectedOC2Actor->IsA(ACookingTable::StaticClass()))
 		{
 			auto Table = Cast<ACookingTable>(SelectedOC2Actor);
-			// 테이블과 상호작용한 결과를 저장
+			// 테이블과 상호작용을 시도한다.
 			ACooking* Cook = Table->Interact(this);
 			// 잡고있는 물건이 없고, 테이블에 올려진 물체가 있는 경우
 			if (GrabbedObject == nullptr && Cook != nullptr)
@@ -220,7 +253,7 @@ void AOC2Character::Interact_Implementation()
 				Table->PlaceItem(GrabbedObject);
 				GrabbedObject = nullptr;
 			}
-			else if(GrabbedObject != nullptr && Cook != nullptr)
+			else if (GrabbedObject != nullptr && Cook != nullptr)
 			{
 				Table->PlaceItem(Cook);
 			}
@@ -244,7 +277,6 @@ void AOC2Character::Drop_Implementation()
 	// 내가 들고 있는 물건이 있을때
 	if (GrabbedObject != nullptr)
 	{
-		UPrimitiveComponent* PrimitiveComp = Cast<UPrimitiveComponent>(GrabbedObject->GetRootComponent());
 		UE_LOG(LogTemp, Log, TEXT("Drop"));
 		// 들고 있는 물체에 대해 상호작용을 실행한다. 바닥에 내려놓는다는 뜻.
 		GrabbedObject->DetachFromChef(this);
@@ -311,7 +343,7 @@ void AOC2Character::Throwing_Implementation()
 		}
 
 		// 6️⃣ 잡고 있던 객체 초기화
-		
+
 		bCanThrowing = false;
 		GrabbedObject = nullptr;
 	}
@@ -435,7 +467,7 @@ void AOC2Character::OnOverlapCheck(UPrimitiveComponent* OverlappedComponent, AAc
 {
 	if (OtherActor)
 	{
-//			GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Green, "Hit");
+		//			GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Green, "Hit");
 		AIngredient* Ingredient = Cast<AIngredient>(OtherActor);
 		if (Ingredient) // 캡슐과 충돌한 경우
 		{
