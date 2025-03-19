@@ -173,7 +173,7 @@ void APlate::Add_Implementation(AIngredient* Ingredient)
 	// 3-1. 데이터를 획득하는데 실패했다면
 	if (nullptr == InitData.StaticMesh) 
 	{
-		Ingredients.Pop(); // 재료 자료구조에서 제거하고 실패 반환
+		Ingredients.Pop(); // 재료 자료구조에서 제거하고 리턴
 		return;
 	}
 	else // 3-2. 데이터를 획득하는데 성공했다면 

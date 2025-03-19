@@ -4,6 +4,7 @@
 #include "LevelContent/Cook/Pot.h"
 #include <LevelContent/Cook/Ingredient.h>
 #include <LevelContent/Table/BurnerTable.h>
+#include <Net/UnrealNetwork.h>
 
 APot::APot()
 {
@@ -15,9 +16,18 @@ APot::APot()
 
 	SoupSkeletalMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SoupSkeletalMeshComponent"));
 	SoupSkeletalMeshComponent->SetupAttachment(StaticMeshComponent);
+	SoupSkeletalMeshComponent->SetIsReplicated(true);
+
+
+
+	UMaterialInstanceDynamic* MaterialInstanceDynamic = Cast<UMaterialInstanceDynamic>(StaticMeshComponent->GetMaterial(0));
+
 
 	FVector Pos = FVector(249, 1452, 60);
 	StaticMeshComponent->SetRelativeLocation(Pos);
+
+
+
 }
 
 void APot::BeginPlay()
@@ -45,7 +55,7 @@ void APot::Cook(float DeltaTime)
 
 void APot::ChangeAnimation()
 {
-	if (nullptr == Ingredient)
+	if (PrevPotState == PotState)
 	{
 		return;
 	}
@@ -53,6 +63,9 @@ void APot::ChangeAnimation()
 	switch (PotState)
 	{
 	case EPotState::IDLE:
+		
+		break;
+	case EPotState::HEATING:
 		break;
 	case EPotState::BOILING:
 		break;
@@ -69,20 +82,14 @@ void APot::ChangeMaterialColor()
 {
 }
 
-// Pot은 조리를 할 모든 요건이 갖춰졌는가?
-bool APot::CanCook()
-{
-
-	if (nullptr == Ingredient) // 2. 재료가 있냐
-	{
-		return false;
-	}
-
-	return true;
-}
-
 void APot::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
+	DOREPLIFETIME(APot, SoupSkeletalMeshComponent);
+	DOREPLIFETIME(APot, PotState);
+	DOREPLIFETIME(APot, PrevPotState);
+	DOREPLIFETIME(APot, bIsRiceInPot);
+	DOREPLIFETIME(APot, CookingTable);
+	DOREPLIFETIME(APot, bIsBoiling);
 }
 
 void APot::ForwardCookingTable(ACookingTable* Table)
@@ -93,6 +100,29 @@ void APot::ForwardCookingTable(ACookingTable* Table)
 void APot::ForwardAttachToChef()
 {
 	CookingTable = nullptr;
+}
+
+void APot::Add_Implementation(AIngredient* Ingredient)
+{
+	if (true == bIsRiceInPot) // 1. 이미 쌀이 들어와있다면 리턴
+	{
+		return;
+	}
+
+	AIngredient* RawRice = Cast<AIngredient>(Ingredient);
+	if (nullptr == RawRice) // 2. 지금 들어온 재료가 쌀이냐
+	{
+		return;
+	}
+	if (EIngredientState::EIS_BOILABLE != RawRice->GetCurIngredientState()) // 3. Boil 할 수 있고, 조리가 안 된 상태가 맞냐
+	{
+		return;
+	}
+
+	bIsRiceInPot =  true;
+
+	RawRice->RequestOC2ActorDestroy(); // 들어온 재료는 삭제
+	
 }
 
 void APot::SetBoil(ACooking* Rice)
@@ -107,21 +137,10 @@ void APot::SetBoil(ACooking* Rice)
 		return; // 가장 먼저 Ingredient를 넣는 함수이므로 CanCook 함수로 체크하지 않는다.
 	}
 
-	AIngredient* RawRice = Cast<AIngredient>(Rice);
-	if (nullptr == RawRice) // 2. 재료가 쌀이냐
-	{
-		return;
-	}
-	if (EIngredientState::EIS_BOILABLE != RawRice->GetCurIngredientState()) // 3. Boil 할 수 있고, 조리가 안 된 상태가 맞냐
-	{
-		return;
-	}
-
 	// 예외처리를 통과할 수 있는 재료는 쌀 뿐이므로 여기까지 오면 조리가 되지 않은 쌀이다.
 
-	Ingredient = RawRice;
-	PotState = EPotState::BOILING;
 
+	PotState = EPotState::BOILING;
 	bIsBoiling = true;
 
 
@@ -132,11 +151,6 @@ void APot::SetBoil(ACooking* Rice)
 
 AIngredient* APot::GetCookedIngredient()
 {
-	Ingredient->ChangeState(EIngredientState::EIS_BOILED);
-
-	AIngredient* CookedIngredient = Ingredient;
-	Ingredient = nullptr;
-
-	return CookedIngredient;
+	return nullptr;
 }
 

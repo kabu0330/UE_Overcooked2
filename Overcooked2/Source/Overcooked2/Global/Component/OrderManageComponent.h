@@ -24,15 +24,17 @@ private:
 
 protected:
 	virtual void BeginPlay() override;
-
-public:	
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+public:	
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_CreateNewOrder(FOrder Order);
 
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_CompleteOrder(FOrder Order);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_BlinkOrderUI();
 
 private:
 	TArray<FOrder> OrderList;
