@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include <LevelContent/Cook/Cooking.h>
+#include "PhysicsEngine/PhysicsConstraintComponent.h"
 #include "Ingredient.generated.h"
 
 // 요리 재료
@@ -124,4 +125,6 @@ private:
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	AActor* Thrower = nullptr;
 
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	UPhysicsConstraintComponent* PhysicsConstraintComponent = nullptr;
 };

@@ -16,6 +16,13 @@ AIngredient::AIngredient()
 
 	CookingType = ECookingType::ECT_INGREDIENT;
 
+	PhysicsConstraintComponent = CreateDefaultSubobject<UPhysicsConstraintComponent>(TEXT("PhysicsConstraintComponent"));
+	PhysicsConstraintComponent->SetupAttachment(RootComponent);
+
+	PhysicsConstraintComponent->SetAngularSwing1Limit(EAngularConstraintMotion::ACM_Locked, 0.0f);
+	PhysicsConstraintComponent->SetAngularSwing2Limit(EAngularConstraintMotion::ACM_Locked, 0.0f);
+	PhysicsConstraintComponent->SetAngularTwistLimit(EAngularConstraintMotion::ACM_Free, 0.0f);
+
 }
 
 void AIngredient::SetType_Implementation(EIngredientType Type)

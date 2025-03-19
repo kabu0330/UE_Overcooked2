@@ -28,7 +28,7 @@ void ACooking::AttachToChef_Implementation(AActor* Player)
 	StaticMeshComponent->SetSimulatePhysics(false);
 	StaticMeshComponent->SetCollisionProfileName(TEXT("NoCollision"));
 	StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	AttachToActor(Player, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+	AttachToActor(Player, FAttachmentTransformRules::KeepRelativeTransform);
 
 	ForwardAttachToChef(); // 캐릭터가 집으면 테이블 정보를 nullptr로 만든다.
 }
