@@ -27,8 +27,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void ChopIngredient(AActor* ChefActor);
 
-	UFUNCTION(BlueprintCallable)
-	virtual void PlaceItem(ACooking* Item) override;
+	//UFUNCTION(BlueprintCallable)
+	//virtual void PlaceItem(ACooking* Item) override;
 
 	void TimerUpdate(float DeltaTime);
 

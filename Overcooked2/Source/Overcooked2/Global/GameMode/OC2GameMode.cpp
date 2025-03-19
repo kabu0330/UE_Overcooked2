@@ -2,6 +2,8 @@
 
 
 #include "Global/GameMode/OC2GameMode.h"
+#include "Overcooked2.h"
+
 #include "Global/Component/SpawnManageComponent.h"
 #include "Global/GameFramework/OC2Actor.h"
 
@@ -30,12 +32,28 @@ void AOC2GameMode::PostLogin(APlayerController* NewPlayerController)
 
 AIngredient* AOC2GameMode::SpawnIngredientActor(EIngredientType IngredientType)
 {
-	return SpawnManager->SpawnIngredientActor(IngredientType);
+	if (nullptr != IngredientToSpawn)
+	{
+		return SpawnManager->SpawnIngredientActor(IngredientToSpawn, IngredientType);
+	}
+	else
+	{
+		UE_LOG(OVERCOOKED_LOG, Error, TEXT("Ingredient BP Spawn actor is nullptr BP_CookingGameMode"));
+		return nullptr;
+	}
 }
 
 APlate* AOC2GameMode::SpawnPlateActor(EPlateState PlateState)
 {
-	return SpawnManager->SpawnPlateActor(PlateToSpawn, PlateState);
+	if (nullptr != PlateToSpawn)
+	{
+		return SpawnManager->SpawnPlateActor(PlateToSpawn, PlateState);
+	}
+	else
+	{
+		UE_LOG(OVERCOOKED_LOG, Error, TEXT("Plate BP Spawn actor is nullptr BP_CookingGameMode"));
+		return nullptr;
+	}
 }
 
 void AOC2GameMode::DestroyOC2Actor(AOC2Actor* OC2Actor)
