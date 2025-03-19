@@ -151,5 +151,6 @@ void APot::SetBoil(ACooking* Rice)
 
 AIngredient* APot::GetCookedIngredient()
 {
+	return nullptr;
 }
 
