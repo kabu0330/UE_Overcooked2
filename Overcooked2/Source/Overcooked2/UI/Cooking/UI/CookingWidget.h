@@ -2,8 +2,8 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/TimelineComponent.h"
 #include "CookingWidget.generated.h"
-
 UCLASS()
 class OVERCOOKED2_API UCookingWidget : public UUserWidget
 {
@@ -27,6 +27,7 @@ public:
 
     UFUNCTION(BlueprintCallable, Category = "OC2UI")
     void WrongOrder();
+    //void SubmitWrongOrder();
 
 
     // UI 바인딩 (총 5개의 주문 슬롯)
@@ -46,6 +47,9 @@ public:
     class UCanvasPanel* Order_4;
 
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OC2UI")
+    UCurveFloat* ColorCurve;
+
 protected:
     virtual void NativeOnInitialized() override;
     virtual void NativeTick(const FGeometry& MyGeometry, float DeltaTime) override;
@@ -60,7 +64,7 @@ private:
     float ImageSize = 230.0f;
     float ImageOffset = 10.0f;
     float IngredientArrivePos = 100.f;
-    float OpacityOffset = 0.05f;
+    float OpacityOffset = 0.02f;
     float FinalPos = 0.0f;
     float ArrivePos = 0.0f;
 
@@ -81,6 +85,8 @@ private:
     FTimerHandle MoveTimerHandle;
     FTimerHandle IngredientTimerHandle;
 
+    class UTimeEventComponent* TimeEvent;
+
 
     // 내부 함수
     void UpdateImageOpacity();
@@ -91,8 +97,22 @@ private:
     void MoveNewOrder();
 
     void FindOrderImgRecursive(class UWidget* Widget, const FLinearColor& Color);
-    void UpdateImgColor(class UImage* Image, const FLinearColor& Color);
 
+
+    FTimeline WrongOrderTimeline;
+    FTimeline CompleteOrderTimeline;
+
+    FLinearColor OriginalColor = FLinearColor::White;
+    FLinearColor TargetColor = FLinearColor::White;
+
+    UFUNCTION()
+    void UpdateAllOrderColor(float Value);
+
+    UFUNCTION()
+    void UpdateCompleteOrderColor(float Value);
+
+    void UpdateImgColor(class UImage* Image, const FLinearColor& Color);
+    void ResetColor();
 
     template <typename T>
     T* FindChildWidget(const FString& name, UCanvasPanel* canvas);
