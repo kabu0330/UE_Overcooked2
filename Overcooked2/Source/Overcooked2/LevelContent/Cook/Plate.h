@@ -52,6 +52,10 @@ protected:
 
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
 
+	bool CanPlaceOnPlate(AIngredient* Ingredient);
+	void SetIngredinetMesh(FPlateInitData Data);
+	void SetIngredinetTextures(FPlateInitData Data);
+
 	void SetMesh();
 	void SetMaterialTexture(UTexture* Texture);
 
@@ -75,5 +79,8 @@ private:
 
 	UPROPERTY(Replicated)
 	bool bIsCombinationSuccessful = false;
+
+	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	TArray<class UBillboardComponent*> TextureBillboards;
 
 };
