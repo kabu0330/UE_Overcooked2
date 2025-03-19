@@ -31,8 +31,6 @@ public:
 	void DetachFromChef(AActor* Player);
 	void DetachFromChef_Implementation(AActor* Player);
 
-	virtual void DetachAction() {};
-
 
 	const FIngredientDataRow* const GetIngredientDataTable() const
 	{
@@ -80,6 +78,7 @@ protected:
 
 	virtual void ForwardCookingTable(class ACookingTable* Table) {};
 	virtual void ForwardAttachToChef() {};
+	void DetachAction();
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	ECookingType CookingType = ECookingType::ECT_NONE;

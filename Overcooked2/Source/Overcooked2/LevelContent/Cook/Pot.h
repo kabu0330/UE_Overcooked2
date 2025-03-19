@@ -14,6 +14,7 @@ enum class EPotState : uint8
 	BOILING		UMETA(DisplayName = "조리 중"),
 	COOKED		UMETA(DisplayName = "조리 완료"),
 	OVERCOOKED	UMETA(DisplayName = "태움"),
+	MAX			UMETA(DisplayName = "MAX"),
 };
 
 /**
@@ -28,12 +29,17 @@ public:
 	APot();
 
 	// 처음 재료가 들어왔을 때 호출할 함수
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	void Add(class AIngredient* Ingredient);
+	void Add_Implementation(class AIngredient* Ingredient);
+
 	UFUNCTION(BlueprintCallable)
 	void SetBoil(ACooking* Rice);
 
 	// 조리된 밥을 받아오는 함수
 	UFUNCTION(BlueprintCallable)
 	class AIngredient* GetCookedIngredient();
+
 
 
 protected:
@@ -53,14 +59,20 @@ protected:
 	virtual void ForwardAttachToChef() override;
 
 private:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowprivateAccess = "true"))
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowprivateAccess = "true"))
 	USkeletalMeshComponent* SoupSkeletalMeshComponent = nullptr;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowprivateAccess = "true"))
+	TArray<UMaterialInstanceDynamic*> SoupDynamicMaterial;
+
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowprivateAccess = "true"))
 	EPotState PotState = EPotState::IDLE;
 
-	class AIngredient* Ingredient = nullptr;
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowprivateAccess = "true"))
+	EPotState PrevPotState = EPotState::MAX;
 
+	UPROPERTY(Replicated)
+	bool bIsRiceInPot = false;
+	
 	float TimeElapsed = 0.0f;
 
 	UPROPERTY(Replicated)
