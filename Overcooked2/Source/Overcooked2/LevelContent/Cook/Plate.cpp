@@ -6,6 +6,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 #include <Global/Data/OC2GlobalData.h>
+#include "Components/BillboardComponent.h"  
 
 // Sets default values
 APlate::APlate()
@@ -21,6 +22,16 @@ APlate::APlate()
 
 	FVector Scale = FVector(2.0f, 2.0f, 2.0f);
 	StaticMeshComponent->SetRelativeScale3D(Scale);
+
+
+	int MaxTexture = 3;
+	for (int i = 0; i < MaxTexture; i++)
+	{
+		FString ComponentName = FString::Printf(TEXT("TextureBillboard_%d"), i);
+		UBillboardComponent* BillboardComponent = CreateDefaultSubobject<UBillboardComponent>(*ComponentName);
+		BillboardComponent->SetupAttachment(RootComponent);
+		TextureBillboards.Add(BillboardComponent);
+	}
 
 	// Debug
 	SetActorLocation(FVector(0.0f, -200.0f, 10.0f));
@@ -120,22 +131,32 @@ void APlate::SetMaterialTexture(UTexture* Texture)
 	}
 }
 
-void APlate::Add_Implementation(AIngredient* Ingredient)
+bool APlate::CanPlaceOnPlate(AIngredient* Ingredient)
 {
-	bIsCombinationSuccessful = false;
 	if (ECookingType::ECT_INGREDIENT != Ingredient->GetCookingType())
 	{
-		return;
+		return false;
 	}
 	if (EPlateState::COMPLETED == PlateState || EPlateState::DIRTY == PlateState)
 	{	// 이미 완성된 요리나 세척 전의 접시는 재료를 올릴 수 없다.
-		return;
+		return false;
 	}
 	if (EIngredientState::EIS_NONE == Ingredient->GetCurIngredientState())
 	{	// 손질되지 않은 재료는 접시에 올릴 수 없다.
-		return;
+		return false;
 	}
 	if (nullptr == StaticMeshComponent)
+	{
+		return false;
+	}
+	return true;
+}
+
+void APlate::Add_Implementation(AIngredient* Ingredient)
+{
+	bIsCombinationSuccessful = false;
+
+	if (false == CanPlaceOnPlate(Ingredient))
 	{
 		return;
 	}
@@ -160,29 +181,96 @@ void APlate::Add_Implementation(AIngredient* Ingredient)
 		IngredientMesh->SetStaticMesh(InitData.StaticMesh); // 메시 변경
 		if (nullptr != IngredientMesh)
 		{
-			// 3-3. 물리 잠시 끄고
-			SetSimulatePhysics(false); // 컴포넌트와 충돌로 날아가는 움직이는 것을 방지하기 위해 물리를 잠시 끈다.
+			// 3-3. 접시 위에 올라갈 요리 메시 세팅
+			SetIngredinetMesh(InitData);
 
-			// 3-4. IngredientMesh의 충돌체와 물리를 끈다.
-			IngredientMesh->AttachToComponent(StaticMeshComponent, FAttachmentTransformRules::KeepRelativeTransform);
-			IngredientMesh->SetCollisionProfileName(TEXT("NoCollision"));
-			IngredientMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-			IngredientMesh->SetSimulatePhysics(false);
-
-			// 3-5. Offset
-			IngredientMesh->SetRelativeLocation(InitData.OffsetLocation); // 수정 필요 Add -> Set
-			IngredientMesh->SetRelativeRotation(InitData.OffsetRotation);
-			IngredientMesh->SetRelativeScale3D(InitData.OffsetScale);
-
-			// 3-6. 물리 다시 켜고
-			SetSimulatePhysics(true);
-			bIsCombinationSuccessful = true;
-
-			// 3-7. 기존에 존재하는 재료는 월드에서 삭제
+			// 3-5. 기존에 존재하는 재료는 월드에서 삭제
 			Ingredient->RequestOC2ActorDestroy();
 
+			// 4. Texture 추가
+			SetIngredinetTextures(InitData);
 			return;
 		}
 	}
 	return;
+}
+
+void APlate::SetIngredinetMesh(FPlateInitData Data)
+{
+	// 1. 물리 잠시 끄고
+	SetSimulatePhysics(false); // 컴포넌트와 충돌로 날아가는 움직이는 것을 방지하기 위해 물리를 잠시 끈다.
+
+	// 2. IngredientMesh의 충돌체와 물리를 끈다.
+	IngredientMesh->AttachToComponent(StaticMeshComponent, FAttachmentTransformRules::KeepRelativeTransform);
+	IngredientMesh->SetCollisionProfileName(TEXT("NoCollision"));
+	IngredientMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	IngredientMesh->SetSimulatePhysics(false);
+
+	// 3. Offset
+	IngredientMesh->SetRelativeLocation(Data.OffsetLocation);
+	IngredientMesh->SetRelativeRotation(Data.OffsetRotation);
+	IngredientMesh->SetRelativeScale3D(Data.OffsetScale);
+
+	// 4. 물리 다시 켜고
+	SetSimulatePhysics(true);
+	bIsCombinationSuccessful = true;
+}
+
+void APlate::SetIngredinetTextures(FPlateInitData Data)
+{
+	TArray<UTexture*> Textures = Data.IngredientTextures;
+	if (true == Textures.IsEmpty())
+	{
+		return;
+	}
+
+	int32 NumTextures = Textures.Num(); // 텍스처 개수
+	int32 NumBillboard = TextureBillboards.Num(); // 텍스처 최대 개수 : 3개(생성자에서 설정함)
+	int32 NumRows = (NumTextures + 1) / 2; // 몇 행인지. (올림 처리)
+
+	float BaseZ = 50.0f; // 최초 z축 위치
+	float VertialSpacing = 40.0f; // 상하 간격
+	float HorizontalSpacing = 40.0f; // 좌우 간격
+	for (int32 i = 0; i < NumTextures; i++) // 이번에 들어온 텍스처 수만큼 반복
+	{
+		int32 RowIndex = i / 2; 
+		int32 ColIndex = i % 2;
+
+		int32 ActualRow = NumRows - 1 - RowIndex; // 실제 행 0번부터
+		float CurrentZ = BaseZ + ActualRow * VertialSpacing; // 행 간 간격
+
+		bool bIsRowFull = true;
+		// 마지막 텍스처인데 홀수라면 그 텍스처만 가운데에 맞춰야 하니까
+		if ((RowIndex == NumRows - 1) && (NumTextures % 2 != 0)) 
+		{
+			bIsRowFull = false; // 해당 변수를 이용해서 
+		}
+
+		float CurrentY = 0.0f;
+		if (true == bIsRowFull) // 한 행에 두 개씩 존재하면 좌우 간격 맞추고
+		{
+			if (0 == ColIndex)
+			{
+				CurrentY = -HorizontalSpacing / 2.0f;
+			}
+			else
+			{
+				CurrentY = HorizontalSpacing / 2.0f;
+			}
+		}
+		else // 한 행에 남은 텍스처가 하나면 가운데 맞추자.
+		{
+			CurrentY = 0.0f;
+		}
+
+		FVector NewLocation(0.0f, CurrentY, CurrentZ);
+
+		UTexture2D* Texture = Cast<UTexture2D>(Textures[i]);
+		if (nullptr != Texture)
+		{
+			TextureBillboards[i]->SetSprite(Texture);
+			TextureBillboards[i]->bHiddenInGame = false; // 안 켜면 안보임
+			TextureBillboards[i]->SetRelativeLocation(NewLocation);
+		}
+	}
 }
