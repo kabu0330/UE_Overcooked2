@@ -15,11 +15,23 @@ public:
 	// Sets default values for this actor's properties
 	AWorldMapDialogue();
 
+	virtual void Tick(float DeltaTime) override;
+
+	void SetStage(int _Stage);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+private:
+	void InitCameraToLook();
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Mesh", meta = (AllowPrivateAccess = "true"))
+	USceneComponent* SceneComponent = nullptr;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Mesh", meta = (AllowPrivateAccess = "true"))
+	UStaticMeshComponent* DialogMeshComponent = nullptr;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Mesh", meta = (AllowPrivateAccess = "true"))
+	UStaticMeshComponent* CaptureMeshComponent = nullptr;
 };

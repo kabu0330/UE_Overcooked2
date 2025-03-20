@@ -85,6 +85,18 @@ void APlate::SetPlateState_Implementation(EPlateState State)
 	SetMesh();
 }
 
+void APlate::CleanPlate_Implementation()
+{
+	PlateState = EPlateState::EMPTY;
+	IngredientMesh->SetStaticMesh(nullptr);
+	Ingredients.Empty();
+	for (int i = 0; i < TextureBillboards.Num(); i++)
+	{
+		TextureBillboards[i]->SetSprite(nullptr);
+	}
+	bIsCombinationSuccessful = false;
+}
+
 void APlate::SetMesh()
 {
 	UTexture* Texture = nullptr;
@@ -228,7 +240,7 @@ void APlate::SetIngredinetTextures(FPlateInitData Data)
 	int32 NumBillboard = TextureBillboards.Num(); // 텍스처 최대 개수 : 3개(생성자에서 설정함)
 	int32 NumRows = (NumTextures + 1) / 2; // 몇 행인지. (올림 처리)
 
-	float BaseZ = 50.0f; // 최초 z축 위치
+	float BaseZ = 70.0f; // 최초 z축 위치
 	float VertialSpacing = 40.0f; // 상하 간격
 	float HorizontalSpacing = 40.0f; // 좌우 간격
 	for (int32 i = 0; i < NumTextures; i++) // 이번에 들어온 텍스처 수만큼 반복

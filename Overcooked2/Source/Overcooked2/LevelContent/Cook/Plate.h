@@ -41,7 +41,12 @@ public:
 	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
 	void SetPlateState(EPlateState State);
 	void SetPlateState_Implementation(EPlateState State);
-	// ------------------------------------------------------
+
+	// 접시 위에 요리 재료를 버리고 접시를 초기 상태로 되돌림
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	void CleanPlate();
+	void CleanPlate_Implementation();
+
 
 protected:
 	// Called when the game starts or when spawned

@@ -9,6 +9,8 @@
 #include "Components/CanvasPanelSlot.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Global/Data/OrderDataTable.h"
+#include "UI/Cooking/UI/CookingScoreWidget.h"
+#include "UI/Cooking/UI/CookingTimeWidget.h"
 
 
 
@@ -37,6 +39,18 @@ void UCookingWidget::NativeOnInitialized()
     {
         Orders[i]->SetVisibility(ESlateVisibility::Collapsed);
     }
+
+    {
+        CookingScoreWidget = Cast<UCookingScoreWidget>(CreateWidget(GetWorld(), ScoreSubWidget));
+        UCookingTimeWidget* CookingTimerWidget = Cast<UCookingTimeWidget>(CreateWidget(GetWorld(), TimeSubWidget));
+
+        if (CookingScoreWidget != nullptr && CookingScoreWidget != nullptr)
+        {
+            CookingScoreWidget->AddToViewport();
+            CookingTimerWidget->AddToViewport();
+        }
+    }
+
 }
 
 
@@ -92,8 +106,15 @@ void UCookingWidget::OrderComplete(int Index)
             CompleteOrderTimeline.Stop();
             CompleteOrderTimeline.PlayFromStart();
         }
+        
 
+        if (CookingScoreWidget != nullptr)
+        {
+            CookingScoreWidget->PlayCoinAnimation();
+        }
+       
 
+       
         GetWorld()->GetTimerManager().SetTimer(OpacityTimerHandle, this, &UCookingWidget::UpdateImageOpacity, 0.01f, true);
     }
 
@@ -383,17 +404,19 @@ void UCookingWidget::UpdateOrderTime(int Index, float DeltaTime)
     FLinearColor Color = TimeImg->GetFillColorAndOpacity();
 
 
+    float Offset = 30.0f / TimeLimit;
+
     if (OrderTime[Index] > (TimeLimit / 3) * 2)
     {
-        TimeImg->SetFillColorAndOpacity({ Color.R + DeltaTime * 0.7f, Color.G + DeltaTime * 0.7f, 0.0f });
+        TimeImg->SetFillColorAndOpacity({ Color.R + DeltaTime * 0.7f * Offset, Color.G + DeltaTime * 0.7f * Offset, 0.0f });
     }
     else if (OrderTime[Index] > TimeLimit / 3)
     {
-        TimeImg->SetFillColorAndOpacity({ Color.R + DeltaTime * 0.7f, Color.G - DeltaTime * 0.5f, 0.0f });
+        TimeImg->SetFillColorAndOpacity({ Color.R + DeltaTime * 0.7f * Offset, Color.G - DeltaTime * 0.5f * Offset, 0.0f });
     }
     else
     {
-        TimeImg->SetFillColorAndOpacity({ Color.R + DeltaTime * 0.2f, Color.G - DeltaTime * 0.1f, 0.0f });
+        TimeImg->SetFillColorAndOpacity({ Color.R + DeltaTime * 0.2f * Offset, Color.G - DeltaTime * 0.1f * Offset, 0.0f });
     }
 
 }

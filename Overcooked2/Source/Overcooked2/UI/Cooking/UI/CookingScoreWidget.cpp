@@ -23,6 +23,7 @@ void UCookingScoreWidget::NativeConstruct()
 void UCookingScoreWidget::PlayCoinAnimation()
 {
     if (!CoinMaterial) return;
+    if (GetWorld()->GetTimerManager().IsTimerActive(AnimationTimer)) return;
 
     float AnimationDuration = 1.0f;
     float TimeStep = 0.01f;

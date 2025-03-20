@@ -131,7 +131,10 @@ void AOC2Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 void AOC2Character::SetCharacterName_Implementation(const FString& Name)
 {
 	if (CharacterHeadMap.Contains(Name))
+	{
 		CharacterName = Name;
+		OnRep_ChangeCharacter();
+	}
 }
 
 void AOC2Character::OnRep_ChangeCharacter()
@@ -273,9 +276,11 @@ void AOC2Character::Grab_Implementation(ACooking* Cook)
 	GrabbedObject->AttachToChef(this);
 
 	auto DataTable = GrabbedObject->GetIngredientDataTable();
-	
-	GrabbedObject->SetActorRotation(DataTable->Rotation);
-	GrabbedObject->SetActorLocation(GrabComponent->GetComponentLocation());
+	if (DataTable)
+	{
+		GrabbedObject->SetActorRelativeRotation(DataTable->Rotation);
+		GrabbedObject->SetActorRelativeLocation(DataTable->Location);
+	}
 }
 
 void AOC2Character::Drop_Implementation()
@@ -287,10 +292,13 @@ void AOC2Character::Drop_Implementation()
 		// 들고 있는 물체에 대해 상호작용을 실행한다. 바닥에 내려놓는다는 뜻.
 		GrabbedObject->DetachFromChef(this);
 
+		auto DataTable = GrabbedObject->GetIngredientDataTable();
+		if (DataTable)
+		{
+			GrabbedObject->SetActorRotation(DataTable->Rotation);
+		}
+		
 		GrabbedObject->SetActorLocation(GrabComponent->GetComponentLocation());
-		GrabbedObject->SetActorRotation(GetActorRotation());
-
-
 		GrabbedObject = nullptr;
 	}
 }
@@ -476,7 +484,7 @@ void AOC2Character::OnOverlapCheck_Implementation(UPrimitiveComponent* Overlappe
 {
 	if (OtherActor && HasAuthority())
 	{
-		//			GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Green, "Hit");
+		//GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Green, "Hit");
 		AIngredient* Ingredient = Cast<AIngredient>(OtherActor);
 		if (Ingredient) // 캡슐과 충돌한 경우
 		{
@@ -484,7 +492,12 @@ void AOC2Character::OnOverlapCheck_Implementation(UPrimitiveComponent* Overlappe
 			{
 				GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Green, "Hit");
 				Ingredient->AttachToChef(this);
-				Ingredient->SetActorLocation(GrabComponent->GetComponentLocation());
+				auto DataTable = Ingredient->GetIngredientDataTable();
+				if (DataTable)
+				{
+					GrabbedObject->SetActorRelativeRotation(DataTable->Rotation);
+					GrabbedObject->SetActorRelativeLocation(DataTable->Location);
+				}
 				Ingredient->SetThrowing(false);
 				GrabbedObject = Ingredient;
 				FVector Dir = SweepResult.ImpactPoint - GetActorLocation();

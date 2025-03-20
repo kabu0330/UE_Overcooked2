@@ -48,6 +48,10 @@ public:
 	void Reset();
 	void Reset_Implementation();
 
+	UFUNCTION(BlueprintCallable, Reliable, Server)
+	void CleanPlate();
+	void CleanPlate_Implementation();
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;

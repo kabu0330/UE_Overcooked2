@@ -31,6 +31,7 @@ void ACookingTable::Tick(float DeltaTime)
 void ACookingTable::PlaceItem(ACooking* ReceivedCooking)
 {
 	CookingPtr = ReceivedCooking;
+	CookingPtr->SetCookingTable_Implementation(this);
 
 	//Cooking을 Attach 시킬것
 	CookingPtr->AttachToComponent(ComponentForCooking, FAttachmentTransformRules::KeepRelativeTransform);

@@ -78,6 +78,16 @@ void ACookingDevGameMode::Wash()
 	Plates[0]->WashPlate();
 }
 
+void ACookingDevGameMode::CleanPlate()
+{
+	TArray<APlate*>& Plates = CookingObjectManager->GetPlates();
+	if (true == Plates.IsEmpty())
+	{
+		return;
+	}
+	Plates[0]->CleanPlate();
+}
+
 void ACookingDevGameMode::BeginPlay()
 {
 	Super::BeginPlay();

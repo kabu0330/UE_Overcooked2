@@ -5,11 +5,12 @@
 
 AOC2Map::AOC2Map()
 {
-	SkeletalMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMeshComponent"));
-	SkeletalMeshComponent->SetupAttachment(RootComponent);
-
 	FVector Scale(100.0f, 100.0f, 100.0f);
 	SetActorRelativeScale3D(Scale);
+
+	StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	//StaticMeshComponent->SetCollisionResponseToChannels
+	StaticMeshComponent->ComponentTags.Add(TEXT("Floor"));
 }
 
 void AOC2Map::BeginPlay()

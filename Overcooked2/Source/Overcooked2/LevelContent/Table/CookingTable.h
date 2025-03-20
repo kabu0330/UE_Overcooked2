@@ -25,12 +25,6 @@ public:
 	{ 
 		return CookingPtr; 
 	}
-
-	/*UFUNCTION(BlueprintCallable)
-	virtual void SetAndSpawnCooking(AActor* ChefActor, ACooking* CookingObj)
-	{
-
-	}*/
 	
 	virtual void PlaceItem(ACooking* ReceivedCooking);
 
@@ -62,6 +56,9 @@ protected:
 
 	class ACooking* CookingPtr = nullptr;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking")
+	USceneComponent* ComponentForCooking = nullptr;
+
 private:	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	float CookingTime = 0.0f;
@@ -71,9 +68,5 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	bool bCanOvercook = false;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
-	USceneComponent* ComponentForCooking = nullptr;
-	// 테이블이 사용 가능한가?
 
 };
