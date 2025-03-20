@@ -25,6 +25,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
 	class UCanvasPanel* LobbyCanvasPanel;
 
+	UFUNCTION(BlueprintCallable, Category = "OC2UI")
+	void SetUserTexture(class UTexture2D* Texture, int Index);
+
 protected:
 	virtual void NativeConstruct() override;
 
