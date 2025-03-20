@@ -4,6 +4,7 @@
 #include "LevelContent/WorldMap/WorldPlayer.h"
 #include "LevelContent/WorldMap/WorldMapData.h"
 #include "Global/OC2GameInstance.h"
+#include "Global/OC2Global.h"
 #include "Components/CapsuleComponent.h"
 #include "Engine/SkeletalMesh.h"
 #include "Net/UnrealNetwork.h"
@@ -77,7 +78,7 @@ void AWorldPlayer::OnSelectMap()
 {
 	if (Controller && HasAuthority())
 	{
-		
+		UOC2Global::GetOC2GameInstance(GetWorld())->StartGame();
 	}
 }
 

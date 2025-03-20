@@ -2,6 +2,8 @@
 
 
 #include "LevelContent/WorldMap/WorldFlag.h"
+#include "LevelContent/WorldMap/WorldMapDialogue.h"
+#include "Components/BillboardComponent.h"
 
 AWorldFlag::AWorldFlag()
 {
@@ -23,6 +25,19 @@ AWorldFlag::AWorldFlag()
 void AWorldFlag::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (StageCount > 0)
+	{
+		UWorld* Level = GetWorld();
+		if (Level)
+		{
+			WorldMapDialogue = Level->SpawnActor<AWorldMapDialogue>();
+			WorldMapDialogue->SetStage(StageCount);
+			WorldMapDialogue->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
+			WorldMapDialogue->SetActorRelativeScale3D(FVector(2.f, 2.f, 1.f));
+			WorldMapDialogue->SetActorHiddenInGame(true);
+		}
+	}
 }
 
 void AWorldFlag::Tick(float DeltaTime)
@@ -37,6 +52,10 @@ void AWorldFlag::ChangeState(EStageExplain _State)
 		if (_State == EStageExplain::ShowExplain)
 		{
 			OnShowExplain();
+		}
+		else if (_State == EStageExplain::Idle)
+		{
+			OnIdle();
 		}
 	}
 
@@ -63,11 +82,18 @@ void AWorldFlag::OnOverlapFinished(AActor* _OtherActor)
 	ChangeState(EStageExplain::Idle);
 }
 
+void AWorldFlag::OnIdle()
+{
+	if (WorldMapDialogue->IsHidden() == false)
+	{
+		WorldMapDialogue->SetActorHiddenInGame(true);
+	}
+}
+
 void AWorldFlag::OnShowExplain()
 {
-	// Temp
-	if (StageCount == 1)
+	if (WorldMapDialogue->IsHidden())
 	{
-
+		WorldMapDialogue->SetActorHiddenInGame(false);
 	}
 }

@@ -36,11 +36,13 @@ public:
 
 private:
 	void ChangeState(EStageExplain _State);
+
+	void OnIdle();
 	void OnShowExplain();
 
 	EStageExplain State = EStageExplain::Idle;
 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Stage", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Stage", meta = (AllowPrivateAccess = "true"))
 	int StageCount = 1;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Mesh", meta = (AllowPrivateAccess = "true"))
@@ -54,4 +56,7 @@ private:
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Collision", meta = (AllowPrivateAccess = "true"))
 	UBoxComponent* BoxCollision = nullptr;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Dialogue", meta = (AllowPrivateAccess = "true"))
+	class AWorldMapDialogue* WorldMapDialogue = nullptr;
 };
