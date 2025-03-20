@@ -17,6 +17,7 @@ class USpawnManageComponent;
 class AIngredient;
 class APlate;
 class AOC2Actor;
+class ACookingGameState;
 
 UENUM(BlueprintType)
 enum class ECookingGameModeState : uint8
@@ -65,6 +66,8 @@ private:
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Order", meta = (AllowPrivateAccess = "true"))
 	UOrderManageComponent* OrderManager = nullptr;
+
+	ACookingGameState* CookingGameState = nullptr;
 	
 	ECookingGameModeState CurState = ECookingGameModeState::ECS_None;
 

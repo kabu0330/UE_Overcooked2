@@ -25,6 +25,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
 	class UCanvasPanel* LobbyCanvasPanel;
 
+	UFUNCTION(BlueprintCallable, Category = "OC2UI")
+	void SetUserTexture(class UTexture2D* Texture, int Index);
+
 protected:
 	virtual void NativeConstruct() override;
 
@@ -33,7 +36,7 @@ protected:
 private:
 	// Temp
 	const FString LOBBY_LEVEL = "LobbyDevLevel";
-	const FString PLAY_LEVEL = "GlobalDevLevel";
+	const FString PLAY_LEVEL = "Sushi1-3StageLevel";
 
 	UFUNCTION(BlueprintCallable, meta=(AllowPrivateAccess="true"))
 	void MoveToPlayLevel();

@@ -7,7 +7,7 @@
 #include "CookingScoreWidget.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class OVERCOOKED2_API UCookingScoreWidget : public UUserWidget
@@ -15,10 +15,13 @@ class OVERCOOKED2_API UCookingScoreWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
-
+	UFUNCTION(BlueprintCallable, Category = "OC2UI")
+	void PlayCoinAnimation();
 
 protected:
 	virtual void NativeConstruct() override;
 private:
+	class UMaterialInstanceDynamic* CoinMaterial;
 
+	FTimerHandle AnimationTimer;
 };

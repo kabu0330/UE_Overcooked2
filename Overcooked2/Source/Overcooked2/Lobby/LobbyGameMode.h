@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameMode.h"
+#include "Global/GameMode/OC2GameMode.h"
 #include "LobbyGameMode.generated.h"
 
 UENUM(BlueprintType)
@@ -17,7 +18,7 @@ enum class ELobbyGameModeState : uint8
  * 
  */
 UCLASS()
-class OVERCOOKED2_API ALobbyGameMode : public AGameMode
+class OVERCOOKED2_API ALobbyGameMode : public AOC2GameMode
 {
 	GENERATED_BODY()
 
