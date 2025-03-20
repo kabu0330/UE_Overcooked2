@@ -15,6 +15,8 @@
 #include "UI/Cooking/CookingHUD.h"
 #include "UI/Cooking/UI/CookingWidget.h"
 
+#include "Character/OC2Character.h"
+
 #include "Kismet/GameplayStatics.h"
 
 ACookingGameMode::ACookingGameMode()
@@ -28,7 +30,7 @@ void ACookingGameMode::BeginPlay()
 
 	CookingGameState = GetGameState<ACookingGameState>();
 
-	ChangeState(ECookingGameModeState::ECS_Stage);
+	ChangeState(ECookingGameModeState::ECS_Stay);
 }
 
 void ACookingGameMode::Tick(float DeltaTime)
@@ -67,11 +69,17 @@ void ACookingGameMode::PostLogin(APlayerController* NewPlayerController)
 
 void ACookingGameMode::EntryStay()
 {
+	CheckTime = 0.0f;
 }
 
 void ACookingGameMode::Stay(float DeltaTime)
 {
-	//TestTime += DeltaTime;
+	CheckTime += DeltaTime;
+
+	if (CheckTime > 3.0f)
+	{
+		ChangeState(ECookingGameModeState::ECS_Stage);
+	}
 
 	//if (TestTime >= 5.0f)
 	//{
@@ -81,6 +89,34 @@ void ACookingGameMode::Stay(float DeltaTime)
 
 void ACookingGameMode::EntryStage()
 {
+	//for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
+	//{
+	//	APlayerController* PC = It->Get();
+	//	if (PC)
+	//	{
+	//		// Owning Pawn 가져오기
+	//		AOC2Character* PlayerPawn = Cast< AOC2Character>(PC->GetPawn());
+
+	//		if (PlayerPawn)
+	//		{
+	//			UOC2GameInstance* GameInstance = Cast<UOC2GameInstance>(PC->GetGameInstance());
+
+	//			if (GameInstance != nullptr)
+	//			{
+	//				UE_LOG(LogTemp, Log, TEXT("GameInstance 가져오기 성공!"));
+
+	//				PlayerPawn->SetCharacterName(GameInstance->GetChefHeadName());
+	//			}
+
+	//			UE_LOG(LogTemp, Log, TEXT("Found PlayerPawn: %s"), *PlayerPawn->GetName());
+	//		}
+	//		else
+	//		{
+	//			UE_LOG(LogTemp, Log, TEXT("PlayerController does not have a Pawn"));
+	//		}
+	//	}
+	//}
+
 	CheckTime = 0.0f;
 }
 

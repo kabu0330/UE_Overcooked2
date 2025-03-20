@@ -132,6 +132,7 @@ void AOC2Character::SetCharacterName_Implementation(const FString& Name)
 {
 	if (CharacterHeadMap.Contains(Name))
 		CharacterName = Name;
+	OnRep_ChangeCharacter();
 }
 
 void AOC2Character::OnRep_ChangeCharacter()

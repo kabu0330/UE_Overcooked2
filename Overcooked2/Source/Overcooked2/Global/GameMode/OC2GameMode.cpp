@@ -6,6 +6,7 @@
 
 #include "Global/Component/SpawnManageComponent.h"
 #include "Global/GameFramework/OC2Actor.h"
+#include "Global/OC2GameInstance.h"
 
 #include "LevelContent/Cook/Ingredient.h"
 #include "LevelContent/Cook/Plate.h"
@@ -26,6 +27,13 @@ void AOC2GameMode::BeginPlay()
 void AOC2GameMode::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	UOC2GameInstance* GameInstance = Cast<UOC2GameInstance>(GetGameInstance());
+
+	if (GameInstance != nullptr)
+	{
+		UE_LOG(OVERCOOKED_LOG, Log, TEXT("Cur Head Name : %s"), *GameInstance->GetChefHeadName());
+	}
 }
 
 void AOC2GameMode::PostLogin(APlayerController* NewPlayerController)
