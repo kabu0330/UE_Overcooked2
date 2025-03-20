@@ -53,15 +53,17 @@ void AChoppingTable::ChopIngredient(AActor* ChefActor)
 
 			if (true == PlacedIngredient->IsChoppable())
 			{
-				Timer = 3.0f;
+				Timer = 2.0f;
 
 				while (Timer > 0)
 				{
 					bTimerActivated = true;
+					GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Magenta, "Chopping...");
 				}
 
 				bTimerActivated = false;
 				PlacedIngredient->ChangeState(EIngredientState::EIS_CHOPPED);
+				GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Turquoise, "Chopping Done");
 				CookingPtr = Cast<ACooking>(PlacedIngredient);
 			}
 		}

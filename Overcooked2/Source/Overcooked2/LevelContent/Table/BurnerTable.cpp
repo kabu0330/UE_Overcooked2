@@ -38,28 +38,26 @@ ACooking* ABurnerTable::Interact(AActor* ChefActor)
 	}
 }
 
-//void ABurnerTable::PlaceItem(ACooking* Item)
-//{
-//	ACooking* TempCooking = Item;
-//	ACookingTable::PlaceItem(Item);
-//	CookingPtr = TempCooking;
-//
-//	if (true == CookingPtr->IsCookingType(ECookingType::ECT_POT))
-//	{
-//		/*FVector OnTheTable = GetActorLocation() + FVector{ (0.0f, 0.0f, 100.0f) };
-//		TempCooking->SetActorLocation(OnTheTable);*/
-//		/*CookingPtr = TempCooking;
-//		ACookingTable::PlaceItem(Item);*/
-//
-//		APot* TempPot = Cast<APot>(CookingPtr);
-//		//TempPot->SetOnTable(true);
-//	}
-//}
+void ABurnerTable::PlaceItem(ACooking* Item)
+{
+	ACooking* TempCooking = Item;
+	
+	if (true == TempCooking->IsCookingType(ECookingType::ECT_POT))
+	{
+		CookingPtr = TempCooking;
 
-//void ABurnerTable::BoilThePot(AActor* ChefActor)
-//{
-//	if (nullptr != ChefActor)
-//	{
-//
-//	}
-//}
+		CookingPtr->AttachToComponent(ComponentForCooking, FAttachmentTransformRules::KeepRelativeTransform);
+		CookingPtr->SetActorLocation(ComponentForCooking->GetComponentLocation());
+
+		CookingPtr->SetCookingTable_Implementation(this);
+		APot* TempPot = Cast<APot>(CookingPtr);
+
+		//TempPot->SetOnTable(true);
+		//냄비의 음식물이 Boilable이면 바로 BoilThePot();
+	}
+}
+
+void ABurnerTable::BoilThePot()
+{
+	
+}
