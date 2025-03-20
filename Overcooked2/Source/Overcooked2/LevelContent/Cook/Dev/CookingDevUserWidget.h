@@ -35,6 +35,9 @@ public:
 	void Wash();
 
 
+	UFUNCTION(BlueprintCallable)
+	void CleanPlate();
+
 
 	UFUNCTION(BlueprintCallable)
 	void Reset();
