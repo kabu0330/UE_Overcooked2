@@ -18,6 +18,9 @@ AOC2GameMode::AOC2GameMode()
 void AOC2GameMode::BeginPlay()
 {
 	Super::BeginPlay();
+
+	bUseSeamlessTravel = true;  // 시므리스 트래블 활성화
+
 }
 
 void AOC2GameMode::Tick(float DeltaTime)

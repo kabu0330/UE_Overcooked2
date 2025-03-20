@@ -33,7 +33,7 @@ protected:
 private:
 	// Temp
 	const FString LOBBY_LEVEL = "LobbyDevLevel";
-	const FString PLAY_LEVEL = "GlobalDevLevel";
+	const FString PLAY_LEVEL = "Sushi1-3StageLevel";
 
 	UFUNCTION(BlueprintCallable, meta=(AllowPrivateAccess="true"))
 	void MoveToPlayLevel();

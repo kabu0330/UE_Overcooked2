@@ -10,6 +10,7 @@
 #include "Global/Data/IngredientDataTable.h"
 #include "Global/Data/OC2GlobalData.h"
 #include "Global/OC2Global.h"
+#include "Global/State/GameState/CookingGameState.h"
 
 #include "UI/Cooking/CookingHUD.h"
 #include "UI/Cooking/UI/CookingWidget.h"
@@ -24,6 +25,8 @@ ACookingGameMode::ACookingGameMode()
 void ACookingGameMode::BeginPlay()
 {
 	Super::BeginPlay();
+
+	CookingGameState = GetGameState<ACookingGameState>();
 
 	ChangeState(ECookingGameModeState::ECS_Stage);
 }
@@ -87,17 +90,39 @@ void ACookingGameMode::Stage(float DeltaTime)
 
 	if (CheckTime >= UOC2Const::OrderSpawnDelay)
 	{
-		FOrder Order = UOC2GlobalData::GetOrderByStageAndIndex(GetWorld(), UOC2Global::GetOC2GameInstance(GetWorld())->GetCurStage(), 1);
 
-		OrderManager->Multicast_CreateNewOrder(Order);
+		if (CookingGameState != nullptr)
+		{
+			FOrder Order = UOC2GlobalData::GetOrderByStageAndIndex(GetWorld(), UOC2Global::GetOC2GameInstance(GetWorld())->GetCurStage(), 1);
+
+			//OrderManager->Multicast_CreateNewOrder(Order);
+
+			CookingGameState->Multicast_CreateNewOrder(Order);
+		}
+
+
+		//FOrder Order = UOC2GlobalData::GetOrderByStageAndIndex(GetWorld(), UOC2Global::GetOC2GameInstance(GetWorld())->GetCurStage(), 1);
+
+		//OrderManager->Multicast_CreateNewOrder(Order);
 	}
 
 	if (CheckTime >= 6.0f)
 	{
-		FOrder Order = UOC2GlobalData::GetOrderByStageAndIndex(GetWorld(), UOC2Global::GetOC2GameInstance(GetWorld())->GetCurStage(), 1);
-		OrderManager->Multicast_CompleteOrder(Order);
-		OrderManager->Multicast_BlinkOrderUI();
-		CheckTime = 0.0f;
+		if (CookingGameState != nullptr)
+		{
+			FOrder Order = UOC2GlobalData::GetOrderByStageAndIndex(GetWorld(), UOC2Global::GetOC2GameInstance(GetWorld())->GetCurStage(), 1);
+
+			CookingGameState->Multicast_CompleteOrder(Order);
+			CookingGameState->Multicast_BlinkOrderUI();
+
+			CheckTime = 0.0f;
+
+		}
+
+		//FOrder Order = UOC2GlobalData::GetOrderByStageAndIndex(GetWorld(), UOC2Global::GetOC2GameInstance(GetWorld())->GetCurStage(), 1);
+		//OrderManager->Multicast_CompleteOrder(Order);
+		//OrderManager->Multicast_BlinkOrderUI();
+		//CheckTime = 0.0f;
 	}
 }
 
