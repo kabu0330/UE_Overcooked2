@@ -5,6 +5,7 @@
 #include "EnhancedInputComponent.h"
 #include "OC2CharacterTestTable.h"
 #include "OC2CharacterTestChoppingTable.h"
+#include "LevelContent/Table/ChoppingTable.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Net/UnrealNetwork.h"
 
@@ -311,10 +312,12 @@ void AOC2Character::DoActionPress_Implementation()
 	}
 	else
 	{
-		if (SelectedOC2Actor->IsA(AOC2CharacterTestChoppingTable::StaticClass()))
+		if (SelectedOC2Actor->IsA(AChoppingTable::StaticClass()))
 		{
-			auto Table = Cast<AOC2CharacterTestChoppingTable>(SelectedOC2Actor);
+			auto Table = Cast<AChoppingTable>(SelectedOC2Actor);
 			Chopping(true);
+			Table->ChopIngredient(this);
+			
 		}
 	}
 }

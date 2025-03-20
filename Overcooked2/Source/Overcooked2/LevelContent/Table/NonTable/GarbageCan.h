@@ -30,12 +30,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual void PlaceItem(ACooking* Item) override;
 
-	void DestroyIngredient(AIngredient* WrongIngredient);
+	void DestroyIngredient(ACooking* Garbage);
 
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TimeSetting", meta = (AllowPrivateAccess = "true"))
 	float Timer = 0.0f;
-
-	class AIngredient* Garbage = nullptr;
 	
 };
