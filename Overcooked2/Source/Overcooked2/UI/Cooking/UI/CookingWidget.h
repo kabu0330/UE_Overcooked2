@@ -54,13 +54,23 @@ protected:
     virtual void NativeOnInitialized() override;
     virtual void NativeTick(const FGeometry& MyGeometry, float DeltaTime) override;
 
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OC2UI")
+    TSubclassOf<UUserWidget> ScoreSubWidget;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OC2UI")
+    TSubclassOf<UUserWidget> TimeSubWidget;
+
+
 private:
+    class UCookingScoreWidget* CookingScoreWidget;
+
     // 주문 관련 변수
     int CompleteOrderNum = 0;
     int NewOrderNum = 0;
     int CurOrderCount = 0;
 
-    float TimeLimit = 30.f;
+    float TimeLimit = 180.f;
     float ImageSize = 230.0f;
     float ImageOffset = 10.0f;
     float IngredientArrivePos = 100.f;
@@ -73,7 +83,7 @@ private:
 
     FVector2D TargetOffset = FVector2D(50.0f, 0.0f);
     FVector2D IngredientTargetOffset = FVector2D(0.0f, 10.0f);
-    FVector2D IShortSize = { 72.0f, 65.f };
+    FVector2D IShortSize = { 72.0f, 72.0f };
     FVector2D ILongSize = { 72.0f, 115.f };
 
     TArray<class UCanvasPanel*> Orders;
