@@ -4,6 +4,7 @@
 #include "LevelContent/WorldMap/WorldPlayer.h"
 #include "LevelContent/WorldMap/WorldMapData.h"
 #include "Global/OC2GameInstance.h"
+#include "Global/OC2Global.h"
 #include "Components/CapsuleComponent.h"
 #include "Engine/SkeletalMesh.h"
 #include "Net/UnrealNetwork.h"
@@ -68,7 +69,8 @@ void AWorldPlayer::OnMove(const FVector2D& _Vec)
 {
 	if (Controller && HasAuthority())
 	{
-		AddMovementInput(FVector(_Vec.X * 0.5f, _Vec.Y * 0.5f, 0.f));
+		// Use Player's mapping context
+		AddMovementInput(FVector(_Vec.Y * 0.5f, _Vec.X * -0.5f, 0.f));
 		UpdateBusLocation(GetActorLocation());
 	}
 }
@@ -77,7 +79,7 @@ void AWorldPlayer::OnSelectMap()
 {
 	if (Controller && HasAuthority())
 	{
-		
+		UOC2Global::GetOC2GameInstance(GetWorld())->StartGame();
 	}
 }
 
