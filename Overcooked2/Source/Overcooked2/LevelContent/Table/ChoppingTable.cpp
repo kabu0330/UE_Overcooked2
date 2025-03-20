@@ -32,7 +32,6 @@ ACooking* AChoppingTable::Interact(AActor* ChefActor)
 
 	if (CookingPtr != nullptr && false == Chef->IsHolding()) // À½½Ä ÀÖÀ½, ¼ÎÇÁ ºó ¼Õ
 	{
-		//ChopIngredient(ChefActor);
 		TempCooking = CookingPtr;
 		CookingPtr = nullptr;
 		return TempCooking;
@@ -46,7 +45,7 @@ ACooking* AChoppingTable::Interact(AActor* ChefActor)
 
 void AChoppingTable::ChopIngredient(AActor* ChefActor)
 {
-	if (nullptr != ChefActor)
+	if (nullptr != ChefActor && nullptr != CookingPtr)
 	{
 		if (true == CookingPtr->IsCookingType(ECookingType::ECT_INGREDIENT))
 		{
