@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/TimelineComponent.h"
 #include "TitleWidget.generated.h"
 
 /**
@@ -22,8 +23,11 @@ public:
 	void Connect();
 
 
+
+
 protected:
 
+	virtual void NativeOnInitialized() override;
 
 private:
 
@@ -35,8 +39,6 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Network", meta = (AllowPrivateAccess = "true"))
 	FString LevelName = TEXT("LobbyLevel");
-
-
 
 
 };
