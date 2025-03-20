@@ -345,7 +345,7 @@ void AOC2Character::Throwing_Implementation()
 
 			// 4️⃣ 던질 방향과 세기 설정
 			FVector ThrowDirection = GetActorForwardVector();  // 캐릭터가 바라보는 방향
-			float ThrowStrength = 1000.0f;  // 던지는 힘 조절
+			float ThrowStrength = 1500.0f;  // 던지는 힘 조절
 
 			// 5️⃣ 물리적 임펄스 추가 (던지기)
 			PrimitiveComp->AddImpulse(ThrowDirection * ThrowStrength, NAME_None, true);

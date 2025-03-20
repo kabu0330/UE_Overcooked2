@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include <LevelContent/Cook/Cooking.h>
+#include "PhysicsEngine/PhysicsConstraintComponent.h"
 #include "Ingredient.generated.h"
 
 // 요리 재료
@@ -94,6 +95,9 @@ public:
 		return Thrower;
 	}
 
+	UFUNCTION(BlueprintCallable)
+	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
+
 
 protected:
 	// Called when the game starts or when spawned
@@ -124,4 +128,5 @@ private:
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	AActor* Thrower = nullptr;
 
+	
 };

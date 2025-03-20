@@ -25,30 +25,10 @@ void AIngredient::SetType_Implementation(EIngredientType Type)
 	IngredientType = Type;
 }
 
-bool AIngredient::IsCooked()
+void AIngredient::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit)
 {
-	switch (CurIngredientState)
-	{
-	case EIngredientState::EIS_FINISHED:
-	case EIngredientState::EIS_CHOPPED:
-	case EIngredientState::EIS_GRILLED:
-	case EIngredientState::EIS_FRYABED:
-	case EIngredientState::EIS_BOILED:
-		return true;
-
-	case EIngredientState::EIS_CHOPPABLE:
-	case EIngredientState::EIS_GRILLABLE:
-	case EIngredientState::EIS_FRYABLE:
-	case EIngredientState::EIS_BOILABLE:
-	case EIngredientState::EIS_NONE:
-	case EIngredientState::EIS_OVERCOOKED:
-	case EIngredientState::EIS_MAX:
-		return false;
-
-	default:
-		break;
-	}
-	return false;
+	StaticMeshComponent->SetPhysicsLinearVelocity(FVector::ZeroVector);
+	StaticMeshComponent->SetPhysicsAngularVelocityInDegrees(FVector(0.0f, 0.0f, 10.0f));
 }
 
 // Called when the game starts or when spawned
@@ -58,6 +38,7 @@ void AIngredient::BeginPlay()
 
 	// 5. 서버에서 Spawn이 되면서 Init 함수 호출
 	Init(IngredientType);
+
 }
 
 // Called every frame
@@ -121,6 +102,32 @@ void AIngredient::Offset(FVector Pos, FRotator Rot)
 {
 	AddActorLocalOffset(Pos);
 	SetActorRelativeRotation(Rot);
+}
+
+bool AIngredient::IsCooked()
+{
+	switch (CurIngredientState)
+	{
+	case EIngredientState::EIS_FINISHED:
+	case EIngredientState::EIS_CHOPPED:
+	case EIngredientState::EIS_GRILLED:
+	case EIngredientState::EIS_FRYABED:
+	case EIngredientState::EIS_BOILED:
+		return true;
+
+	case EIngredientState::EIS_CHOPPABLE:
+	case EIngredientState::EIS_GRILLABLE:
+	case EIngredientState::EIS_FRYABLE:
+	case EIngredientState::EIS_BOILABLE:
+	case EIngredientState::EIS_NONE:
+	case EIngredientState::EIS_OVERCOOKED:
+	case EIngredientState::EIS_MAX:
+		return false;
+
+	default:
+		break;
+	}
+	return false;
 }
 
 const FIngredientCookDataRow& AIngredient::CheckState(EIngredientState State)
