@@ -24,8 +24,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual ACooking* Interact(AActor* ChefActor) override;
 
-	UFUNCTION(BlueprintCallable)
-	virtual void PlaceItem(ACooking* Item) override;
+	//UFUNCTION(BlueprintCallable)
+	//virtual void PlaceItem(ACooking* Item) override;
 
 	/*UFUNCTION(BlueprintCallable)
 	void BoilThePot(AActor* ChefActor);*/

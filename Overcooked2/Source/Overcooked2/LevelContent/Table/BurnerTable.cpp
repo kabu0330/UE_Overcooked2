@@ -23,29 +23,38 @@ void ABurnerTable::Tick(float DeltaTime)
 
 ACooking* ABurnerTable::Interact(AActor* ChefActor)
 {
-	if (false == bIsOccupied) // 테이블이 비어있다.
+	AOC2Character* Chef = Cast<AOC2Character>(ChefActor);
+	ACooking* TempCooking = nullptr;
+
+	if (CookingPtr != nullptr && false == Chef->IsHolding()) // 음식 있음, 셰프 빈 손
 	{
+		TempCooking = CookingPtr;
 		CookingPtr = nullptr;
-		//BPlacedItem = nullptr;
+		return TempCooking;
 	}
-
-	return CookingPtr;
-}
-
-void ABurnerTable::PlaceItem(ACooking* Item)
-{
-	ACooking* TempCooking = Item;
-
-	if (true == CookingPtr->IsCookingType(ECookingType::ECT_POT))
+	else
 	{
-		FVector OnTheTable = GetActorLocation() + FVector{ (0.0f, 0.0f, 100.0f) };
-		TempCooking->SetActorLocation(OnTheTable);
-		CookingPtr = TempCooking;
-
-		APot* TempPot = Cast<APot>(CookingPtr);
-		//TempPot->SetOnTable(true);
+		return CookingPtr;
 	}
 }
+
+//void ABurnerTable::PlaceItem(ACooking* Item)
+//{
+//	ACooking* TempCooking = Item;
+//	ACookingTable::PlaceItem(Item);
+//	CookingPtr = TempCooking;
+//
+//	if (true == CookingPtr->IsCookingType(ECookingType::ECT_POT))
+//	{
+//		/*FVector OnTheTable = GetActorLocation() + FVector{ (0.0f, 0.0f, 100.0f) };
+//		TempCooking->SetActorLocation(OnTheTable);*/
+//		/*CookingPtr = TempCooking;
+//		ACookingTable::PlaceItem(Item);*/
+//
+//		APot* TempPot = Cast<APot>(CookingPtr);
+//		//TempPot->SetOnTable(true);
+//	}
+//}
 
 //void ABurnerTable::BoilThePot(AActor* ChefActor)
 //{
