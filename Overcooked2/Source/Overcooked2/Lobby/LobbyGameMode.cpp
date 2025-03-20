@@ -20,6 +20,16 @@ void ALobbyGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
+	//UOC2GameInstance* GameInstance = Cast<UOC2GameInstance>(GetGameInstance());
+
+	//if (GameInstance != nullptr)
+	//{
+	//	UE_LOG(LogTemp, Log, TEXT("GameInstance 가져오기 성공!"));
+
+	//	GameInstance->SetChefHeadName(ChefHeadNames[CurIdx]);
+	//	CurIdx++;
+	//}
+
 }
 
 void ALobbyGameMode::Tick(float DeltaTime)
