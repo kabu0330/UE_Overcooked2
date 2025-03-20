@@ -7,6 +7,7 @@
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
 #include "Components/Widget.h"
+#include "Components/Image.h"
 #include "Components/CanvasPanel.h"
 #include "Components/CanvasPanelSlot.h"
 
@@ -49,6 +50,29 @@ void ULobbyUserWidget::Ready()
     if (GetWorld()->GetAuthGameMode()) // 서버에서는 실행 안 함
     {
         return;
+    }
+
+}
+
+
+void ULobbyUserWidget::SetUserTexture(UTexture2D* Texture, int Index)
+{
+
+    UImage* PlayersImage = FindChildWidget<UImage>("Player_" + FString::FromInt(Index), LobbyCanvasPanel);
+    if (PlayersImage == nullptr) return;
+
+    if (Texture != nullptr)
+    {
+        UTexture2D* PlayerTexture = Texture;
+
+        PlayersImage->SetBrushFromTexture(PlayerTexture);
+    }
+    else
+    {
+        FString texturepath = TEXT("/Game/Resources/UI/Lobby/t_ui_multi_kitchen_gamer_tag_1_d.t_ui_multi_kitchen_gamer_tag_1_d");
+        UTexture2D* texture = Cast<UTexture2D>(StaticLoadObject(UTexture2D::StaticClass(), nullptr, *texturepath));
+
+        PlayersImage->SetBrushFromTexture(texture);
     }
 
 }
