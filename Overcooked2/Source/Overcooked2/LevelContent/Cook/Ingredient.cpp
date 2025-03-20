@@ -39,8 +39,6 @@ void AIngredient::BeginPlay()
 	// 5. 서버에서 Spawn이 되면서 Init 함수 호출
 	Init(IngredientType);
 
-	
-	//StaticMeshComponent->OnComponentHit.Add(&AIngredient::OnHit);
 }
 
 // Called every frame

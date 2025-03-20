@@ -14,4 +14,14 @@ class OVERCOOKED2_API AOC2Map : public AOC2Actor
 {
 	GENERATED_BODY()
 	
+public:
+	AOC2Map();
+
+protected:
+	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
+
+private:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	USkeletalMeshComponent* SkeletalMeshComponent = nullptr;
 };
