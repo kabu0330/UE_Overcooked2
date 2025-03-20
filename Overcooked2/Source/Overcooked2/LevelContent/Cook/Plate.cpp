@@ -85,6 +85,15 @@ void APlate::SetPlateState_Implementation(EPlateState State)
 	SetMesh();
 }
 
+void APlate::CleanPlate_Implementation()
+{
+	PlateState = EPlateState::EMPTY;
+	IngredientMesh = nullptr;
+	Ingredients.Empty();
+	TextureBillboards.Empty();
+	bIsCombinationSuccessful = false;
+}
+
 void APlate::SetMesh()
 {
 	UTexture* Texture = nullptr;

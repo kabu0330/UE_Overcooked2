@@ -16,6 +16,7 @@ AIngredient::AIngredient()
 
 	CookingType = ECookingType::ECT_INGREDIENT;
 
+	//StaticMeshComponent->OnComponentBeginOverlap.AddDynamic(this, &AIngredient::OnOverlapBegin);
 }
 
 void AIngredient::SetType_Implementation(EIngredientType Type)
@@ -25,11 +26,21 @@ void AIngredient::SetType_Implementation(EIngredientType Type)
 	IngredientType = Type;
 }
 
-void AIngredient::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit)
+
+void AIngredient::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit)
 {
+	TArray<FName> OtherComponentTags = OtherComponent->ComponentTags;
+ 	if (nullptr != OtherActor && true == OtherComponent->ComponentHasTag(TEXT("Floor")))
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, TEXT("재료와 바닥 충돌"));
+		//StaticMeshComponent->BodyInstance.bLockXRotation = true;
+		StaticMeshComponent->BodyInstance.bLockYRotation = true;
+		StaticMeshComponent->BodyInstance.bLockZRotation = true;
+		//StaticMeshComponent->SetSimulatePhysics(false);
+	}
 	StaticMeshComponent->SetPhysicsLinearVelocity(FVector::ZeroVector);
-	StaticMeshComponent->SetPhysicsAngularVelocityInDegrees(FVector(0.0f, 0.0f, 10.0f));
 }
+
 
 // Called when the game starts or when spawned
 void AIngredient::BeginPlay()
@@ -71,7 +82,8 @@ AIngredient* AIngredient::Init(EIngredientType Type)
 	CurIngredientState = IngredientDataTable->StateRows[0].PrevIngredientState;
 
 	// 3). Offset
-	FVector Location = IngredientDataTable->Location;
+	//FVector Location = IngredientDataTable->Location;
+	FVector Location = FVector::ZeroVector;
 	FRotator Rotation = IngredientDataTable->Rotation;
 	Offset(Location, Rotation);
 
@@ -100,7 +112,7 @@ void AIngredient::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifet
 
 void AIngredient::Offset(FVector Pos, FRotator Rot)
 {
-	AddActorLocalOffset(Pos);
+	SetActorRelativeLocation(Pos);
 	SetActorRelativeRotation(Rot);
 }
 

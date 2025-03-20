@@ -22,6 +22,5 @@ protected:
 	virtual void Tick(float DeltaTime) override;
 
 private:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
-	USkeletalMeshComponent* SkeletalMeshComponent = nullptr;
+
 };
