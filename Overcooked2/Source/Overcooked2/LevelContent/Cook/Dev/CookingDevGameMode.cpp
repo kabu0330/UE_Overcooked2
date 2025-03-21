@@ -8,6 +8,7 @@
 #include <Global/OC2Global.h>
 #include <LevelContent/Cook/Plate.h>
 
+
 ACookingDevGameMode::ACookingDevGameMode()
 {
 	CookingObjectManager = CreateDefaultSubobject<UCookingObjectManager>(TEXT("CookingObjectManager"));
@@ -91,6 +92,9 @@ void ACookingDevGameMode::CleanPlate()
 void ACookingDevGameMode::BeginPlay()
 {
 	Super::BeginPlay();
+
+	APot* NewPot = GetWorld()->SpawnActor<APot>(Pot);
+	NewPot->SetActorLocation(FVector(-300, 0, 10));
 }
 
 void ACookingDevGameMode::Tick(float DeltaTime)

@@ -34,7 +34,7 @@ APlate::APlate()
 	}
 
 	// Debug
-	SetActorLocation(FVector(0.0f, -200.0f, 10.0f));
+	//SetActorLocation(FVector(0.0f, -200.0f, 10.0f));
 }
 
 void APlate::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

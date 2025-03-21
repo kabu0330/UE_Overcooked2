@@ -77,10 +77,10 @@ private:
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
-	UTexture* CleanTexture;
+	UTexture* CleanTexture = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
-	UTexture* DirtyTexture;
+	UTexture* DirtyTexture = nullptr;
 
 	UPROPERTY(Replicated)
 	bool bIsCombinationSuccessful = false;

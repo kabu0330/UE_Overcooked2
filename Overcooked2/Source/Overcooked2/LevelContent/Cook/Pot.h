@@ -48,7 +48,7 @@ protected:
 
 	void Cook(float DeltaTime);
 
-	void ChangeAnimation();
+	void ChangeState();
 	void ChangeMaterialColor();
 
 
@@ -73,6 +73,7 @@ private:
 	UPROPERTY(Replicated)
 	bool bIsRiceInPot = false;
 	
+	UPROPERTY(Replicated)
 	float TimeElapsed = 0.0f;
 
 	UPROPERTY(Replicated)
