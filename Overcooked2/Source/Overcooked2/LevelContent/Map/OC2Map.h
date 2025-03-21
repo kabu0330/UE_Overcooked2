@@ -10,7 +10,7 @@
  * 
  */
 UCLASS()
-class OVERCOOKED2_API AOC2Map : public AOC2Actor
+class OVERCOOKED2_API AOC2Map : public AActor
 {
 	GENERATED_BODY()
 	
@@ -22,5 +22,6 @@ protected:
 	virtual void Tick(float DeltaTime) override;
 
 private:
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	UStaticMeshComponent* StaticMeshComponent = nullptr;
 };

@@ -11,12 +11,32 @@ AOC2Actor::AOC2Actor()
 	SecenComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SecenComponent"));
 	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
 	RootComponent = StaticMeshComponent;
+
+	bReplicates = true;
 	
 	//StaticMeshComponent->SetupAttachment(RootComponent);
 }
 
 void AOC2Actor::InitOC2Actor()
 {
+}
+
+void AOC2Actor::SetHighlight_Implementation(bool Value)
+{
+	bIsHighlighted = Value;
+	OnRep_Highlight();
+}
+
+void AOC2Actor::OnRep_Highlight()
+{
+	if (bIsHighlighted)
+	{
+		ApplyMaterialHighlight();
+	}
+	else
+	{
+		RestoreMaterial();
+	}
 }
 
 void AOC2Actor::RequestOC2ActorDestroy()
@@ -46,6 +66,7 @@ void AOC2Actor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetim
 
 	DOREPLIFETIME(AOC2Actor, SecenComponent);
 	DOREPLIFETIME(AOC2Actor, StaticMeshComponent);
+	DOREPLIFETIME(AOC2Actor, bIsHighlighted);
 }
 
 void AOC2Actor::BeginPlay()
@@ -60,7 +81,6 @@ void AOC2Actor::BeginPlay()
 		return;
 	}
 
-	float HighlightValue = 5.0f;
 	int Count = 0;
 
 	for (UMeshComponent* Mesh : MeshComponents)
@@ -96,7 +116,7 @@ void AOC2Actor::Tick(float DeltaTime)
 
 }
 
-void AOC2Actor::ApplyMaterialHighlight_Implementation()
+void AOC2Actor::ApplyMaterialHighlight()
 {
 	TArray<UMeshComponent*> MeshComponents;
 	GetComponents<UMeshComponent>(MeshComponents);
@@ -106,7 +126,6 @@ void AOC2Actor::ApplyMaterialHighlight_Implementation()
 		return;
 	}
 
-	float HighlightValue = 5.0f;
 	int Count = 0;
 
 	for (UMeshComponent* Mesh : MeshComponents)
@@ -153,7 +172,7 @@ void AOC2Actor::ApplyMaterialHighlight_Implementation()
 	bIsHighlighted = true;
 }
 
-void AOC2Actor::RestoreMaterial_Implementation()
+void AOC2Actor::RestoreMaterial()
 {
 	TArray<UMeshComponent*> MeshComponents;
 	GetComponents<UMeshComponent>(MeshComponents);

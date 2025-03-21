@@ -5,6 +5,8 @@
 #include "EnhancedInputComponent.h"
 #include "OC2CharacterTestTable.h"
 #include "OC2CharacterTestChoppingTable.h"
+#include "LevelContent/Table/ChoppingTable.h"
+#include "LevelContent/Table/NonTable/GarbageCan.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Net/UnrealNetwork.h"
 
@@ -77,6 +79,9 @@ void AOC2Character::BeginPlay()
 
 	//CheckOverlap->OnComponentHit.AddDynamic(this, &AOC2Character::OnHit);
 	CheckOverlap->OnComponentBeginOverlap.AddDynamic(this, &AOC2Character::OnOverlapCheck);
+
+	Plane->SetVisibility(IsLocallyControlled());
+
 	// 임시 :
 	//SetCharacterHead("Alien_Green");
 
@@ -241,6 +246,14 @@ void AOC2Character::Interact_Implementation()
 			}
 		}
 		//만약 이 액터가 테이블인 경우 ???(여기가 제일 어려움)
+		if (SelectedOC2Actor->IsA(AGarbageCan::StaticClass()))
+		{
+			APlate* Plate = Cast<APlate>(GrabbedObject);
+			if (Plate)
+			{
+				Plate->SetPlateState(EPlateState::EMPTY);
+			}
+		}
 		if (SelectedOC2Actor->IsA(ACookingTable::StaticClass()))
 		{
 			auto Table = Cast<ACookingTable>(SelectedOC2Actor);
@@ -279,7 +292,7 @@ void AOC2Character::Grab_Implementation(ACooking* Cook)
 	if (DataTable)
 	{
 		GrabbedObject->SetActorRelativeRotation(DataTable->Rotation);
-		GrabbedObject->SetActorRelativeLocation(DataTable->Location);
+		GrabbedObject->SetActorLocation(GrabComponent->GetComponentTransform().TransformPosition(DataTable->Location));
 	}
 }
 
@@ -297,7 +310,7 @@ void AOC2Character::Drop_Implementation()
 		{
 			GrabbedObject->SetActorRotation(DataTable->Rotation);
 		}
-		
+
 		GrabbedObject->SetActorLocation(GrabComponent->GetComponentLocation());
 		GrabbedObject = nullptr;
 	}
@@ -318,9 +331,9 @@ void AOC2Character::DoActionPress_Implementation()
 	}
 	else
 	{
-		if (SelectedOC2Actor->IsA(AOC2CharacterTestChoppingTable::StaticClass()))
+		if (SelectedOC2Actor->IsA(AChoppingTable::StaticClass()))
 		{
-			auto Table = Cast<AOC2CharacterTestChoppingTable>(SelectedOC2Actor);
+			AChoppingTable* Table = Cast<AChoppingTable>(SelectedOC2Actor);
 			Chopping(true);
 		}
 	}
@@ -362,7 +375,7 @@ void AOC2Character::Throwing_Implementation()
 		// 6️⃣ 잡고 있던 객체 초기화
 		bCanThrowing = false;
 		GrabbedObject = nullptr;
-		
+
 	}
 
 }
@@ -372,10 +385,8 @@ void AOC2Character::Chopping_Implementation(bool State)
 	bIsChopping = State;
 	OnRep_KnifeSet();
 
-	if (SelectedOC2Actor != nullptr)
-	{
-		return;
-	}
+
+	
 }
 
 void AOC2Character::CheckInteract()
@@ -424,7 +435,7 @@ void AOC2Character::CheckInteract()
 		{
 			if (ClosestActor != SelectedOC2Actor)
 			{
-				SelectedOC2Actor->RestoreMaterial();
+				SelectedOC2Actor->SetHighlight(false);
 			}
 			//UMaterialInstanceDynamic* DynamicMat = Mesh->CreateDynamicMaterialInstance(0);
 			//if (DynamicMat)
@@ -435,7 +446,7 @@ void AOC2Character::CheckInteract()
 		SelectedOC2Actor = ClosestActor;
 		if (!SelectedOC2Actor->IsHighlighted())
 		{
-			SelectedOC2Actor->ApplyMaterialHighlight();
+			SelectedOC2Actor->SetHighlight(true);
 		}
 		//SelectedOC2Actor->Highlight();
 	}
@@ -444,7 +455,7 @@ void AOC2Character::CheckInteract()
 		if (SelectedOC2Actor != nullptr)
 		{
 			//Cast<AOC2CharacterTestTable>(SelectedOC2Actor)->OffHighlight();
-			SelectedOC2Actor->RestoreMaterial();
+			SelectedOC2Actor->SetHighlight(false);
 		}
 		SelectedOC2Actor = nullptr;
 	}
@@ -495,16 +506,16 @@ void AOC2Character::OnOverlapCheck_Implementation(UPrimitiveComponent* Overlappe
 				auto DataTable = Ingredient->GetIngredientDataTable();
 				if (DataTable)
 				{
-					GrabbedObject->SetActorRelativeRotation(DataTable->Rotation);
-					GrabbedObject->SetActorRelativeLocation(DataTable->Location);
+					Ingredient->SetActorRelativeRotation(DataTable->Rotation);
+					Ingredient->SetActorRelativeLocation(DataTable->Location);
 				}
 				Ingredient->SetThrowing(false);
 				GrabbedObject = Ingredient;
 				FVector Dir = SweepResult.ImpactPoint - GetActorLocation();
 				Dir.Z = 0;
-				
+
 				SetActorRotation(-GetActorRotation().Quaternion());
-				
+
 			}
 		}
 	}

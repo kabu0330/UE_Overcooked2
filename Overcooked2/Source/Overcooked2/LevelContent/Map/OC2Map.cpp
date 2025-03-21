@@ -8,6 +8,8 @@ AOC2Map::AOC2Map()
 	FVector Scale(100.0f, 100.0f, 100.0f);
 	SetActorRelativeScale3D(Scale);
 
+	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>("StaticMesh");
+	RootComponent = StaticMeshComponent;
 	StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	//StaticMeshComponent->SetCollisionResponseToChannels
 	StaticMeshComponent->ComponentTags.Add(TEXT("Floor"));
@@ -15,10 +17,10 @@ AOC2Map::AOC2Map()
 
 void AOC2Map::BeginPlay()
 {
-	AOC2Actor::BeginPlay();
+	Super::BeginPlay();
 }
 
 void AOC2Map::Tick(float DeltaTime)
 {
-	AOC2Actor::Tick(DeltaTime);
+	Super::Tick(DeltaTime);
 }
