@@ -13,5 +13,11 @@ UCLASS()
 class OVERCOOKED2_API ASinkTable : public ACookingTable
 {
 	GENERATED_BODY()
-	
+
+public:
+	ASinkTable();
+
+	virtual void BeginPlay() override;
+
+	virtual void Tick(float DeltaTime) override;
 };
