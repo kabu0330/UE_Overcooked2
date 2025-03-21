@@ -17,26 +17,26 @@ class OVERCOOKED2_API UTitleMenuWidget : public UTitleWidget
 public:
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
-	class UCanvasPanel* StoryPanel;
+	class UCanvasPanel* StoryPanel = nullptr;
 
 
 protected:
 	virtual void NativeOnInitialized() override;
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
-	class UButton* StoryButton;
+	class UButton* StoryButton = nullptr;
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
-	class UButton* ArcadeButton;
+	class UButton* ArcadeButton = nullptr;
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
-	class UButton* BattleButton;
+	class UButton* BattleButton = nullptr;
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
-	class UButton* ChefButton;
+	class UButton* ChefButton = nullptr;
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
-	class UButton* OptionButton;
+	class UButton* OptionButton = nullptr;
 
 private:
 	TArray<class UButton*> Buttons;
@@ -44,7 +44,7 @@ private:
 	UFUNCTION(BlueprintCallable, Category = "OC2UI")
 	void HoverButton();
 
-	class UCanvasPanel* CurPanel;
+	class UCanvasPanel* CurPanel = nullptr;
 
 
 	void UpdateMenuPosition();
