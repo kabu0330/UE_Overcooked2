@@ -10,6 +10,7 @@ APot::APot()
 {
 	PrimaryActorTick.bCanEverTick = true;
 	bReplicates = true;
+
 	SetReplicateMovement(true);
 
 	CookingType = ECookingType::ECT_POT;
@@ -18,16 +19,10 @@ APot::APot()
 	SoupSkeletalMeshComponent->SetupAttachment(StaticMeshComponent);
 	SoupSkeletalMeshComponent->SetIsReplicated(true);
 
-
-
 	UMaterialInstanceDynamic* MaterialInstanceDynamic = Cast<UMaterialInstanceDynamic>(StaticMeshComponent->GetMaterial(0));
-
 
 	FVector Pos = FVector(249, 1452, 60);
 	StaticMeshComponent->SetRelativeLocation(Pos);
-
-
-
 }
 
 void APot::BeginPlay()
@@ -40,7 +35,7 @@ void APot::Tick(float DeltaTime)
 {
 	ACooking::Tick(DeltaTime);
 	Cook(DeltaTime);
-	ChangeAnimation();
+	ChangeState();
 	ChangeMaterialColor();
 }
 
@@ -53,17 +48,17 @@ void APot::Cook(float DeltaTime)
 	TimeElapsed += DeltaTime;
 }
 
-void APot::ChangeAnimation()
+void APot::ChangeState()
 {
-	if (PrevPotState == PotState)
+	if (true)
 	{
-		return;
+
 	}
 
 	switch (PotState)
 	{
 	case EPotState::IDLE:
-		
+
 		break;
 	case EPotState::HEATING:
 		break;
