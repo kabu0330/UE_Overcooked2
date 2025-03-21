@@ -18,6 +18,7 @@ class OVERCOOKED2_API UTitleSubmenuWidget : public UTitleWidget
 public:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
 	class UCanvasPanel* IP_Panel;
+
 	UFUNCTION(BlueprintCallable, Category = "OC2UI")
 	void MoveBanner();
 protected:

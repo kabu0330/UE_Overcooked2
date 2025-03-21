@@ -9,6 +9,16 @@
 #include "Components/Button.h"
 #include "UI/Title/TitleSubmenuWidget.h"
 
+
+
+void UTitleWidget::NativeOnInitialized()
+{
+    Super::NativeOnInitialized();
+
+
+
+}
+
 void UTitleWidget::StartServer()
 {
 	UOC2Global::StartServer(GetWorld(), Port, LevelName);

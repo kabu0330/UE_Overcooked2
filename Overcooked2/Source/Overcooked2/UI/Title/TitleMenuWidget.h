@@ -29,11 +29,27 @@ protected:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
 	class UButton* ArcadeButton;
 
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
+	class UButton* BattleButton;
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
+	class UButton* ChefButton;
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
+	class UButton* OptionButton;
+
 private:
 	TArray<class UButton*> Buttons;
 
 	UFUNCTION(BlueprintCallable, Category = "OC2UI")
-	void OnButtonHovered();
+	void HoverButton();
+
+	class UCanvasPanel* CurPanel;
+
+
+	void UpdateMenuPosition();
+	FTimerHandle MenuMoveTimerHandle;
+	float MenuMoveOffset = 10.0f;
 
 	template <typename T>
 	T* FindChildWidget(const FString& name, class UCanvasPanel* canvas);
