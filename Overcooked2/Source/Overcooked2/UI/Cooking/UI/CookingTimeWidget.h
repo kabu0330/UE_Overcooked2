@@ -16,10 +16,10 @@ class OVERCOOKED2_API UCookingTimeWidget : public UUserWidget
 public:
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
-	class UTextBlock* Time;
+	class UTextBlock* Time = nullptr;
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
-	class UProgressBar* TimeProgressBar;
+	class UProgressBar* TimeProgressBar = nullptr;
 
 	UFUNCTION(BlueprintCallable, Category = "OC2UI")
 	void SetbIsStart(bool Value)

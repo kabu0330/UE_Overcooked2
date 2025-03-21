@@ -32,23 +32,23 @@ public:
 
     // UI 바인딩 (총 5개의 주문 슬롯)
     UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
-    class UCanvasPanel* Order_0;
+    class UCanvasPanel* Order_0 = nullptr;
 
     UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
-    class UCanvasPanel* Order_1;
+    class UCanvasPanel* Order_1 = nullptr;
 
     UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
-    class UCanvasPanel* Order_2;
+    class UCanvasPanel* Order_2 = nullptr;
 
     UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
-    class UCanvasPanel* Order_3;
+    class UCanvasPanel* Order_3 = nullptr;
 
     UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
-    class UCanvasPanel* Order_4;
+    class UCanvasPanel* Order_4 = nullptr;
 
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OC2UI")
-    UCurveFloat* ColorCurve;
+    UCurveFloat* ColorCurve = nullptr;
 
 protected:
     virtual void NativeOnInitialized() override;
@@ -63,7 +63,7 @@ protected:
 
 
 private:
-    class UCookingScoreWidget* CookingScoreWidget;
+    class UCookingScoreWidget* CookingScoreWidget = nullptr;;
 
     // 주문 관련 변수
     int CompleteOrderNum = 0;
@@ -94,8 +94,6 @@ private:
     FTimerHandle OpacityTimerHandle;
     FTimerHandle MoveTimerHandle;
     FTimerHandle IngredientTimerHandle;
-
-    class UTimeEventComponent* TimeEvent;
 
 
     // 내부 함수
