@@ -11,7 +11,6 @@ AIngredient::AIngredient()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	bReplicates = true;
-	//SetReplicates(true);
 	SetReplicateMovement(true);
 
 	CookingType = ECookingType::ECT_INGREDIENT;
@@ -32,12 +31,12 @@ void AIngredient::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* Othe
 	TArray<FName> OtherComponentTags = OtherComponent->ComponentTags;
  	if (nullptr != OtherActor && true == OtherComponent->ComponentHasTag(TEXT("Floor")))
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, TEXT("재료와 바닥 충돌"));
+		//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, TEXT("재료와 바닥 충돌"));
 		//StaticMeshComponent->BodyInstance.bLockXRotation = true;
 		StaticMeshComponent->BodyInstance.bLockYRotation = true;
 		StaticMeshComponent->BodyInstance.bLockZRotation = true;
-		//StaticMeshComponent->SetSimulatePhysics(false);
 	}
+
 	StaticMeshComponent->SetPhysicsLinearVelocity(FVector::ZeroVector);
 }
 
@@ -77,12 +76,10 @@ AIngredient* AIngredient::Init(EIngredientType Type)
 
 	// 2). Setting
 	StaticMeshComponent->SetStaticMesh(GameInst->GetIngredientStaticMesh(Name.ToString()));
-	//StaticMeshComponent->SetStaticMesh(IngredientDataTable->BaseMesh);
 	IngredientType = IngredientDataTable->IngredientType;
 	CurIngredientState = IngredientDataTable->StateRows[0].PrevIngredientState;
 
 	// 3). Offset
-	//FVector Location = IngredientDataTable->Location;
 	FVector Location = FVector::ZeroVector;
 	FRotator Rotation = IngredientDataTable->Rotation;
 	Offset(Location, Rotation);
