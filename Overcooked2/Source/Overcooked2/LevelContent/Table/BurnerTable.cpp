@@ -52,7 +52,6 @@ void ABurnerTable::PlaceItem(ACooking* Item)
 		CookingPtr->SetCookingTable_Implementation(this);
 		APot* TempPot = Cast<APot>(CookingPtr);
 
-		//TempPot->SetOnTable(true);
 		//냄비의 음식물이 Boilable이면 바로 BoilThePot();
 	}
 }

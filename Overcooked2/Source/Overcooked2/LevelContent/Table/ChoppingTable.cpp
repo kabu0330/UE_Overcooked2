@@ -7,7 +7,7 @@
 
 AChoppingTable::AChoppingTable()
 {
-
+	
 }
 
 void AChoppingTable::BeginPlay()
@@ -22,6 +22,16 @@ void AChoppingTable::Tick(float DeltaTime)
 	if (true == bTimerActivated)
 	{
 		TimerUpdate(DeltaTime);
+
+		if (Timer < 0)
+		{
+			bChoppingDone = true;
+		}
+	}
+
+	if (bChoppingDone == true)
+	{
+		ChoppingIsDone();
 	}
 }
 
@@ -51,23 +61,26 @@ void AChoppingTable::ChopIngredient(AActor* ChefActor)
 		{
 			AIngredient* PlacedIngredient = Cast<AIngredient>(CookingPtr);
 
-			if (true == PlacedIngredient->IsChoppable())
+			//if (true == PlacedIngredient->IsChoppable())
 			{
 				Timer = 2.0f;
-
-				while (Timer > 0)
-				{
-					bTimerActivated = true;
-					GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Magenta, "Chopping...");
-				}
-
-				bTimerActivated = false;
-				PlacedIngredient->ChangeState(EIngredientState::EIS_CHOPPED);
-				GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Turquoise, "Chopping Done");
-				CookingPtr = Cast<ACooking>(PlacedIngredient);
+				bTimerActivated = true;
+				GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Magenta, "Chopping...");
 			}
 		}
 	}
+}
+
+void AChoppingTable::ChoppingIsDone()
+{
+	bTimerActivated = false;
+
+	AIngredient* PlacedIngredient = Cast<AIngredient>(CookingPtr);
+	PlacedIngredient->ChangeState(EIngredientState::EIS_CHOPPED);
+	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Turquoise, "Chopping Done");
+	CookingPtr = Cast<ACooking>(PlacedIngredient);
+
+	bChoppingDone = false;
 }
 
 void AChoppingTable::TimerUpdate(float DeltaTime)

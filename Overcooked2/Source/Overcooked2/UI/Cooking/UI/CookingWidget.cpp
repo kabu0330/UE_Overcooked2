@@ -110,14 +110,13 @@ void UCookingWidget::OrderComplete(int Index)
 
         if (CookingScoreWidget != nullptr)
         {
-            CookingScoreWidget->PlayCoinAnimation();
+            // test
+            int testnum = 23;
+            CookingScoreWidget->PlayOderCompleteAnimation(testnum);
         }
-       
 
-       
         GetWorld()->GetTimerManager().SetTimer(OpacityTimerHandle, this, &UCookingWidget::UpdateImageOpacity, 0.01f, true);
     }
-
 }
 
 void UCookingWidget::CreateNewOrder(FOrder& Order)
