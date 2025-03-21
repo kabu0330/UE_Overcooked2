@@ -23,10 +23,10 @@ struct FCharacterData
 	~FCharacterData() {}
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character")
-	UMaterialInterface* Material;
+	UMaterialInterface* Material = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character")
-	int32 MaterialIndex;
+	int32 MaterialIndex = 0;
 };
 
 UCLASS()
