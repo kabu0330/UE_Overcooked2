@@ -3,3 +3,17 @@
 
 #include "LevelContent/Table/NonTable/PlateSpawner.h"
 
+APlateSpawner::APlateSpawner()
+{
+
+}
+
+void APlateSpawner::BeginPlay()
+{
+	Super::BeginPlay();
+}
+
+void APlateSpawner::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+}

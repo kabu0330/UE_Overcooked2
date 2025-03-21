@@ -27,6 +27,14 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void ChopIngredient(AActor* ChefActor);
 
+	void ChoppingIsDone();
+
+	bool IsChoppingDone()
+	{
+		return bChoppingDone;
+	}
+
+	UFUNCTION(BlueprintCallable)
 	void TimerUpdate(float DeltaTime);
 
 	UFUNCTION(BlueprintCallable)
@@ -38,9 +46,8 @@ public:
 protected:
 
 private:
-	ACooking* CPlacedItem = nullptr;
-
 	float Timer = 0.0f;
 	float CurTime = 0.0f;
 	bool bTimerActivated = false;
+	bool bChoppingDone = false;
 };

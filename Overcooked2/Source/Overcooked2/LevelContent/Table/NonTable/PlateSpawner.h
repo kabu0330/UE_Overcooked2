@@ -13,5 +13,11 @@ UCLASS()
 class OVERCOOKED2_API APlateSpawner : public ACookingTable
 {
 	GENERATED_BODY()
-	
+
+public:
+	APlateSpawner();
+
+	virtual void BeginPlay() override;
+
+	virtual void Tick(float DeltaTime) override;
 };
