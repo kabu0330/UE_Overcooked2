@@ -44,7 +44,7 @@ void UCookingWidget::NativeOnInitialized()
         CookingScoreWidget = Cast<UCookingScoreWidget>(CreateWidget(GetWorld(), ScoreSubWidget));
         UCookingTimeWidget* CookingTimerWidget = Cast<UCookingTimeWidget>(CreateWidget(GetWorld(), TimeSubWidget));
 
-        if (CookingScoreWidget != nullptr && CookingScoreWidget != nullptr)
+        if (CookingScoreWidget != nullptr && CookingTimerWidget != nullptr)
         {
             CookingScoreWidget->AddToViewport();
             CookingTimerWidget->AddToViewport();

@@ -13,18 +13,18 @@ void UTitleMenuWidget::NativeOnInitialized()
 {
     Super::NativeOnInitialized();
 
-    Buttons.SetNum(2);
-    Buttons = { StoryButton, ArcadeButton };
+    Buttons.SetNum(5);
+    Buttons = { StoryButton, ArcadeButton, BattleButton, ChefButton, OptionButton };
 
     for (int i = 0; i < Buttons.Num(); i++)
     {
-        Buttons[i]->OnHovered.AddDynamic(this, &UTitleMenuWidget::OnButtonHovered);
+        Buttons[i]->OnHovered.AddDynamic(this, &UTitleMenuWidget::HoverButton);
     }
 
 }
 
 
-void UTitleMenuWidget::OnButtonHovered()
+void UTitleMenuWidget::HoverButton()
 {
     for (UButton* Button : Buttons)
     {
@@ -34,15 +34,36 @@ void UTitleMenuWidget::OnButtonHovered()
             if (Panel)
             {
                 Panel->SetVisibility(ESlateVisibility::Visible);
+                if (CurPanel != Panel)
+                {
+                    CurPanel = Panel;
+                    GetWorld()->GetTimerManager().ClearTimer(MenuMoveTimerHandle);
+                    GetWorld()->GetTimerManager().SetTimer(MenuMoveTimerHandle, this, &UTitleMenuWidget::UpdateMenuPosition, 0.01f, true);
+                }
+
             }
         }
         else
         {
             Panel->SetVisibility(ESlateVisibility::Hidden);
+            Panel->SetRenderTranslation({0.0f, -82.0f});
         }
     }
 }
+void UTitleMenuWidget::UpdateMenuPosition()
+{
+    if (CurPanel->GetRenderTransform().Translation.Y >= 0)
+    {
+        CurPanel->SetRenderTranslation({ 0.0f, 0.0f });
 
+        GetWorld()->GetTimerManager().ClearTimer(MenuMoveTimerHandle);
+    }
+    else
+    {
+        float CurPos = CurPanel->GetRenderTransform().Translation.Y;
+        CurPanel->SetRenderTranslation({ 0.0f, CurPos + MenuMoveOffset });
+    }
+}
 
 
 template <typename T>
