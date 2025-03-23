@@ -46,11 +46,21 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 
+	UMaterialInstanceDynamic* LoadNoneMaterial();
 	void Cook(float DeltaTime);
 
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
 	void ChangeState();
+	void ChangeState_Implementation();
+
 	void ChangeMaterialColor();
 
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	void SetSoupMaterial();
+	void SetSoupMaterial_Implementation();
+
+	UFUNCTION(BlueprintCallable)
+	void ChangeNoneMaterial();
 
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
 
@@ -63,6 +73,9 @@ private:
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowprivateAccess = "true"))
 	TArray<UMaterialInstanceDynamic*> SoupDynamicMaterial;
+
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowprivateAccess = "true"))
+	UMaterialInstanceDynamic* NoneMaterial = nullptr;
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowprivateAccess = "true"))
 	EPotState PotState = EPotState::IDLE;

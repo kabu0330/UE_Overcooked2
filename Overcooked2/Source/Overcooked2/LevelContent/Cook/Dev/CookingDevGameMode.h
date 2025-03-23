@@ -51,6 +51,8 @@ public:
 		CookingObjectManager->GetPlates().Add(Plate);
 	}
 
+	void PlaceOnThePot();
+
 	void Wash();
 
 	void Reset()
@@ -70,6 +72,9 @@ private:
 	UCookingObjectManager* CookingObjectManager = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<APot> Pot = nullptr;
+	TSubclassOf<APot> SubclassPot = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	APot* Pot = nullptr;
 
 };

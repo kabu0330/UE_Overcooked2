@@ -32,6 +32,9 @@ public:
 	void PlaceOnthePlate();
 
 	UFUNCTION(BlueprintCallable)
+	void PlaceOnthePot();
+
+	UFUNCTION(BlueprintCallable)
 	void Wash();
 
 

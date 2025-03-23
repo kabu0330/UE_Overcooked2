@@ -69,6 +69,28 @@ void ACookingDevGameMode::PlaceOnthePlate()
 	int a = 0;
 }
 
+void ACookingDevGameMode::PlaceOnThePot()
+{
+	TArray<AIngredient*>& Ingredients = CookingObjectManager->GetIngredients();
+
+	if (true == Ingredients.IsEmpty())
+	{
+		return;
+	}
+	AIngredient* TargetIngredient = Ingredients[0];
+
+	if (nullptr != Pot)
+	{
+		if (EIngredientType::EIT_RICE == TargetIngredient->GetIngredientType() && EIngredientState::EIS_BOILABLE == TargetIngredient->GetCurIngredientState())
+		{
+			Ingredients.RemoveAt(0);
+		}
+
+		Pot->Add(TargetIngredient);
+	}
+
+}
+
 void ACookingDevGameMode::Wash()
 {
 	TArray<APlate*>& Plates = CookingObjectManager->GetPlates();
@@ -93,8 +115,13 @@ void ACookingDevGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
-	APot* NewPot = GetWorld()->SpawnActor<APot>(Pot);
-	NewPot->SetActorLocation(FVector(-300, 0, 10));
+	FTransform Trans;
+	Pot = GetWorld()->SpawnActor<APot>(SubclassPot);
+	//Pot = GetWorld()->SpawnActorDeferred<APot>(SubclassPot, Trans);
+	//Pot->SetType(EPotState::IDLE);
+	//Pot->FinishSpawning(Trans);
+	Pot->SetActorLocation(FVector(-400, 0, 10));
+	
 }
 
 void ACookingDevGameMode::Tick(float DeltaTime)
