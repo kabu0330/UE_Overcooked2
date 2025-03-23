@@ -2,6 +2,7 @@
 
 
 #include "LevelContent/Table/NonTable/GarbageCan.h"
+#include "Kismet/GameplayStatics.h"
 #include "Global/GameMode/OC2GameMode.h"
 
 AGarbageCan::AGarbageCan()
@@ -17,32 +18,46 @@ void AGarbageCan::BeginPlay()
 void AGarbageCan::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (bDestroyGarbage == true)
+	{
+		Timer -= DeltaTime;
+		// ...쓰레기 회전시키기...
+		FRotator Rotation = { 0.0, 0.0, 90.0 };
+		//FTransform Location = { 0.0, 0.0, -10.0 };
+		CookingPtr->AddActorWorldRotation(Rotation * DeltaTime);
+		FVector Scale = CookingPtr->GetActorScale3D();
+		CookingPtr->SetActorScale3D(Scale * 0.99);
+		//Garbage->AddActorWorldTransform(Location);
+	}
+
+	if (Timer < 0)
+	{
+		//DestroyIngredient();
+	}
 }
 
 void AGarbageCan::PlaceItem(ACooking* Item)
 {
-	CookingPtr = Item;
-	CookingPtr->AttachToComponent(ComponentForCooking, FAttachmentTransformRules::KeepRelativeTransform);
-	CookingPtr->SetActorLocation(ComponentForCooking->GetComponentLocation());
-
 	// Ingredient만 없애기. Plate의 경우 AOC2Character가 담당
-	if (true == CookingPtr->IsCookingType(ECookingType::ECT_INGREDIENT))
+	if (true == Item->IsCookingType(ECookingType::ECT_INGREDIENT))
 	{
-		DestroyIngredient(CookingPtr);
+		CookingPtr = Item;
+		CookingPtr->AttachToComponent(ComponentForCooking, FAttachmentTransformRules::KeepRelativeTransform);
+		CookingPtr->SetActorLocation(ComponentForCooking->GetComponentLocation());
+
+		bDestroyGarbage = true;
+		Timer = 2.0f;
 	}
 }
 
-void AGarbageCan::DestroyIngredient(ACooking* Garbage)
+void AGarbageCan::DestroyIngredient()
 {
-	CookingPtr = Garbage;
-	/*FQuat Rotation = 
-	Garbage->AddActorWorldRotation()*/
-	// ...쓰레기 회전시키기...
-	
 	AOC2GameMode* GM = Cast<AOC2GameMode>(GetWorld()->GetAuthGameMode());
 	if (GM)
 	{
 		GM->DestroyOC2Actor(CookingPtr);
 		CookingPtr = nullptr;
+		bDestroyGarbage = false;
 	}
 }
