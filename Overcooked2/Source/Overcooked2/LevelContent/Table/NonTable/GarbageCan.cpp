@@ -26,9 +26,9 @@ void AGarbageCan::Tick(float DeltaTime)
 		GarbageTransform(DeltaTime);
 	}
 
-	if (Timer < 0)
+	if (Timer < 0 && bDestroyGarbage == true)
 	{
-		//DestroyIngredient();
+		DestroyIngredient();
 	}
 }
 
