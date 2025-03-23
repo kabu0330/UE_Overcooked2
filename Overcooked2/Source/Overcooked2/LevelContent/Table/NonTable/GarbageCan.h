@@ -30,6 +30,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual void PlaceItem(ACooking* Item) override;
 
+	void GarbageTransform(float DeltaTime);
+
 	void DestroyIngredient();
 
 private:

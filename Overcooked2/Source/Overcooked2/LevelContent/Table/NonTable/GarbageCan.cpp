@@ -23,12 +23,7 @@ void AGarbageCan::Tick(float DeltaTime)
 	{
 		Timer -= DeltaTime;
 		// ...쓰레기 회전시키기...
-		FRotator Rotation = { 0.0, 0.0, 90.0 };
-		//FTransform Location = { 0.0, 0.0, -10.0 };
-		CookingPtr->AddActorWorldRotation(Rotation * DeltaTime);
-		FVector Scale = CookingPtr->GetActorScale3D();
-		CookingPtr->SetActorScale3D(Scale * 0.99);
-		//Garbage->AddActorWorldTransform(Location);
+		GarbageTransform(DeltaTime);
 	}
 
 	if (Timer < 0)
@@ -60,4 +55,14 @@ void AGarbageCan::DestroyIngredient()
 		CookingPtr = nullptr;
 		bDestroyGarbage = false;
 	}
+}
+
+void AGarbageCan::GarbageTransform(float DeltaTime)
+{
+	FRotator Rotation = { 0.0, 0.0, 90.0 };
+	//FTransform Location = { 0.0, 0.0, -10.0 };
+	CookingPtr->AddActorWorldRotation(Rotation * DeltaTime);
+	FVector Scale = CookingPtr->GetActorScale3D();
+	CookingPtr->SetActorScale3D(Scale * 0.99);
+	//Garbage->AddActorWorldTransform(Location);
 }
