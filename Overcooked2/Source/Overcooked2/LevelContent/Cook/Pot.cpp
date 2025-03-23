@@ -64,7 +64,7 @@ void APot::SetSoupMaterial_Implementation()
 	}
 	for (int32 i = 0; i < NumSoupMaterials; i++)
 	{
-		UMaterialInstanceDynamic* MaterialInstanceDynamic = UMaterialInstanceDynamic::Create(StaticMeshComponent->GetMaterial(i), this);
+		UMaterialInstanceDynamic* MaterialInstanceDynamic = UMaterialInstanceDynamic::Create(SoupSkeletalMeshComponent->GetMaterial(i), this);
 		SoupDynamicMaterial.Add(MaterialInstanceDynamic);
 		SoupSkeletalMeshComponent->SetMaterial(i, MaterialInstanceDynamic);
 	}
@@ -80,11 +80,25 @@ void APot::Tick(float DeltaTime)
 
 void APot::Cook(float DeltaTime)
 {
-	if (false == bIsBoiling)
+	if (false == bIsRiceInPot)
 	{
 		return;
 	}
+
 	TimeElapsed += DeltaTime;
+
+	if (EPotState::HEATING == PotState && 4.0f < TimeElapsed)
+	{
+		PotState = EPotState::BOILING;
+	}
+	else if (EPotState::BOILING == PotState && 8.0f < TimeElapsed)
+	{
+		PotState = EPotState::COOKED;
+	}
+	else if (EPotState::COOKED == PotState && 12.0f < TimeElapsed)
+	{
+		PotState = EPotState::OVERCOOKED;
+	}
 }
 
 void APot::ChangeState_Implementation()
@@ -115,7 +129,6 @@ void APot::ChangeState_Implementation()
 		{
 			SoupSkeletalMeshComponent->SetMaterial(i, SoupDynamicMaterial[i]);
 		}
-
 		break;
 	}
 	case EPotState::BOILING:

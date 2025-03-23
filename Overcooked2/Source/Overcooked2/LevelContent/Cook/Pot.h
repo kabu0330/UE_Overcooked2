@@ -10,10 +10,10 @@ UENUM(BlueprintType)
 enum class EPotState : uint8
 {
 	IDLE 		UMETA(DisplayName = "대기"),
-	HEATING		UMETA(DisplayName = "가열 중"),
-	BOILING		UMETA(DisplayName = "조리 중"),
-	COOKED		UMETA(DisplayName = "조리 완료"),
-	OVERCOOKED	UMETA(DisplayName = "태움"),
+	HEATING		UMETA(DisplayName = "HEATING"),
+	BOILING		UMETA(DisplayName = "BOILING"),
+	COOKED		UMETA(DisplayName = "COOKED"),
+	OVERCOOKED	UMETA(DisplayName = "OVERCOOKED"),
 	MAX			UMETA(DisplayName = "MAX"),
 };
 

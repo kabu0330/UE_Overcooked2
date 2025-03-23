@@ -42,6 +42,7 @@ public:
 
 	void AddIngredient(AIngredient* Ingredient)
 	{
+		Ingredient->AddActorWorldOffset(FVector(0, 0, 20));
 		CookingObjectManager->GetIngredients().Add(Ingredient);
 	}
 

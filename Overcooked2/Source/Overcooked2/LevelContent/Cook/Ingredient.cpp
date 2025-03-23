@@ -82,7 +82,8 @@ AIngredient* AIngredient::Init(EIngredientType Type)
 	// 3). Offset
 	FVector Location = FVector::ZeroVector;
 	FRotator Rotation = IngredientDataTable->Rotation;
-	Offset(Location, Rotation);
+	FVector Scale = IngredientDataTable->Scale;
+	Offset(Location, Rotation, Scale);
 
 
 	// Network Debug
@@ -107,10 +108,11 @@ void AIngredient::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifet
 	DOREPLIFETIME(AIngredient, CurIngredientState);
 }
 
-void AIngredient::Offset(FVector Pos, FRotator Rot)
+void AIngredient::Offset(FVector Pos, FRotator Rot, FVector Scale)
 {
 	SetActorRelativeLocation(Pos);
 	SetActorRelativeRotation(Rot);
+	SetActorRelativeScale3D(Scale);
 }
 
 bool AIngredient::IsCooked()
@@ -173,7 +175,8 @@ void AIngredient::ChangeState_Implementation(EIngredientState State)
 
 	FVector Location = CookData->Location;
 	FRotator Rotation = CookData->Rotation;
-	Offset(Location, Rotation);
+	FVector Scale = FVector::OneVector;
+	Offset(Location, Rotation, Scale);
 
 	return;
 }

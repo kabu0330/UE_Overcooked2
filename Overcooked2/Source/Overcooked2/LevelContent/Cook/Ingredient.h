@@ -108,7 +108,7 @@ protected:
 
 	const FIngredientCookDataRow& CheckState(EIngredientState State);
 
-	void Offset(FVector Pos, FRotator Rot);
+	void Offset(FVector Pos, FRotator Rot, FVector Scale);
 
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
 
