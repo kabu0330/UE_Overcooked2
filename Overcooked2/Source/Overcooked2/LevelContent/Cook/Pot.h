@@ -72,7 +72,9 @@ protected:
 	virtual void ForwardCookingTable(class ACookingTable* Table) override;
 	virtual void ForwardAttachToChef() override;
 
-
+	void InitTexture();
+	void SetWarningTexture();
+	void SetWarnigTextureOffset();
 
 private:
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowprivateAccess = "true"))
@@ -98,5 +100,8 @@ private:
 
 	UPROPERTY(Replicated)
 	class ACookingTable* CookingTable = nullptr;
+
+	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	class UBillboardComponent* TextureBillboard = nullptr;
 
 };

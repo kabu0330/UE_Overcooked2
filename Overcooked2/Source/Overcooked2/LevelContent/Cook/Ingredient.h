@@ -121,6 +121,8 @@ protected:
 	void SetLocalOffset();
 	void SetTexture();
 
+	void SetTextureOffest();
+
 private:
 	void DeactivateHighlight();
 	void ActivateHighlight();
@@ -139,7 +141,7 @@ private:
 	AActor* Thrower = nullptr;
 
 	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
-	class UBillboardComponent* TextureBillboard;
+	class UBillboardComponent* TextureBillboard = nullptr;
 
 	
 };

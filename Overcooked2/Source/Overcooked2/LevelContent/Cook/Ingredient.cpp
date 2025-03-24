@@ -68,6 +68,11 @@ void AIngredient::Tick(float DeltaTime)
 {
 	ACooking::Tick(DeltaTime);
 
+	SetTextureOffest();
+}
+
+void AIngredient::SetTextureOffest()
+{
 	if (nullptr != TextureBillboard)
 	{
 		FRotator FixedRotation = FRotator(0, 0, 0);
@@ -117,7 +122,6 @@ AIngredient* AIngredient::Init(EIngredientType Type)
 
 	return this;
 }
-
 
 void AIngredient::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
