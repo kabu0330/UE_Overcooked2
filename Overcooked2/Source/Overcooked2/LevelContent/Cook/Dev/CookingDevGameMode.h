@@ -11,7 +11,6 @@
 #include <LevelContent/Cook/Dev/CookingDevPlayerState.h>
 #include <LevelContent/Cook/Dev/CookingObjectManager.h>
 #include <LevelContent/Cook/Pot.h>
-#include <LevelContent/Cook/FireExtinguisher.h>
 #include "CookingDevGameMode.generated.h"
 
 /**
@@ -78,11 +77,5 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	APot* Pot = nullptr;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<AFireExtinguisher> SubclassFireExtinguisher = nullptr;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
-	AFireExtinguisher* FireExtinguisher = nullptr;
 
 };

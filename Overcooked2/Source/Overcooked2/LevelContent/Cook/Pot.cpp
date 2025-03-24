@@ -7,7 +7,6 @@
 #include <Net/UnrealNetwork.h>
 #include "GameFramework/Character.h"
 #include <Global/GameMode/OC2GameMode.h>
-#include "Components/BillboardComponent.h"  
 
 APot::APot()
 {
@@ -22,25 +21,9 @@ APot::APot()
 	SoupSkeletalMeshComponent->SetupAttachment(StaticMeshComponent);
 	SoupSkeletalMeshComponent->SetIsReplicated(true);
 
-	InitTexture();
 
 	FVector Pos = FVector(249, 1452, 60);
 	StaticMeshComponent->SetRelativeLocation(Pos);
-}
-
-
-void APot::InitTexture()
-{
-	TextureBillboard = CreateDefaultSubobject<UBillboardComponent>(TEXT("TextureBillboard"));
-	TextureBillboard->bHiddenInGame = false;
-	TextureBillboard->bIsScreenSizeScaled = true;
-	TextureBillboard->bReceivesDecals = false;
-
-	FVector Scale(0.8f, 0.8f, 0.8f);
-	TextureBillboard->SetRelativeScale3D(Scale);
-
-	TextureBillboard->SetUsingAbsoluteRotation(true);
-	TextureBillboard->SetUsingAbsoluteLocation(true);
 }
 
 void APot::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -75,14 +58,13 @@ void APot::BeginPlay()
 
 	NoneMaterial = LoadNoneMaterial(); // 여기서 해줘야 클라도  NULL 머티리얼 생성된다.
 	SetSoupMaterial();
-	ChangeNoneMaterial();
 
-	SetWarningTexture();
+	ChangeNoneMaterial();
 }
 
 UMaterialInstanceDynamic* APot::LoadNoneMaterial()
-{	
-	const FString NoneMaterialName = TEXT("/Game/Resources/LevelResource/CookObject/Object/Pot/Soup/M_NONE");
+{
+	const FString NoneMaterialName = TEXT("/Game/Resources/LevelResource/Object/Pot/M_NONE");
 	UMaterial* NewMaterial = LoadObject<UMaterial>(nullptr, *NoneMaterialName);
 	UMaterialInstanceDynamic* NewMaterialInstanceDynamic = UMaterialInstanceDynamic::Create(NewMaterial, this);
 	return NewMaterialInstanceDynamic;
@@ -103,36 +85,12 @@ void APot::SetSoupMaterial_Implementation()
 	}
 }
 
-void APot::SetWarningTexture()
-{
-	const FString WarningTextureName = TEXT("/Game/Resources/LevelResource/CookObject/Object/FireExtinguisher/DangerLight/BurnWarning");
-	UTexture2D* NewTexture = LoadObject<UTexture2D>(nullptr, *WarningTextureName);
-	if (nullptr != NewTexture)
-	{
-		TextureBillboard->SetSprite(NewTexture);
-	}
-}
-
 void APot::Tick(float DeltaTime)
 {
 	ACooking::Tick(DeltaTime);
 
 	Cook(DeltaTime);
 	SetAction();
-
-	SetWarnigTextureOffset();
-}
-
-void APot::SetWarnigTextureOffset()
-{
-	if (nullptr != TextureBillboard)
-	{
-		FRotator FixedRotation = FRotator(0, 0, 0);
-		TextureBillboard->SetWorldRotation(FixedRotation);
-
-		FVector OffsetPos = FVector(0, -100, 50);
-		TextureBillboard->SetWorldLocation(GetActorLocation() + OffsetPos);
-	}
 }
 
 void APot::Add_Implementation(AIngredient* Ingredient)
