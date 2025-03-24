@@ -5,6 +5,8 @@
 #include <LevelContent/Cook/Ingredient.h>
 #include <LevelContent/Table/BurnerTable.h>
 #include <Net/UnrealNetwork.h>
+#include "GameFramework/Character.h"
+#include <Global/GameMode/OC2GameMode.h>
 
 APot::APot()
 {
@@ -36,15 +38,18 @@ void APot::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProp
 	DOREPLIFETIME(APot, bIsRiceInPot);
 	DOREPLIFETIME(APot, TimeElapsed);
 	DOREPLIFETIME(APot, CookingTable);
-	DOREPLIFETIME(APot, bIsBoiling);
 }
 
-UMaterialInstanceDynamic* APot::LoadNoneMaterial()
+// Table이 SetCookingTable 함수를 호출해주면 여기서 세팅
+void APot::ForwardCookingTable(ACookingTable* Table)
 {
-	const FString NoneMaterialName = TEXT("/Game/Resources/LevelResource/Object/Pot/M_NONE");
-	UMaterial* NewMaterial = LoadObject<UMaterial>(nullptr, *NoneMaterialName);
-	UMaterialInstanceDynamic* NewMaterialInstanceDynamic = UMaterialInstanceDynamic::Create(NewMaterial, this);
-	return NewMaterialInstanceDynamic;
+	CookingTable = Table;
+}
+
+// 캐릭터가 냄비를 들어올렸을 때, 호출
+void APot::ForwardAttachToChef()
+{
+	CookingTable = nullptr;
 }
 
 void APot::BeginPlay()
@@ -55,6 +60,14 @@ void APot::BeginPlay()
 	SetSoupMaterial();
 
 	ChangeNoneMaterial();
+}
+
+UMaterialInstanceDynamic* APot::LoadNoneMaterial()
+{
+	const FString NoneMaterialName = TEXT("/Game/Resources/LevelResource/Object/Pot/M_NONE");
+	UMaterial* NewMaterial = LoadObject<UMaterial>(nullptr, *NoneMaterialName);
+	UMaterialInstanceDynamic* NewMaterialInstanceDynamic = UMaterialInstanceDynamic::Create(NewMaterial, this);
+	return NewMaterialInstanceDynamic;
 }
 
 void APot::SetSoupMaterial_Implementation()
@@ -75,14 +88,56 @@ void APot::SetSoupMaterial_Implementation()
 void APot::Tick(float DeltaTime)
 {
 	ACooking::Tick(DeltaTime);
+
 	Cook(DeltaTime);
-	ChangeState();
-	//ChangeMaterialColor();
+	SetAction();
+}
+
+void APot::Add_Implementation(AIngredient* Ingredient)
+{
+	if (true == bIsRiceInPot) // 1. 이미 쌀이 들어와있다면 리턴
+	{
+		return;
+	}
+
+	AIngredient* RawRice = Cast<AIngredient>(Ingredient);
+	if (nullptr == RawRice) // 2. 지금 들어온 재료가 쌀이냐
+	{
+		return;
+	}
+	if (EIngredientState::EIS_BOILABLE != RawRice->GetCurIngredientState()) // 3. Boil 할 수 있고, 조리가 안 된 상태가 맞냐
+	{
+		return;
+	}
+
+	RawRice->RequestOC2ActorDestroy(); // 들어온 재료는 삭제
+
+	bIsRiceInPot = true;
+	PotState = EPotState::HEATING;
+}
+
+// 조리 시간 타이머 트리거
+bool APot::IsBoiling()
+{
+	if (false == bIsRiceInPot) // 1. 냄비에 쌀이 있냐
+	{
+		return false;
+	}
+	if (nullptr == CookingTable)
+	{
+		return false;
+	}
+	ABurnerTable* BurnerTable = Cast<ABurnerTable>(CookingTable);
+	if (nullptr == BurnerTable) // 2. 버너 위에 있냐
+	{
+		return false;
+	}
+	return true;
 }
 
 void APot::Cook(float DeltaTime)
 {
-	if (false == bIsRiceInPot)
+	if (false == IsBoiling())
 	{
 		return;
 	}
@@ -103,7 +158,7 @@ void APot::Cook(float DeltaTime)
 	}
 }
 
-void APot::ChangeState_Implementation()
+void APot::SetAction_Implementation()
 {
 	if (!HasAuthority())
 	{
@@ -136,8 +191,14 @@ void APot::ChangeState_Implementation()
 	case EPotState::BOILING:
 		break;
 	case EPotState::COOKED:
+	{
+
+	}
 		break;
 	case EPotState::OVERCOOKED:
+	{
+
+	}
 		break;
 	default:
 		break;
@@ -153,69 +214,47 @@ void APot::ChangeNoneMaterial()
 	}
 }
 
-void APot::ChangeMaterialColor()
+void APot::ChangeMaterialColor(FVector4 Color)
 {
+	int32 NumSoupMaterials = SoupSkeletalMeshComponent->GetMaterials().Num();
+	for (int32 i = 1; i < NumSoupMaterials; i++)
+	{
+		SoupDynamicMaterial[i]->SetVectorParameterValue(FName("Tint"), Color);
+		SoupSkeletalMeshComponent->SetMaterial(i, SoupDynamicMaterial[i]);
+	}
 }
 
-void APot::ForwardCookingTable(ACookingTable* Table)
+void APot::ResetPot()
 {
-	CookingTable = Table;
-}
+	PrevPotState = EPotState::MAX;
+	PotState = EPotState::IDLE;
+	bIsRiceInPot = false;
+	TimeElapsed = 0.0f;
 
-void APot::ForwardAttachToChef()
-{
-	CookingTable = nullptr;
-}
-
-void APot::Add_Implementation(AIngredient* Ingredient)
-{
-	if (true == bIsRiceInPot) // 1. 이미 쌀이 들어와있다면 리턴
-	{
-		return;
-	}
-
-	AIngredient* RawRice = Cast<AIngredient>(Ingredient);
-	if (nullptr == RawRice) // 2. 지금 들어온 재료가 쌀이냐
-	{
-		return;
-	}
-	if (EIngredientState::EIS_BOILABLE != RawRice->GetCurIngredientState()) // 3. Boil 할 수 있고, 조리가 안 된 상태가 맞냐
-	{
-		return;
-	}
-
-	RawRice->RequestOC2ActorDestroy(); // 들어온 재료는 삭제
-	
-	bIsRiceInPot =  true;
-	PotState = EPotState::HEATING;
-}
-
-void APot::SetBoil(ACooking* Rice)
-{
-	if (nullptr == CookingTable)
-	{
-		return;
-	}
-	ABurnerTable* BurnerTable =  Cast<ABurnerTable>(CookingTable);
-	if (nullptr == BurnerTable) // 1. 버너 위에 있냐
-	{
-		return; // 가장 먼저 Ingredient를 넣는 함수이므로 CanCook 함수로 체크하지 않는다.
-	}
-
-	// 예외처리를 통과할 수 있는 재료는 쌀 뿐이므로 여기까지 오면 조리가 되지 않은 쌀이다.
-
-
-	PotState = EPotState::BOILING;
-	bIsBoiling = true;
-
-
-	// 스켈레탈 메시에 조리 애니메이션 재생해야함
-
-	return;
+	ChangeNoneMaterial();
 }
 
 AIngredient* APot::GetRice()
 {
-	return nullptr;
+	AGameModeBase* GameModeBase =  GetWorld()->GetAuthGameMode();
+	if (nullptr == GameModeBase)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("nullptr == GameModeBase"));
+		return nullptr;
+	}
+
+	AOC2GameMode* GameMode = Cast<AOC2GameMode>(GameModeBase);
+	if (nullptr == GameMode)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("nullptr == GameMode"));
+		return nullptr;
+	}
+
+	AIngredient* Rice = GameMode->SpawnIngredientActor(EIngredientType::EIT_RICE);
+	Rice->ChangeState(EIngredientState::EIS_BOILED);
+
+	ResetPot();
+
+	return Rice;
 }
 

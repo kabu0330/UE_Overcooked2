@@ -33,14 +33,17 @@ public:
 	void Add(class AIngredient* Ingredient);
 	void Add_Implementation(class AIngredient* Ingredient);
 
-	UFUNCTION(BlueprintCallable)
-	void SetBoil(ACooking* Rice);
-
 	// 조리된 밥을 받아오는 함수
+	// 캐릭터가 RPC Server 함수로 호출 요청
 	UFUNCTION(BlueprintCallable)
 	class AIngredient* GetRice();
 
+	EPotState GetPotState() const
+	{
+		return PotState;
+	}
 
+	void ResetPot();
 
 protected:
 	virtual void BeginPlay() override;
@@ -50,22 +53,26 @@ protected:
 	void Cook(float DeltaTime);
 
 	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
-	void ChangeState();
-	void ChangeState_Implementation();
+	void SetAction();
+	void SetAction_Implementation();
 
-	void ChangeMaterialColor();
+	void ChangeMaterialColor(FVector4 Color);
 
 	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
 	void SetSoupMaterial();
 	void SetSoupMaterial_Implementation();
 
-	UFUNCTION(BlueprintCallable)
+	bool IsBoiling();
+
+
 	void ChangeNoneMaterial();
 
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
 
 	virtual void ForwardCookingTable(class ACookingTable* Table) override;
 	virtual void ForwardAttachToChef() override;
+
+
 
 private:
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowprivateAccess = "true"))
@@ -91,8 +98,5 @@ private:
 
 	UPROPERTY(Replicated)
 	class ACookingTable* CookingTable = nullptr;
-
-	UPROPERTY(Replicated)
-	bool bIsBoiling = false;
 
 };
