@@ -41,6 +41,10 @@ public:
 	void PlaceOnthePlate_Implementation();
 
 	UFUNCTION(BlueprintCallable, Reliable, Server)
+	void PlaceOnThePot();
+	void PlaceOnThePot_Implementation();
+
+	UFUNCTION(BlueprintCallable, Reliable, Server)
 	void Wash();
 	void Wash_Implementation();
 
