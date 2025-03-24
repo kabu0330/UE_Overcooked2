@@ -19,16 +19,57 @@ APot::APot()
 	SoupSkeletalMeshComponent->SetupAttachment(StaticMeshComponent);
 	SoupSkeletalMeshComponent->SetIsReplicated(true);
 
-	UMaterialInstanceDynamic* MaterialInstanceDynamic = Cast<UMaterialInstanceDynamic>(StaticMeshComponent->GetMaterial(0));
 
 	FVector Pos = FVector(249, 1452, 60);
 	StaticMeshComponent->SetRelativeLocation(Pos);
+}
+
+void APot::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(APot, SoupSkeletalMeshComponent);
+	DOREPLIFETIME(APot, SoupDynamicMaterial);
+	DOREPLIFETIME(APot, NoneMaterial);
+	DOREPLIFETIME(APot, PotState);
+	//DOREPLIFETIME(APot, PrevPotState);
+	DOREPLIFETIME(APot, bIsRiceInPot);
+	DOREPLIFETIME(APot, TimeElapsed);
+	DOREPLIFETIME(APot, CookingTable);
+	DOREPLIFETIME(APot, bIsBoiling);
+}
+
+UMaterialInstanceDynamic* APot::LoadNoneMaterial()
+{
+	const FString NoneMaterialName = TEXT("/Game/Resources/LevelResource/Object/Pot/M_NONE");
+	UMaterial* NewMaterial = LoadObject<UMaterial>(nullptr, *NoneMaterialName);
+	UMaterialInstanceDynamic* NewMaterialInstanceDynamic = UMaterialInstanceDynamic::Create(NewMaterial, this);
+	return NewMaterialInstanceDynamic;
 }
 
 void APot::BeginPlay()
 {
 	ACooking::BeginPlay();
 
+	NoneMaterial = LoadNoneMaterial(); // 여기서 해줘야 클라도  NULL 머티리얼 생성된다.
+	SetSoupMaterial();
+
+	ChangeNoneMaterial();
+}
+
+void APot::SetSoupMaterial_Implementation()
+{
+	int32 NumSoupMaterials = SoupSkeletalMeshComponent->GetMaterials().Num();
+	if (NumSoupMaterials == SoupDynamicMaterial.Num())
+	{
+		return;
+	}
+	for (int32 i = 0; i < NumSoupMaterials; i++)
+	{
+		UMaterialInstanceDynamic* MaterialInstanceDynamic = UMaterialInstanceDynamic::Create(SoupSkeletalMeshComponent->GetMaterial(i), this);
+		SoupDynamicMaterial.Add(MaterialInstanceDynamic);
+		SoupSkeletalMeshComponent->SetMaterial(i, MaterialInstanceDynamic);
+	}
 }
 
 void APot::Tick(float DeltaTime)
@@ -36,32 +77,62 @@ void APot::Tick(float DeltaTime)
 	ACooking::Tick(DeltaTime);
 	Cook(DeltaTime);
 	ChangeState();
-	ChangeMaterialColor();
+	//ChangeMaterialColor();
 }
 
 void APot::Cook(float DeltaTime)
 {
-	if (false == bIsBoiling)
+	if (false == bIsRiceInPot)
 	{
 		return;
 	}
+
 	TimeElapsed += DeltaTime;
+
+	if (EPotState::HEATING == PotState && 4.0f < TimeElapsed)
+	{
+		PotState = EPotState::BOILING;
+	}
+	else if (EPotState::BOILING == PotState && 8.0f < TimeElapsed)
+	{
+		PotState = EPotState::COOKED;
+	}
+	else if (EPotState::COOKED == PotState && 12.0f < TimeElapsed)
+	{
+		PotState = EPotState::OVERCOOKED;
+	}
 }
 
-void APot::ChangeState()
+void APot::ChangeState_Implementation()
 {
-	if (true)
+	if (!HasAuthority())
 	{
-
+		int a = 0;
 	}
+
+	// 상태가 변경되지 않았으면 리턴
+	if (PrevPotState == PotState)
+	{
+		return;
+	}
+	PrevPotState = PotState;
 
 	switch (PotState)
 	{
 	case EPotState::IDLE:
-
+	{
+		ChangeNoneMaterial();
 		break;
+	}
 	case EPotState::HEATING:
+	{
+		int32 NumSoupMaterials = SoupSkeletalMeshComponent->GetMaterials().Num();
+		for (int32 i = 0; i < NumSoupMaterials; i++)
+		{
+			SoupSkeletalMeshComponent->SetMaterial(i, SoupDynamicMaterial[i]);
+		}
 		break;
+	}
 	case EPotState::BOILING:
 		break;
 	case EPotState::COOKED:
@@ -73,18 +144,17 @@ void APot::ChangeState()
 	}
 }
 
-void APot::ChangeMaterialColor()
+void APot::ChangeNoneMaterial()
 {
+	int32 NumSoupMaterials = SoupSkeletalMeshComponent->GetMaterials().Num();
+	for (int32 i = 0; i < NumSoupMaterials; i++)
+	{
+		SoupSkeletalMeshComponent->SetMaterial(i, NoneMaterial);
+	}
 }
 
-void APot::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+void APot::ChangeMaterialColor()
 {
-	DOREPLIFETIME(APot, SoupSkeletalMeshComponent);
-	DOREPLIFETIME(APot, PotState);
-	DOREPLIFETIME(APot, PrevPotState);
-	DOREPLIFETIME(APot, bIsRiceInPot);
-	DOREPLIFETIME(APot, CookingTable);
-	DOREPLIFETIME(APot, bIsBoiling);
 }
 
 void APot::ForwardCookingTable(ACookingTable* Table)
@@ -114,10 +184,10 @@ void APot::Add_Implementation(AIngredient* Ingredient)
 		return;
 	}
 
-	bIsRiceInPot =  true;
-
 	RawRice->RequestOC2ActorDestroy(); // 들어온 재료는 삭제
 	
+	bIsRiceInPot =  true;
+	PotState = EPotState::HEATING;
 }
 
 void APot::SetBoil(ACooking* Rice)
@@ -144,7 +214,7 @@ void APot::SetBoil(ACooking* Rice)
 	return;
 }
 
-AIngredient* APot::GetCookedIngredient()
+AIngredient* APot::GetRice()
 {
 	return nullptr;
 }

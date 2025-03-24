@@ -10,10 +10,10 @@ UENUM(BlueprintType)
 enum class EPotState : uint8
 {
 	IDLE 		UMETA(DisplayName = "대기"),
-	HEATING		UMETA(DisplayName = "가열 중"),
-	BOILING		UMETA(DisplayName = "조리 중"),
-	COOKED		UMETA(DisplayName = "조리 완료"),
-	OVERCOOKED	UMETA(DisplayName = "태움"),
+	HEATING		UMETA(DisplayName = "HEATING"),
+	BOILING		UMETA(DisplayName = "BOILING"),
+	COOKED		UMETA(DisplayName = "COOKED"),
+	OVERCOOKED	UMETA(DisplayName = "OVERCOOKED"),
 	MAX			UMETA(DisplayName = "MAX"),
 };
 
@@ -38,7 +38,7 @@ public:
 
 	// 조리된 밥을 받아오는 함수
 	UFUNCTION(BlueprintCallable)
-	class AIngredient* GetCookedIngredient();
+	class AIngredient* GetRice();
 
 
 
@@ -46,11 +46,21 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 
+	UMaterialInstanceDynamic* LoadNoneMaterial();
 	void Cook(float DeltaTime);
 
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
 	void ChangeState();
+	void ChangeState_Implementation();
+
 	void ChangeMaterialColor();
 
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	void SetSoupMaterial();
+	void SetSoupMaterial_Implementation();
+
+	UFUNCTION(BlueprintCallable)
+	void ChangeNoneMaterial();
 
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
 
@@ -65,9 +75,12 @@ private:
 	TArray<UMaterialInstanceDynamic*> SoupDynamicMaterial;
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowprivateAccess = "true"))
-	EPotState PotState = EPotState::IDLE;
+	UMaterialInstanceDynamic* NoneMaterial = nullptr;
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowprivateAccess = "true"))
+	EPotState PotState = EPotState::IDLE;
+
+	UPROPERTY(/*Replicated,*/ EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowprivateAccess = "true"))
 	EPotState PrevPotState = EPotState::MAX;
 
 	UPROPERTY(Replicated)

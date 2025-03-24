@@ -108,9 +108,13 @@ protected:
 
 	const FIngredientCookDataRow& CheckState(EIngredientState State);
 
-	void Offset(FVector Pos, FRotator Rot);
+	void Offset(FVector Pos, FRotator Rot, FVector Scale);
 
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
+
+	void SetIngredientData(UOC2GameInstance* Inst, FName Name);
+	void SetLocalOffset();
+	void SetTexture();
 
 private:
 	void DeactivateHighlight();
@@ -128,6 +132,9 @@ private:
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	AActor* Thrower = nullptr;
+
+	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	class UBillboardComponent* TextureBillboard;
 
 	
 };

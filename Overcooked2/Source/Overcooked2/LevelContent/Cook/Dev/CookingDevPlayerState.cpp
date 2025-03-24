@@ -59,6 +59,15 @@ void ACookingDevPlayerState::PlaceOnthePlate_Implementation()
 	}
 }
 
+void ACookingDevPlayerState::PlaceOnThePot_Implementation()
+{
+	ACookingDevGameMode* GameMode = Cast<ACookingDevGameMode>(GetWorld()->GetAuthGameMode());
+	if (nullptr != GameMode)
+	{
+		GameMode->PlaceOnThePot();
+	}
+}
+
 void ACookingDevPlayerState::Wash_Implementation()
 {
 	ACookingDevGameMode* GameMode = Cast<ACookingDevGameMode>(GetWorld()->GetAuthGameMode());

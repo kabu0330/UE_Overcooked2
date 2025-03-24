@@ -42,6 +42,7 @@ public:
 
 	void AddIngredient(AIngredient* Ingredient)
 	{
+		Ingredient->AddActorWorldOffset(FVector(0, 0, 20));
 		CookingObjectManager->GetIngredients().Add(Ingredient);
 	}
 
@@ -50,6 +51,8 @@ public:
 		Plate->SetActorLocation(FVector(300, -100, 10));
 		CookingObjectManager->GetPlates().Add(Plate);
 	}
+
+	void PlaceOnThePot();
 
 	void Wash();
 
@@ -70,6 +73,9 @@ private:
 	UCookingObjectManager* CookingObjectManager = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<APot> Pot = nullptr;
+	TSubclassOf<APot> SubclassPot = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	APot* Pot = nullptr;
 
 };
