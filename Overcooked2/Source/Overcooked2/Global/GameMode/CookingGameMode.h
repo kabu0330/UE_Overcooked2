@@ -73,5 +73,9 @@ private:
 	
 	ECookingGameModeState CurState = ECookingGameModeState::ECS_None;
 
+	TArray<FString> ChefHeadNames;
+
+	int CurIdx = 0;
+
 	float CheckTime = 0.0f;
 };

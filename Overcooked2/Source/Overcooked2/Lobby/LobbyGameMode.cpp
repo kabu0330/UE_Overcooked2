@@ -4,6 +4,8 @@
 #include "Lobby/LobbyGameMode.h"
 #include "Overcooked2.h"
 
+#include "Lobby/LobbyPlayerController.h"
+
 #include "Global/OC2GameInstance.h"
 #include "Global/OC2Global.h"
 #include "Global/OC2Const.h"
@@ -20,15 +22,15 @@ void ALobbyGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
-	//UOC2GameInstance* GameInstance = Cast<UOC2GameInstance>(GetGameInstance());
+	UOC2GameInstance* GameInstance = Cast<UOC2GameInstance>(GetGameInstance());
 
-	//if (GameInstance != nullptr)
-	//{
-	//	UE_LOG(LogTemp, Log, TEXT("GameInstance 가져오기 성공!"));
+	if (GameInstance != nullptr)
+	{
+		UE_LOG(LogTemp, Log, TEXT("GameInstance 가져오기 성공!"));
 
-	//	GameInstance->SetChefHeadName(ChefHeadNames[CurIdx]);
-	//	CurIdx++;
-	//}
+		GameInstance->SetChefHeadName(ChefHeadNames[CurIdx]);
+		CurIdx++;
+	}
 
 }
 
@@ -43,14 +45,10 @@ void ALobbyGameMode::PostLogin(APlayerController* NewPlayerController)
 
 	PlayerControllers.Push(NewPlayerController);
 
-	// GameInstance 가져오기
-	UOC2GameInstance* GameInstance = Cast<UOC2GameInstance>(NewPlayerController->GetGameInstance());
-
-	if (GameInstance != nullptr)
+	ALobbyPlayerController* LobbyPlayerController = Cast<ALobbyPlayerController>(NewPlayerController);
+	if (nullptr != LobbyPlayerController)
 	{
-		UE_LOG(LogTemp, Log, TEXT("GameInstance 가져오기 성공!"));
-
-		GameInstance->SetChefHeadName(ChefHeadNames[CurIdx]);
+		LobbyPlayerController->Client_SetChefHeadName(ChefHeadNames[CurIdx]);
 		CurIdx++;
 	}
 }
