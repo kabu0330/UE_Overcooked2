@@ -19,7 +19,12 @@ AIngredient::AIngredient()
 
 	TextureBillboard = CreateDefaultSubobject<UBillboardComponent>(TEXT("TextureBillboard"));
 	TextureBillboard->bHiddenInGame = false;
+	TextureBillboard->bIsScreenSizeScaled = true;
 	TextureBillboard->bReceivesDecals = false;
+
+	TextureBillboard->SetUsingAbsoluteRotation(true);
+	TextureBillboard->SetUsingAbsoluteLocation(true);
+	
 	TextureBillboard->SetupAttachment(RootComponent);
 	
 	//StaticMeshComponent->OnComponentBeginOverlap.AddDynamic(this, &AIngredient::OnOverlapBegin);
@@ -65,8 +70,11 @@ void AIngredient::Tick(float DeltaTime)
 
 	if (nullptr != TextureBillboard)
 	{
-		FRotator FixedRotation = FRotator(0, GetActorRotation().Yaw, 0);
+		FRotator FixedRotation = FRotator(0, 0, 0);
 		TextureBillboard->SetWorldRotation(FixedRotation);
+
+		FVector OffsetPos = FVector(0, 0, 100);
+		TextureBillboard->SetWorldLocation(GetActorLocation() + OffsetPos);
 	}
 }
 
@@ -92,6 +100,8 @@ AIngredient* AIngredient::Init(EIngredientType Type)
 	// 3). Offset
 	SetLocalOffset();
 
+
+	// 4). 텍스처 설정, 회전값만 Tick에서 무시하도록 적용
 	SetTexture();
 
 
@@ -139,9 +149,6 @@ void AIngredient::SetTexture()
 	if (nullptr != Texture)
 	{
 		TextureBillboard->SetSprite(Texture);
-		FVector OffsetPos = FVector(0, 0, 100);
-
-		TextureBillboard->SetWorldLocation(GetActorLocation() + OffsetPos);
 	}
 }
 
