@@ -4,6 +4,8 @@
 #include "LevelContent/Cook/Ingredient.h"
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
+#include "Components/BillboardComponent.h"  
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
 AIngredient::AIngredient()
@@ -15,6 +17,11 @@ AIngredient::AIngredient()
 
 	CookingType = ECookingType::ECT_INGREDIENT;
 
+	TextureBillboard = CreateDefaultSubobject<UBillboardComponent>(TEXT("TextureBillboard"));
+	TextureBillboard->bHiddenInGame = false;
+	TextureBillboard->bReceivesDecals = false;
+	TextureBillboard->SetupAttachment(RootComponent);
+	
 	//StaticMeshComponent->OnComponentBeginOverlap.AddDynamic(this, &AIngredient::OnOverlapBegin);
 }
 
@@ -56,6 +63,11 @@ void AIngredient::Tick(float DeltaTime)
 {
 	ACooking::Tick(DeltaTime);
 
+	if (nullptr != TextureBillboard)
+	{
+		FRotator FixedRotation = FRotator(0, GetActorRotation().Yaw, 0);
+		TextureBillboard->SetWorldRotation(FixedRotation);
+	}
 }
 
 AIngredient* AIngredient::Init(EIngredientType Type)
@@ -74,16 +86,13 @@ AIngredient* AIngredient::Init(EIngredientType Type)
 		return nullptr;
 	}
 
-	// 2). Setting
-	StaticMeshComponent->SetStaticMesh(GameInst->GetIngredientStaticMesh(Name.ToString()));
-	IngredientType = IngredientDataTable->IngredientType;
-	CurIngredientState = IngredientDataTable->StateRows[0].PrevIngredientState;
+	// 2). 메시, 타입, 상태 설정
+	SetIngredientData(GameInst, Name);
 
 	// 3). Offset
-	FVector Location = FVector::ZeroVector;
-	FRotator Rotation = IngredientDataTable->Rotation;
-	FVector Scale = IngredientDataTable->Scale;
-	Offset(Location, Rotation, Scale);
+	SetLocalOffset();
+
+	SetTexture();
 
 
 	// Network Debug
@@ -106,6 +115,34 @@ void AIngredient::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifet
 
 	DOREPLIFETIME(AIngredient, IngredientType);
 	DOREPLIFETIME(AIngredient, CurIngredientState);
+}
+
+void AIngredient::SetIngredientData(UOC2GameInstance* Inst, FName Name)
+{
+	// 2). Setting
+	StaticMeshComponent->SetStaticMesh(Inst->GetIngredientStaticMesh(Name.ToString()));
+	IngredientType = IngredientDataTable->IngredientType;
+	CurIngredientState = IngredientDataTable->StateRows[0].PrevIngredientState;
+}
+
+void AIngredient::SetLocalOffset()
+{
+	FVector Location = FVector::ZeroVector;
+	FRotator Rotation = IngredientDataTable->Rotation;
+	FVector Scale = IngredientDataTable->Scale;
+	Offset(Location, Rotation, Scale);
+}
+
+void AIngredient::SetTexture()
+{
+	UTexture2D* Texture = IngredientDataTable->IngredientTexture;
+	if (nullptr != Texture)
+	{
+		TextureBillboard->SetSprite(Texture);
+		FVector OffsetPos = FVector(0, 0, 100);
+
+		TextureBillboard->SetWorldLocation(GetActorLocation() + OffsetPos);
+	}
 }
 
 void AIngredient::Offset(FVector Pos, FRotator Rot, FVector Scale)

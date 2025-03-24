@@ -112,6 +112,10 @@ protected:
 
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
 
+	void SetIngredientData(UOC2GameInstance* Inst, FName Name);
+	void SetLocalOffset();
+	void SetTexture();
+
 private:
 	void DeactivateHighlight();
 	void ActivateHighlight();
@@ -128,6 +132,9 @@ private:
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	AActor* Thrower = nullptr;
+
+	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	class UBillboardComponent* TextureBillboard;
 
 	
 };

@@ -26,11 +26,13 @@ APot::APot()
 
 void APot::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
 	DOREPLIFETIME(APot, SoupSkeletalMeshComponent);
 	DOREPLIFETIME(APot, SoupDynamicMaterial);
 	DOREPLIFETIME(APot, NoneMaterial);
 	DOREPLIFETIME(APot, PotState);
-	DOREPLIFETIME(APot, PrevPotState);
+	//DOREPLIFETIME(APot, PrevPotState);
 	DOREPLIFETIME(APot, bIsRiceInPot);
 	DOREPLIFETIME(APot, TimeElapsed);
 	DOREPLIFETIME(APot, CookingTable);
@@ -52,7 +54,7 @@ void APot::BeginPlay()
 	NoneMaterial = LoadNoneMaterial(); // 여기서 해줘야 클라도  NULL 머티리얼 생성된다.
 	SetSoupMaterial();
 
-	//ChangeNoneMaterial();
+	ChangeNoneMaterial();
 }
 
 void APot::SetSoupMaterial_Implementation()
@@ -107,12 +109,12 @@ void APot::ChangeState_Implementation()
 	{
 		int a = 0;
 	}
+
 	// 상태가 변경되지 않았으면 리턴
-	// Tick에서 들어오는데 하...
-	//if (PrevPotState == PotState)
-	//{
-	//	return;
-	//}
+	if (PrevPotState == PotState)
+	{
+		return;
+	}
 	PrevPotState = PotState;
 
 	switch (PotState)
@@ -144,10 +146,6 @@ void APot::ChangeState_Implementation()
 
 void APot::ChangeNoneMaterial()
 {
-	if (!HasAuthority())
-	{
-		int a = 0;
-	}
 	int32 NumSoupMaterials = SoupSkeletalMeshComponent->GetMaterials().Num();
 	for (int32 i = 0; i < NumSoupMaterials; i++)
 	{
@@ -216,7 +214,7 @@ void APot::SetBoil(ACooking* Rice)
 	return;
 }
 
-AIngredient* APot::GetCookedIngredient()
+AIngredient* APot::GetRice()
 {
 	return nullptr;
 }

@@ -38,7 +38,7 @@ public:
 
 	// 조리된 밥을 받아오는 함수
 	UFUNCTION(BlueprintCallable)
-	class AIngredient* GetCookedIngredient();
+	class AIngredient* GetRice();
 
 
 
@@ -80,7 +80,7 @@ private:
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowprivateAccess = "true"))
 	EPotState PotState = EPotState::IDLE;
 
-	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowprivateAccess = "true"))
+	UPROPERTY(/*Replicated,*/ EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowprivateAccess = "true"))
 	EPotState PrevPotState = EPotState::MAX;
 
 	UPROPERTY(Replicated)
