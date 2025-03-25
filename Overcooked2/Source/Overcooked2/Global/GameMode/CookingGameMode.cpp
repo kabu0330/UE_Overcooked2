@@ -22,6 +22,11 @@
 ACookingGameMode::ACookingGameMode()
 {
 	OrderManager = CreateDefaultSubobject<UOrderManageComponent>(TEXT("OrderManager"));
+
+	ChefHeadNames.Add(UOC2Const::ChefEagleHeadName);
+	ChefHeadNames.Add(UOC2Const::ChefMouseHeadName);
+	ChefHeadNames.Add(UOC2Const::ChefPandaHeadName);
+	ChefHeadNames.Add(UOC2Const::ChefPigHeadName);
 }
 
 void ACookingGameMode::BeginPlay()
@@ -57,13 +62,27 @@ void ACookingGameMode::PostLogin(APlayerController* NewPlayerController)
 {
 	Super::PostLogin(NewPlayerController);
 
-	UE_LOG(LogTemp, Warning, TEXT("Player %s has joined the game!"), *NewPlayerController->GetName());
+	//UE_LOG(LogTemp, Warning, TEXT("Player %s has joined the game!"), *NewPlayerController->GetName());
 
-	PlayerControllers.Push(NewPlayerController);
+	//PlayerControllers.Push(NewPlayerController);
 
-	if (4 == PlayerControllers.Num() && ECookingGameModeState::ECS_Stay == CurState)
+	//if (4 == PlayerControllers.Num() && ECookingGameModeState::ECS_Stay == CurState)
+	//{
+	//	ChangeState(ECookingGameModeState::ECS_Stage);
+	//}
+
+	// 접속한 플레이어가 가진 디폴트 폰을 가져오기
+	AOC2Character* DefaultCharacter = Cast<AOC2Character>(NewPlayerController->GetCharacter());
+
+	if (DefaultCharacter)
 	{
-		ChangeState(ECookingGameModeState::ECS_Stage);
+		AOC2Character* OC2Character = Cast<AOC2Character>(DefaultCharacter);
+		if (nullptr != OC2Character)
+		{
+			// 이름을 설정하는 함수 호출
+			OC2Character->SetCharacterName(ChefHeadNames[CurIdx]);
+			CurIdx++;
+		}
 	}
 }
 

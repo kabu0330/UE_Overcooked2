@@ -17,4 +17,7 @@ class OVERCOOKED2_API ALobbyPlayerController : public APlayerController
 protected:
 	virtual void BeginPlay() override;
 	
+public:
+	UFUNCTION(Client, Reliable)
+	void Client_SetChefHeadName(const FString& NewChefHeadName);
 };

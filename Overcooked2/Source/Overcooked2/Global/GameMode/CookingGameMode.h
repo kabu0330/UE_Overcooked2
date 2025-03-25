@@ -18,6 +18,7 @@ class AIngredient;
 class APlate;
 class AOC2Actor;
 class ACookingGameState;
+class ACookingTable;
 
 UENUM(BlueprintType)
 enum class ECookingGameModeState : uint8
@@ -59,6 +60,7 @@ public:
 
 public:
 	TArray<APlayerController*> PlayerControllers;
+	TArray < TSubclassOf< ACookingTable>> CookingTables;
 
 private:
 	void PrintDebugMessage();
@@ -70,6 +72,10 @@ private:
 	ACookingGameState* CookingGameState = nullptr;
 	
 	ECookingGameModeState CurState = ECookingGameModeState::ECS_None;
+
+	TArray<FString> ChefHeadNames;
+
+	int CurIdx = 0;
 
 	float CheckTime = 0.0f;
 };

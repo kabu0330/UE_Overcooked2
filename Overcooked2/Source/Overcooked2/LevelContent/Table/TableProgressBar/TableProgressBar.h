@@ -3,21 +3,22 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "LevelContent/Table/CookingTable.h"
-#include "SinkTable.generated.h"
+#include "Global/GameFramework/OC2Actor.h"
+#include "TableProgressBar.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class OVERCOOKED2_API ASinkTable : public ACookingTable
+class OVERCOOKED2_API ATableProgressBar : public AOC2Actor
 {
 	GENERATED_BODY()
 
 public:
-	ASinkTable();
+	ATableProgressBar();
 
 	virtual void BeginPlay() override;
 
 	virtual void Tick(float DeltaTime) override;
+	
 };

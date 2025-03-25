@@ -10,6 +10,7 @@
 #include <LevelContent/Cook/Plate.h>
 #include <LevelContent/Cook/Dev/CookingDevPlayerState.h>
 #include <LevelContent/Cook/Dev/CookingObjectManager.h>
+#include <LevelContent/Cook/Pot.h>
 #include "CookingDevGameMode.generated.h"
 
 /**
@@ -41,13 +42,17 @@ public:
 
 	void AddIngredient(AIngredient* Ingredient)
 	{
+		Ingredient->AddActorWorldOffset(FVector(0, 0, 20));
 		CookingObjectManager->GetIngredients().Add(Ingredient);
 	}
 
 	void AddPlate(APlate* Plate)
 	{
+		Plate->SetActorLocation(FVector(300, -100, 10));
 		CookingObjectManager->GetPlates().Add(Plate);
 	}
+
+	void PlaceOnThePot();
 
 	void Wash();
 
@@ -66,5 +71,11 @@ private:
 	class UCookingDevUserWidget* Widget = nullptr;
 
 	UCookingObjectManager* CookingObjectManager = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<APot> SubclassPot = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	APot* Pot = nullptr;
 
 };
