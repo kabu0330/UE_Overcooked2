@@ -39,3 +39,10 @@ void ACookingPlayerController::Tick(float DeltaTime)
 void ACookingPlayerController::SetupInputComponent()
 {
 }
+
+void ACookingPlayerController::OnPossess(APawn* InPawn)
+{
+	Super::OnPossess(InPawn);
+
+
+}
