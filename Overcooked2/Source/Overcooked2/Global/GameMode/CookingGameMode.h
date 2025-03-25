@@ -45,6 +45,8 @@ protected:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void PostLogin(APlayerController* NewPlayerController) override;
+
+	void InitChef();
 	
 public:
 	void EntryStay();
@@ -74,6 +76,7 @@ private:
 	ECookingGameModeState CurState = ECookingGameModeState::ECS_None;
 
 	TArray<FString> ChefHeadNames;
+	TArray<class AOC2Character*> Characters;
 
 	int CurIdx = 0;
 

@@ -35,6 +35,8 @@ void ACookingGameMode::BeginPlay()
 
 	CookingGameState = GetGameState<ACookingGameState>();
 
+	CurIdx = 0;
+
 	ChangeState(ECookingGameModeState::ECS_Stay);
 }
 
@@ -62,6 +64,9 @@ void ACookingGameMode::PostLogin(APlayerController* NewPlayerController)
 {
 	Super::PostLogin(NewPlayerController);
 
+
+
+	/* OC2Controller->OnPossessDelegate->AddDynaimc(&SetHead) */
 	//UE_LOG(LogTemp, Warning, TEXT("Player %s has joined the game!"), *NewPlayerController->GetName());
 
 	//PlayerControllers.Push(NewPlayerController);
@@ -72,16 +77,57 @@ void ACookingGameMode::PostLogin(APlayerController* NewPlayerController)
 	//}
 
 	// 접속한 플레이어가 가진 디폴트 폰을 가져오기
-	AOC2Character* DefaultCharacter = Cast<AOC2Character>(NewPlayerController->GetCharacter());
+	
+	//ACharacter* DefaultCharacter = NewPlayerController->GetCharacter();
 
-	if (DefaultCharacter)
+	//if (DefaultCharacter)
+	//{
+	//	AOC2Character* OC2Character = Cast<AOC2Character>(DefaultCharacter);
+
+	//	Characters.Add(OC2Character);
+
+	//	if (nullptr != OC2Character)
+	//	{
+	//		// 이름을 설정하는 함수 호출
+	//		CurIdx++;
+	//	}
+	//}
+
+	//if (CurIdx == 2)
+	//{
+	//	for (int i = 0; i < CurIdx; i++)
+	//	{
+	//		Characters[i]->SetCharacterName(ChefHeadNames[CurIdx]);
+	//	}
+	//}
+}
+
+void ACookingGameMode::InitChef()
+{
+	UWorld* World = GetWorld();
+	if (nullptr == World)
 	{
-		AOC2Character* OC2Character = Cast<AOC2Character>(DefaultCharacter);
-		if (nullptr != OC2Character)
+		return;
+	}
+
+	for (FConstPlayerControllerIterator Iterator = World->GetPlayerControllerIterator(); Iterator; ++Iterator)
+	{
+		APlayerController* PlayerController = Iterator->Get();
+
+		if (nullptr != PlayerController)
 		{
-			// 이름을 설정하는 함수 호출
-			OC2Character->SetCharacterName(ChefHeadNames[CurIdx]);
-			CurIdx++;
+			ACharacter* DefaultCharacter = PlayerController->GetCharacter();
+
+			if (nullptr != DefaultCharacter)
+			{
+				AOC2Character* OC2Character = Cast<AOC2Character>(DefaultCharacter);
+
+				if (nullptr != OC2Character)
+				{
+					OC2Character->SetCharacterName(ChefHeadNames[CurIdx]);
+					CurIdx++;
+				}
+			}
 		}
 	}
 }
@@ -99,42 +145,11 @@ void ACookingGameMode::Stay(float DeltaTime)
 	{
 		ChangeState(ECookingGameModeState::ECS_Stage);
 	}
-
-	//if (TestTime >= 5.0f)
-	//{
-	//	ChangeState(ECookingGameModeState::ECS_Score);
-	//}
 }
 
 void ACookingGameMode::EntryStage()
 {
-	//for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
-	//{
-	//	APlayerController* PC = It->Get();
-	//	if (PC)
-	//	{
-	//		// Owning Pawn 가져오기
-	//		AOC2Character* PlayerPawn = Cast< AOC2Character>(PC->GetPawn());
-
-	//		if (PlayerPawn)
-	//		{
-	//			UOC2GameInstance* GameInstance = Cast<UOC2GameInstance>(PC->GetGameInstance());
-
-	//			if (GameInstance != nullptr)
-	//			{
-	//				UE_LOG(LogTemp, Log, TEXT("GameInstance 가져오기 성공!"));
-
-	//				PlayerPawn->SetCharacterName(GameInstance->GetChefHeadName());
-	//			}
-
-	//			UE_LOG(LogTemp, Log, TEXT("Found PlayerPawn: %s"), *PlayerPawn->GetName());
-	//		}
-	//		else
-	//		{
-	//			UE_LOG(LogTemp, Log, TEXT("PlayerController does not have a Pawn"));
-	//		}
-	//	}
-	//}
+	InitChef();
 
 	CheckTime = 0.0f;
 }
