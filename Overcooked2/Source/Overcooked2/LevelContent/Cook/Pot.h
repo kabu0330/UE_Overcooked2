@@ -9,12 +9,15 @@
 UENUM(BlueprintType)
 enum class EPotState : uint8
 {
-	IDLE 		UMETA(DisplayName = "대기"),
-	HEATING		UMETA(DisplayName = "HEATING"),
-	BOILING		UMETA(DisplayName = "BOILING"),
-	COOKED		UMETA(DisplayName = "COOKED"),
-	OVERCOOKED	UMETA(DisplayName = "OVERCOOKED"),
-	MAX			UMETA(DisplayName = "MAX"),
+	IDLE 			UMETA(DisplayName = "대기"),
+	HEATING			UMETA(DisplayName = "HEATING"),
+	BOILING			UMETA(DisplayName = "BOILING"),
+	COOKED			UMETA(DisplayName = "COOKED"),
+	COOKED_WARNING	UMETA(DisplayName = "COOKED_WARNING"),
+	COOKED_DANGER	UMETA(DisplayName = "COOKED_DANGER"),
+	SCORCHING	 	UMETA(DisplayName = "SCORCHING"),
+	OVERCOOKED		UMETA(DisplayName = "OVERCOOKED"),
+	MAX				UMETA(DisplayName = "MAX"),
 };
 
 /**
@@ -45,6 +48,13 @@ public:
 
 	void ResetPot();
 
+	void BlinkTexture(float DeltaTime);
+
+	bool IsCombinationSuccessful() const
+	{
+		return bIsCombinationSuccessful;
+	}
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
@@ -72,6 +82,9 @@ protected:
 	virtual void ForwardCookingTable(class ACookingTable* Table) override;
 	virtual void ForwardAttachToChef() override;
 
+	void InitTexture();
+	void SetWarningTexture();
+	void SetWarnigTextureOffset();
 
 
 private:
@@ -98,5 +111,24 @@ private:
 
 	UPROPERTY(Replicated)
 	class ACookingTable* CookingTable = nullptr;
+
+
+	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	class UBillboardComponent* TextureBillboard = nullptr;
+
+	UPROPERTY()
+	float BlinkTimeElapsed = 0.0f;
+
+	UPROPERTY(Replicated)
+	float BlinkTime = 0.0f;
+
+	UPROPERTY(Replicated)
+	bool bCanBlink = false;
+
+	UPROPERTY()
+	class UTimeEventComponent* TimeEventComponent = nullptr;
+
+	UPROPERTY(Replicated)
+	bool bIsCombinationSuccessful = false;
 
 };

@@ -37,10 +37,10 @@ void AChoppingTable::Tick(float DeltaTime)
 
 ACooking* AChoppingTable::Interact(AActor* ChefActor)
 {
-	AOC2Character* Chef = Cast<AOC2Character>(ChefActor);
+	ChefPtr = Cast<AOC2Character>(ChefActor);
 	ACooking* TempCooking = nullptr;
 
-	if (CookingPtr != nullptr && false == Chef->IsHolding()) // À½½Ä ÀÖÀ½, ¼ÎÇÁ ºó ¼Õ
+	if (CookingPtr != nullptr && false == ChefPtr->IsHolding()) // À½½Ä ÀÖÀ½, ¼ÎÇÁ ºó ¼Õ
 	{
 		TempCooking = CookingPtr;
 		CookingPtr = nullptr;
@@ -80,6 +80,8 @@ void AChoppingTable::ChoppingIsDone()
 	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Turquoise, "Chopping Done");
 	CookingPtr = Cast<ACooking>(PlacedIngredient);
 
+	ChefPtr->Chopping(false);
+	ChefPtr = nullptr;
 	bChoppingDone = false;
 }
 
