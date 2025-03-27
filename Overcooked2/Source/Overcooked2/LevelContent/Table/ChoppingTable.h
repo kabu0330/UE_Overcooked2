@@ -50,4 +50,6 @@ private:
 	float CurTime = 0.0f;
 	bool bTimerActivated = false;
 	bool bChoppingDone = false;
+
+	class AOC2Character* ChefPtr = nullptr;
 };
