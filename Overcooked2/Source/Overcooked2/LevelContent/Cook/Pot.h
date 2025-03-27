@@ -4,21 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "LevelContent/Cook/Cooking.h"
-#include "Pot.generated.h"
 
-UENUM(BlueprintType)
-enum class EPotState : uint8
-{
-	IDLE 			UMETA(DisplayName = "대기"),
-	HEATING			UMETA(DisplayName = "HEATING"),
-	BOILING			UMETA(DisplayName = "BOILING"),
-	COOKED			UMETA(DisplayName = "COOKED"),
-	COOKED_WARNING	UMETA(DisplayName = "COOKED_WARNING"),
-	COOKED_DANGER	UMETA(DisplayName = "COOKED_DANGER"),
-	SCORCHING	 	UMETA(DisplayName = "SCORCHING"),
-	OVERCOOKED		UMETA(DisplayName = "OVERCOOKED"),
-	MAX				UMETA(DisplayName = "MAX"),
-};
+#include "Global/OC2Const.h"
+#include "Global/OC2Struct.h"
+#include "Global/OC2Enum.h"
+
+#include "Pot.generated.h"
 
 /**
  * 

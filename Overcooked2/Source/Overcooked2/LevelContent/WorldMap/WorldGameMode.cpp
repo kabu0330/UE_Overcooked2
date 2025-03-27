@@ -23,7 +23,17 @@ void AWorldGameMode::BeginPlay()
 	}
 }
 
-void AWorldGameMode::Tick(float _DeltaTime)
+void AWorldGameMode::Tick(float DeltaTime)
 {
-	Super::Tick(_DeltaTime);
+	Super::Tick(DeltaTime);
+}
+
+void AWorldGameMode::PostLogin(APlayerController* NewPlayerController)
+{
+	Super::PostLogin(NewPlayerController);
+
+	FInputModeGameOnly Mode;
+
+	NewPlayerController->SetInputMode(Mode);
+	NewPlayerController->SetShowMouseCursor(false);
 }

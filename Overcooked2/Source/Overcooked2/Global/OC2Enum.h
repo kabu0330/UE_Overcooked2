@@ -7,6 +7,29 @@
 #include "OC2Enum.generated.h"
 
 UENUM(BlueprintType)
+enum class ECookingGameModeState : uint8
+{
+	ECS_None	UMETA(DisplayName = "None"),
+	ECS_Stay    UMETA(DisplayName = "Stay"),
+	ECS_Stage   UMETA(DisplayName = "Stage"),
+	ECS_Score   UMETA(DisplayName = "Score"),
+};
+
+UENUM(BlueprintType)
+enum class EPotState : uint8
+{
+	IDLE 			UMETA(DisplayName = "대기"),
+	HEATING			UMETA(DisplayName = "HEATING"),
+	BOILING			UMETA(DisplayName = "BOILING"),
+	COOKED			UMETA(DisplayName = "COOKED"),
+	COOKED_WARNING	UMETA(DisplayName = "COOKED_WARNING"),
+	COOKED_DANGER	UMETA(DisplayName = "COOKED_DANGER"),
+	SCORCHING	 	UMETA(DisplayName = "SCORCHING"),
+	OVERCOOKED		UMETA(DisplayName = "OVERCOOKED"),
+	MAX				UMETA(DisplayName = "MAX"),
+};
+
+UENUM(BlueprintType)
 enum class EPlateState : uint8
 {
 	NONE			UMETA(DisplayName = "None"),

@@ -18,8 +18,9 @@ public:
 	AWorldGameMode();
 
 protected:
-	void BeginPlay() override;
-	void Tick(float _DeltaTime) override;
+	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
+	virtual void PostLogin(APlayerController* NewPlayerController) override;
 
 private:
 	TObjectPtr<class AWorldManager> WorldManager = nullptr;

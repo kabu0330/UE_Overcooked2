@@ -4,6 +4,10 @@
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 
+AWorldPlayerController::AWorldPlayerController()
+{
+}
+
 void AWorldPlayerController::AddInputMappingContext(UInputMappingContext* _Context)
 {
 	if (GetLocalPlayer() == nullptr)

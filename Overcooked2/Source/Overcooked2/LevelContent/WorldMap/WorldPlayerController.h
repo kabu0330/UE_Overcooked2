@@ -15,6 +15,8 @@ class OVERCOOKED2_API AWorldPlayerController : public APlayerController
 	GENERATED_BODY()
 	
 public:
+	AWorldPlayerController();
+
 	UFUNCTION(BlueprintCallable)
 	void AddInputMappingContext(UInputMappingContext* _Context);
 
