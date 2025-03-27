@@ -81,4 +81,8 @@ private:
 
 	void ChangeState(ETileState _State);
 	void RunFlip(float _DeltaTime);
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite);
+	UStaticMesh* TestMesh = nullptr;
 };
