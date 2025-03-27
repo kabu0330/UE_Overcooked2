@@ -27,8 +27,8 @@ APot::APot()
 
 	TimeEventComponent = CreateDefaultSubobject<UTimeEventComponent>(TEXT("TimeEventComponent "));
 
-	FVector Pos = FVector(249, 1452, 60);
-	StaticMeshComponent->SetRelativeLocation(Pos);
+	//FVector Pos = FVector(249, 1452, 60);
+	//StaticMeshComponent->SetRelativeLocation(Pos);
 }
 
 void APot::InitTexture()
@@ -77,6 +77,7 @@ void APot::SetWarningTexture()
 	if (nullptr != NewTexture)
 	{
 		TextureBillboard->SetSprite(NewTexture);
+		TextureBillboard->SetVisibility(false);
 	}
 }
 
@@ -110,8 +111,7 @@ void APot::Tick(float DeltaTime)
 	Cook(DeltaTime);
 	SetAction();
 	SetWarnigTextureOffset();
-
-	BlinkTexture(0.5f, DeltaTime);
+	BlinkTexture(DeltaTime);
 }
 
 void APot::SetWarnigTextureOffset()
@@ -146,6 +146,7 @@ void APot::Add_Implementation(AIngredient* Ingredient)
 	RawRice->RequestOC2ActorDestroy(); // 들어온 재료는 삭제
 
 	bIsRiceInPot = true;
+	bIsCombinationSuccessful = true;
 	PotState = EPotState::HEATING;
 }
 
@@ -156,15 +157,15 @@ bool APot::IsBoiling()
 	{
 		return false;
 	}
-	if (nullptr == CookingTable)
-	{
-		return false;
-	}
-	ABurnerTable* BurnerTable = Cast<ABurnerTable>(CookingTable);
-	if (nullptr == BurnerTable) // 2. 버너 위에 있냐
-	{
-		return false;
-	}
+	//if (nullptr == CookingTable)
+	//{
+	//	return false;
+	//}
+	//ABurnerTable* BurnerTable = Cast<ABurnerTable>(CookingTable);
+	//if (nullptr == BurnerTable) // 2. 버너 위에 있냐
+	//{
+	//	return false;
+	//}
 	return true;
 }
 
@@ -177,15 +178,40 @@ void APot::Cook(float DeltaTime)
 
 	TimeElapsed += DeltaTime;
 
-	if (EPotState::HEATING == PotState && 4.0f < TimeElapsed)
+	float TimeToBoil = 4.0f;
+	float TimeToCook = 12.0f;
+	float TimeToWarning = 16.0f;
+	float TimeToDanger = 20.0f;
+	float TimeToScorch = 24.0f;
+	float TimeToOvercook = 28.0f;
+
+	if (EPotState::HEATING == PotState && 
+		TimeToBoil < TimeElapsed)
 	{
 		PotState = EPotState::BOILING;
 	}
-	else if (EPotState::BOILING == PotState && 8.0f < TimeElapsed)
+	else if (EPotState::BOILING == PotState && 
+		TimeToCook < TimeElapsed)
 	{
 		PotState = EPotState::COOKED;
 	}
-	else if (EPotState::COOKED == PotState && 12.0f < TimeElapsed)
+	else if (EPotState::COOKED == PotState && 
+		TimeToWarning < TimeElapsed)
+	{
+		PotState = EPotState::COOKED_WARNING;
+	}
+	else if (EPotState::COOKED_WARNING == PotState && 
+		TimeToDanger < TimeElapsed)
+	{
+		PotState = EPotState::COOKED_DANGER;
+	}
+	else if (EPotState::COOKED_DANGER == PotState && 
+		TimeToScorch < TimeElapsed)
+	{
+		PotState = EPotState::SCORCHING;
+	}
+	else if (EPotState::SCORCHING == PotState && 
+		TimeToOvercook < TimeElapsed)
 	{
 		PotState = EPotState::OVERCOOKED;
 	}
@@ -225,13 +251,22 @@ void APot::SetAction_Implementation()
 		break;
 	case EPotState::COOKED:
 	{
-
 	}
 		break;
+	case EPotState::COOKED_WARNING:
+		bCanBlink = true;
+		TextureBillboard->SetVisibility(true);
+		BlinkTime = 1.0f;
+		break;
+	case EPotState::COOKED_DANGER:
+		BlinkTime = 0.5f;
+		break;
+	case EPotState::SCORCHING:
+		BlinkTime = 0.2f;
+		break;
 	case EPotState::OVERCOOKED:
-	{
-
-	}
+		bCanBlink = false;
+		TextureBillboard->SetVisibility(false);
 		break;
 	default:
 		break;
@@ -263,18 +298,25 @@ void APot::ResetPot()
 	PotState = EPotState::IDLE;
 	bIsRiceInPot = false;
 	TimeElapsed = 0.0f;
+	bCanBlink = false;
+	bIsCombinationSuccessful = false;
 
 	ChangeNoneMaterial();
 }
 
-void APot::BlinkTexture(float Time, float DeltaTime)
+void APot::BlinkTexture(float DeltaTime)
 {
+	if (false == bCanBlink)
+	{
+		return;
+	}
+
+
 	if (true == TextureBillboard->IsVisible())
 	{
 		BlinkTimeElapsed += DeltaTime;
 	}
 
-	float BlinkTime = Time;
 	if (BlinkTime <= BlinkTimeElapsed && true == TextureBillboard->IsVisible())
 	{
 		TextureBillboard->SetVisibility(false);
