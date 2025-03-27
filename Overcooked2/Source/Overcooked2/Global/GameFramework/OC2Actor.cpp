@@ -102,7 +102,7 @@ void AOC2Actor::BeginPlay()
 					float Temp;
 					Mesh->GetMaterials()[i]->GetScalarParameterValue(FName("DiffuseAdd"), Temp);
 					DiffuseColorMapWeights.Add(Temp);
-					++Count;
+					Mesh->SetMaterial(i, DynamicMaterial);
 				}
 			}
 		}
@@ -151,21 +151,21 @@ void AOC2Actor::ApplyMaterialHighlight()
 				}
 			}
 			
-			// 최초 하이라이트
-			UMaterialInterface* Material = Mesh->GetMaterials()[i];
-			if (nullptr != Material)
-			{
-				UMaterialInstanceDynamic* DynamicMaterial = UMaterialInstanceDynamic::Create(Material, this);
-				if (nullptr != DynamicMaterial)
-				{
-					float Temp;
-					Mesh->GetMaterials()[i]->GetScalarParameterValue(FName("DiffuseAdd"), Temp);
-					DiffuseColorMapWeights.Add(Temp);
-					DynamicMaterial->SetScalarParameterValue(FName("DiffuseAdd"), HighlightValue);
-					Mesh->SetMaterial(i, DynamicMaterial);
-					++Count;
-				}
-			}
+			//// 최초 하이라이트
+			//UMaterialInterface* Material = Mesh->GetMaterials()[i];
+			//if (nullptr != Material)
+			//{
+			//	UMaterialInstanceDynamic* DynamicMaterial = UMaterialInstanceDynamic::Create(Material, this);
+			//	if (nullptr != DynamicMaterial)
+			//	{
+			//		float Temp;
+			//		Mesh->GetMaterials()[i]->GetScalarParameterValue(FName("DiffuseAdd"), Temp);
+			//		DiffuseColorMapWeights.Add(Temp);
+			//		DynamicMaterial->SetScalarParameterValue(FName("DiffuseAdd"), HighlightValue);
+			//		Mesh->SetMaterial(i, DynamicMaterial);
+			//		++Count;
+			//	}
+			//}
 		}
 	}
 

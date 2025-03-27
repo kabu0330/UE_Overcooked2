@@ -80,6 +80,7 @@ protected:
 
 	virtual void ForwardCookingTable(class ACookingTable* Table) {};
 	virtual void ForwardAttachToChef() {};
+	virtual void ForwardDetachToChef() {};
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	ECookingType CookingType = ECookingType::ECT_NONE;

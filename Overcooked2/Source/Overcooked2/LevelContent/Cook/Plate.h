@@ -64,6 +64,9 @@ protected:
 	void SetMesh();
 	void SetMaterialTexture(UTexture* Texture);
 
+	virtual void ForwardAttachToChef() override;
+	virtual void ForwardDetachToChef() override;
+
 private:
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	TArray<FRecipe> Ingredients;
