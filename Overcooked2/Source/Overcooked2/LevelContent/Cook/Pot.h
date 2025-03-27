@@ -45,6 +45,8 @@ public:
 
 	void ResetPot();
 
+	void BlinkTexture(float Time, float DeltaTime);
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
@@ -72,6 +74,9 @@ protected:
 	virtual void ForwardCookingTable(class ACookingTable* Table) override;
 	virtual void ForwardAttachToChef() override;
 
+	void InitTexture();
+	void SetWarningTexture();
+	void SetWarnigTextureOffset();
 
 
 private:
@@ -98,5 +103,15 @@ private:
 
 	UPROPERTY(Replicated)
 	class ACookingTable* CookingTable = nullptr;
+
+
+	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	class UBillboardComponent* TextureBillboard = nullptr;
+
+	UPROPERTY()
+	float BlinkTimeElapsed = 0.0f;
+
+	UPROPERTY()
+	class UTimeEventComponent* TimeEventComponent = nullptr;
 
 };

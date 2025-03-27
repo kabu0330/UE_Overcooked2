@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "LevelContent/Cook/Pot.h"
@@ -7,6 +7,8 @@
 #include <Net/UnrealNetwork.h>
 #include "GameFramework/Character.h"
 #include <Global/GameMode/OC2GameMode.h>
+#include "Components/BillboardComponent.h"  
+#include <Global/Component/TimeEventComponent.h>
 
 APot::APot()
 {
@@ -21,9 +23,26 @@ APot::APot()
 	SoupSkeletalMeshComponent->SetupAttachment(StaticMeshComponent);
 	SoupSkeletalMeshComponent->SetIsReplicated(true);
 
+	InitTexture();
+
+	TimeEventComponent = CreateDefaultSubobject<UTimeEventComponent>(TEXT("TimeEventComponent "));
 
 	FVector Pos = FVector(249, 1452, 60);
 	StaticMeshComponent->SetRelativeLocation(Pos);
+}
+
+void APot::InitTexture()
+{
+	TextureBillboard = CreateDefaultSubobject<UBillboardComponent>(TEXT("TextureBillboard"));
+	TextureBillboard->bHiddenInGame = false;
+	TextureBillboard->bIsScreenSizeScaled = true;
+	TextureBillboard->bReceivesDecals = false;
+
+	FVector Scale(1.0f, 1.0f, 1.0f);
+	TextureBillboard->SetRelativeScale3D(Scale);
+
+	TextureBillboard->SetUsingAbsoluteRotation(true);
+	TextureBillboard->SetUsingAbsoluteLocation(true);
 }
 
 void APot::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -40,31 +59,30 @@ void APot::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProp
 	DOREPLIFETIME(APot, CookingTable);
 }
 
-// TableÀÌ SetCookingTable ÇÔ¼ö¸¦ È£ÃâÇØÁÖ¸é ¿©±â¼­ ¼¼ÆÃ
-void APot::ForwardCookingTable(ACookingTable* Table)
-{
-	CookingTable = Table;
-}
-
-// Ä³¸¯ÅÍ°¡ ³¿ºñ¸¦ µé¾î¿Ã·ÈÀ» ¶§, È£Ãâ
-void APot::ForwardAttachToChef()
-{
-	CookingTable = nullptr;
-}
-
 void APot::BeginPlay()
 {
 	ACooking::BeginPlay();
 
-	NoneMaterial = LoadNoneMaterial(); // ¿©±â¼­ ÇØÁà¾ß Å¬¶óµµ  NULL ¸ÓÆ¼¸®¾ó »ı¼ºµÈ´Ù.
+	NoneMaterial = LoadNoneMaterial(); // ì—¬ê¸°ì„œ í•´ì¤˜ì•¼ í´ë¼ë„  NULL ë¨¸í‹°ë¦¬ì–¼ ìƒì„±ëœë‹¤.
 	SetSoupMaterial();
 
 	ChangeNoneMaterial();
+	SetWarningTexture();
+}
+
+void APot::SetWarningTexture()
+{
+	const FString WarningTextureName = TEXT("/Game/Resources/LevelResource/CookObject/Object/Pot/Texture/BurnWarning");
+	UTexture2D* NewTexture = LoadObject<UTexture2D>(nullptr, *WarningTextureName);
+	if (nullptr != NewTexture)
+	{
+		TextureBillboard->SetSprite(NewTexture);
+	}
 }
 
 UMaterialInstanceDynamic* APot::LoadNoneMaterial()
 {
-	const FString NoneMaterialName = TEXT("/Game/Resources/LevelResource/Object/Pot/M_NONE");
+	const FString NoneMaterialName = TEXT("/Game/Resources/LevelResource/CookObject/Object/Pot/Soup/M_NONE");
 	UMaterial* NewMaterial = LoadObject<UMaterial>(nullptr, *NoneMaterialName);
 	UMaterialInstanceDynamic* NewMaterialInstanceDynamic = UMaterialInstanceDynamic::Create(NewMaterial, this);
 	return NewMaterialInstanceDynamic;
@@ -91,35 +109,50 @@ void APot::Tick(float DeltaTime)
 
 	Cook(DeltaTime);
 	SetAction();
+	SetWarnigTextureOffset();
+
+	BlinkTexture(0.5f, DeltaTime);
+}
+
+void APot::SetWarnigTextureOffset()
+{
+	if (nullptr != TextureBillboard)
+	{
+		FRotator FixedRotation = FRotator(0, 0, 0);
+		TextureBillboard->SetWorldRotation(FixedRotation);
+
+		FVector OffsetPos = FVector(20, -180, 100);
+		TextureBillboard->SetWorldLocation(GetActorLocation() + OffsetPos);
+	}
 }
 
 void APot::Add_Implementation(AIngredient* Ingredient)
 {
-	if (true == bIsRiceInPot) // 1. ÀÌ¹Ì ½ÒÀÌ µé¾î¿ÍÀÖ´Ù¸é ¸®ÅÏ
+	if (true == bIsRiceInPot) // 1. ì´ë¯¸ ìŒ€ì´ ë“¤ì–´ì™€ìˆë‹¤ë©´ ë¦¬í„´
 	{
 		return;
 	}
 
 	AIngredient* RawRice = Cast<AIngredient>(Ingredient);
-	if (nullptr == RawRice) // 2. Áö±İ µé¾î¿Â Àç·á°¡ ½ÒÀÌ³Ä
+	if (nullptr == RawRice) // 2. ì§€ê¸ˆ ë“¤ì–´ì˜¨ ì¬ë£Œê°€ ìŒ€ì´ëƒ
 	{
 		return;
 	}
-	if (EIngredientState::EIS_BOILABLE != RawRice->GetCurIngredientState()) // 3. Boil ÇÒ ¼ö ÀÖ°í, Á¶¸®°¡ ¾È µÈ »óÅÂ°¡ ¸Â³Ä
+	if (EIngredientState::EIS_BOILABLE != RawRice->GetCurIngredientState()) // 3. Boil í•  ìˆ˜ ìˆê³ , ì¡°ë¦¬ê°€ ì•ˆ ëœ ìƒíƒœê°€ ë§ëƒ
 	{
 		return;
 	}
 
-	RawRice->RequestOC2ActorDestroy(); // µé¾î¿Â Àç·á´Â »èÁ¦
+	RawRice->RequestOC2ActorDestroy(); // ë“¤ì–´ì˜¨ ì¬ë£ŒëŠ” ì‚­ì œ
 
 	bIsRiceInPot = true;
 	PotState = EPotState::HEATING;
 }
 
-// Á¶¸® ½Ã°£ Å¸ÀÌ¸Ó Æ®¸®°Å
+// ì¡°ë¦¬ ì‹œê°„ íƒ€ì´ë¨¸ íŠ¸ë¦¬ê±°
 bool APot::IsBoiling()
 {
-	if (false == bIsRiceInPot) // 1. ³¿ºñ¿¡ ½ÒÀÌ ÀÖ³Ä
+	if (false == bIsRiceInPot) // 1. ëƒ„ë¹„ì— ìŒ€ì´ ìˆëƒ
 	{
 		return false;
 	}
@@ -128,7 +161,7 @@ bool APot::IsBoiling()
 		return false;
 	}
 	ABurnerTable* BurnerTable = Cast<ABurnerTable>(CookingTable);
-	if (nullptr == BurnerTable) // 2. ¹ö³Ê À§¿¡ ÀÖ³Ä
+	if (nullptr == BurnerTable) // 2. ë²„ë„ˆ ìœ„ì— ìˆëƒ
 	{
 		return false;
 	}
@@ -165,7 +198,7 @@ void APot::SetAction_Implementation()
 		int a = 0;
 	}
 
-	// »óÅÂ°¡ º¯°æµÇÁö ¾Ê¾ÒÀ¸¸é ¸®ÅÏ
+	// ìƒíƒœê°€ ë³€ê²½ë˜ì§€ ì•Šì•˜ìœ¼ë©´ ë¦¬í„´
 	if (PrevPotState == PotState)
 	{
 		return;
@@ -234,6 +267,27 @@ void APot::ResetPot()
 	ChangeNoneMaterial();
 }
 
+void APot::BlinkTexture(float Time, float DeltaTime)
+{
+	if (true == TextureBillboard->IsVisible())
+	{
+		BlinkTimeElapsed += DeltaTime;
+	}
+
+	float BlinkTime = Time;
+	if (BlinkTime <= BlinkTimeElapsed && true == TextureBillboard->IsVisible())
+	{
+		TextureBillboard->SetVisibility(false);
+		//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("í…ìŠ¤ì²˜ ë”"));
+		BlinkTimeElapsed = 0.0f;
+		TimeEventComponent->AddEndEvent(BlinkTime, [this]()
+			{
+				//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("í…ìŠ¤ì²˜ ì¼¬"));
+				TextureBillboard->SetVisibility(true);
+			});
+	}
+}
+
 AIngredient* APot::GetRice()
 {
 	AGameModeBase* GameModeBase =  GetWorld()->GetAuthGameMode();
@@ -258,3 +312,14 @@ AIngredient* APot::GetRice()
 	return Rice;
 }
 
+// Tableì´ SetCookingTable í•¨ìˆ˜ë¥¼ í˜¸ì¶œí•´ì£¼ë©´ ì—¬ê¸°ì„œ ì„¸íŒ…
+void APot::ForwardCookingTable(ACookingTable* Table)
+{
+	CookingTable = Table;
+}
+
+// ìºë¦­í„°ê°€ ëƒ„ë¹„ë¥¼ ë“¤ì–´ì˜¬ë ¸ì„ ë•Œ, í˜¸ì¶œ
+void APot::ForwardAttachToChef()
+{
+	CookingTable = nullptr;
+}
