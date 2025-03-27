@@ -54,7 +54,7 @@ void ATileGrid::SetStaticMeshes(TMap<int8, FTileData>& _Tiles)
 
 		for (TPair<int8, FTileData>& Elem : _Tiles)
 		{
-			Elem.Value.TileInst->SetStaticMesh(MeshAsset.Object);
+			Elem.Value.TileInst->SetStaticMesh(TestMesh);
 		}
 	}
 }

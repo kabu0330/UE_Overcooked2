@@ -206,6 +206,7 @@ void AWorldManager::RunShowEnvs1_1(float _DeltaTime)
 			IsAllEnd = false;
 			for (int i = 0; i < ActorsChangingScale3D.Num(); ++i)
 			{
+				ActorsChangingScale3D[i]->SetActorHiddenInGame(false);
 				ActorsChangingScale3D[i]->SetActorRelativeScale3D(Scale + 0.05f);
 			}
 		}
