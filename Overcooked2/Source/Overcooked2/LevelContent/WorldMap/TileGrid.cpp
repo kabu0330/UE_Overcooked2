@@ -384,7 +384,7 @@ void ATileGrid::RunFlip(float _DeltaTime)
 
 		if (_IsAllEnd)
 		{
-			UE_LOG(LogTemp, Log, TEXT("IsAllEnd!!!!!!!"));
+			//UE_LOG(LogTemp, Log, TEXT("IsAllEnd!!!!!!!"));
 			ChangeState(ETileState::Opened);
 			SetActorTickEnabled(false);
 		}
