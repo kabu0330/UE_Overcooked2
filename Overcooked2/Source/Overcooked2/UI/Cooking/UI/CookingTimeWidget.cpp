@@ -20,11 +20,18 @@ void UCookingTimeWidget::NativeTick(const FGeometry& MyGeometry, float DeltaTime
 }
 
 
-void UCookingTimeWidget::StartTimer(float Deltatime)
+void UCookingTimeWidget::StartTimer(float DeltaTime)
 {
 
 	int Min = static_cast<int>(CurTime / 60);
 	int Sec = static_cast<int>(CurTime) % 60;
+
+	if (Min <= 0 && Sec <= 0)
+	{
+		Min = 0;
+		Sec = 0;
+	}
+
 
 	FString MinStr = "0";
 	FString SecStr = "0";
@@ -38,6 +45,8 @@ void UCookingTimeWidget::StartTimer(float Deltatime)
 		MinStr = FString::FromInt(Min);
 	}
 
+
+
 	if (Sec < 10)
 	{
 		SecStr = "0" + FString::FromInt(Sec);
@@ -47,9 +56,28 @@ void UCookingTimeWidget::StartTimer(float Deltatime)
 		SecStr = FString::FromInt(Sec);
 	}
 
+
 	Time->SetText(FText::FromString(MinStr + ":" + SecStr));
 	TimeProgressBar->SetPercent(CurTime / TotalTime);
 
-	CurTime -= Deltatime;
+	FLinearColor Color = TimeProgressBar->GetFillColorAndOpacity();
+
+	float TimeLimit = 180.0f;
+
+	if (CurTime > (TimeLimit / 3) * 2)
+	{
+		TimeProgressBar->SetFillColorAndOpacity({ Color.R, Color.G, 0.0f });
+	}	
+	else if (CurTime > TimeLimit / 3)
+	{
+		TimeProgressBar->SetFillColorAndOpacity({ Color.R + DeltaTime * 0.01f, Color.G + DeltaTime * 0.01f, 0.0f });
+	}
+	else 
+	{
+		TimeProgressBar->SetFillColorAndOpacity({ Color.R + DeltaTime * 0.01f, Color.G - DeltaTime * 0.02f, 0.0f });
+	}
+
+
+	CurTime -= DeltaTime;
 
 }
