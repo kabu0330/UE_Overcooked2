@@ -41,6 +41,7 @@ void ACooking::DetachFromChef_Implementation(AActor* Player)
 	DetachFromActor(FDetachmentTransformRules::KeepRelativeTransform);
 
 	// 놓이면 Table에서 SetCookingTable 함수 호출해서 테이블 정보를 넣어준다.
+	ForwardDetachToChef();
 }
 
 // Called when the game starts or when spawned

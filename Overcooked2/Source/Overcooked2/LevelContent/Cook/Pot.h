@@ -81,6 +81,7 @@ protected:
 
 	virtual void ForwardCookingTable(class ACookingTable* Table) override;
 	virtual void ForwardAttachToChef() override;
+	virtual void ForwardDetachToChef() override;
 
 	void InitTexture();
 	void SetWarningTexture();
@@ -130,5 +131,7 @@ private:
 
 	UPROPERTY(Replicated)
 	bool bIsCombinationSuccessful = false;
+
+	FVector InitPos = FVector(249, 1452, 60);
 
 };

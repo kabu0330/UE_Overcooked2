@@ -27,8 +27,7 @@ APot::APot()
 
 	TimeEventComponent = CreateDefaultSubobject<UTimeEventComponent>(TEXT("TimeEventComponent "));
 
-	//FVector Pos = FVector(249, 1452, 60);
-	//StaticMeshComponent->SetRelativeLocation(Pos);
+	StaticMeshComponent->SetRelativeLocation(InitPos);
 }
 
 void APot::InitTexture()
@@ -181,9 +180,9 @@ void APot::Cook(float DeltaTime)
 	float TimeToBoil = 4.0f;
 	float TimeToCook = 12.0f;
 	float TimeToWarning = 16.0f;
-	float TimeToDanger = 20.0f;
-	float TimeToScorch = 24.0f;
-	float TimeToOvercook = 28.0f;
+	float TimeToDanger = 19.0f;
+	float TimeToScorch = 22.0f;
+	float TimeToOvercook = 25.0f;
 
 	if (EPotState::HEATING == PotState && 
 		TimeToBoil < TimeElapsed)
@@ -311,7 +310,6 @@ void APot::BlinkTexture(float DeltaTime)
 		return;
 	}
 
-
 	if (true == TextureBillboard->IsVisible())
 	{
 		BlinkTimeElapsed += DeltaTime;
@@ -364,4 +362,16 @@ void APot::ForwardCookingTable(ACookingTable* Table)
 void APot::ForwardAttachToChef()
 {
 	CookingTable = nullptr;
+	FVector Offset = FVector(90, 0, -30);
+	FRotator Rotation = FRotator(0, 90, 0);
+	StaticMeshComponent->SetRelativeLocation(Offset);
+	StaticMeshComponent->SetRelativeRotation(Rotation);
+
+}
+
+void APot::ForwardDetachToChef()
+{
+	FRotator Rotation = FRotator(0, 180, 0);
+	StaticMeshComponent->SetRelativeLocation(InitPos);
+	StaticMeshComponent->SetRelativeRotation(Rotation);
 }
