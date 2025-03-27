@@ -126,21 +126,33 @@ void APlate::SetMaterialTexture(UTexture* Texture)
 	}
 
 	// 4. 기존에 만들어진 머티리얼 인스턴스 다이나믹이 없다면 == SetMaterial이 처음이라면
-	UMaterialInterface* Material = StaticMeshComponent->GetMaterial(0);
-	if (nullptr != Material)
-	{
-		// 5. 이제 기존의 머티리얼은 안쓰고 머티리얼 인스턴스 다이나믹을 만들어서 쓸 것이다.
-		UMaterialInstanceDynamic* DynamicMaterial = UMaterialInstanceDynamic::Create(Material, this);
-		if (nullptr != DynamicMaterial)
-		{
-			// 6. 바꿀 텍스처를 에디터에서 설정해줬다면 그걸로 바꿔라.
-			if (nullptr != Texture)
-			{
-				DynamicMaterial->SetTextureParameterValue(FName(TEXT("DiffuseAdd")), Texture);
-				StaticMeshComponent->SetMaterial(0, DynamicMaterial);
-			}
-		}
-	}
+	//UMaterialInterface* Material = StaticMeshComponent->GetMaterial(0);
+	//if (nullptr != Material)
+	//{
+	//	// 5. 이제 기존의 머티리얼은 안쓰고 머티리얼 인스턴스 다이나믹을 만들어서 쓸 것이다.
+	//	UMaterialInstanceDynamic* DynamicMaterial = UMaterialInstanceDynamic::Create(Material, this);
+	//	if (nullptr != DynamicMaterial)
+	//	{
+	//		// 6. 바꿀 텍스처를 에디터에서 설정해줬다면 그걸로 바꿔라.
+	//		if (nullptr != Texture)
+	//		{
+	//			DynamicMaterial->SetTextureParameterValue(FName(TEXT("DiffuseAdd")), Texture);
+	//			StaticMeshComponent->SetMaterial(0, DynamicMaterial);
+	//		}
+	//	}
+	//}
+}
+
+void APlate::ForwardAttachToChef()
+{
+	FVector Offset = FVector(90, 0, -40);
+	//FRotator Rotation = FRotator(0, 90, 0);
+	StaticMeshComponent->SetRelativeLocation(Offset);
+	//StaticMeshComponent->SetRelativeRotation(Rotation);
+}
+
+void APlate::ForwardDetachToChef()
+{
 }
 
 bool APlate::CanPlaceOnPlate(AIngredient* Ingredient)
@@ -258,24 +270,24 @@ void APlate::SetIngredinetTextures(FPlateInitData Data)
 			bIsRowFull = false; // 해당 변수를 이용해서 
 		}
 
-		float CurrentY = 0.0f;
+		float CurrentX = 0.0f;
 		if (true == bIsRowFull) // 한 행에 두 개씩 존재하면 좌우 간격 맞추고
 		{
 			if (0 == ColIndex)
 			{
-				CurrentY = -HorizontalSpacing / 2.0f;
+				CurrentX = HorizontalSpacing / 2.0f;
 			}
 			else
 			{
-				CurrentY = HorizontalSpacing / 2.0f;
+				CurrentX = -HorizontalSpacing / 2.0f;
 			}
 		}
 		else // 한 행에 남은 텍스처가 하나면 가운데 맞추자.
 		{
-			CurrentY = 0.0f;
+			CurrentX = 0.0f;
 		}
 
-		FVector NewLocation(0.0f, CurrentY, CurrentZ);
+		FVector NewLocation(CurrentX, 0.0f, CurrentZ);
 
 		UTexture2D* Texture = Cast<UTexture2D>(Textures[i]);
 		if (nullptr != Texture)

@@ -68,9 +68,9 @@ protected:
 
 	void ChangeMaterialColor(FVector4 Color);
 
-	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	UFUNCTION()
 	void SetSoupMaterial();
-	void SetSoupMaterial_Implementation();
+
 
 	bool IsBoiling();
 
@@ -81,6 +81,7 @@ protected:
 
 	virtual void ForwardCookingTable(class ACookingTable* Table) override;
 	virtual void ForwardAttachToChef() override;
+	virtual void ForwardDetachToChef() override;
 
 	void InitTexture();
 	void SetWarningTexture();
@@ -91,7 +92,7 @@ private:
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowprivateAccess = "true"))
 	USkeletalMeshComponent* SoupSkeletalMeshComponent = nullptr;
 
-	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowprivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowprivateAccess = "true"))
 	TArray<UMaterialInstanceDynamic*> SoupDynamicMaterial;
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowprivateAccess = "true"))
@@ -130,5 +131,7 @@ private:
 
 	UPROPERTY(Replicated)
 	bool bIsCombinationSuccessful = false;
+
+	FVector InitPos = FVector(249, 1452, 60);
 
 };

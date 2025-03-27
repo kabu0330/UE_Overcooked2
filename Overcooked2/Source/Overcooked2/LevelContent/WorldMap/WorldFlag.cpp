@@ -26,6 +26,8 @@ void AWorldFlag::BeginPlay()
 {
 	Super::BeginPlay();
 
+	SetActorHiddenInGame(true);
+
 	if (StageCount > 0)
 	{
 		UWorld* Level = GetWorld();

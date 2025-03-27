@@ -50,6 +50,7 @@ void UTitleMenuWidget::HoverButton()
         }
     }
 }
+
 void UTitleMenuWidget::UpdateMenuPosition()
 {
     if (CurPanel->GetRenderTransform().Translation.Y >= 0)

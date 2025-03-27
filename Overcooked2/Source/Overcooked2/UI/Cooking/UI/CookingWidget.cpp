@@ -10,6 +10,7 @@
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Global/Data/OrderDataTable.h"
 #include "UI/Cooking/UI/CookingScoreWidget.h"
+#include "UI/Cooking/UI/CookingFinalScoreWidget.h"
 #include "UI/Cooking/UI/CookingTimeWidget.h"
 
 
@@ -42,12 +43,15 @@ void UCookingWidget::NativeOnInitialized()
 
     {
         CookingScoreWidget = Cast<UCookingScoreWidget>(CreateWidget(GetWorld(), ScoreSubWidget));
+        CookingFinalScoreWidget = Cast<UCookingFinalScoreWidget>(CreateWidget(GetWorld(), FinalScoreSubWidget));
         UCookingTimeWidget* CookingTimerWidget = Cast<UCookingTimeWidget>(CreateWidget(GetWorld(), TimeSubWidget));
 
-        if (CookingScoreWidget != nullptr && CookingTimerWidget != nullptr)
+        if (CookingScoreWidget != nullptr && CookingTimerWidget != nullptr && CookingFinalScoreWidget != nullptr)
         {
             CookingScoreWidget->AddToViewport();
             CookingTimerWidget->AddToViewport();
+            CookingFinalScoreWidget->AddToViewport();
+            //CookingFinalScoreWidget->SetVisibility(ESlateVisibility::Hidden);
         }
     }
 

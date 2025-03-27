@@ -27,8 +27,7 @@ APot::APot()
 
 	TimeEventComponent = CreateDefaultSubobject<UTimeEventComponent>(TEXT("TimeEventComponent "));
 
-	//FVector Pos = FVector(249, 1452, 60);
-	//StaticMeshComponent->SetRelativeLocation(Pos);
+	StaticMeshComponent->SetRelativeLocation(InitPos);
 }
 
 void APot::InitTexture()
@@ -50,7 +49,7 @@ void APot::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProp
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(APot, SoupSkeletalMeshComponent);
-	DOREPLIFETIME(APot, SoupDynamicMaterial);
+	//DOREPLIFETIME(APot, SoupDynamicMaterial);
 	DOREPLIFETIME(APot, NoneMaterial);
 	DOREPLIFETIME(APot, PotState);
 	//DOREPLIFETIME(APot, PrevPotState);
@@ -70,17 +69,6 @@ void APot::BeginPlay()
 	SetWarningTexture();
 }
 
-void APot::SetWarningTexture()
-{
-	const FString WarningTextureName = TEXT("/Game/Resources/LevelResource/CookObject/Object/Pot/Texture/BurnWarning");
-	UTexture2D* NewTexture = LoadObject<UTexture2D>(nullptr, *WarningTextureName);
-	if (nullptr != NewTexture)
-	{
-		TextureBillboard->SetSprite(NewTexture);
-		TextureBillboard->SetVisibility(false);
-	}
-}
-
 UMaterialInstanceDynamic* APot::LoadNoneMaterial()
 {
 	const FString NoneMaterialName = TEXT("/Game/Resources/LevelResource/CookObject/Object/Pot/Soup/M_NONE");
@@ -89,7 +77,7 @@ UMaterialInstanceDynamic* APot::LoadNoneMaterial()
 	return NewMaterialInstanceDynamic;
 }
 
-void APot::SetSoupMaterial_Implementation()
+void APot::SetSoupMaterial()
 {
 	int32 NumSoupMaterials = SoupSkeletalMeshComponent->GetMaterials().Num();
 	if (NumSoupMaterials == SoupDynamicMaterial.Num())
@@ -98,9 +86,33 @@ void APot::SetSoupMaterial_Implementation()
 	}
 	for (int32 i = 0; i < NumSoupMaterials; i++)
 	{
-		UMaterialInstanceDynamic* MaterialInstanceDynamic = UMaterialInstanceDynamic::Create(SoupSkeletalMeshComponent->GetMaterial(i), this);
-		SoupDynamicMaterial.Add(MaterialInstanceDynamic);
-		SoupSkeletalMeshComponent->SetMaterial(i, MaterialInstanceDynamic);
+		//UMaterialInstanceDynamic* MaterialInstanceDynamic = UMaterialInstanceDynamic::Create(SoupSkeletalMeshComponent->GetMaterial(i), this);
+		UMaterialInstanceDynamic* MaterialInstanceDynamic = Cast<UMaterialInstanceDynamic>(SoupSkeletalMeshComponent->GetMaterials()[i]);
+		if (nullptr != MaterialInstanceDynamic)
+		{
+			SoupDynamicMaterial.Add(MaterialInstanceDynamic);
+			SoupSkeletalMeshComponent->SetMaterial(i, MaterialInstanceDynamic);
+		}
+	}
+}
+
+void APot::ChangeNoneMaterial()
+{
+	int32 NumSoupMaterials = SoupSkeletalMeshComponent->GetMaterials().Num();
+	for (int32 i = 0; i < NumSoupMaterials; i++)
+	{
+		SoupSkeletalMeshComponent->SetMaterial(i, NoneMaterial);
+	}
+}
+
+void APot::SetWarningTexture()
+{
+	const FString WarningTextureName = TEXT("/Game/Resources/LevelResource/CookObject/Object/Pot/Texture/BurnWarning");
+	UTexture2D* NewTexture = LoadObject<UTexture2D>(nullptr, *WarningTextureName);
+	if (nullptr != NewTexture)
+	{
+		TextureBillboard->SetSprite(NewTexture);
+		TextureBillboard->SetVisibility(false);
 	}
 }
 
@@ -181,9 +193,9 @@ void APot::Cook(float DeltaTime)
 	float TimeToBoil = 4.0f;
 	float TimeToCook = 12.0f;
 	float TimeToWarning = 16.0f;
-	float TimeToDanger = 20.0f;
-	float TimeToScorch = 24.0f;
-	float TimeToOvercook = 28.0f;
+	float TimeToDanger = 19.0f;
+	float TimeToScorch = 22.0f;
+	float TimeToOvercook = 25.0f;
 
 	if (EPotState::HEATING == PotState && 
 		TimeToBoil < TimeElapsed)
@@ -245,20 +257,22 @@ void APot::SetAction_Implementation()
 		{
 			SoupSkeletalMeshComponent->SetMaterial(i, SoupDynamicMaterial[i]);
 		}
+		ChangeMaterialColor(FVector4(0.3f, 0.3f, 0.3f, 1.0f));
 		break;
 	}
 	case EPotState::BOILING:
 		break;
 	case EPotState::COOKED:
-	{
-	}
+		ChangeMaterialColor(FVector4(0.5f, 0.5f, 0.5f, 1.0f));
 		break;
 	case EPotState::COOKED_WARNING:
+		ChangeMaterialColor(FVector4(0.2f, 0.2f, 0.2f, 1.0f));
 		bCanBlink = true;
 		TextureBillboard->SetVisibility(true);
 		BlinkTime = 1.0f;
 		break;
 	case EPotState::COOKED_DANGER:
+		ChangeMaterialColor(FVector4(0.1f, 0.1f, 0.1f, 1.0f));
 		BlinkTime = 0.5f;
 		break;
 	case EPotState::SCORCHING:
@@ -270,15 +284,6 @@ void APot::SetAction_Implementation()
 		break;
 	default:
 		break;
-	}
-}
-
-void APot::ChangeNoneMaterial()
-{
-	int32 NumSoupMaterials = SoupSkeletalMeshComponent->GetMaterials().Num();
-	for (int32 i = 0; i < NumSoupMaterials; i++)
-	{
-		SoupSkeletalMeshComponent->SetMaterial(i, NoneMaterial);
 	}
 }
 
@@ -311,7 +316,6 @@ void APot::BlinkTexture(float DeltaTime)
 		return;
 	}
 
-
 	if (true == TextureBillboard->IsVisible())
 	{
 		BlinkTimeElapsed += DeltaTime;
@@ -332,7 +336,7 @@ void APot::BlinkTexture(float DeltaTime)
 
 AIngredient* APot::GetRice()
 {
-	AGameModeBase* GameModeBase =  GetWorld()->GetAuthGameMode();
+	AGameModeBase* GameModeBase = GetWorld()->GetAuthGameMode();
 	if (nullptr == GameModeBase)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("nullptr == GameModeBase"));
@@ -364,4 +368,16 @@ void APot::ForwardCookingTable(ACookingTable* Table)
 void APot::ForwardAttachToChef()
 {
 	CookingTable = nullptr;
+	FVector Offset = FVector(90, 0, -30);
+	FRotator Rotation = FRotator(0, 90, 0);
+	StaticMeshComponent->SetRelativeLocation(Offset);
+	StaticMeshComponent->SetRelativeRotation(Rotation);
+
+}
+
+void APot::ForwardDetachToChef()
+{
+	FRotator Rotation = FRotator(0, 180, 0);
+	StaticMeshComponent->SetRelativeLocation(InitPos);
+	StaticMeshComponent->SetRelativeRotation(Rotation);
 }
