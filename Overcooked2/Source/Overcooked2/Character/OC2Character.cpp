@@ -5,6 +5,7 @@
 #include "EnhancedInputComponent.h"
 #include "OC2CharacterTestTable.h"
 #include "OC2CharacterTestChoppingTable.h"
+#include "LevelContent/Cook/Pot.h"
 #include "LevelContent/Table/ChoppingTable.h"
 #include "LevelContent/Table/NonTable/GarbageCan.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -112,7 +113,7 @@ void AOC2Character::CheckDash_Implementation(float DeltaTime)
 		}
 		else
 		{
-			LaunchCharacter(GetActorForwardVector() * DashPower, true, false);
+			AddMovementInput(GetActorForwardVector());
 		}
 	}
 }
@@ -187,94 +188,90 @@ void AOC2Character::ClearMaterials()
 //상호작용 : Space Key
 void AOC2Character::Interact_Implementation()
 {
-	/*SetCharacterName(IndexToName[FMath::RandRange(0, CharacterHeadMap.Num() - 1)]);
-	OnRep_ChangeCharacter();*/
-
 	// 만약 지금 상호작용을 시도할 수 있는 개체가 있으면
 	if (SelectedOC2Actor != nullptr)
 	{
 		if (bIsChopping)
 			Chopping(false);
-		////만약 이 액터가 재료나 요리 접시인 경우
-		//if (SelectedOC2Actor->IsA(ACooking::StaticClass()))
-		//{
-		//	if (GrabbedObject == nullptr)
-		//	{
-		//		UE_LOG(LogTemp, Log, TEXT("Hold"));
-		//		// 그냥 든다.
-		//		Grab(Cast<ACooking>(SelectedOC2Actor));
-		//	}
-		//	else
-		//	{
-		//		Drop();
-		//	}
-		//}
-
-		// 컴포넌트로 뺄지 안뺄지 모르겠음.
-		// 일단 Plate인 경우
-		if (auto Plate = Cast<APlate>(SelectedOC2Actor))
+		ACooking* Cooking = Cast<ACooking>(SelectedOC2Actor);
+		ACookingTable* Table = Cast<ACookingTable>(SelectedOC2Actor);
+		if (Cooking != nullptr)
 		{
-			// 내가 들고 있는게 재료라면
-			if (auto Ingredient = Cast<AIngredient>(GrabbedObject))
+			if (GrabbedObject == nullptr)
 			{
-				//Plate에 Ingredient추가를 시도한다.
-				Plate->Add(Ingredient);
-				//성공하면 GrabbedObject를 null로 만든다.
-				if (Plate->IsCombinationSuccessful())
-				{
-					GrabbedObject = nullptr;
-				}
+				UE_LOG(LogTemp, Log, TEXT("Hold"));
+				Grab(Cast<ACooking>(SelectedOC2Actor));
 			}
-			// 내가 들고 있는게 없으면 잡는다.
-			else if (GrabbedObject == nullptr)
-			{
-				Grab(Plate);
-			}
-		}
-		//상호작용 할 녀석이 재료 라면 
-		else if (auto Ingredient = Cast<AIngredient>(SelectedOC2Actor))
-		{
-			// 잡고 있는게 있으면 그냥 떨어뜨리고
-			if (GrabbedObject)
-			{
-				Drop();
-			}
-			// 없으면 그 재료를 집는다.
 			else
 			{
-				Grab(Ingredient);
+				if (AIngredient* Ingredient = Cast<AIngredient>(Cooking))
+				{
+					UE_LOG(LogTemp, Log, TEXT("This is an ingredient!"));
+					if (GrabbedObject != nullptr)
+					{
+						Drop();
+					}
+				}
+				else if (APlate* Plate = Cast<APlate>(Cooking))
+				{
+					UE_LOG(LogTemp, Log, TEXT("This is a plate!"));
+					//Plate에 Ingredient추가를 시도한다.
+					Plate->Add(Cast<AIngredient>(GrabbedObject));
+					//성공하면 GrabbedObject를 null로 만든다.
+					if (Plate->IsCombinationSuccessful())
+					{
+						GrabbedObject = nullptr;
+					}
+				}
+				else if (APot* Pot = Cast<APot>(Cooking))
+				{
+					UE_LOG(LogTemp, Log, TEXT("This is a pot!"));
+					Pot->Add(Cast<AIngredient>(GrabbedObject));
+					if (Pot->IsCombinationSuccessful())
+					{
+						GrabbedObject = nullptr;
+					}
+				}
+				else
+				{
+					// 기본적으로 그냥 내려놓기
+					Drop();
+				}
 			}
 		}
-		//만약 이 액터가 테이블인 경우 ???(여기가 제일 어려움)
-		if (SelectedOC2Actor->IsA(AGarbageCan::StaticClass()))
+		else if(Table != nullptr)
 		{
-			APlate* Plate = Cast<APlate>(GrabbedObject);
-			if (Plate)
+			if (Cast<AGarbageCan>(Table) != nullptr)
 			{
-				Plate->SetPlateState(EPlateState::EMPTY);
+				APlate* Plate = Cast<APlate>(GrabbedObject);
+				if (Plate)
+				{
+					Plate->SetPlateState(EPlateState::EMPTY);
+				}
 			}
 		}
+
 		if (SelectedOC2Actor->IsA(ACookingTable::StaticClass()))
 		{
-			auto Table = Cast<ACookingTable>(SelectedOC2Actor);
-			// 테이블과 상호작용을 시도한다.
-			ACooking* Cook = Table->Interact(this);
-			// 잡고있는 물건이 없고, 테이블에 올려진 물체가 있는 경우
-			if (GrabbedObject == nullptr && Cook != nullptr)
-			{
-				Grab(Cook);
-			}
-			// 잡은 물건이 있는데 테이블이 비어있으면
-			else if (GrabbedObject != nullptr && Cook == nullptr)
-			{
-				// 다른 액터에 Attach하게 되면 수동으로 Detach할 필요 X
-				Table->PlaceItem(GrabbedObject);
-				GrabbedObject = nullptr;
-			}
-			else if (GrabbedObject != nullptr && Cook != nullptr)
-			{
-				Table->PlaceItem(Cook);
-			}
+			//auto Table = Cast<ACookingTable>(SelectedOC2Actor);
+			//// 테이블과 상호작용을 시도한다.
+			//ACooking* Cook = Table->Interact(this);
+			//// 잡고있는 물건이 없고, 테이블에 올려진 물체가 있는 경우
+			//if (GrabbedObject == nullptr && Cook != nullptr)
+			//{
+			//	Grab(Cook);
+			//}
+			//// 잡은 물건이 있는데 테이블이 비어있으면
+			//else if (GrabbedObject != nullptr && Cook == nullptr)
+			//{
+			//	// 다른 액터에 Attach하게 되면 수동으로 Detach할 필요 X
+			//	Table->PlaceItem(GrabbedObject);
+			//	GrabbedObject = nullptr;
+			//}
+			//else if (GrabbedObject != nullptr && Cook != nullptr)
+			//{
+			//	Table->PlaceItem(Cook);
+			//}
 		}
 	}
 	else
@@ -331,10 +328,11 @@ void AOC2Character::DoActionPress_Implementation()
 	}
 	else
 	{
-		if (SelectedOC2Actor->IsA(AChoppingTable::StaticClass()))
+		AChoppingTable* Table = Cast<AChoppingTable>(SelectedOC2Actor);
+		if (Table != nullptr)
 		{
-			AChoppingTable* Table = Cast<AChoppingTable>(SelectedOC2Actor);
 			Chopping(true);
+			Table->ChopIngredient(this);
 		}
 	}
 }
@@ -384,9 +382,6 @@ void AOC2Character::Chopping_Implementation(bool State)
 {
 	bIsChopping = State;
 	OnRep_KnifeSet();
-
-
-	
 }
 
 void AOC2Character::CheckInteract()
