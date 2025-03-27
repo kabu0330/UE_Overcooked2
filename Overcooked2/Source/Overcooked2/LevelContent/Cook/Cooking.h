@@ -31,6 +31,7 @@ public:
 	void DetachFromChef(AActor* Player);
 	void DetachFromChef_Implementation(AActor* Player);
 
+	// Burner Table에 Pot이 놓이면 호출해줘야 함. 그래야 Pot이 자신이 어느 테이블에 놓여있는지 알 수 있음.
 	UFUNCTION(NetMulticast, Reliable)
 	void SetCookingTable(class ACookingTable* Table);
 	void SetCookingTable_Implementation(class ACookingTable* Table);
