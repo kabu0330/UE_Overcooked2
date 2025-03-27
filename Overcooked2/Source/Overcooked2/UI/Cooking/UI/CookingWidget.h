@@ -61,9 +61,13 @@ protected:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OC2UI")
     TSubclassOf<UUserWidget> TimeSubWidget;
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OC2UI")
+    TSubclassOf<UUserWidget> FinalScoreSubWidget;
+
 
 private:
-    class UCookingScoreWidget* CookingScoreWidget = nullptr;;
+    class UCookingScoreWidget* CookingScoreWidget = nullptr;
+    class UCookingFinalScoreWidget* CookingFinalScoreWidget = nullptr;
 
     // 주문 관련 변수
     int CompleteOrderNum = 0;
