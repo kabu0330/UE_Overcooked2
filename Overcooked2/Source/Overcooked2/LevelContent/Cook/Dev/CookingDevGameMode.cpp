@@ -115,12 +115,17 @@ void ACookingDevGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
-	FTransform Trans;
-	Pot = GetWorld()->SpawnActor<APot>(SubclassPot);
-	//Pot = GetWorld()->SpawnActorDeferred<APot>(SubclassPot, Trans);
-	//Pot->SetType(EPotState::IDLE);
-	//Pot->FinishSpawning(Trans);
-	Pot->SetActorLocation(FVector(-400, 0, 10));
+	if (nullptr != SubclassPot)
+	{
+		Pot = GetWorld()->SpawnActor<APot>(SubclassPot);
+		Pot->SetActorLocation(FVector(-400, 0, 10));
+	}
+
+	if (nullptr != SubclassFireExtinguisher)
+	{
+		FireExtinguisher = GetWorld()->SpawnActor<AFireExtinguisher>(SubclassFireExtinguisher);
+		FireExtinguisher->SetActorLocation(FVector(-400, 100, 10));
+	}
 	
 }
 
