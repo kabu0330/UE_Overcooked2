@@ -156,7 +156,7 @@ const FResourceTextureDataRow& UOC2GlobalData::GetResourceTextureDataRow(UWorld*
 	return EmptyData;
 }
 
-const UTexture* UOC2GlobalData::GetResourceTexture(UWorld* World, const FName& RowName)
+UTexture* UOC2GlobalData::GetResourceTexture(UWorld* World, const FName& RowName)
 {
 	UOC2GameInstance* GameInstance = UOC2Global::GetOC2GameInstance(World);
 

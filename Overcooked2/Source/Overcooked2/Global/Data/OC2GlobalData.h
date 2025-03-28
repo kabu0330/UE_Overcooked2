@@ -118,6 +118,6 @@ public:
 	 * @param RowName 조회할 리소스 텍스처의 데이터 테이블 행 이름입니다.
 	 * @return UTexture* 해당하는 리소스 텍스처입니다.
 	 */
-	static const UTexture* GetResourceTexture(UWorld* World, const FName& RowName);
+	static UTexture* GetResourceTexture(UWorld* World, const FName& RowName);
 
 };
