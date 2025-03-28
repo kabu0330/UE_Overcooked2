@@ -9,6 +9,7 @@
 #include <Global/GameMode/OC2GameMode.h>
 #include "Components/BillboardComponent.h"  
 #include <Global/Component/TimeEventComponent.h>
+#include <Global/Data/OC2GlobalData.h>
 
 APot::APot()
 {
@@ -25,7 +26,7 @@ APot::APot()
 
 	InitTexture();
 
-	TimeEventComponent = CreateDefaultSubobject<UTimeEventComponent>(TEXT("TimeEventComponent "));
+	TimeEventComponent = CreateDefaultSubobject<UTimeEventComponent>(TEXT("TimeEventComponent"));
 
 	StaticMeshComponent->SetRelativeLocation(InitPos);
 }
@@ -34,7 +35,7 @@ void APot::InitTexture()
 {
 	TextureBillboard = CreateDefaultSubobject<UBillboardComponent>(TEXT("TextureBillboard"));
 	TextureBillboard->bHiddenInGame = false;
-	TextureBillboard->bIsScreenSizeScaled = true;
+	//TextureBillboard->bIsScreenSizeScaled = true;
 	TextureBillboard->bReceivesDecals = false;
 
 	FVector Scale(1.0f, 1.0f, 1.0f);
@@ -42,6 +43,8 @@ void APot::InitTexture()
 
 	TextureBillboard->SetUsingAbsoluteRotation(true);
 	TextureBillboard->SetUsingAbsoluteLocation(true);
+
+	TextureBillboard->SetVisibility(false);
 }
 
 void APot::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -49,24 +52,26 @@ void APot::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProp
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(APot, SoupSkeletalMeshComponent);
-	//DOREPLIFETIME(APot, SoupDynamicMaterial);
 	DOREPLIFETIME(APot, NoneMaterial);
 	DOREPLIFETIME(APot, PotState);
-	//DOREPLIFETIME(APot, PrevPotState);
+	DOREPLIFETIME(APot, bIsCombinationSuccessful);
 	DOREPLIFETIME(APot, bIsRiceInPot);
+	DOREPLIFETIME(APot, bIsCooked);
 	DOREPLIFETIME(APot, TimeElapsed);
 	DOREPLIFETIME(APot, CookingTable);
+	DOREPLIFETIME(APot, TextureBillboard);
+	DOREPLIFETIME(APot, bIsCombinationSuccessful);
+	DOREPLIFETIME(APot, TargetColor);
 }
 
 void APot::BeginPlay()
 {
 	ACooking::BeginPlay();
 
-	NoneMaterial = LoadNoneMaterial(); // 여기서 해줘야 클라도  NULL 머티리얼 생성된다.
+	NoneMaterial = LoadNoneMaterial(); // 여기서 해줘야 클라도 NULL 머티리얼 생성된다.
 	SetSoupMaterial();
 
 	ChangeNoneMaterial();
-	SetWarningTexture();
 }
 
 UMaterialInstanceDynamic* APot::LoadNoneMaterial()
@@ -105,17 +110,6 @@ void APot::ChangeNoneMaterial()
 	}
 }
 
-void APot::SetWarningTexture()
-{
-	const FString WarningTextureName = TEXT("/Game/Resources/LevelResource/CookObject/Object/Pot/Texture/BurnWarning");
-	UTexture2D* NewTexture = LoadObject<UTexture2D>(nullptr, *WarningTextureName);
-	if (nullptr != NewTexture)
-	{
-		TextureBillboard->SetSprite(NewTexture);
-		TextureBillboard->SetVisibility(false);
-	}
-}
-
 void APot::Tick(float DeltaTime)
 {
 	ACooking::Tick(DeltaTime);
@@ -124,6 +118,22 @@ void APot::Tick(float DeltaTime)
 	SetAction();
 	SetWarnigTextureOffset();
 	BlinkTexture(DeltaTime);
+
+	if (true == bColorChanging)
+	{
+		CurrentColor = FMath::Lerp(CurrentColor, TargetColor, DeltaTime * ColorChangeSpeed);
+
+		// 실제 머티리얼에 적용
+		FVector4 Color = FVector4(CurrentColor.R, CurrentColor.G, CurrentColor.B, CurrentColor.A);
+		ChangeMaterialColor(Color);
+
+		// 목표에 거의 도달했으면 종료
+		if (FVector(CurrentColor - TargetColor).Size() < 0.001f)
+		{
+			CurrentColor = TargetColor;
+			bColorChanging = false;
+		}
+	}
 }
 
 void APot::SetWarnigTextureOffset()
@@ -133,7 +143,7 @@ void APot::SetWarnigTextureOffset()
 		FRotator FixedRotation = FRotator(0, 0, 0);
 		TextureBillboard->SetWorldRotation(FixedRotation);
 
-		FVector OffsetPos = FVector(20, -180, 100);
+		FVector OffsetPos = FVector(50, -180, 100);
 		TextureBillboard->SetWorldLocation(GetActorLocation() + OffsetPos);
 	}
 }
@@ -157,7 +167,7 @@ void APot::Add_Implementation(AIngredient* Ingredient)
 
 	RawRice->RequestOC2ActorDestroy(); // 들어온 재료는 삭제
 
-	bIsRiceInPot = true;
+	bIsRiceInPot = true; // bool 값으로 재료가 들어왔는지 체크할 것임
 	bIsCombinationSuccessful = true;
 	PotState = EPotState::HEATING;
 }
@@ -188,44 +198,45 @@ void APot::Cook(float DeltaTime)
 		return;
 	}
 
+	// Debug
+	float TimeToBoil = 1.0f;
+	float TimeToCook = 4.0f;
+	float TimeToWarning = 7.0f;
+	float TimeToDanger = 10.0f;
+	float TimeToScorch = 13.0f;
+	float TimeToOvercook = 16.0f;
+
+	// Real Time
+	//float TimeToOvercook = 25.0f;
+
+	if (TimeToOvercook < TimeElapsed) // 불필요한 계산 차단
+	{
+		return;
+	}
+
 	TimeElapsed += DeltaTime;
 
-	float TimeToBoil = 4.0f;
-	float TimeToCook = 12.0f;
-	float TimeToWarning = 16.0f;
-	float TimeToDanger = 19.0f;
-	float TimeToScorch = 22.0f;
-	float TimeToOvercook = 25.0f;
+	//float TimeToBoil = 4.0f;
+	//float TimeToCook = 12.0f;
+	//float TimeToWarning = 16.0f;
+	//float TimeToDanger = 19.0f;
+	//float TimeToScorch = 22.0f;
 
-	if (EPotState::HEATING == PotState && 
-		TimeToBoil < TimeElapsed)
+	ChangeState(EPotState::HEATING, EPotState::BOILING, TimeToBoil);
+	ChangeState(EPotState::BOILING, EPotState::COOKED, TimeToCook);
+	ChangeState(EPotState::COOKED, EPotState::COOKED_WARNING, TimeToWarning);
+	ChangeState(EPotState::COOKED_WARNING, EPotState::COOKED_DANGER, TimeToDanger);
+	ChangeState(EPotState::COOKED_DANGER, EPotState::SCORCHING, TimeToScorch);
+	ChangeState(EPotState::SCORCHING, EPotState::OVERCOOKED, TimeToOvercook);
+
+}
+
+void APot::ChangeState(EPotState CurState, EPotState NextState, float TransitionTime)
+{
+	if (CurState == PotState &&
+		TransitionTime < TimeElapsed)
 	{
-		PotState = EPotState::BOILING;
-	}
-	else if (EPotState::BOILING == PotState && 
-		TimeToCook < TimeElapsed)
-	{
-		PotState = EPotState::COOKED;
-	}
-	else if (EPotState::COOKED == PotState && 
-		TimeToWarning < TimeElapsed)
-	{
-		PotState = EPotState::COOKED_WARNING;
-	}
-	else if (EPotState::COOKED_WARNING == PotState && 
-		TimeToDanger < TimeElapsed)
-	{
-		PotState = EPotState::COOKED_DANGER;
-	}
-	else if (EPotState::COOKED_DANGER == PotState && 
-		TimeToScorch < TimeElapsed)
-	{
-		PotState = EPotState::SCORCHING;
-	}
-	else if (EPotState::SCORCHING == PotState && 
-		TimeToOvercook < TimeElapsed)
-	{
-		PotState = EPotState::OVERCOOKED;
+		PotState = NextState;
 	}
 }
 
@@ -257,31 +268,73 @@ void APot::SetAction_Implementation()
 		{
 			SoupSkeletalMeshComponent->SetMaterial(i, SoupDynamicMaterial[i]);
 		}
-		ChangeMaterialColor(FVector4(0.3f, 0.3f, 0.3f, 1.0f));
+		ChangeMaterialColor(FVector4(0.2f, 0.2f, 0.2f, 1.0f));
+		CurrentColor = FLinearColor(0.2f, 0.2f, 0.2f, 1.0f);
+		bColorChanging = true;
+		TargetColor = FLinearColor(0.6f, 0.6f, 0.6f, 1.0f);
 		break;
 	}
 	case EPotState::BOILING:
+	{
 		break;
+	}
 	case EPotState::COOKED:
-		ChangeMaterialColor(FVector4(0.5f, 0.5f, 0.5f, 1.0f));
+	{
+		bIsCooked = true; // 조리완료
+
+		bColorChanging = true;
+		TargetColor = FLinearColor(0.3f, 0.3f, 0.3f, 1.0f);
+
+		FString TextureName = TEXT("CookingTick");
+		SetTexture(TextureName);
+		TimeEventComponent->AddEndEvent(0.5f, [this]()
+			{
+				TextureBillboard->SetVisibility(false);
+			});
 		break;
+	}
 	case EPotState::COOKED_WARNING:
-		ChangeMaterialColor(FVector4(0.2f, 0.2f, 0.2f, 1.0f));
+	{
+		bColorChanging = true;
+		TargetColor = FLinearColor(0.1f, 0.1f, 0.1f, 1.0f);
+
+		// 경고 텍스처 활성화
 		bCanBlink = true;
-		TextureBillboard->SetVisibility(true);
+		FString TextureName = TEXT("BurnWarning");
+		SetTexture(TextureName);
 		BlinkTime = 1.0f;
 		break;
+	}
 	case EPotState::COOKED_DANGER:
-		ChangeMaterialColor(FVector4(0.1f, 0.1f, 0.1f, 1.0f));
+	{
+		//ChangeMaterialColor(FVector4(0.08f, 0.08f, 0.08f, 1.0f));
+		bColorChanging = true;
+		TargetColor = FLinearColor(0.07f, 0.07f, 0.07f, 1.0f);
+
 		BlinkTime = 0.5f;
 		break;
+	}
 	case EPotState::SCORCHING:
+	{
+		//ChangeMaterialColor(FVector4(0.04f, 0.04f, 0.04f, 1.0f));
+		bColorChanging = true;
+		TargetColor = FLinearColor(0.04f, 0.04f, 0.04f, 1.0f);
 		BlinkTime = 0.2f;
 		break;
+	}
 	case EPotState::OVERCOOKED:
+	{
+		bIsCooked = false; // 조리실패
+
+		bColorChanging = true;
+		TargetColor = FLinearColor(0.01f, 0.01f, 0.01f, 1.0f);
+		//ChangeMaterialColor(FVector4(0.02f, 0.02f, 0.02f, 1.0f));
+
 		bCanBlink = false;
+		TextureBillboard->bHiddenInGame = true;
 		TextureBillboard->SetVisibility(false);
 		break;
+	}
 	default:
 		break;
 	}
@@ -293,20 +346,20 @@ void APot::ChangeMaterialColor(FVector4 Color)
 	for (int32 i = 1; i < NumSoupMaterials; i++)
 	{
 		SoupDynamicMaterial[i]->SetVectorParameterValue(FName("Tint"), Color);
-		SoupSkeletalMeshComponent->SetMaterial(i, SoupDynamicMaterial[i]);
 	}
 }
 
-void APot::ResetPot()
+void APot::SetTexture(const FString& RowName)
 {
-	PrevPotState = EPotState::MAX;
-	PotState = EPotState::IDLE;
-	bIsRiceInPot = false;
-	TimeElapsed = 0.0f;
-	bCanBlink = false;
-	bIsCombinationSuccessful = false;
+	if (nullptr != TextureBillboard)
+	{
+		UTexture* Texture = UOC2GlobalData::GetResourceTexture(GetWorld(), *RowName);
+		UTexture2D* NewTexture = Cast<UTexture2D>(Texture);
+		TextureBillboard->SetSprite(NewTexture);
 
-	ChangeNoneMaterial();
+		TextureBillboard->SetVisibility(true);
+		TextureBillboard->bHiddenInGame = false;
+	}
 }
 
 void APot::BlinkTexture(float DeltaTime)
@@ -334,8 +387,17 @@ void APot::BlinkTexture(float DeltaTime)
 	}
 }
 
+void APot::ChangeSoupColor(float DeltaTime)
+{
+}
+
 AIngredient* APot::GetRice()
 {
+	if (false == bIsCooked)
+	{
+		return nullptr;
+	}
+
 	AGameModeBase* GameModeBase = GetWorld()->GetAuthGameMode();
 	if (nullptr == GameModeBase)
 	{
@@ -356,6 +418,19 @@ AIngredient* APot::GetRice()
 	ResetPot();
 
 	return Rice;
+}
+
+void APot::ResetPot()
+{
+	PrevPotState = EPotState::MAX;
+	PotState = EPotState::IDLE;
+	bIsRiceInPot = false;
+	TimeElapsed = 0.0f;
+	bCanBlink = false;
+	bIsCombinationSuccessful = false;
+	bIsCooked = false;
+
+	ChangeNoneMaterial();
 }
 
 // Table이 SetCookingTable 함수를 호출해주면 여기서 세팅
