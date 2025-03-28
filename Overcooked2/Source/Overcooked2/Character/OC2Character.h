@@ -54,7 +54,7 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UFUNCTION(Reliable, Server)
+	UFUNCTION()
 	void CheckDash(float DeltaTime);
 
 	// Called to bind functionality to input
