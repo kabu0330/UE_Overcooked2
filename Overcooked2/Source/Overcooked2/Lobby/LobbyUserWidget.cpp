@@ -21,7 +21,11 @@ void ULobbyUserWidget::NativeConstruct()
     {
         // 서버는 게임 시작 버튼만 보이게 설정
         if (StartGameButton)
+        {
             StartGameButton->SetVisibility(ESlateVisibility::Visible);
+            ButtonImg->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+        }
+
         //if (ReadyButton)
         //    ReadyButton->SetVisibility(ESlateVisibility::Collapsed);
 
@@ -30,7 +34,12 @@ void ULobbyUserWidget::NativeConstruct()
     {
         // 클라이언트는 준비 버튼만 보이게 설정
         if (StartGameButton)
+        {
             StartGameButton->SetVisibility(ESlateVisibility::Collapsed);
+            ButtonImg->SetVisibility(ESlateVisibility::Collapsed);
+
+        }
+
         //if (ReadyButton)
         //    ReadyButton->SetVisibility(ESlateVisibility::Visible);
     }
