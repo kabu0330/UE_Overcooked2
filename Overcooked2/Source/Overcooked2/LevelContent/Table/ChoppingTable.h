@@ -43,6 +43,16 @@ public:
 		return CurTime;
 	}
 
+	bool IsTimerActivated()
+	{
+		return bTimerActivated;
+	}
+
+	void TimerSwitch(bool bActivated)
+	{
+		bTimerActivated = bActivated;
+	}
+
 protected:
 
 private:
