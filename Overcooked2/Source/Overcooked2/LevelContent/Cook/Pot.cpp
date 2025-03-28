@@ -60,6 +60,7 @@ void APot::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProp
 	DOREPLIFETIME(APot, TimeElapsed);
 	DOREPLIFETIME(APot, CookingTable);
 	DOREPLIFETIME(APot, TextureBillboard);
+	DOREPLIFETIME(APot, bIsBlinkStop);
 	DOREPLIFETIME(APot, bIsCombinationSuccessful);
 	DOREPLIFETIME(APot, TargetColor);
 }
@@ -116,34 +117,20 @@ void APot::Tick(float DeltaTime)
 
 	Cook(DeltaTime);
 	SetAction();
-	SetWarnigTextureOffset();
+	SetTextureOffset();
 	BlinkTexture(DeltaTime);
-
-	if (true == bColorChanging)
-	{
-		CurrentColor = FMath::Lerp(CurrentColor, TargetColor, DeltaTime * ColorChangeSpeed);
-
-		// 실제 머티리얼에 적용
-		FVector4 Color = FVector4(CurrentColor.R, CurrentColor.G, CurrentColor.B, CurrentColor.A);
-		ChangeMaterialColor(Color);
-
-		// 목표에 거의 도달했으면 종료
-		if (FVector(CurrentColor - TargetColor).Size() < 0.001f)
-		{
-			CurrentColor = TargetColor;
-			bColorChanging = false;
-		}
-	}
+	UpdateTextureVisibilityOnTable();
+	ChangeSoupColor(DeltaTime);
 }
 
-void APot::SetWarnigTextureOffset()
+void APot::SetTextureOffset()
 {
 	if (nullptr != TextureBillboard)
 	{
 		FRotator FixedRotation = FRotator(0, 0, 0);
 		TextureBillboard->SetWorldRotation(FixedRotation);
 
-		FVector OffsetPos = FVector(50, -180, 100);
+		FVector OffsetPos = FVector(50, -200, 100);
 		TextureBillboard->SetWorldLocation(GetActorLocation() + OffsetPos);
 	}
 }
@@ -179,15 +166,15 @@ bool APot::IsBoiling()
 	{
 		return false;
 	}
-	//if (nullptr == CookingTable)
-	//{
-	//	return false;
-	//}
-	//ABurnerTable* BurnerTable = Cast<ABurnerTable>(CookingTable);
-	//if (nullptr == BurnerTable) // 2. 버너 위에 있냐
-	//{
-	//	return false;
-	//}
+	if (nullptr == CookingTable)
+	{
+		return false;
+	}
+	ABurnerTable* BurnerTable = Cast<ABurnerTable>(CookingTable);
+	if (nullptr == BurnerTable) // 2. 버너 위에 있냐
+	{
+		return false;
+	}
 	return true;
 }
 
@@ -268,8 +255,11 @@ void APot::SetAction_Implementation()
 		{
 			SoupSkeletalMeshComponent->SetMaterial(i, SoupDynamicMaterial[i]);
 		}
+		// 초기 머티리얼 색상 설정
 		ChangeMaterialColor(FVector4(0.2f, 0.2f, 0.2f, 1.0f));
 		CurrentColor = FLinearColor(0.2f, 0.2f, 0.2f, 1.0f);
+
+		// 0.2에서 0.6까지 컬러 러프
 		bColorChanging = true;
 		TargetColor = FLinearColor(0.6f, 0.6f, 0.6f, 1.0f);
 		break;
@@ -299,27 +289,27 @@ void APot::SetAction_Implementation()
 		TargetColor = FLinearColor(0.1f, 0.1f, 0.1f, 1.0f);
 
 		// 경고 텍스처 활성화
+		bIsBlinkStop = true;
 		bCanBlink = true;
 		FString TextureName = TEXT("BurnWarning");
 		SetTexture(TextureName);
-		BlinkTime = 1.0f;
+		BlinkTime = 0.5f;
 		break;
 	}
 	case EPotState::COOKED_DANGER:
 	{
-		//ChangeMaterialColor(FVector4(0.08f, 0.08f, 0.08f, 1.0f));
+
 		bColorChanging = true;
 		TargetColor = FLinearColor(0.07f, 0.07f, 0.07f, 1.0f);
 
-		BlinkTime = 0.5f;
+		BlinkTime = 0.3f;
 		break;
 	}
 	case EPotState::SCORCHING:
 	{
-		//ChangeMaterialColor(FVector4(0.04f, 0.04f, 0.04f, 1.0f));
 		bColorChanging = true;
 		TargetColor = FLinearColor(0.04f, 0.04f, 0.04f, 1.0f);
-		BlinkTime = 0.2f;
+		BlinkTime = 0.15f;
 		break;
 	}
 	case EPotState::OVERCOOKED:
@@ -328,8 +318,8 @@ void APot::SetAction_Implementation()
 
 		bColorChanging = true;
 		TargetColor = FLinearColor(0.01f, 0.01f, 0.01f, 1.0f);
-		//ChangeMaterialColor(FVector4(0.02f, 0.02f, 0.02f, 1.0f));
 
+		bIsBlinkStop = false;
 		bCanBlink = false;
 		TextureBillboard->bHiddenInGame = true;
 		TextureBillboard->SetVisibility(false);
@@ -387,8 +377,38 @@ void APot::BlinkTexture(float DeltaTime)
 	}
 }
 
+void APot::UpdateTextureVisibilityOnTable()
+{
+	if (nullptr == CookingTable)
+	{
+		TextureBillboard->SetVisibility(false);
+		TextureBillboard->bHiddenInGame = true; // 숨김처리
+		return;
+	}
+	else if (nullptr != Cast<ABurnerTable>(CookingTable) && true == bIsBlinkStop && true == TextureBillboard->bHiddenInGame)
+	{	// 버너 테이블에 다시 올라왔는데, 블링크 효과가 진행중인 상태에서 숨김처리가 되어있다면,
+		TextureBillboard->SetVisibility(true);
+		TextureBillboard->bHiddenInGame = false; // 보이게하기
+	}
+}
+
 void APot::ChangeSoupColor(float DeltaTime)
 {
+	if (true == bColorChanging)
+	{
+		CurrentColor = FMath::Lerp(CurrentColor, TargetColor, DeltaTime * ColorChangeSpeed);
+
+		// 실제 머티리얼에 적용
+		FVector4 Color = FVector4(CurrentColor.R, CurrentColor.G, CurrentColor.B, CurrentColor.A);
+		ChangeMaterialColor(Color);
+
+		// 목표에 거의 도달했으면 종료
+		if (FVector(CurrentColor - TargetColor).Size() < 0.001f)
+		{
+			CurrentColor = TargetColor;
+			bColorChanging = false;
+		}
+	}
 }
 
 AIngredient* APot::GetRice()
@@ -429,6 +449,8 @@ void APot::ResetPot()
 	bCanBlink = false;
 	bIsCombinationSuccessful = false;
 	bIsCooked = false;
+	TextureBillboard->bHiddenInGame = true;
+	bIsBlinkStop = false;
 
 	ChangeNoneMaterial();
 }
