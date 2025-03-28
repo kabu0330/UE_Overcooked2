@@ -30,10 +30,10 @@ void AOC2GameMode::Tick(float DeltaTime)
 
 	UOC2GameInstance* GameInstance = Cast<UOC2GameInstance>(GetGameInstance());
 
-	if (GameInstance != nullptr)
-	{
-		UE_LOG(OVERCOOKED_LOG, Log, TEXT("Cur Head Name : %s"), *GameInstance->GetChefHeadName());
-	}
+	//if (GameInstance != nullptr)
+	//{
+	//	UE_LOG(OVERCOOKED_LOG, Log, TEXT("Cur Head Name : %s"), *GameInstance->GetChefHeadName());
+	//}
 }
 
 void AOC2GameMode::PostLogin(APlayerController* NewPlayerController)

@@ -121,6 +121,8 @@ protected:
 	void SetLocalOffset();
 	void SetTexture();
 
+	void CreateDynamicMaterial();
+
 private:
 	void DeactivateHighlight();
 	void ActivateHighlight();
