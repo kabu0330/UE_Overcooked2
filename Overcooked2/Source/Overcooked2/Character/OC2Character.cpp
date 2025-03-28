@@ -46,6 +46,7 @@ void AOC2Character::MoveCharacter(const FInputActionValue& Value)
 	if (bIsChopping == true)
 	{
 		Chopping(false);
+		Cast<AChoppingTable>(SelectedOC2Actor)->TimerSwitch(false);
 	}
 
 	if (bIsDashing == false && bCanThrowing == false)
@@ -113,8 +114,8 @@ void AOC2Character::CheckDash(float DeltaTime)
 		}
 		else
 		{
-			GetCharacterMovement()->MaxWalkSpeed = 1200.0f;
-			AddMovementInput(GetActorForwardVector(), 50.0f, true);
+			
+			SetActorLocation(GetActorLocation() + GetActorForwardVector()*DashPower*DeltaTime, true);
 		}
 	}
 }
@@ -266,10 +267,16 @@ void AOC2Character::Interact_Implementation()
 		if (Cast<AGarbageCan>(Table) != nullptr)
 		{
 			APlate* Plate = Cast<APlate>(GrabbedObject);
+			AIngredient* Ingredient = Cast<AIngredient>(GrabbedObject);
 			if (Plate)
 			{
 				Plate->SetPlateState(EPlateState::EMPTY);
 			}
+			else if(Ingredient)
+			{
+				Table->PlaceItem(Ingredient);
+			}
+
 		}
 		else
 		{
@@ -375,7 +382,6 @@ void AOC2Character::DoActionPress_Implementation()
 		AChoppingTable* Table = Cast<AChoppingTable>(SelectedOC2Actor);
 		if (Table != nullptr)
 		{
-			Chopping(true);
 			Table->ChopIngredient(this);
 		}
 	}

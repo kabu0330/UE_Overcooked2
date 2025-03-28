@@ -46,6 +46,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	bool IsCooking() { return bIsChopping; }
+
+	UFUNCTION(BlueprintCallable)
+	bool IsDashing() { return bIsDashing; }
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -199,7 +202,7 @@ private :
 	UPROPERTY(EditAnywhere, Replicated, BlueprintReadWrite, Category = "Dash", meta = (AllowPrivateAccess = "true"))
 	bool bIsDashing = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dash", meta = (AllowPrivateAccess = "true"))
-	float DashPower = 100.0f;
+	float DashPower = 10.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dash", meta = (AllowPrivateAccess = "true"))
 	float DashDuration = 0.5f;
 	UPROPERTY(EditAnywhere, Replicated, BlueprintReadWrite, Category = "Dash", meta = (AllowPrivateAccess = "true"))
