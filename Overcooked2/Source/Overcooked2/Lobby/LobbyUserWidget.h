@@ -18,8 +18,8 @@ public:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
 	class UButton* StartGameButton;
 
-	//UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
-	//class UButton* ReadyButton;
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
+	class UImage* ButtonImg;
 
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
