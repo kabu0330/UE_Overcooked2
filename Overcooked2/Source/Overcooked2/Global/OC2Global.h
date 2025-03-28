@@ -44,4 +44,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	static void TravelServer(UWorld* World, const FString& LevelName);
+
+	UFUNCTION(BlueprintCallable)
+	static void StartCookingStage(UWorld* World);
 };

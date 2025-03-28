@@ -79,7 +79,7 @@ void AWorldPlayer::OnSelectMap()
 {
 	if (Controller && HasAuthority())
 	{
-		UOC2Global::GetOC2GameInstance(GetWorld())->StartGame();
+		UOC2Global::GetOC2GameInstance(GetWorld())->StartCookingStage();
 	}
 }
 

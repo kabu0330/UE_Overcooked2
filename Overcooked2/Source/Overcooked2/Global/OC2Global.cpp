@@ -72,3 +72,8 @@ void UOC2Global::TravelServer(UWorld* World, const FString& LevelName)
 {
 	UOC2Global::GetOC2GameInstance(World)->StartGame();
 }
+
+void UOC2Global::StartCookingStage(UWorld* World)
+{
+	UOC2Global::GetOC2GameInstance(World)->StartGame();
+}

@@ -55,6 +55,13 @@ void UOC2GameInstance::StartGame()
 	GetWorld()->ServerTravel(OpenLevelPath + TEXT("?listen"));
 }
 
+void UOC2GameInstance::StartCookingStage()
+{
+	FString OpenLevelPath = CookingLevel.GetLongPackageName();
+
+	GetWorld()->ServerTravel(OpenLevelPath + TEXT("?listen"));
+}
+
 EIngredientType UOC2GameInstance::GetIngredientType(const FString& RowName)
 {
 	if (nullptr != IngredientDataTable)
