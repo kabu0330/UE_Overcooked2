@@ -178,15 +178,15 @@ bool APot::IsBoiling()
 	{
 		return false;
 	}
-	//if (nullptr == CookingTable)
-	//{
-	//	return false;
-	//}
-	//ABurnerTable* BurnerTable = Cast<ABurnerTable>(CookingTable);
-	//if (nullptr == BurnerTable) // 2. 버너 위에 있냐
-	//{
-	//	return false;
-	//}
+	if (nullptr == CookingTable)
+	{
+		return false;
+	}
+	ABurnerTable* BurnerTable = Cast<ABurnerTable>(CookingTable);
+	if (nullptr == BurnerTable) // 2. 버너 위에 있냐
+	{
+		return false;
+	}
 	return true;
 }
 

@@ -94,8 +94,11 @@ AIngredient* AIngredient::Init(EIngredientType Type)
 		return nullptr;
 	}
 
-	// 2). 메시, 타입, 상태 설정
+	// 2-1). 메시, 타입, 상태 설정
 	SetIngredientData(GameInst, Name);
+
+	// 2-2). 머티리얼 
+	CreateDynamicMaterial(); 
 
 	// 3). Offset
 	SetLocalOffset();
@@ -149,6 +152,48 @@ void AIngredient::SetTexture()
 	if (nullptr != Texture)
 	{
 		TextureBillboard->SetSprite(Texture);
+	}
+}
+
+void AIngredient::CreateDynamicMaterial()
+{
+	TArray<UMeshComponent*> MeshComponents;
+	GetComponents<UMeshComponent>(MeshComponents);
+
+	if (true == MeshComponents.IsEmpty())
+	{
+		return;
+	}
+
+	int Count = 0;
+
+	for (UMeshComponent* Mesh : MeshComponents)
+	{
+		if (nullptr == Mesh)
+		{
+			continue;
+		}
+
+		for (int i = 0; i < Mesh->GetNumMaterials(); i++)
+		{
+			UMaterialInterface* Material = Mesh->GetMaterials()[i];
+			if (nullptr != Material)
+			{
+				UMaterialInstanceDynamic* CastMaterial = Cast<UMaterialInstanceDynamic>(Material);
+				if (nullptr != CastMaterial) // 이미 다이나믹 머티리얼이 생성되어 있다면 또 만들지 않는다.
+				{
+					continue;
+				}
+				UMaterialInstanceDynamic* DynamicMaterial = UMaterialInstanceDynamic::Create(Material, this);
+				if (nullptr != DynamicMaterial)
+				{
+					float Temp;
+					Mesh->GetMaterials()[i]->GetScalarParameterValue(FName("DiffuseAdd"), Temp);
+					DiffuseColorMapWeights.Add(Temp);
+					Mesh->SetMaterial(i, DynamicMaterial);
+				}
+			}
+		}
 	}
 }
 
