@@ -140,3 +140,30 @@ FOrder UOC2GlobalData::GetOrderByStageAndIndex(UWorld* World, EOC2Stage CurStage
 
 	return Empty;
 }
+
+const FResourceTextureDataRow& UOC2GlobalData::GetResourceTextureDataRow(UWorld* World, const FName& RowName)
+{
+	// TODO: 여기에 return 문을 삽입합니다.
+	static FResourceTextureDataRow EmptyData;
+
+	UOC2GameInstance* GameInstance = UOC2Global::GetOC2GameInstance(World);
+
+	if (nullptr != GameInstance)
+	{
+		return GameInstance->GetResourceTextureDataRow(RowName);
+	}
+
+	return EmptyData;
+}
+
+const UTexture* UOC2GlobalData::GetResourceTexture(UWorld* World, const FName& RowName)
+{
+	UOC2GameInstance* GameInstance = UOC2Global::GetOC2GameInstance(World);
+
+	if (nullptr != GameInstance)
+	{
+		return GameInstance->GetResourceTextureDataRow(RowName).TextureRes;
+	}
+
+	return nullptr;
+}

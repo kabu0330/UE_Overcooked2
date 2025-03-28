@@ -37,7 +37,7 @@ void UCookingWidget::NativeOnInitialized()
     }
 
     for (int i = CurOrderCount; i < Orders.Num(); i++)
-    {
+    {   
         Orders[i]->SetVisibility(ESlateVisibility::Collapsed);
     }
 
@@ -51,7 +51,7 @@ void UCookingWidget::NativeOnInitialized()
             CookingScoreWidget->AddToViewport();
             CookingTimerWidget->AddToViewport();
             CookingFinalScoreWidget->AddToViewport();
-            //CookingFinalScoreWidget->SetVisibility(ESlateVisibility::Hidden);
+            CookingFinalScoreWidget->SetVisibility(ESlateVisibility::Hidden);
         }
     }
 

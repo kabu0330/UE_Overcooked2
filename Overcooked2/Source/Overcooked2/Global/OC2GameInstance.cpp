@@ -171,6 +171,23 @@ const FIngredientDataRow& UOC2GameInstance::GetIngredientDataRow(EIngredientType
 	return EmptyData;
 }
 
+const FResourceTextureDataRow& UOC2GameInstance::GetResourceTextureDataRow(const FName& RowName)
+{
+	static FResourceTextureDataRow EmptyData;
+
+	if (nullptr != ResourceTextureDataTable)
+	{
+		FResourceTextureDataRow* ResourceTextureData = ResourceTextureDataTable->FindRow<FResourceTextureDataRow>(RowName, nullptr);
+
+		if (nullptr != ResourceTextureData)
+		{
+			return *ResourceTextureData;
+		}
+	}
+
+	return EmptyData;
+}
+
 FPlateInitData UOC2GameInstance::GetPlateMesh(TArray<FRecipe>& Recipes)
 {
 	static FPlateInitData EmptyArray;
