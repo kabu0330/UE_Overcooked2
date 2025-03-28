@@ -63,48 +63,12 @@ void ACookingGameMode::Tick(float DeltaTime)
 void ACookingGameMode::PostLogin(APlayerController* NewPlayerController)
 {
 	Super::PostLogin(NewPlayerController);
-
-
-
-	/* OC2Controller->OnPossessDelegate->AddDynaimc(&SetHead) */
-	//UE_LOG(LogTemp, Warning, TEXT("Player %s has joined the game!"), *NewPlayerController->GetName());
-
-	//PlayerControllers.Push(NewPlayerController);
-
-	//if (4 == PlayerControllers.Num() && ECookingGameModeState::ECS_Stay == CurState)
-	//{
-	//	ChangeState(ECookingGameModeState::ECS_Stage);
-	//}
-
-	// 접속한 플레이어가 가진 디폴트 폰을 가져오기
-	
-	//ACharacter* DefaultCharacter = NewPlayerController->GetCharacter();
-
-	//if (DefaultCharacter)
-	//{
-	//	AOC2Character* OC2Character = Cast<AOC2Character>(DefaultCharacter);
-
-	//	Characters.Add(OC2Character);
-
-	//	if (nullptr != OC2Character)
-	//	{
-	//		// 이름을 설정하는 함수 호출
-	//		CurIdx++;
-	//	}
-	//}
-
-	//if (CurIdx == 2)
-	//{
-	//	for (int i = 0; i < CurIdx; i++)
-	//	{
-	//		Characters[i]->SetCharacterName(ChefHeadNames[CurIdx]);
-	//	}
-	//}
 }
 
 void ACookingGameMode::InitChef()
 {
 	UWorld* World = GetWorld();
+
 	if (nullptr == World)
 	{
 		return;
@@ -164,16 +128,8 @@ void ACookingGameMode::Stage(float DeltaTime)
 		if (CookingGameState != nullptr)
 		{
 			FOrder Order = UOC2GlobalData::GetOrderByStageAndIndex(GetWorld(), UOC2Global::GetOC2GameInstance(GetWorld())->GetCurStage(), 1);
-
-			//OrderManager->Multicast_CreateNewOrder(Order);
-
 			CookingGameState->Multicast_CreateNewOrder(Order);
 		}
-
-
-		//FOrder Order = UOC2GlobalData::GetOrderByStageAndIndex(GetWorld(), UOC2Global::GetOC2GameInstance(GetWorld())->GetCurStage(), 1);
-
-		//OrderManager->Multicast_CreateNewOrder(Order);
 	}
 
 	if (CheckTime >= 6.0f)
@@ -188,23 +144,11 @@ void ACookingGameMode::Stage(float DeltaTime)
 			CheckTime = 0.0f;
 
 		}
-
-		//FOrder Order = UOC2GlobalData::GetOrderByStageAndIndex(GetWorld(), UOC2Global::GetOC2GameInstance(GetWorld())->GetCurStage(), 1);
-		//OrderManager->Multicast_CompleteOrder(Order);
-		//OrderManager->Multicast_BlinkOrderUI();
-		//CheckTime = 0.0f;
 	}
 }
 
 void ACookingGameMode::EntryScore()
 {
-	UOC2GameInstance* GameInstance = Cast<UOC2GameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
-
-	EIngredientType Test = GameInstance->GetIngredientType(TEXT("Tomato"));
-	const TArray<FIngredientCookDataRow> DataRows = GameInstance->GetIngredientCookDataRows(TEXT("Tomato"));
-
-	UE_LOG(LogTemp, Log, TEXT("IngredientType: %d"), (int32)Test);
-	UE_LOG(LogTemp, Log, TEXT("PrevState: %d"), (int32)DataRows.Num());
 }
 
 void ACookingGameMode::Score(float DeltaTime)
