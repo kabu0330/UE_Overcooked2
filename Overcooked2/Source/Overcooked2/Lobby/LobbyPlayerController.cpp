@@ -12,7 +12,7 @@ void ALobbyPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	FInputModeUIOnly Mode;
+	FInputModeGameAndUI Mode;
 	SetInputMode(Mode);
 
 	SetShowMouseCursor(true);
