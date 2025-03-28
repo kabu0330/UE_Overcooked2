@@ -157,6 +157,10 @@ void APlate::ForwardDetachToChef()
 
 bool APlate::CanPlaceOnPlate(AIngredient* Ingredient)
 {
+	if (nullptr == Ingredient)
+	{
+		return false;
+	}
 	if (ECookingType::ECT_INGREDIENT != Ingredient->GetCookingType())
 	{
 		return false;
