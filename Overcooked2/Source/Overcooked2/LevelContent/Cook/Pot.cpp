@@ -61,6 +61,7 @@ void APot::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProp
 	DOREPLIFETIME(APot, CookingTable);
 	DOREPLIFETIME(APot, TextureBillboard);
 	DOREPLIFETIME(APot, bIsCombinationSuccessful);
+	DOREPLIFETIME(APot, TargetColor);
 }
 
 void APot::BeginPlay()
@@ -127,7 +128,7 @@ void APot::Tick(float DeltaTime)
 		ChangeMaterialColor(Color);
 
 		// 목표에 거의 도달했으면 종료
-		if (FVector(CurrentColor - TargetColor).Size() < 0.01f)
+		if (FVector(CurrentColor - TargetColor).Size() < 0.001f)
 		{
 			CurrentColor = TargetColor;
 			bColorChanging = false;
@@ -166,7 +167,7 @@ void APot::Add_Implementation(AIngredient* Ingredient)
 
 	RawRice->RequestOC2ActorDestroy(); // 들어온 재료는 삭제
 
-	bIsRiceInPot = true;
+	bIsRiceInPot = true; // bool 값으로 재료가 들어왔는지 체크할 것임
 	bIsCombinationSuccessful = true;
 	PotState = EPotState::HEATING;
 }
@@ -178,15 +179,15 @@ bool APot::IsBoiling()
 	{
 		return false;
 	}
-	if (nullptr == CookingTable)
-	{
-		return false;
-	}
-	ABurnerTable* BurnerTable = Cast<ABurnerTable>(CookingTable);
-	if (nullptr == BurnerTable) // 2. 버너 위에 있냐
-	{
-		return false;
-	}
+	//if (nullptr == CookingTable)
+	//{
+	//	return false;
+	//}
+	//ABurnerTable* BurnerTable = Cast<ABurnerTable>(CookingTable);
+	//if (nullptr == BurnerTable) // 2. 버너 위에 있냐
+	//{
+	//	return false;
+	//}
 	return true;
 }
 
@@ -268,17 +269,21 @@ void APot::SetAction_Implementation()
 			SoupSkeletalMeshComponent->SetMaterial(i, SoupDynamicMaterial[i]);
 		}
 		ChangeMaterialColor(FVector4(0.2f, 0.2f, 0.2f, 1.0f));
+		CurrentColor = FLinearColor(0.2f, 0.2f, 0.2f, 1.0f);
+		bColorChanging = true;
+		TargetColor = FLinearColor(0.6f, 0.6f, 0.6f, 1.0f);
 		break;
 	}
 	case EPotState::BOILING:
 	{
-
 		break;
 	}
 	case EPotState::COOKED:
 	{
-		bIsCooked = true;
-		ChangeMaterialColor(FVector4(0.5f, 0.5f, 0.5f, 1.0f));
+		bIsCooked = true; // 조리완료
+
+		bColorChanging = true;
+		TargetColor = FLinearColor(0.3f, 0.3f, 0.3f, 1.0f);
 
 		FString TextureName = TEXT("CookingTick");
 		SetTexture(TextureName);
@@ -290,9 +295,11 @@ void APot::SetAction_Implementation()
 	}
 	case EPotState::COOKED_WARNING:
 	{
-		ChangeMaterialColor(FVector4(0.1f, 0.1f, 0.1f, 1.0f));
-		bCanBlink = true;
+		bColorChanging = true;
+		TargetColor = FLinearColor(0.1f, 0.1f, 0.1f, 1.0f);
 
+		// 경고 텍스처 활성화
+		bCanBlink = true;
 		FString TextureName = TEXT("BurnWarning");
 		SetTexture(TextureName);
 		BlinkTime = 1.0f;
@@ -300,21 +307,29 @@ void APot::SetAction_Implementation()
 	}
 	case EPotState::COOKED_DANGER:
 	{
-		ChangeMaterialColor(FVector4(0.08f, 0.08f, 0.08f, 1.0f));
+		//ChangeMaterialColor(FVector4(0.08f, 0.08f, 0.08f, 1.0f));
+		bColorChanging = true;
+		TargetColor = FLinearColor(0.07f, 0.07f, 0.07f, 1.0f);
+
 		BlinkTime = 0.5f;
 		break;
 	}
 	case EPotState::SCORCHING:
 	{
-		ChangeMaterialColor(FVector4(0.04f, 0.04f, 0.04f, 1.0f));
+		//ChangeMaterialColor(FVector4(0.04f, 0.04f, 0.04f, 1.0f));
+		bColorChanging = true;
+		TargetColor = FLinearColor(0.04f, 0.04f, 0.04f, 1.0f);
 		BlinkTime = 0.2f;
 		break;
 	}
 	case EPotState::OVERCOOKED:
 	{
-		bIsCooked = false;
+		bIsCooked = false; // 조리실패
 
-		ChangeMaterialColor(FVector4(0.02f, 0.02f, 0.02f, 1.0f));
+		bColorChanging = true;
+		TargetColor = FLinearColor(0.01f, 0.01f, 0.01f, 1.0f);
+		//ChangeMaterialColor(FVector4(0.02f, 0.02f, 0.02f, 1.0f));
+
 		bCanBlink = false;
 		TextureBillboard->bHiddenInGame = true;
 		TextureBillboard->SetVisibility(false);

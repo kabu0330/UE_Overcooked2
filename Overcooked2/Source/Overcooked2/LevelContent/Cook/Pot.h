@@ -145,11 +145,11 @@ private:
 	UPROPERTY()
 	FLinearColor CurrentColor = FLinearColor::Blue;	// 현재 색상
 
-	UPROPERTY()
+	UPROPERTY(Replicated)
 	FLinearColor TargetColor = FLinearColor::Blue;	// 목표 색상
 
 	UPROPERTY()
-	float ColorChangeSpeed = 1.0f;  // 색상이 바뀌는 속도
+	float ColorChangeSpeed = 1.5f;  // 색상이 바뀌는 속도
 
 	UPROPERTY()
 	bool bColorChanging = false;    // 색상이 변하는 중인지
