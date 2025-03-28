@@ -46,9 +46,11 @@ void ABurnerTable::PlaceItem(ACooking* Item)
 	if (true == TempCooking->IsCookingType(ECookingType::ECT_POT))
 	{
 		CookingPtr = TempCooking;
+		FRotator Rotation = FRotator(0, 0, 0);
 
 		CookingPtr->AttachToComponent(ComponentForCooking, FAttachmentTransformRules::KeepRelativeTransform);
 		CookingPtr->SetActorLocation(ComponentForCooking->GetComponentLocation());
+		CookingPtr->GetStaticMeshComponent()->SetRelativeRotation(Rotation);
 
 		CookingPtr->SetCookingTable_Implementation(this);
 		APot* TempPot = Cast<APot>(CookingPtr);
