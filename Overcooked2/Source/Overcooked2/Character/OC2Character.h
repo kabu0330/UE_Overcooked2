@@ -97,8 +97,14 @@ public:
 	UFUNCTION(Reliable, Server)
 	void Chopping(bool State);
 
+	UFUNCTION(Reliable, Server)
+	void Washing(bool State);
+
 	UFUNCTION()
 	void OnRep_KnifeSet();
+
+	UFUNCTION()
+	void OnRep_PlateSet();
 
 
 	UFUNCTION(Reliable, Server)
@@ -175,13 +181,17 @@ private :
 	bool bCanThrowing = false;
 
 	
-	TPair<int, UMaterialInterface*> Knife;
+	TPair<int, UMaterialInterface*> KnifeMaterial;
+	TPair<int, UMaterialInterface*> PlateMaterial;
 
 	UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_ChangeCharacter, BlueprintReadOnly, Category = "Grab", meta = (AllowPrivateAccess = "true"))
 	FString CharacterName;
 
 	UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_KnifeSet, BlueprintReadOnly, Category = "Cook", meta = (AllowPrivateAccess = "true"))
 	bool bIsChopping = false;
+
+	UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_PlateSet, BlueprintReadOnly, Category = "Cook", meta = (AllowPrivateAccess = "true"))
+	bool bIsWashing = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UserInput", meta = (AllowPrivateAccess = "true"))
 	float CharacterSpeed = 10.0f;

@@ -113,7 +113,8 @@ void AOC2Character::CheckDash(float DeltaTime)
 		}
 		else
 		{
-			AddMovementInput(GetActorForwardVector(), DashPower, true);
+			GetCharacterMovement()->MaxWalkSpeed = 1200.0f;
+			AddMovementInput(GetActorForwardVector(), 50.0f, true);
 		}
 	}
 }
@@ -165,7 +166,11 @@ void AOC2Character::InitMesh()
 		}
 		if (Name.Contains("Knife"))
 		{
-			Knife = { i, Materials[i] };
+			KnifeMaterial = { i, Materials[i] };
+		}
+		if (Name.Contains("Plate"))
+		{
+			PlateMaterial = { i, Materials[i] };
 		}
 	}
 
@@ -282,21 +287,40 @@ void AOC2Character::Interact_Implementation()
 				Table->PlaceItem(GrabbedObject);
 				GrabbedObject = nullptr;
 			}
+			//내가 뭔가 잡고 있는데 Cook을 리턴받았으면 Cook을 다시 돌려놔야 한다.
 			else if (GrabbedObject != nullptr && Cook != nullptr)
 			{
+				APot* Pot = Cast<APot>(Cook);
+				APlate* Plate = Cast<APlate>(Cook);
+				AIngredient* GrabIng = Cast<AIngredient>(GrabbedObject);
+				APlate* GrabPlate= Cast<APlate>(GrabbedObject);
+				if (GrabIng != nullptr)
+				{
+					if (Pot != nullptr)
+					{
+						Pot->Add(GrabIng);
+						if (Pot->IsCombinationSuccessful())
+						{
+							GrabbedObject = nullptr;
+						}
+					}
+					else if (Plate != nullptr)
+					{
+						Plate->Add(GrabIng);
+						if (Plate->IsCombinationSuccessful())
+						{
+							GrabbedObject = nullptr;
+						}
+					}
+				}
+				else if (GrabPlate != nullptr)
+				{
+
+				}
+
 				Table->PlaceItem(Cook);
 			}
 		}
-	}
-
-	if (SelectedOC2Actor != nullptr)
-	{
-
-
-
-	}
-	else
-	{
 	}
 }
 
@@ -488,15 +512,33 @@ void AOC2Character::Dash_Implementation()
 
 }
 
+void AOC2Character::Washing_Implementation(bool State)
+{
+	bIsWashing = State;
+	OnRep_PlateSet();
+}
+
 void AOC2Character::OnRep_KnifeSet()
 {
 	if (bIsChopping)
 	{
-		GetMesh()->SetMaterial(Knife.Key, Knife.Value);
+		GetMesh()->SetMaterial(KnifeMaterial.Key, KnifeMaterial.Value);
 	}
 	else
 	{
-		GetMesh()->SetMaterial(Knife.Key, TransparentMat);
+		GetMesh()->SetMaterial(KnifeMaterial.Key, TransparentMat);
+	}
+}
+
+void AOC2Character::OnRep_PlateSet()
+{
+	if (bIsWashing)
+	{
+		GetMesh()->SetMaterial(PlateMaterial.Key, PlateMaterial.Value);
+	}
+	else
+	{
+		GetMesh()->SetMaterial(PlateMaterial.Key, TransparentMat);
 	}
 }
 
@@ -558,6 +600,7 @@ void AOC2Character::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	DOREPLIFETIME(AOC2Character, DashTimer);
 	DOREPLIFETIME(AOC2Character, bCanThrowing);
 	DOREPLIFETIME(AOC2Character, bIsChopping);
+	DOREPLIFETIME(AOC2Character, bIsWashing);
 	DOREPLIFETIME(AOC2Character, CharacterName);
 }
 
