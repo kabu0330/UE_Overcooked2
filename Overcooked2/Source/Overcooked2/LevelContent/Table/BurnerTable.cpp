@@ -41,6 +41,7 @@ ACooking* ABurnerTable::Interact(AActor* ChefActor)
 void ABurnerTable::PlaceItem(ACooking* Item)
 {
 	ACooking* TempCooking = Item;
+	AIngredient* Ingredient = Cast<AIngredient>(Item);
 	
 	if (true == TempCooking->IsCookingType(ECookingType::ECT_POT))
 	{
@@ -53,6 +54,17 @@ void ABurnerTable::PlaceItem(ACooking* Item)
 		APot* TempPot = Cast<APot>(CookingPtr);
 
 		//냄비의 음식물이 Boilable이면 바로 BoilThePot();
+	}
+	else if (CookingPtr->IsCookingType(ECookingType::ECT_POT) == true && nullptr != Ingredient)
+	{
+		if (EIngredientType::EIT_RICE == Ingredient->GetIngredientType() && EIngredientState::EIS_BOILABLE == Ingredient->GetCurIngredientState())
+		{
+			APot* Pot = Cast<APot>(CookingPtr);
+			if (nullptr != Pot)
+			{
+				Pot->Add(Ingredient);
+			}
+		}
 	}
 }
 
