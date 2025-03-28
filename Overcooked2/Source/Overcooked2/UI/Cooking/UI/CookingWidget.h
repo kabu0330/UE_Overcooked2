@@ -29,6 +29,8 @@ public:
     void WrongOrder();
     //void SubmitWrongOrder();
 
+    UFUNCTION(BlueprintCallable, Category = "OC2UI")
+    void PlayTimeoutWidget();
 
     // UI 바인딩 (총 5개의 주문 슬롯)
     UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
@@ -68,6 +70,7 @@ protected:
 private:
     class UCookingScoreWidget* CookingScoreWidget = nullptr;
     class UCookingFinalScoreWidget* CookingFinalScoreWidget = nullptr;
+
 
     // 주문 관련 변수
     int CompleteOrderNum = 0;

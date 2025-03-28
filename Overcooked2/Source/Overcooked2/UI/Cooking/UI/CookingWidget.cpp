@@ -14,7 +14,6 @@
 #include "UI/Cooking/UI/CookingTimeWidget.h"
 
 
-
 void UCookingWidget::NativeOnInitialized()
 {
     Super::NativeOnInitialized();
@@ -46,15 +45,17 @@ void UCookingWidget::NativeOnInitialized()
         CookingFinalScoreWidget = Cast<UCookingFinalScoreWidget>(CreateWidget(GetWorld(), FinalScoreSubWidget));
         UCookingTimeWidget* CookingTimerWidget = Cast<UCookingTimeWidget>(CreateWidget(GetWorld(), TimeSubWidget));
 
+
         if (CookingScoreWidget != nullptr && CookingTimerWidget != nullptr && CookingFinalScoreWidget != nullptr)
         {
+            CookingFinalScoreWidget->SetVisibility(ESlateVisibility::Hidden);
+  
             CookingScoreWidget->AddToViewport();
             CookingTimerWidget->AddToViewport();
             CookingFinalScoreWidget->AddToViewport();
-            CookingFinalScoreWidget->SetVisibility(ESlateVisibility::Hidden);
+
         }
     }
-
 }
 
 
@@ -70,6 +71,11 @@ void UCookingWidget::NativeTick(const FGeometry& MyGeometry, float DeltaTime)
     }
 }
 
+void UCookingWidget::PlayTimeoutWidget()
+{
+    CookingFinalScoreWidget->SetVisibility(ESlateVisibility::Visible);
+
+}
 
 void UCookingWidget::OrderComplete(int Index)
 {
