@@ -55,6 +55,8 @@ ACooking* AChoppingTable::Interact(AActor* ChefActor)
 
 void AChoppingTable::ChopIngredient(AActor* ChefActor)
 {
+	ChefPtr = Cast<AOC2Character>(ChefActor);
+
 	if (nullptr != ChefActor && nullptr != CookingPtr)
 	{
 		if (true == CookingPtr->IsCookingType(ECookingType::ECT_INGREDIENT))
@@ -63,6 +65,8 @@ void AChoppingTable::ChopIngredient(AActor* ChefActor)
 
 			//if (true == PlacedIngredient->IsChoppable())
 			{
+				ChefPtr->Chopping(true);
+
 				Timer = 2.0f;
 				bTimerActivated = true;
 				GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Magenta, "Chopping...");

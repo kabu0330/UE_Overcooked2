@@ -5,6 +5,8 @@
 #include "Overcooked2.h"
 
 #include "Lobby/LobbyPlayerController.h"
+#include "Global/State/GameState/LobbyGameState.h"
+#include "Global/Manager/LobbyManager.h"
 
 #include "Global/OC2GameInstance.h"
 #include "Global/OC2Global.h"
@@ -37,6 +39,21 @@ void ALobbyGameMode::BeginPlay()
 void ALobbyGameMode::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+void ALobbyGameMode::InitGameState()
+{
+	Super::InitGameState();
+
+	ALobbyGameState* LobbyGameState = GetGameState<ALobbyGameState>();
+
+	if (nullptr == LobbyGameState)
+	{
+		UE_LOG(OVERCOOKED_LOG, Log, TEXT("LobbyGameState가 nullptr입니다."));
+		return;
+	}
+
+	LobbyGameState->LobbyManager = GetWorld()->SpawnActor<ALobbyManager>(LobbyGameState->LobbyManagerClass);
 }
 
 void ALobbyGameMode::PostLogin(APlayerController* NewPlayerController)

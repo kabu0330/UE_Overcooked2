@@ -46,16 +46,18 @@ void ABurnerTable::PlaceItem(ACooking* Item)
 	if (true == TempCooking->IsCookingType(ECookingType::ECT_POT))
 	{
 		CookingPtr = TempCooking;
+		FRotator Rotation = FRotator(0, 0, 0);
 
 		CookingPtr->AttachToComponent(ComponentForCooking, FAttachmentTransformRules::KeepRelativeTransform);
 		CookingPtr->SetActorLocation(ComponentForCooking->GetComponentLocation());
+		CookingPtr->GetStaticMeshComponent()->SetRelativeRotation(Rotation);
 
 		CookingPtr->SetCookingTable_Implementation(this);
 		APot* TempPot = Cast<APot>(CookingPtr);
 
 		//냄비의 음식물이 Boilable이면 바로 BoilThePot();
 	}
-	else if (CookingPtr->IsCookingType(ECookingType::ECT_POT) == true && nullptr != Ingredient)
+	else if (nullptr != CookingPtr && nullptr != Ingredient)
 	{
 		if (EIngredientType::EIT_RICE == Ingredient->GetIngredientType() && EIngredientState::EIS_BOILABLE == Ingredient->GetCurIngredientState())
 		{

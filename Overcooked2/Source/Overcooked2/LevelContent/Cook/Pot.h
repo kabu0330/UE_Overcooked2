@@ -76,6 +76,7 @@ protected:
 	bool IsBoiling();
 
 	void BlinkTexture(float DeltaTime);
+	void UpdateTextureVisibilityOnTable();
 
 	void ChangeNoneMaterial();
 
@@ -88,7 +89,7 @@ protected:
 	void InitTexture();
 
 	void SetTexture(const FString& RowName);
-	void SetWarnigTextureOffset();
+	void SetTextureOffset();
 
 
 	void ChangeState(EPotState CurState, EPotState NextState, float TransitionTime);
@@ -138,6 +139,9 @@ private:
 
 	UPROPERTY()
 	bool bCanBlink = false;
+
+	UPROPERTY(Replicated)
+	bool bIsBlinkStop = false;
 	//
 
 	
