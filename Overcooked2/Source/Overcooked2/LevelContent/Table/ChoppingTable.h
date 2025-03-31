@@ -53,6 +53,9 @@ public:
 		bTimerActivated = bActivated;
 	}
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking")
+	USceneComponent* ComponentForProgressBar = nullptr;
+
 protected:
 
 private:
@@ -62,4 +65,5 @@ private:
 	bool bChoppingDone = false;
 
 	class AOC2Character* ChefPtr = nullptr;
+	class ATableProgressBar* ProgressBar = nullptr;
 };

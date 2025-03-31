@@ -4,10 +4,13 @@
 #include "LevelContent/Table/ChoppingTable.h"
 #include <Character/OC2Character.h>
 #include <Global/OC2Enum.h>
+#include "LevelContent/Table/TableProgressBar/TableProgressBar.h"
+#include "Global/GameMode/OC2GameMode.h"
 
 AChoppingTable::AChoppingTable()
 {
-	
+	ComponentForProgressBar = CreateDefaultSubobject<USceneComponent>("ProgressBar");
+	ComponentForProgressBar->SetupAttachment(RootComponent);
 }
 
 void AChoppingTable::BeginPlay()
@@ -70,6 +73,12 @@ void AChoppingTable::ChopIngredient(AActor* ChefActor)
 				Timer = 2.0f;
 				bTimerActivated = true;
 				GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Magenta, "Chopping...");
+
+				ProgressBar = GetWorld()->SpawnActor<ATableProgressBar>();
+				ProgressBar->SetActorLocation(ComponentForProgressBar->GetComponentLocation());
+				FVector Scale = CookingPtr->GetActorScale3D();
+				ProgressBar->SetActorScale3D(Scale * 0.3);
+				ProgressBar->AddActorWorldRotation({ 0.0, 00.0, -60.0 });
 			}
 		}
 	}
@@ -83,6 +92,9 @@ void AChoppingTable::ChoppingIsDone()
 	PlacedIngredient->ChangeState(EIngredientState::EIS_CHOPPED);
 	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Turquoise, "Chopping Done");
 	CookingPtr = Cast<ACooking>(PlacedIngredient);
+
+	ProgressBar->bDestroy = true;
+	ProgressBar = nullptr;
 
 	ChefPtr->Chopping(false);
 	ChefPtr = nullptr;
