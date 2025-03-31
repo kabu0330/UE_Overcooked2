@@ -12,6 +12,7 @@
 #include "UI/Cooking/UI/CookingScoreWidget.h"
 #include "UI/Cooking/UI/CookingFinalScoreWidget.h"
 #include "UI/Cooking/UI/CookingTimeWidget.h"
+#include "UI/Cooking/UI/CookingReceiptWidget.h"
 
 
 void UCookingWidget::NativeOnInitialized()
@@ -56,6 +57,7 @@ void UCookingWidget::NativeOnInitialized()
 
         }
     }
+
 }
 
 
@@ -74,7 +76,7 @@ void UCookingWidget::NativeTick(const FGeometry& MyGeometry, float DeltaTime)
 void UCookingWidget::PlayTimeoutWidget()
 {
     CookingFinalScoreWidget->SetVisibility(ESlateVisibility::Visible);
-
+    bIsFinish = true;
 }
 
 void UCookingWidget::OrderComplete(int Index)
@@ -121,7 +123,7 @@ void UCookingWidget::OrderComplete(int Index)
         if (CookingScoreWidget != nullptr)
         {
             // test
-            int testnum = 23;
+            int testnum = 0;
             CookingScoreWidget->PlayOderCompleteAnimation(testnum);
         }
 
