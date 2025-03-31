@@ -77,8 +77,6 @@ void AOC2Character::BeginPlay()
 {
 	Super::BeginPlay();
 
-	InitMesh();
-
 	//CheckOverlap->OnComponentHit.AddDynamic(this, &AOC2Character::OnHit);
 	CheckOverlap->OnComponentBeginOverlap.AddDynamic(this, &AOC2Character::OnOverlapCheck);
 
@@ -87,6 +85,13 @@ void AOC2Character::BeginPlay()
 	// 임시 :
 	//SetCharacterHead("Alien_Green");
 
+}
+
+void AOC2Character::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	InitMesh();
 }
 
 // Called every frame
@@ -175,7 +180,7 @@ void AOC2Character::InitMesh()
 		}
 	}
 
-	GetMesh()->SetMaterial(CharacterHeadMap["Alien_Green"].MaterialIndex, CharacterHeadMap["Alien_Green"].Material);
+	//GetMesh()->SetMaterial(CharacterHeadMap["Alien_Green"].MaterialIndex, CharacterHeadMap["Alien_Green"].Material);
 }
 
 void AOC2Character::ClearMaterials()

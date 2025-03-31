@@ -5,6 +5,8 @@
 
 #include "Character/OC2Character.h"
 #include "Global/State/GameState/LobbyGameState.h"
+#include "Global/OC2GameInstance.h"
+#include "Global/OC2Global.h"
 
 ALobbyManager::ALobbyManager()
 {
@@ -24,6 +26,8 @@ ALobbyManager* ALobbyManager::Get(UWorld* WorldContext)
 void ALobbyManager::BeginPlay()
 {
 	Super::BeginPlay();
+
+	InitCharacter();
 }
 
 void ALobbyManager::Tick(float DeltaTime)
@@ -36,9 +40,10 @@ void ALobbyManager::InitCharacter()
 	if (nullptr != OC2CharacterClass)
 	{
 		AOC2Character* OC2Character = GetWorld()->SpawnActor<AOC2Character>(OC2CharacterClass, FVector::ZeroVector, FRotator::ZeroRotator);
+		//OC2Character->DispatchBeginPlay();
 		OC2Character->SetActorLocation(UOC2Const::TitleCharacterSpawnLocation);
 		OC2Character->SetActorRotation(UOC2Const::TitleCharacterSpawnRotation);
-		OC2Character->SetCharacterName(UOC2Const::ChefEagleHeadName);
+		OC2Character->SetCharacterName(UOC2Global::GetOC2GameInstance(GetWorld())->GetChefHeadName());
 		OC2Character->Chopping(true);
 	}
 }

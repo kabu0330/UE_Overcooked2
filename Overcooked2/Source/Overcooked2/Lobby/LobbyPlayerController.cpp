@@ -4,6 +4,7 @@
 #include "Lobby/LobbyPlayerController.h"
 
 #include "Global/OC2GameInstance.h"
+#include "Global/Manager/LobbyManager.h"
 
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
