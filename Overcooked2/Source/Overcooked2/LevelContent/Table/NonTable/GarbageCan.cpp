@@ -42,7 +42,7 @@ void AGarbageCan::PlaceItem(ACooking* Item)
 		CookingPtr->SetActorLocation(ComponentForCooking->GetComponentLocation());
 
 		bDestroyGarbage = true;
-		Timer = 2.0f;
+		Timer = 1.5f;
 	}
 }
 
@@ -61,8 +61,8 @@ void AGarbageCan::GarbageTransform(float DeltaTime)
 {
 	FRotator Rotation = { 0.0, 0.0, 90.0 };
 	//FTransform Location = { 0.0, 0.0, -10.0 };
-	CookingPtr->AddActorWorldRotation(Rotation * DeltaTime);
+	CookingPtr->AddActorWorldRotation(Rotation * DeltaTime * 2.0);
 	FVector Scale = CookingPtr->GetActorScale3D();
-	CookingPtr->SetActorScale3D(Scale * 0.99);
+	CookingPtr->SetActorScale3D(Scale * 0.985);
 	//Garbage->AddActorWorldTransform(Location);
 }
