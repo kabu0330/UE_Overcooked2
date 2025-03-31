@@ -52,6 +52,9 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OC2UI")
     UCurveFloat* ColorCurve = nullptr;
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OC2UI", meta = (AllowPrivateAccess = "true"))
+    bool bIsFinish = false;
+
 protected:
     virtual void NativeOnInitialized() override;
     virtual void NativeTick(const FGeometry& MyGeometry, float DeltaTime) override;
@@ -70,6 +73,7 @@ protected:
 private:
     class UCookingScoreWidget* CookingScoreWidget = nullptr;
     class UCookingFinalScoreWidget* CookingFinalScoreWidget = nullptr;
+
 
 
     // 주문 관련 변수

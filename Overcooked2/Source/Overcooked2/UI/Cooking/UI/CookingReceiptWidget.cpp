@@ -41,7 +41,7 @@ void UCookingReceiptWidget::ShowScoreText()
 {
     GetWorld()->GetTimerManager().ClearTimer(ScoreTextTimerHandle);
 
-    GetWorld()->GetTimerManager().SetTimer(ScoreTextTimerHandle, this, &UCookingReceiptWidget::PlayScoreTextAnimation, 0.5f, true);
+    GetWorld()->GetTimerManager().SetTimer(ScoreTextTimerHandle, this, &UCookingReceiptWidget::PlayScoreTextAnimation, 0.3f, true);
 
 }
 
@@ -50,7 +50,7 @@ void UCookingReceiptWidget::PlayScoreTextAnimation()
     if (CurTime == 0)
     {
         UTextBlock* DeliveredTxt = FindChildWidget<UTextBlock>("DeliveredTxt", TxtCanvas);
-        UTextBlock* DeliveredCount = FindChildWidget<UTextBlock>("DeliveredTxt", TxtCanvas);
+        UTextBlock* DeliveredCount = FindChildWidget<UTextBlock>("DeliveredCount", TxtCanvas);
 
         DeliveredTxt->SetVisibility(ESlateVisibility::Visible);
         DeliveredCount->SetVisibility(ESlateVisibility::Visible);
@@ -70,10 +70,30 @@ void UCookingReceiptWidget::PlayScoreTextAnimation()
         UTextBlock* TipScore = FindChildWidget<UTextBlock>("TipScore", TxtCanvas);
         TipScore->SetVisibility(ESlateVisibility::Visible);
     }
+    else if (CurTime == 4)
+    {
+        UTextBlock* FailedTxt = FindChildWidget<UTextBlock>("FailedTxt", TxtCanvas);
+        UTextBlock* FailedCount = FindChildWidget<UTextBlock>("FailedCount", TxtCanvas);
+
+        FailedTxt->SetVisibility(ESlateVisibility::Visible);
+        FailedCount->SetVisibility(ESlateVisibility::Visible);
+    }
+    else if (CurTime == 5)
+    {
+        UTextBlock* FailedScore = FindChildWidget<UTextBlock>("FailedScore", TxtCanvas);
+        FailedScore->SetVisibility(ESlateVisibility::Visible);
+    }
+    else if (CurTime == 6)
+    {
+        UTextBlock* TotalTxt = FindChildWidget<UTextBlock>("TotalTxt", TxtCanvas);
+        TotalTxt->SetVisibility(ESlateVisibility::Visible);
+
+        UTextBlock* TotalScore = FindChildWidget<UTextBlock>("TotalScore", TxtCanvas);
+        TotalScore->SetVisibility(ESlateVisibility::Visible);
+    }
     else
     {
         GetWorld()->GetTimerManager().ClearTimer(ScoreTextTimerHandle);
-
     }
 
     CurTime++;
@@ -103,7 +123,7 @@ void UCookingReceiptWidget::ResetSize()
     CurImg->SetRenderScale(FVector2D(1.0f, 1.0f));
     CurIndex += 1;
 
-    int TestNum = 3;
+    int TestNum = 2;
 
     if(CurIndex < TestNum)
     {
