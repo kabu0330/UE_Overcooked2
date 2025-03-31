@@ -140,4 +140,6 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Global|Stage")
 	EOC2Stage CurStage = EOC2Stage::EOS_Sushi_1_1;
 
+	TArray<FString> ChefHeadNames;
+
 };

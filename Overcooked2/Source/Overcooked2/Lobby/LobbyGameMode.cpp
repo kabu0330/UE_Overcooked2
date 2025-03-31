@@ -28,8 +28,6 @@ void ALobbyGameMode::BeginPlay()
 
 	if (GameInstance != nullptr)
 	{
-		UE_LOG(LogTemp, Log, TEXT("GameInstance 가져오기 성공!"));
-
 		GameInstance->SetChefHeadName(ChefHeadNames[CurIdx]);
 		CurIdx++;
 	}
@@ -53,7 +51,7 @@ void ALobbyGameMode::InitGameState()
 		return;
 	}
 
-	LobbyGameState->LobbyManager = GetWorld()->SpawnActor<ALobbyManager>(LobbyGameState->LobbyManagerClass);
+	//LobbyGameState->LobbyManager = GetWorld()->SpawnActor<ALobbyManager>(LobbyGameState->LobbyManagerClass);
 }
 
 void ALobbyGameMode::PostLogin(APlayerController* NewPlayerController)
