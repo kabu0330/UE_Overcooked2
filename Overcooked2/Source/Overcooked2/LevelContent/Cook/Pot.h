@@ -75,6 +75,7 @@ protected:
 
 	bool IsBoiling();
 
+	void CanBlink();
 	void BlinkTexture(float DeltaTime);
 	void UpdateTextureVisibilityOnTable();
 
@@ -86,10 +87,13 @@ protected:
 	virtual void ForwardAttachToChef() override;
 	virtual void ForwardDetachToChef() override;
 
-	void InitTexture();
+	void InitGaugeWidget();
+	void InitStatusWidget();
 
-	void SetTexture(const FString& RowName);
-	void SetTextureOffset();
+	void InitWidgetSetting(class UWidgetComponent* WidgetComponent);
+	void UpdateGaugeWidget();
+
+	UTexture2D* GetTexture(const FString& RowName);
 
 
 	void ChangeState(EPotState CurState, EPotState NextState, float TransitionTime);
@@ -100,16 +104,16 @@ private:
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowprivateAccess = "true"))
 	USkeletalMeshComponent* SoupSkeletalMeshComponent = nullptr; // 쌀이 들어오면 렌더링될 메시
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowprivateAccess = "true"))
+	UPROPERTY()
 	TArray<UMaterialInstanceDynamic*> SoupDynamicMaterial; // 조리 시간에 따라 색상 바꿀 머티리얼들
 
-	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowprivateAccess = "true"))
+	UPROPERTY(Replicated)
 	UMaterialInstanceDynamic* NoneMaterial = nullptr; // 투명 머티리얼
 
-	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowprivateAccess = "true"))
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowprivateAccess = "true"))
 	EPotState PotState = EPotState::IDLE; // 현재 상태
 
-	UPROPERTY(/*Replicated,*/ EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowprivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowprivateAccess = "true"))
 	EPotState PrevPotState = EPotState::MAX; // 직전 상태. 현재 상태와 비교해서 상태 변경처리
 
 	UPROPERTY(Replicated)
@@ -124,25 +128,47 @@ private:
 	UPROPERTY(Replicated)
 	float TimeElapsed = 0.0f; // 조리 시간
 
-	UPROPERTY(Replicated)
-	class ACookingTable* CookingTable = nullptr; // 버너 테이블 위에 있는지 체크할 포인터 변수
 
-	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
-	class UBillboardComponent* TextureBillboard = nullptr; // 텍스처
+	// 조리 게이지
+	UPROPERTY()
+	class UWidgetComponent* GaugeWidgetComponent = nullptr;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowprivateAccess = "true"))
+	TSubclassOf<UUserWidget> SubclassGaugeWidget = nullptr; // 에디터에서 가져올 WBP 지정
+
+	UPROPERTY()
+	class UGaugeTextureWidget* GaugeWidget = nullptr; // 세팅한 위젯 객체 저장 및 함수 호출용
+
+	float CookingTimeRatio = 0.0f; // Widget으로 보내 요리 진행률을 나타낼 변수
+	//
+
+	// 조리 완료 및 경고 텍스처 출력 위젯
+	UPROPERTY()
+	class UWidgetComponent* StatusWidgetComponent = nullptr; 
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowprivateAccess = "true"))
+	TSubclassOf<UUserWidget> SubclassStatusWidget = nullptr; // 에디터에서 가져올 WBP 지정
+
+	UPROPERTY()
+	class UCookStatusWidget* StatusWidget = nullptr; // 세팅한 위젯 객체 저장 및 함수 호출용
+	
 	// 경고 텍스처 블링크 효과
 	UPROPERTY()
-	float BlinkTimeElapsed = 0.0f; 
+	float BlinkTimeElapsed = 0.0f;
 
 	UPROPERTY()
 	float BlinkTime = 0.0f;
 
-	UPROPERTY()
-	bool bCanBlink = false;
+	UPROPERTY(Replicated)
+	bool bIsBlinking = false; // 상태가 변할 때 블링크 가능 여부를 결정짓는 변수
 
 	UPROPERTY(Replicated)
-	bool bIsBlinkStop = false;
+	bool bCanBlink = false; // 플레이어가 냄비를 들고 내릴 때 블링크 여부를 결정짓는 변수
 	//
+
+
+	UPROPERTY(Replicated)
+	class ACookingTable* CookingTable = nullptr; // 버너 테이블 위에 있는지 체크할 포인터 변수
 
 	
 	// 머티리얼 색상을 조리시간 경과에 따라 변경
