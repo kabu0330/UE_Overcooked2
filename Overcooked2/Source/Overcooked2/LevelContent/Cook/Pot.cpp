@@ -10,6 +10,9 @@
 #include "Components/BillboardComponent.h"  
 #include <Global/Component/TimeEventComponent.h>
 #include <Global/Data/OC2GlobalData.h>
+#include <LevelContent/Cook/GaugeTextureWidget.h>
+#include <LevelContent/Cook/CookStatusWidget.h>
+#include "Components/WidgetComponent.h"
 
 APot::APot()
 {
@@ -24,45 +27,15 @@ APot::APot()
 	SoupSkeletalMeshComponent->SetupAttachment(StaticMeshComponent);
 	SoupSkeletalMeshComponent->SetIsReplicated(true);
 
-	InitTexture();
+	GaugeWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
+	GaugeWidgetComponent->SetupAttachment(RootComponent);
+
+	StatusWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("StatusWidgetComponent"));
+	StatusWidgetComponent->SetupAttachment(RootComponent);
 
 	TimeEventComponent = CreateDefaultSubobject<UTimeEventComponent>(TEXT("TimeEventComponent"));
 
 	StaticMeshComponent->SetRelativeLocation(InitPos);
-}
-
-void APot::InitTexture()
-{
-	TextureBillboard = CreateDefaultSubobject<UBillboardComponent>(TEXT("TextureBillboard"));
-	TextureBillboard->bHiddenInGame = false;
-	//TextureBillboard->bIsScreenSizeScaled = true;
-	TextureBillboard->bReceivesDecals = false;
-
-	FVector Scale(1.0f, 1.0f, 1.0f);
-	TextureBillboard->SetRelativeScale3D(Scale);
-
-	TextureBillboard->SetUsingAbsoluteRotation(true);
-	TextureBillboard->SetUsingAbsoluteLocation(true);
-
-	TextureBillboard->SetVisibility(false);
-}
-
-void APot::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	DOREPLIFETIME(APot, SoupSkeletalMeshComponent);
-	DOREPLIFETIME(APot, NoneMaterial);
-	DOREPLIFETIME(APot, PotState);
-	DOREPLIFETIME(APot, bIsCombinationSuccessful);
-	DOREPLIFETIME(APot, bIsRiceInPot);
-	DOREPLIFETIME(APot, bIsCooked);
-	DOREPLIFETIME(APot, TimeElapsed);
-	DOREPLIFETIME(APot, CookingTable);
-	DOREPLIFETIME(APot, TextureBillboard);
-	DOREPLIFETIME(APot, bIsBlinkStop);
-	DOREPLIFETIME(APot, bIsCombinationSuccessful);
-	DOREPLIFETIME(APot, TargetColor);
 }
 
 void APot::BeginPlay()
@@ -71,8 +44,10 @@ void APot::BeginPlay()
 
 	NoneMaterial = LoadNoneMaterial(); // 여기서 해줘야 클라도 NULL 머티리얼 생성된다.
 	SetSoupMaterial();
-
 	ChangeNoneMaterial();
+
+	InitGaugeWidget();
+	InitStatusWidget();
 }
 
 UMaterialInstanceDynamic* APot::LoadNoneMaterial()
@@ -111,27 +86,70 @@ void APot::ChangeNoneMaterial()
 	}
 }
 
+void APot::InitGaugeWidget()
+{
+	// 위젯 클래스 지정
+	GaugeWidgetComponent->SetWidgetClass(SubclassGaugeWidget); // WBP 위젯으로 설정
+	UUserWidget* UserWidget = GaugeWidgetComponent->GetUserWidgetObject();
+	if (nullptr != UserWidget)
+	{
+		GaugeWidget = Cast<UGaugeTextureWidget>(UserWidget);
+	}
+	InitWidgetSetting(GaugeWidgetComponent);
+}
+
+void APot::InitStatusWidget()
+{
+	StatusWidgetComponent->SetWidgetClass(SubclassStatusWidget); // WBP 위젯으로 설정
+	UUserWidget* UserWidget = StatusWidgetComponent->GetUserWidgetObject();
+	if (nullptr != UserWidget)
+	{
+		StatusWidget = Cast<UCookStatusWidget>(UserWidget);
+	}
+	InitWidgetSetting(StatusWidgetComponent);
+}
+
+void APot::InitWidgetSetting(UWidgetComponent* WidgetComponent)
+{
+	WidgetComponent->SetDrawAtDesiredSize(true);   // 위젯의 실제 크기로 렌더
+	WidgetComponent->SetPivot(FVector2D(0.5f, 0.5f)); // 중심 정렬
+	WidgetComponent->SetWidgetSpace(EWidgetSpace::Screen); // 월드 공간에서 3D처럼 보이게
+	WidgetComponent->bHiddenInGame = true;
+
+	// 카메라를 향하도록 설정
+	WidgetComponent->SetTwoSided(true);
+	WidgetComponent->SetTickWhenOffscreen(true);
+}
+
 void APot::Tick(float DeltaTime)
 {
 	ACooking::Tick(DeltaTime);
 
 	Cook(DeltaTime);
 	SetAction();
-	SetTextureOffset();
 	BlinkTexture(DeltaTime);
 	UpdateTextureVisibilityOnTable();
 	ChangeSoupColor(DeltaTime);
+
+	UpdateGaugeWidget();
+
 }
 
-void APot::SetTextureOffset()
+void APot::UpdateGaugeWidget()
 {
-	if (nullptr != TextureBillboard)
+	if (0.01f >= CookingTimeRatio)
 	{
-		FRotator FixedRotation = FRotator(0, 0, 0);
-		TextureBillboard->SetWorldRotation(FixedRotation);
-
-		FVector OffsetPos = FVector(50, -200, 100);
-		TextureBillboard->SetWorldLocation(GetActorLocation() + OffsetPos);
+		return;
+	}
+	if (1.0f <= CookingTimeRatio)
+	{
+		GaugeWidgetComponent->bHiddenInGame = true; // 100%면 숨기고
+		return;
+	}
+	else if (nullptr != GaugeWidget) // 100%도 아니고 위젯도 정상적으로 세팅되어 있으면
+	{
+		GaugeWidgetComponent->bHiddenInGame = false;
+		GaugeWidget->SetProgressTimeRatio(CookingTimeRatio); // 비율대로 채워주고
 	}
 }
 
@@ -202,12 +220,14 @@ void APot::Cook(float DeltaTime)
 	}
 
 	TimeElapsed += DeltaTime;
-
+	
 	//float TimeToBoil = 4.0f;
 	//float TimeToCook = 12.0f;
 	//float TimeToWarning = 16.0f;
 	//float TimeToDanger = 19.0f;
 	//float TimeToScorch = 22.0f;
+
+	CookingTimeRatio = TimeElapsed / TimeToCook;
 
 	ChangeState(EPotState::HEATING, EPotState::BOILING, TimeToBoil);
 	ChangeState(EPotState::BOILING, EPotState::COOKED, TimeToCook);
@@ -276,10 +296,13 @@ void APot::SetAction_Implementation()
 		TargetColor = FLinearColor(0.3f, 0.3f, 0.3f, 1.0f);
 
 		FString TextureName = TEXT("CookingTick");
-		SetTexture(TextureName);
+		UTexture2D* Texture = GetTexture(TextureName);
+		StatusWidget->SetStatusTexture(Texture);
+		StatusWidgetComponent->bHiddenInGame = false;
+
 		TimeEventComponent->AddEndEvent(0.5f, [this]()
 			{
-				TextureBillboard->SetVisibility(false);
+				StatusWidgetComponent->bHiddenInGame = true;
 			});
 		break;
 	}
@@ -289,27 +312,31 @@ void APot::SetAction_Implementation()
 		TargetColor = FLinearColor(0.1f, 0.1f, 0.1f, 1.0f);
 
 		// 경고 텍스처 활성화
-		bIsBlinkStop = true;
-		bCanBlink = true;
+		bIsBlinking = true;
+
 		FString TextureName = TEXT("BurnWarning");
-		SetTexture(TextureName);
+		UTexture2D* Texture = GetTexture(TextureName);
+		StatusWidget->SetStatusTexture(Texture);
+		StatusWidgetComponent->bHiddenInGame = false;
+		CanBlink();
+
 		BlinkTime = 0.5f;
 		break;
 	}
 	case EPotState::COOKED_DANGER:
 	{
-
 		bColorChanging = true;
 		TargetColor = FLinearColor(0.07f, 0.07f, 0.07f, 1.0f);
 
-		BlinkTime = 0.3f;
+		BlinkTime = 0.2f;
 		break;
 	}
 	case EPotState::SCORCHING:
 	{
 		bColorChanging = true;
-		TargetColor = FLinearColor(0.04f, 0.04f, 0.04f, 1.0f);
-		BlinkTime = 0.15f;
+		TargetColor = FLinearColor(0.025f, 0.025f, 0.025f, 1.0f);
+
+		BlinkTime = 0.1f;
 		break;
 	}
 	case EPotState::OVERCOOKED:
@@ -319,10 +346,10 @@ void APot::SetAction_Implementation()
 		bColorChanging = true;
 		TargetColor = FLinearColor(0.01f, 0.01f, 0.01f, 1.0f);
 
-		bIsBlinkStop = false;
-		bCanBlink = false;
-		TextureBillboard->bHiddenInGame = true;
-		TextureBillboard->SetVisibility(false);
+		bIsBlinking = false;
+
+		StatusWidgetComponent->bHiddenInGame = true;
+
 		break;
 	}
 	default:
@@ -339,56 +366,69 @@ void APot::ChangeMaterialColor(FVector4 Color)
 	}
 }
 
-void APot::SetTexture(const FString& RowName)
+UTexture2D* APot::GetTexture(const FString& RowName)
 {
-	if (nullptr != TextureBillboard)
-	{
-		UTexture* Texture = UOC2GlobalData::GetResourceTexture(GetWorld(), *RowName);
-		UTexture2D* NewTexture = Cast<UTexture2D>(Texture);
-		TextureBillboard->SetSprite(NewTexture);
+	UTexture* NewTexture = UOC2GlobalData::GetResourceTexture(GetWorld(), *RowName);
+	UTexture2D* NewTexture2D = Cast<UTexture2D>(NewTexture);
+	return NewTexture2D;
+}
 
-		TextureBillboard->SetVisibility(true);
-		TextureBillboard->bHiddenInGame = false;
+void APot::CanBlink()
+{
+	// 버너 테이블일 때만
+	if (nullptr != Cast<ABurnerTable>(CookingTable))
+	{
+		bCanBlink = true; // 블링크가 가능하다.
+		TimeEventComponent->AddEndEvent(0.09f, [this]()
+			{
+				bCanBlink = false; // 블링크 업데이트가 정상적으로 되도록 잠깐 값을 바꿔줬다가 원복
+			});
 	}
 }
 
 void APot::BlinkTexture(float DeltaTime)
 {
-	if (false == bCanBlink)
+	if (false == bIsBlinking)
 	{
 		return;
 	}
-
-	if (true == TextureBillboard->IsVisible())
+	
+	// 텍스처가 보이는 중이면
+	if (false == StatusWidgetComponent->bHiddenInGame)
 	{
 		BlinkTimeElapsed += DeltaTime;
 	}
 
-	if (BlinkTime <= BlinkTimeElapsed && true == TextureBillboard->IsVisible())
+	// 텍스처가 일정 시간 이미 보였다면
+	if (BlinkTime <= BlinkTimeElapsed && false == StatusWidgetComponent->bHiddenInGame)
 	{
-		TextureBillboard->SetVisibility(false);
-		//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("텍스처 끔"));
+		StatusWidgetComponent->bHiddenInGame = true; // 다시 텍스처 끄고
 		BlinkTimeElapsed = 0.0f;
-		TimeEventComponent->AddEndEvent(BlinkTime, [this]()
+		//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("텍스처 끔"));
+
+		TimeEventComponent->AddEndEvent(BlinkTime, [this]() 
 			{
+				StatusWidgetComponent->bHiddenInGame = false; // 일정 시간 뒤에 다시 켠다.
 				//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("텍스처 켬"));
-				TextureBillboard->SetVisibility(true);
 			});
 	}
 }
 
 void APot::UpdateTextureVisibilityOnTable()
 {
-	if (nullptr == CookingTable)
+	if (nullptr == CookingTable) // 테이블에 있지 않다면
 	{
-		TextureBillboard->SetVisibility(false);
-		TextureBillboard->bHiddenInGame = true; // 숨김처리
+		StatusWidgetComponent->bHiddenInGame = true; // 숨김처리
 		return;
 	}
-	else if (nullptr != Cast<ABurnerTable>(CookingTable) && true == bIsBlinkStop && true == TextureBillboard->bHiddenInGame)
-	{	// 버너 테이블에 다시 올라왔는데, 블링크 효과가 진행중인 상태에서 숨김처리가 되어있다면,
-		TextureBillboard->SetVisibility(true);
-		TextureBillboard->bHiddenInGame = false; // 보이게하기
+
+	// 버너 테이블에 다시 올라왔는데, 블링크 효과가 진행중인 상태에서 숨김처리가 되어있다면,
+	else if (nullptr != Cast<ABurnerTable>(CookingTable) && 
+		true == bCanBlink && 
+		true == bIsBlinking && 
+		true == StatusWidgetComponent->bHiddenInGame)
+	{	
+		StatusWidgetComponent->bHiddenInGame = false; // 블링크가 되도록 설정
 	}
 }
 
@@ -446,19 +486,38 @@ void APot::ResetPot()
 	PotState = EPotState::IDLE;
 	bIsRiceInPot = false;
 	TimeElapsed = 0.0f;
-	bCanBlink = false;
 	bIsCombinationSuccessful = false;
 	bIsCooked = false;
-	TextureBillboard->bHiddenInGame = true;
-	bIsBlinkStop = false;
+	bIsBlinking = false;
+	CookingTimeRatio = 0.0f;
 
 	ChangeNoneMaterial();
+}
+
+void APot::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(APot, SoupSkeletalMeshComponent);
+	DOREPLIFETIME(APot, NoneMaterial);
+	DOREPLIFETIME(APot, PotState);
+	DOREPLIFETIME(APot, bIsCombinationSuccessful);
+	DOREPLIFETIME(APot, bIsRiceInPot);
+	DOREPLIFETIME(APot, bIsCooked);
+	DOREPLIFETIME(APot, TimeElapsed);
+	DOREPLIFETIME(APot, CookingTable);
+	DOREPLIFETIME(APot, bIsBlinking);
+	DOREPLIFETIME(APot, bCanBlink);
+	DOREPLIFETIME(APot, bIsCombinationSuccessful);
+	DOREPLIFETIME(APot, TargetColor);
 }
 
 // Table이 SetCookingTable 함수를 호출해주면 여기서 세팅
 void APot::ForwardCookingTable(ACookingTable* Table)
 {
 	CookingTable = Table;
+
+	CanBlink(); // 블링크 효과 활성화 여부 체크 후 켬
 }
 
 // 캐릭터가 냄비를 들어올렸을 때, 호출
@@ -469,6 +528,8 @@ void APot::ForwardAttachToChef()
 	FRotator Rotation = FRotator(0, 90, 0);
 	StaticMeshComponent->SetRelativeLocation(Offset);
 	StaticMeshComponent->SetRelativeRotation(Rotation);
+
+	bCanBlink = false; // 블링크 효과 끔
 
 }
 

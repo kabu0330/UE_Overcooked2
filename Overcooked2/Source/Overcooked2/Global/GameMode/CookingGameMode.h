@@ -19,6 +19,7 @@ class APlate;
 class AOC2Actor;
 class ACookingGameState;
 class ACookingTable;
+class ASpawnManager;
 
 /**
  * 요리 게임 모드 클래스 (ACookingGameMode)
@@ -76,6 +77,12 @@ public:
 
 	/** 사용 가능한 요리 테이블 목록 */
 	TArray<TSubclassOf<ACookingTable>> CookingTables;
+
+	/** 스폰 매니저 객체 */
+	ASpawnManager* SpawnManagerActor = nullptr;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<ASpawnManager> SpawnManagerClass = nullptr;
 
 private:
 	/** 주문을 관리하는 컴포넌트 */

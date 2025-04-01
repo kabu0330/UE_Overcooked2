@@ -40,7 +40,6 @@ void ALobbyManager::InitCharacter()
 	if (nullptr != OC2CharacterClass)
 	{
 		AOC2Character* OC2Character = GetWorld()->SpawnActor<AOC2Character>(OC2CharacterClass, FVector::ZeroVector, FRotator::ZeroRotator);
-		//OC2Character->DispatchBeginPlay();
 		OC2Character->SetActorLocation(UOC2Const::TitleCharacterSpawnLocation);
 		OC2Character->SetActorRotation(UOC2Const::TitleCharacterSpawnRotation);
 		OC2Character->SetCharacterName(UOC2Global::GetOC2GameInstance(GetWorld())->GetChefHeadName());
