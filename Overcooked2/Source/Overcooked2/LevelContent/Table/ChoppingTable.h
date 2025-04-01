@@ -53,6 +53,11 @@ public:
 		bTimerActivated = bActivated;
 	}
 
+	float GetTime()
+	{
+		return CurTime;
+	}
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking")
 	USceneComponent* ComponentForProgressBar = nullptr;
 
@@ -67,7 +72,7 @@ private:
 	class AOC2Character* ChefPtr = nullptr;
 
 	UPROPERTY(VisibleAnywhere, Category = UI)
-	class UWidgetComponent* ProgressBarWidget = nullptr;
+	class UWidgetComponent* ProgressBarComponent = nullptr;
 
 	//class ATableProgressBar* ProgressBar = nullptr;
 };
