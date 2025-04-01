@@ -23,4 +23,5 @@ public:
 
 	virtual void PlaceItem(ACooking* ReceivedCooking) override;
 
+	void DoTheDishes();
 };

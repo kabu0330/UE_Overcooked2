@@ -30,3 +30,8 @@ void ASinkTable::PlaceItem(ACooking* ReceivedCooking)
 		}
 	}
 }
+
+void ASinkTable::DoTheDishes()
+{
+
+}
