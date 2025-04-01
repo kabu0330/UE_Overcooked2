@@ -11,6 +11,8 @@
 
 #include "CookingGameState.generated.h"
 
+class ASpawnManager;
+
 /**
  * 
  */
