@@ -100,10 +100,10 @@ public:
 	void OnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
 
 
-	class UBillboardComponent* GetTextureBillboard()
-	{
-		return TextureBillboard;
-	}
+	//class UBillboardComponent* GetTextureBillboard()
+	//{
+	//	return TextureBillboard;
+	//}
 
 protected:
 	// Called when the game starts or when spawned
@@ -141,9 +141,6 @@ private:
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	AActor* Thrower = nullptr;
-
-	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
-	class UBillboardComponent* TextureBillboard;
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowprivateAccess = "true"))
