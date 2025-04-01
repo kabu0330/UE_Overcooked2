@@ -5,7 +5,9 @@
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 #include "Components/BillboardComponent.h"  
+#include <LevelContent/Cook/Widget/IngredientIconWidget.h>
 #include "Kismet/KismetMathLibrary.h"
+#include "Components/WidgetComponent.h"
 
 // Sets default values
 AIngredient::AIngredient()
@@ -17,17 +19,9 @@ AIngredient::AIngredient()
 
 	CookingType = ECookingType::ECT_INGREDIENT;
 
-	TextureBillboard = CreateDefaultSubobject<UBillboardComponent>(TEXT("TextureBillboard"));
-	TextureBillboard->bHiddenInGame = false;
-	TextureBillboard->bIsScreenSizeScaled = true;
-	TextureBillboard->bReceivesDecals = false;
-
-	TextureBillboard->SetUsingAbsoluteRotation(true);
-	TextureBillboard->SetUsingAbsoluteLocation(true);
+	WidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
+	WidgetComponent->SetupAttachment(RootComponent);
 	
-	TextureBillboard->SetupAttachment(RootComponent);
-	
-	//StaticMeshComponent->OnComponentBeginOverlap.AddDynamic(this, &AIngredient::OnOverlapBegin);
 }
 
 void AIngredient::SetType_Implementation(EIngredientType Type)
@@ -36,7 +30,6 @@ void AIngredient::SetType_Implementation(EIngredientType Type)
 	// Replicated이기 때문에, 서버에서 변경하면 클라도 다 같이 바뀐다.
 	IngredientType = Type;
 }
-
 
 void AIngredient::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit)
 {
@@ -52,30 +45,14 @@ void AIngredient::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* Othe
 	StaticMeshComponent->SetPhysicsLinearVelocity(FVector::ZeroVector);
 }
 
-
 // Called when the game starts or when spawned
 void AIngredient::BeginPlay()
 {
 	ACooking::BeginPlay();
 
 	// 5. 서버에서 Spawn이 되면서 Init 함수 호출
+	InitIconWidget();
 	Init(IngredientType);
-
-}
-
-// Called every frame
-void AIngredient::Tick(float DeltaTime)
-{
-	ACooking::Tick(DeltaTime);
-
-	if (nullptr != TextureBillboard)
-	{
-		FRotator FixedRotation = FRotator(0, 0, 0);
-		TextureBillboard->SetWorldRotation(FixedRotation);
-
-		FVector OffsetPos = FVector(0, 0, 100);
-		TextureBillboard->SetWorldLocation(GetActorLocation() + OffsetPos);
-	}
 }
 
 AIngredient* AIngredient::Init(EIngredientType Type)
@@ -98,7 +75,7 @@ AIngredient* AIngredient::Init(EIngredientType Type)
 	SetIngredientData(GameInst, Name);
 
 	// 2-2). 머티리얼 
-	CreateDynamicMaterial(); 
+	CreateDynamicMaterial();
 
 	// 3). Offset
 	SetLocalOffset();
@@ -121,13 +98,31 @@ AIngredient* AIngredient::Init(EIngredientType Type)
 	return this;
 }
 
-
-void AIngredient::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+void AIngredient::InitIconWidget()
 {
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	// 위젯 클래스 지정
+	WidgetComponent->SetWidgetClass(SubclassWidget); // WBP 위젯으로 설정
+	UUserWidget* UserWidget = WidgetComponent->GetUserWidgetObject();
+	if (nullptr != UserWidget)
+	{
+		IconWidget = Cast<UIngredientIconWidget>(UserWidget);
+	}
 
-	DOREPLIFETIME(AIngredient, IngredientType);
-	DOREPLIFETIME(AIngredient, CurIngredientState);
+	WidgetComponent->SetDrawAtDesiredSize(true);   // 위젯의 실제 크기로 렌더
+	WidgetComponent->SetPivot(FVector2D(0.5f, 0.5f)); // 중심 정렬
+	WidgetComponent->SetWidgetSpace(EWidgetSpace::Screen); // 월드 공간에서 3D처럼 보이게
+	WidgetComponent->bHiddenInGame = false;
+
+	// 카메라를 향하도록 설정
+	WidgetComponent->SetTwoSided(true);
+	WidgetComponent->SetTickWhenOffscreen(true);
+}
+
+// Called every frame
+void AIngredient::Tick(float DeltaTime)
+{
+	ACooking::Tick(DeltaTime);
+
 }
 
 void AIngredient::SetIngredientData(UOC2GameInstance* Inst, FName Name)
@@ -149,10 +144,7 @@ void AIngredient::SetLocalOffset()
 void AIngredient::SetTexture()
 {
 	UTexture2D* Texture = IngredientDataTable->IngredientTexture;
-	if (nullptr != Texture)
-	{
-		TextureBillboard->SetSprite(Texture);
-	}
+	IconWidget->SetTexture(Texture);
 }
 
 void AIngredient::CreateDynamicMaterial()
@@ -296,4 +288,12 @@ void AIngredient::ActivateHighlight()
 			StaticMeshComponent->SetMaterial(i, nullptr);
 		}
 	}
+}
+
+void AIngredient::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AIngredient, IngredientType);
+	DOREPLIFETIME(AIngredient, CurIngredientState);
 }

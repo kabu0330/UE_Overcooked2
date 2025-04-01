@@ -38,6 +38,7 @@ public:
 	void WashPlate();
 	void WashPlate_Implementation();
 
+	// 접시의 상태를 Dirty로 바꿔서 스폰하고 싶으면 호출
 	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
 	void SetPlateState(EPlateState State);
 	void SetPlateState_Implementation(EPlateState State);

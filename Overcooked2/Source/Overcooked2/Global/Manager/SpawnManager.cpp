@@ -10,6 +10,7 @@
 
 #include "LevelContent/Cook/Plate.h"
 #include "LevelContent/Cook/Pot.h"
+#include "LevelContent/Table/NonTable/PlateSpawner.h"
 
 ASpawnManager::ASpawnManager()
 {
@@ -37,13 +38,18 @@ void ASpawnManager::BeginPlay()
 		ACookingTable* PrepTableActor = *It;
 		if (PrepTableActor->Tags.Contains("Plate"))
 		{
-			APlate* Plate = GetWorld()->SpawnActor<APlate>(PlateClass);
-			PrepTableActor->PlaceItem(Plate);
+			APlate* SpawnedPlate = GetWorld()->SpawnActor<APlate>(PlateClass);
+			PrepTableActor->PlaceItem(SpawnedPlate);
+			Plate = SpawnedPlate;
 		}
 		else if (PrepTableActor->Tags.Contains("Pot"))
 		{
 			APot* Pot = GetWorld()->SpawnActor<APot>(PotClass);
 			PrepTableActor->PlaceItem(Pot);
+		}
+		else if (PrepTableActor->Tags.Contains("PlateSpawner"))
+		{
+			PlateSpawner = Cast<APlateSpawner>(PrepTableActor);
 		}
 	}
 }
@@ -52,6 +58,16 @@ void ASpawnManager::BeginPlay()
 void ASpawnManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	CheckTime += DeltaTime;
+
+	if (CheckTime > 10.0f)
+	{
+		CheckTime = 0.0f;
+
+		PlateSpawner->SetPlate(Plate);
+
+	}
 
 }
 
