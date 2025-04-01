@@ -65,5 +65,9 @@ private:
 	bool bChoppingDone = false;
 
 	class AOC2Character* ChefPtr = nullptr;
-	class ATableProgressBar* ProgressBar = nullptr;
+
+	UPROPERTY(VisibleAnywhere, Category = UI)
+	class UWidgetComponent* ProgressBarWidget = nullptr;
+
+	//class ATableProgressBar* ProgressBar = nullptr;
 };

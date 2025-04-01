@@ -75,6 +75,10 @@ void UCookingWidget::NativeTick(const FGeometry& MyGeometry, float DeltaTime)
 
 void UCookingWidget::PlayTimeoutWidget()
 {
+    for (int i = 0; i < Orders.Num(); i++)
+    {
+        Orders[i]->SetVisibility(ESlateVisibility::Hidden);
+    }
     CookingFinalScoreWidget->SetVisibility(ESlateVisibility::Visible);
     bIsFinish = true;
 }
