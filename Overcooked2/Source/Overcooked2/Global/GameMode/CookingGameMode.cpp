@@ -11,6 +11,7 @@
 #include "Global/Data/OC2GlobalData.h"
 #include "Global/OC2Global.h"
 #include "Global/State/GameState/CookingGameState.h"
+#include "Global/Manager/SpawnManager.h"
 
 #include "UI/Cooking/CookingHUD.h"
 #include "UI/Cooking/UI/CookingWidget.h"
@@ -34,6 +35,11 @@ void ACookingGameMode::BeginPlay()
 	Super::BeginPlay();
 
 	CookingGameState = GetGameState<ACookingGameState>();
+
+	if (true == HasAuthority()) // 서버에서만 실행
+	{
+		SpawnManagerActor = GetWorld()->SpawnActor<ASpawnManager>(SpawnManagerClass);
+	}
 
 	CurIdx = 0;
 

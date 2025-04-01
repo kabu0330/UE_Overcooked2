@@ -5,12 +5,25 @@
 #include "LevelContent/Table/CookingTable.h"
 #include "EngineUtils.h"
 
-// Sets default values
+#include "Global/GameMode/CookingGameMode.h"
+#include "Global/State/GameState/CookingGameState.h"
+
+#include "LevelContent/Cook/Plate.h"
+#include "LevelContent/Cook/Pot.h"
+
 ASpawnManager::ASpawnManager()
 {
-	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+}
 
+ASpawnManager* ASpawnManager::Get(UWorld* World)
+{
+	if (ACookingGameMode* CookingGameMode = Cast<ACookingGameMode>(World->GetAuthGameMode()))
+	{
+		return CookingGameMode->SpawnManagerActor;
+	}
+
+	return nullptr;
 }
 
 // Called when the game starts or when spawned
@@ -24,11 +37,15 @@ void ASpawnManager::BeginPlay()
 		ACookingTable* PrepTableActor = *It;
 		if (PrepTableActor->Tags.Contains("Plate"))
 		{
-			Tables.Add(PrepTableActor);
+			APlate* Plate = GetWorld()->SpawnActor<APlate>(PlateClass);
+			PrepTableActor->PlaceItem(Plate);
 		}
-		GEngine->AddOnScreenDebugMessage(0, 10.0f, FColor::Blue, PrepTableActor->GetName());
+		else if (PrepTableActor->Tags.Contains("Pot"))
+		{
+			APot* Pot = GetWorld()->SpawnActor<APot>(PotClass);
+			PrepTableActor->PlaceItem(Pot);
+		}
 	}
-	GEngine->AddOnScreenDebugMessage(0, 10.0f, FColor::Blue, FString::Printf(TEXT("My Value is: %d"), Tables.Num()));
 }
 
 // Called every frame
