@@ -7,7 +7,7 @@
 #include "ProgressBarComponent.generated.h"
 
 
-//DECLARE_MULTICAST_DELEGATE(FProgressDelegate);
+DECLARE_MULTICAST_DELEGATE(FProgressDelegate);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class OVERCOOKED2_API UProgressBarComponent : public UActorComponent
@@ -28,15 +28,25 @@ public:
 
 	void InitializeProgress(float DeltaTime);
 	void CountProgress(float DeltaTime);
-	void TimerUpdate(float DeltaTime);
 
 	bool IsProgressDone()
 	{
 		return bProgressDone;
 	}
 
+	float GetRatio()
+	{
+		return CurRatio;
+	}
+
 	float Timer = 0.0f;
 	float CurTime = 0.0f;
+
+	float CurRatio = 0.0f;
 	bool bProgressDone = false;
+
+	class AChoppingTable* ChoppingTable = nullptr;
+
+	FProgressDelegate ProgressDelegate;
 		
 };
