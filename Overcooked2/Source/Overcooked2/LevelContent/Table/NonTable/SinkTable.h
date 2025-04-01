@@ -21,5 +21,6 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 
+	virtual void PlaceItem(ACooking* ReceivedCooking) override;
 
 };
