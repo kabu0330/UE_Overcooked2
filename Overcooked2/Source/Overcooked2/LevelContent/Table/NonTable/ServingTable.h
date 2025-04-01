@@ -28,18 +28,20 @@ public:
 		return CookingPtr;
 	}
 
-	void CookingRight(bool Check)
+	void CookingRight()
 	{
-		bCookingRight = Check;
+		bCookingRight = true;
 	}
 
-	void CookingWrong(bool Check)
+	void CookingWrong()
 	{
-		bCookingWrong = Check;
+		bCookingWrong = true;
 	}
 
 private:
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CookingCheck", meta = (AllowPrivateAccess = "true"))
 	bool bCookingRight = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CookingCheck", meta = (AllowPrivateAccess = "true"))
 	bool bCookingWrong = false;
 };
