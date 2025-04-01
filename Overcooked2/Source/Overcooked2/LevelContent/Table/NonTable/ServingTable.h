@@ -20,4 +20,26 @@ public:
 	virtual void BeginPlay() override;
 
 	virtual void Tick(float DeltaTime) override;
+
+	virtual void PlaceItem(ACooking* ReceivedCooking) override;
+
+	ACooking* GetCookingPtr()
+	{
+		return CookingPtr;
+	}
+
+	void CookingRight(bool Check)
+	{
+		bCookingRight = Check;
+	}
+
+	void CookingWrong(bool Check)
+	{
+		bCookingWrong = Check;
+	}
+
+private:
+
+	bool bCookingRight = false;
+	bool bCookingWrong = false;
 };
