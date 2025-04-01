@@ -20,5 +20,18 @@ public:
 	virtual void BeginPlay() override;
 
 	virtual void Tick(float DeltaTime) override;
+
+	void SetComponentMesh();
+
+	void UpdateLength();
+
+
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CurProgress")
+	//USceneComponent* ComponentForProgress = nullptr;
+
+	UStaticMeshComponent* BackGroundMeshComponent = nullptr;
+	UStaticMeshComponent* ProgressMeshComponent = nullptr;
+
+	bool bDestroy = false;
 	
 };
