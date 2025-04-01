@@ -10,8 +10,8 @@
 #include "Components/BillboardComponent.h"  
 #include <Global/Component/TimeEventComponent.h>
 #include <Global/Data/OC2GlobalData.h>
-#include <LevelContent/Cook/GaugeTextureWidget.h>
-#include <LevelContent/Cook/CookStatusWidget.h>
+#include <LevelContent/Cook/Widget/GaugeTextureWidget.h>
+#include <LevelContent/Cook/Widget/CookStatusWidget.h>
 #include "Components/WidgetComponent.h"
 
 APot::APot()
@@ -67,7 +67,6 @@ void APot::SetSoupMaterial()
 	}
 	for (int32 i = 0; i < NumSoupMaterials; i++)
 	{
-		//UMaterialInstanceDynamic* MaterialInstanceDynamic = UMaterialInstanceDynamic::Create(SoupSkeletalMeshComponent->GetMaterial(i), this);
 		UMaterialInstanceDynamic* MaterialInstanceDynamic = Cast<UMaterialInstanceDynamic>(SoupSkeletalMeshComponent->GetMaterials()[i]);
 		if (nullptr != MaterialInstanceDynamic)
 		{
@@ -334,7 +333,7 @@ void APot::SetAction_Implementation()
 	case EPotState::SCORCHING:
 	{
 		bColorChanging = true;
-		TargetColor = FLinearColor(0.025f, 0.025f, 0.025f, 1.0f);
+		TargetColor = FLinearColor(0.03f, 0.03f, 0.03f, 1.0f);
 
 		BlinkTime = 0.1f;
 		break;
@@ -490,6 +489,8 @@ void APot::ResetPot()
 	bIsCooked = false;
 	bIsBlinking = false;
 	CookingTimeRatio = 0.0f;
+	StatusWidgetComponent->bHiddenInGame = true;
+	GaugeWidgetComponent->bHiddenInGame = true;
 
 	ChangeNoneMaterial();
 }
