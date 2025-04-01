@@ -209,4 +209,6 @@ private :
 	float DashDuration = 0.5f;
 	UPROPERTY(EditAnywhere, Replicated, BlueprintReadWrite, Category = "Dash", meta = (AllowPrivateAccess = "true"))
 	float DashTimer = 0.0f;
+
+
 };
