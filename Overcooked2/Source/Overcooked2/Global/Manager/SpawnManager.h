@@ -3,10 +3,18 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "GameFramework/Info.h"
+
+#include "Global/OC2Const.h"
+#include "Global/OC2Enum.h"
+#include "Global/OC2Struct.h"
+
 #include "SpawnManager.generated.h"
 
 class ACookingTable;
+class APlateSpawner;
+class APlate;
+class APot;
 
 UCLASS()
 class OVERCOOKED2_API ASpawnManager : public AActor
@@ -14,19 +22,25 @@ class OVERCOOKED2_API ASpawnManager : public AActor
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
 	ASpawnManager();
 
-protected:
-	// Called when the game starts or when spawned
+	UFUNCTION(BlueprintCallable)
+	static ASpawnManager* Get(UWorld* World);
+	
+public:
 	virtual void BeginPlay() override;
-
-public:	
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Order", meta = (AllowPrivateAccess = "true"))
-	TArray<ACookingTable*> Tables;
+public:	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|SpawnActor")
+	TSubclassOf<APlate> PlateClass = nullptr;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|SpawnActor")
+	TSubclassOf<APot> PotClass = nullptr;
+
+private:
+	APlate* Plate = nullptr;
+	float CheckTime = 0.0f;
+	APlateSpawner* PlateSpawner = nullptr;
 
 };

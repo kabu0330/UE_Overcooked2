@@ -24,7 +24,7 @@ public:
 	virtual ACooking* Interact(AActor* ChefActor) 
 	{ 
 		return CookingPtr; 
-	}
+	} 
 	
 	virtual void PlaceItem(ACooking* ReceivedCooking);
 

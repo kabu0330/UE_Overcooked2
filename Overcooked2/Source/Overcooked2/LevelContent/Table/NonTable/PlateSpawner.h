@@ -20,4 +20,9 @@ public:
 	virtual void BeginPlay() override;
 
 	virtual void Tick(float DeltaTime) override;
+
+	void SetPlate(class APlate* Plate);
+
+private:
+	void PlaceItem(ACooking* ReceivedCooking) override;
 };

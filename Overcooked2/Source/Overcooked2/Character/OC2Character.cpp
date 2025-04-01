@@ -269,19 +269,18 @@ void AOC2Character::Interact_Implementation()
 	}
 	else if (Table != nullptr)
 	{
-		if (Cast<AGarbageCan>(Table) != nullptr)
+		if (Table->IsA(AGarbageCan::StaticClass()) == true)
 		{
 			APlate* Plate = Cast<APlate>(GrabbedObject);
 			AIngredient* Ingredient = Cast<AIngredient>(GrabbedObject);
-			if (Plate)
+			if (Plate != nullptr)
 			{
 				Plate->SetPlateState(EPlateState::EMPTY);
 			}
-			else if(Ingredient)
+			else if(Ingredient != nullptr)
 			{
 				Table->PlaceItem(Ingredient);
 			}
-
 		}
 		else
 		{
@@ -437,6 +436,10 @@ void AOC2Character::Chopping_Implementation(bool State)
 {
 	bIsChopping = State;
 	OnRep_KnifeSet();
+	if (State == false)
+	{
+		Cast<AChoppingTable>(SelectedOC2Actor)->TimerSwitch(false);
+	}
 }
 
 void AOC2Character::CheckInteract()
@@ -567,7 +570,7 @@ void AOC2Character::OnOverlapCheck_Implementation(UPrimitiveComponent* Overlappe
 		AIngredient* Ingredient = Cast<AIngredient>(OtherActor);
 		if (Ingredient) // 캡슐과 충돌한 경우
 		{
-			if (Ingredient->IsThrowing() && Ingredient->GetThrower() != this)
+			if (Ingredient->IsThrowing() && Ingredient->GetThrower() != this && GrabbedObject == nullptr)
 			{
 				GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Green, "Hit");
 				Ingredient->AttachToChef(this);
@@ -575,7 +578,7 @@ void AOC2Character::OnOverlapCheck_Implementation(UPrimitiveComponent* Overlappe
 				if (DataTable)
 				{
 					Ingredient->SetActorRelativeRotation(DataTable->Rotation);
-					Ingredient->SetActorRelativeLocation(DataTable->Location);
+					Ingredient->SetActorLocation(GrabComponent->GetComponentTransform().TransformPosition(DataTable->Location));
 				}
 				Ingredient->SetThrowing(false);
 				GrabbedObject = Ingredient;
