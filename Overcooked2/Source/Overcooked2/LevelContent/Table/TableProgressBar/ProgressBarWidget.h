@@ -13,5 +13,18 @@ UCLASS()
 class OVERCOOKED2_API UProgressBarWidget : public UUserWidget
 {
 	GENERATED_BODY()
+
+public:
+	//UProgressBarWidget();
+
+	UFUNCTION(BlueprintCallable)
+	void BindProgress(class UProgressBarComponent* ProgressBarComponent);
+
+	UFUNCTION(BlueprintCallable)
+	void UpdateWidget();
+
+	class UProgressBarComponent* ProgressBarCompo = nullptr;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ProgressRatio")
+	float Ratio = 0.0f;
 };

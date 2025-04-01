@@ -29,22 +29,21 @@ void UProgressBarComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-
 }
 
 void UProgressBarComponent::InitializeProgress(float DeltaTime)
 {
 	bProgressDone = false;
-	Timer = 2.0f;
+	CurRatio = 0.0f;
+	ProgressDelegate.Broadcast();
 }
 
 void UProgressBarComponent::CountProgress(float DeltaTime)
 {
+	CurRatio = (DeltaTime / 0.4f) * 0.2f;
 
-}
-
-void UProgressBarComponent::TimerUpdate(float DeltaTime)
-{
-	Timer -= DeltaTime;
-	CurTime = Timer;
+	if (CurRatio > 1.0f)
+	{
+		bProgressDone = true;
+	}
 }
