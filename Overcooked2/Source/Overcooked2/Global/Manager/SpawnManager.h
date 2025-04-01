@@ -12,6 +12,7 @@
 #include "SpawnManager.generated.h"
 
 class ACookingTable;
+class APlateSpawner;
 class APlate;
 class APot;
 
@@ -36,5 +37,10 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|SpawnActor")
 	TSubclassOf<APot> PotClass = nullptr;
+
+private:
+	APlate* Plate = nullptr;
+	float CheckTime = 0.0f;
+	APlateSpawner* PlateSpawner = nullptr;
 
 };
