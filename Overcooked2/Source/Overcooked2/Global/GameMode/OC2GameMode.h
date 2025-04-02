@@ -14,6 +14,7 @@
 class AIngredient;
 class APlate;
 class AOC2Actor;
+class APot;
 
 class USpawnManageComponent;
 
@@ -37,6 +38,7 @@ protected:
 public:
 	AIngredient* SpawnIngredientActor(EIngredientType Type);
 	APlate* SpawnPlateActor(EPlateState PlateState = EPlateState::EMPTY);
+	APot* SpawnPotActor(EPotState PotState);
 
 	void DestroyOC2Actor(AOC2Actor* OC2Actor);
 
@@ -49,4 +51,7 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Spawning", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<APlate> PlateToSpawn;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Spawning", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<APot> PotToSpawn;
 };

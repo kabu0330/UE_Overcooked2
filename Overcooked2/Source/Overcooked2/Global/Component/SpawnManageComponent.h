@@ -13,6 +13,7 @@
 
 class AIngredient;
 class APlate;
+class APot;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class OVERCOOKED2_API USpawnManageComponent : public UActorComponent
@@ -24,6 +25,7 @@ public:
 
 	AIngredient* SpawnIngredientActor(TSubclassOf<AIngredient> IngredientToSpawn, EIngredientType IngredientType);
 	APlate* SpawnPlateActor(TSubclassOf<APlate> PlateTopSpawn, EPlateState PlateState);
+	APot* SpawnPotActor(TSubclassOf<APot> PotToSpawn, EPotState PotState);
 
 protected:
 	virtual void BeginPlay() override;

@@ -10,6 +10,7 @@
 
 #include "LevelContent/Cook/Ingredient.h"
 #include "LevelContent/Cook/Plate.h"
+#include "LevelContent/Cook/Pot.h"
 
 AOC2GameMode::AOC2GameMode()
 {
@@ -63,6 +64,19 @@ APlate* AOC2GameMode::SpawnPlateActor(EPlateState PlateState)
 	else
 	{
 		UE_LOG(OVERCOOKED_LOG, Error, TEXT("Plate BP Spawn actor is nullptr BP_CookingGameMode"));
+		return nullptr;
+	}
+}
+
+APot* AOC2GameMode::SpawnPotActor(EPotState PotState)
+{
+	if (nullptr != PotToSpawn)
+	{
+		return SpawnManager->SpawnPotActor(PotToSpawn, PotState);
+	}
+	else
+	{
+		UE_LOG(OVERCOOKED_LOG, Error, TEXT("Pot BP Spawn actor is nullptr BP_CookingGameMode"));
 		return nullptr;
 	}
 }
