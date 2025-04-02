@@ -15,6 +15,7 @@ class UOC2GameInstance;
 class AOC2Actor;
 class AIngredient;
 class APlate;
+class ACooking;
 
 /**
  * 
@@ -47,4 +48,10 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	static void StartCookingStage(UWorld* World);
+
+	UFUNCTION(BlueprintCallable)
+	static void SubmitPlate(UWorld* World, ACooking* Plate);
+
+	UFUNCTION(BlueprintCallable)
+	static void CheckPlateToRecipe(UWorld* World, APlate* Plate);
 };

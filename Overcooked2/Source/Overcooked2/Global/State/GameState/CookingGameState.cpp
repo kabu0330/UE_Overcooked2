@@ -2,11 +2,17 @@
 
 
 #include "Global/State/GameState/CookingGameState.h"
+#include "Overcooked2.h"
+
+#include "Kismet/GameplayStatics.h"
+
+#include "LevelContent/Cook/Plate.h"
+#include "LevelContent/Cook/Cooking.h"
 
 #include "UI/Cooking/CookingHUD.h"
 #include "UI/Cooking/UI/CookingWidget.h"
 
-#include "Kismet/GameplayStatics.h"
+#include "Global/GameMode/CookingGameMode.h"
 
 void ACookingGameState::Multicast_CompleteOrder_Implementation(FOrder Order)
 {
@@ -58,6 +64,19 @@ void ACookingGameState::Multicast_BlinkOrderUI_Implementation()
 		if (nullptr != CookingHUD && nullptr != CookingHUD->CookWidget)
 		{
 			CookingHUD->CookWidget->WrongOrder();
+		}
+	}
+}
+
+void ACookingGameState::Server_SubmitPlate_Implementation(ACooking* Plate)
+{
+	if (true == HasAuthority())
+	{
+		ACookingGameMode* GameMode = Cast<ACookingGameMode>(UGameplayStatics::GetGameMode(this));
+
+		if (nullptr != GameMode)
+		{
+			/*if(Plate)*/
 		}
 	}
 }
