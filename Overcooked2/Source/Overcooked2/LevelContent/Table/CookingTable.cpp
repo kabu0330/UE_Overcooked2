@@ -43,15 +43,3 @@ void ACookingTable::PlaceItem(ACooking* ReceivedCooking)
 	bIsOccupied = true;
 }
 
-void ACookingTable::RequestSpawnPlate_Implementation()
-{
-	auto GameMode = Cast<AOC2GameMode>(GetWorld()->GetAuthGameMode());
-	APlate* Plate = nullptr;
-	if (GameMode)
-	{
-		Plate = GameMode->SpawnPlateActor(EPlateState::EMPTY);
-	}
-	Plate->AttachToChef(this);
-	Plate->SetActorLocation(ComponentForCooking->GetComponentLocation());
-	CookingPtr = Plate;
-}

@@ -30,6 +30,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void BoilThePot();
 
+	UFUNCTION(Server, Reliable)
+	void RequestSpawnPot();
+	void RequestSpawnPot_Implementation();
+
 private:
 
 };
