@@ -72,6 +72,8 @@ void APlate::BeginPlay()
 	// 카메라를 향하도록 설정
 	WidgetComponent->SetTwoSided(true);
 	WidgetComponent->SetTickWhenOffscreen(true);
+
+	IconWidget->Init();
 }
 
 // Called every frame

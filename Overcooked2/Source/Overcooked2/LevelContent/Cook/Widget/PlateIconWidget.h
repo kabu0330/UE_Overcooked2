@@ -15,6 +15,8 @@ class OVERCOOKED2_API UPlateIconWidget : public UUserWidget
 	GENERATED_BODY()
 	
 public:
+    void Init();
+    
     UFUNCTION(BlueprintCallable)
     void SetIngredientTextures(const TArray<UTexture2D*>& InTextures);
 
