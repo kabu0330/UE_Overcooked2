@@ -3,6 +3,9 @@
 
 #include "LevelContent/Table/CookingTable.h"
 #include "Global/GameMode/OC2GameMode.h"
+#include <Global/Data/IngredientDataTable.h>
+#include <Global/OC2GameInstance.h>
+#include "Kismet/GameplayStatics.h"
 //#include "Global/Component/TimeEventComponent.h"
 
 // Sets default values
@@ -35,11 +38,27 @@ void ACookingTable::PlaceItem(ACooking* ReceivedCooking)
 {
 	CookingPtr = ReceivedCooking;
 	CookingPtr->SetCookingTable_Implementation(this);
-
-	//Cooking을 Attach 시킬것
 	CookingPtr->AttachToComponent(ComponentForCooking, FAttachmentTransformRules::KeepRelativeTransform);
-	CookingPtr->SetActorLocation(ComponentForCooking->GetComponentLocation());
 
+	//AIngredient* TempIngredient = Cast<AIngredient>(CookingPtr);
+	//if (nullptr != TempIngredient)
+	//{
+	//	SetIngredientOffset(TempIngredient);
+	//	CookingPtr->GetStaticMeshComponent()->SetRelativeRotation(IngreRotation);
+	//	CookingPtr->GetStaticMeshComponent()->SetRelativeLocation(IngreLocation);
+	//}
+
+	CookingPtr->SetActorLocation(ComponentForCooking->GetComponentLocation());
 	bIsOccupied = true;
 }
 
+void ACookingTable::SetIngredientOffset(AIngredient* Ingredient)
+{
+	EIngredientType Type = Ingredient->GetIngredientType();
+	UOC2GameInstance* GameInst = Cast<UOC2GameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	FName Name = GameInst->GetIngredientDataTableRowName(Type);
+
+	const FIngredientDataRow* IngredientDataTable = &GameInst->GetIngredientDataRow(Name);
+	IngreRotation = IngredientDataTable->Rotation;
+	IngreLocation = IngredientDataTable->Location;
+}
