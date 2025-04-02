@@ -12,6 +12,11 @@ APrepTable::APrepTable()
 void APrepTable::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (bSpawnWhenGameStarted == true)
+	{
+		RequestSpawnPlate();
+	}
 }
 
 void APrepTable::Tick(float DeltaTime)

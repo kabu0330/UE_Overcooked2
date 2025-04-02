@@ -7,6 +7,7 @@
 #include "OC2CharacterTestChoppingTable.h"
 #include "LevelContent/Cook/Pot.h"
 #include "LevelContent/Table/ChoppingTable.h"
+#include "LevelContent/Table/BurnerTable.h"
 #include "LevelContent/Table/NonTable/GarbageCan.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Net/UnrealNetwork.h"
@@ -217,6 +218,7 @@ void AOC2Character::Interact_Implementation()
 		{
 			UE_LOG(LogTemp, Log, TEXT("Hold"));
 			Grab(Cast<ACooking>(SelectedOC2Actor));
+			GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Cyan, SelectedOC2Actor->GetName());
 		}
 		// 잡고 있는게 있으면
 		else
@@ -290,13 +292,29 @@ void AOC2Character::Interact_Implementation()
 			if (GrabbedObject == nullptr && Cook != nullptr)
 			{
 				Grab(Cook);
+				GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Cyan, Cook->GetName());
 			}
 			// 잡은 물건이 있는데 테이블이 비어있으면
 			else if (GrabbedObject != nullptr && Cook == nullptr)
 			{
-				// 다른 액터에 Attach하게 되면 수동으로 Detach할 필요 X
-				Table->PlaceItem(GrabbedObject);
-				GrabbedObject = nullptr;
+				if (Table->IsA<ABurnerTable>() == true)
+				{
+					if (GrabbedObject->IsA<APot>() == true)
+					{
+						Table->PlaceItem(GrabbedObject);
+						GrabbedObject = nullptr;
+					}
+					else
+					{
+						return;
+					}
+				}
+				else
+				{
+					// 다른 액터에 Attach하게 되면 수동으로 Detach할 필요 X
+					Table->PlaceItem(GrabbedObject);
+					GrabbedObject = nullptr;
+				}
 			}
 			//내가 뭔가 잡고 있는데 Cook을 리턴받았으면 Cook을 다시 돌려놔야 한다.
 			else if (GrabbedObject != nullptr && Cook != nullptr)

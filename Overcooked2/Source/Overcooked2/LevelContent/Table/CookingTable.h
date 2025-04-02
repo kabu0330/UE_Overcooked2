@@ -40,6 +40,10 @@ public:
 		return bIsOccupied;
 	}
 
+
+	UFUNCTION(Server, Reliable)
+	void RequestSpawnPlate();
+	void RequestSpawnPlate_Implementation();
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -59,6 +63,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking")
 	USceneComponent* ComponentForCooking = nullptr;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	bool bSpawnWhenGameStarted = false;
+
 private:	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	float CookingTime = 0.0f;
@@ -68,5 +75,7 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	bool bCanOvercook = false;
+
+
 
 };

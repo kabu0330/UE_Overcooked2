@@ -2,6 +2,7 @@
 
 
 #include "LevelContent/Table/CookingTable.h"
+#include "Global/GameMode/OC2GameMode.h"
 //#include "Global/Component/TimeEventComponent.h"
 
 // Sets default values
@@ -20,7 +21,8 @@ ACookingTable::ACookingTable()
 void ACookingTable::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+
 }
 
 // Called every frame
@@ -39,4 +41,17 @@ void ACookingTable::PlaceItem(ACooking* ReceivedCooking)
 	CookingPtr->SetActorLocation(ComponentForCooking->GetComponentLocation());
 
 	bIsOccupied = true;
+}
+
+void ACookingTable::RequestSpawnPlate_Implementation()
+{
+	auto GameMode = Cast<AOC2GameMode>(GetWorld()->GetAuthGameMode());
+	APlate* Plate = nullptr;
+	if (GameMode)
+	{
+		Plate = GameMode->SpawnPlateActor(EPlateState::EMPTY);
+	}
+	Plate->AttachToChef(this);
+	Plate->SetActorLocation(ComponentForCooking->GetComponentLocation());
+	CookingPtr = Plate;
 }
