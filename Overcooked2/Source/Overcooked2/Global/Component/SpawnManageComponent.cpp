@@ -6,6 +6,7 @@
 
 #include "LevelContent/Cook/Ingredient.h"
 #include "LevelContent/Cook/Plate.h"
+#include "LevelContent/Cook/Pot.h"
 
 USpawnManageComponent::USpawnManageComponent()
 {
@@ -56,34 +57,27 @@ APlate* USpawnManageComponent::SpawnPlateActor(TSubclassOf<APlate> PlateTopSpawn
 	return PlateActor;
 }
 
+APot* USpawnManageComponent::SpawnPotActor(TSubclassOf<APot> PotToSpawn, EPotState PotState)
+{
+	FTransform PotTransform;
+	APot* PotActor = GetWorld()->SpawnActorDeferred<APot>(PotToSpawn, PotTransform);
+
+	if (nullptr == PotActor)
+	{
+		UE_LOG(OVERCOOKED_LOG, Error, TEXT("Pot actor spawn failed"));
+
+		return nullptr;
+	}
+
+	PotActor->FinishSpawning(PotTransform);
+
+	return PotActor;
+}
+
 
 void USpawnManageComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
-	//FString IngredientPath = TEXT("/Game/Blueprints/LevelContent/Cooking/BP_Ingredient.BP_Ingredient_C");
-	//FString PlatePath = TEXT("/Game/Blueprints/LevelContent/Cooking/BP_Plate.BP_Plate_C");
-
-	//IngredientToSpawn = Cast<UClass>(StaticLoadObject(UClass::StaticClass(), nullptr, *IngredientPath));
-	//PlateToSpawn = Cast<UClass>(StaticLoadObject(UClass::StaticClass(), nullptr, *PlatePath));
-
-	//if (IngredientToSpawn)
-	//{
-	//	UE_LOG(LogTemp, Warning, TEXT("IngredientToSpawn successfully loaded: %s"), *IngredientToSpawn->GetName());
-	//}
-	//else
-	//{
-	//	UE_LOG(LogTemp, Error, TEXT("Failed to load IngredientToSpawn!"));
-	//}
-
-	//if (PlateToSpawn)
-	//{
-	//	UE_LOG(LogTemp, Warning, TEXT("PlateToSpawn successfully loaded: %s"), *PlateToSpawn->GetName());
-	//}
-	//else
-	//{
-	//	UE_LOG(LogTemp, Error, TEXT("Failed to load PlateToSpawn!"));
-	//}
 
 }
 

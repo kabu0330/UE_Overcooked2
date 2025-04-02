@@ -32,25 +32,25 @@ void ASpawnManager::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// TActorIterator를 사용하여 월드 내 모든 APrepTable 액터를 순회
-	for (TActorIterator<ACookingTable> It(GetWorld()); It; ++It)
-	{
-		ACookingTable* PrepTableActor = *It;
-		if (PrepTableActor->Tags.Contains("Plate"))
-		{
-			APlate* SpawnedPlate = GetWorld()->SpawnActor<APlate>(PlateClass);
-			PrepTableActor->PlaceItem(SpawnedPlate);
-		}
-		else if (PrepTableActor->Tags.Contains("Pot"))
-		{
-			APot* Pot = GetWorld()->SpawnActor<APot>(PotClass);
-			PrepTableActor->PlaceItem(Pot);
-		}
-		else if (PrepTableActor->Tags.Contains("PlateSpawner"))
-		{
-			PlateSpawner = Cast<APlateSpawner>(PrepTableActor);
-		}
-	}
+	//// TActorIterator를 사용하여 월드 내 모든 APrepTable 액터를 순회
+	//for (TActorIterator<ACookingTable> It(GetWorld()); It; ++It)
+	//{
+	//	ACookingTable* PrepTableActor = *It;
+	//	if (PrepTableActor->Tags.Contains("Plate"))
+	//	{
+	//		APlate* SpawnedPlate = GetWorld()->SpawnActor<APlate>(PlateClass);
+	//		PrepTableActor->PlaceItem(SpawnedPlate);
+	//	}
+	//	else if (PrepTableActor->Tags.Contains("Pot"))
+	//	{
+	//		APot* Pot = GetWorld()->SpawnActor<APot>(PotClass);
+	//		PrepTableActor->PlaceItem(Pot);
+	//	}
+	//	else if (PrepTableActor->Tags.Contains("PlateSpawner"))
+	//	{
+	//		PlateSpawner = Cast<APlateSpawner>(PrepTableActor);
+	//	}
+	//}
 }
 
 // Called every frame
