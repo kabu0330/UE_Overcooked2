@@ -15,16 +15,16 @@ ABurnerTable::ABurnerTable()
 void ABurnerTable::BeginPlay()
 {
 	Super::BeginPlay();
-}
-
-void ABurnerTable::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
 
 	if (bSpawnWhenGameStarted)
 	{
 		RequestSpawnPot();
 	}
+}
+
+void ABurnerTable::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
 }
 
 ACooking* ABurnerTable::Interact(AActor* ChefActor)
