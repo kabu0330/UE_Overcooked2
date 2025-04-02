@@ -41,9 +41,7 @@ public:
 	}
 
 
-	UFUNCTION(Server, Reliable)
-	void RequestSpawnPlate();
-	void RequestSpawnPlate_Implementation();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

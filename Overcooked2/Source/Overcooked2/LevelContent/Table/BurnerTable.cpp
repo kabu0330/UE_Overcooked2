@@ -4,6 +4,7 @@
 #include "LevelContent/Table/BurnerTable.h"
 #include <Character/OC2Character.h>
 #include <LevelContent/Cook/Pot.h>
+#include <Global/GameMode/OC2GameMode.h>
 #include <Global/OC2Enum.h>
 
 ABurnerTable::ABurnerTable()
@@ -19,6 +20,11 @@ void ABurnerTable::BeginPlay()
 void ABurnerTable::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (bSpawnWhenGameStarted)
+	{
+		RequestSpawnPot();
+	}
 }
 
 ACooking* ABurnerTable::Interact(AActor* ChefActor)
@@ -42,7 +48,7 @@ void ABurnerTable::PlaceItem(ACooking* Item)
 {
 	ACooking* TempCooking = Item;
 	AIngredient* Ingredient = Cast<AIngredient>(Item);
-	
+
 	if (true == TempCooking->IsCookingType(ECookingType::ECT_POT))
 	{
 		CookingPtr = TempCooking;
@@ -72,5 +78,18 @@ void ABurnerTable::PlaceItem(ACooking* Item)
 
 void ABurnerTable::BoilThePot()
 {
-	
+
+}
+
+void ABurnerTable::RequestSpawnPot_Implementation()
+{
+	auto GameMode = Cast<AOC2GameMode>(GetWorld()->GetAuthGameMode());
+	APot* Pot = nullptr;
+	if (GameMode)
+	{
+		Pot = GameMode->SpawnPotActor(EPotState::IDLE);
+	}
+	Pot->AttachToChef(this);
+	Pot->SetActorLocation(ComponentForCooking->GetComponentLocation());
+	CookingPtr = Pot;
 }

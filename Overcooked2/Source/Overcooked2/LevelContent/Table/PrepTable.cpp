@@ -3,6 +3,7 @@
 
 #include "LevelContent/Table/PrepTable.h"
 #include <Character/OC2Character.h>
+#include <Global/GameMode/OC2GameMode.h>
 
 APrepTable::APrepTable()
 {
@@ -41,4 +42,18 @@ ACooking* APrepTable::Interact(AActor* ChefActor)
 		return TempCooking;
 	}
 }
+
+void APrepTable::RequestSpawnPlate_Implementation()
+{
+	auto GameMode = Cast<AOC2GameMode>(GetWorld()->GetAuthGameMode());
+	APlate* Plate = nullptr;
+	if (GameMode)
+	{
+		Plate = GameMode->SpawnPlateActor(EPlateState::EMPTY);
+	}
+	Plate->AttachToChef(this);
+	Plate->SetActorLocation(ComponentForCooking->GetComponentLocation());
+	CookingPtr = Plate;
+}
+
 
