@@ -32,6 +32,9 @@ public:
     UFUNCTION(BlueprintCallable, Category = "OC2UI")
     void PlayTimeoutWidget();
 
+    UFUNCTION(BlueprintCallable, Category = "OC2UI")
+    void ShowReadyImageAnim();
+
     // UI 바인딩 (총 5개의 주문 슬롯)
     UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
     class UCanvasPanel* Order_0 = nullptr;
@@ -47,6 +50,13 @@ public:
 
     UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
     class UCanvasPanel* Order_4 = nullptr;
+
+
+    UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
+    class UCanvasPanel* ReadyCanvas = nullptr;
+
+    UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
+    class UCanvasPanel* GoCanvas = nullptr;
 
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OC2UI")
@@ -91,6 +101,8 @@ private:
 
     float IngredientTimeElapsed = 0.0f;
     float MoveTimeElapsed = 0.0f;
+    float ReadyTimeElapsed = 0.0f;
+    float ReadyOffset = 0.0f;
 
     FVector2D TargetOffset = FVector2D(50.0f, 0.0f);
     FVector2D IngredientTargetOffset = FVector2D(0.0f, 10.0f);
@@ -105,6 +117,7 @@ private:
     FTimerHandle OpacityTimerHandle;
     FTimerHandle MoveTimerHandle;
     FTimerHandle IngredientTimerHandle;
+    FTimerHandle ReadyTimerHandle;
 
 
     // 내부 함수
@@ -114,6 +127,7 @@ private:
     void UpdateOrderTime(int Index, float DeltaTime);
     void SettingIngredientImages(FOrder& order);
     void MoveNewOrder();
+    void PlayReadyImageAnim();
 
     void FindOrderImgRecursive(class UWidget* Widget, const FLinearColor& Color);
 

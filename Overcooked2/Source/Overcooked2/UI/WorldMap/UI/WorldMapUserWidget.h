@@ -13,5 +13,23 @@ UCLASS()
 class OVERCOOKED2_API UWorldMapUserWidget : public UUserWidget
 {
 	GENERATED_BODY()
-	
+public:
+	UFUNCTION(BlueprintCallable, Category = "OC2UI")
+	void PlayZoomInAnimation();
+
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
+	class UImage* TransitionImg = nullptr;
+
+
+protected:
+	virtual void NativeConstruct() override;
+
+
+private:
+	class UMaterialInstanceDynamic* TransitionMaterial = nullptr;
+
+	FTimerHandle AnimationTimer;
+
+
 };
