@@ -13,6 +13,7 @@
 #include <LevelContent/Cook/Widget/GaugeTextureWidget.h>
 #include <LevelContent/Cook/Widget/CookStatusWidget.h>
 #include "Components/WidgetComponent.h"
+#include <LevelContent/Cook/Widget/IngredientIconWidget.h>
 
 APot::APot()
 {
@@ -33,6 +34,9 @@ APot::APot()
 	StatusWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("StatusWidgetComponent"));
 	StatusWidgetComponent->SetupAttachment(RootComponent);
 
+	IconWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("IconWidgetComponent"));
+	IconWidgetComponent->SetupAttachment(RootComponent);
+
 	TimeEventComponent = CreateDefaultSubobject<UTimeEventComponent>(TEXT("TimeEventComponent"));
 
 	StaticMeshComponent->SetRelativeLocation(InitPos);
@@ -48,6 +52,7 @@ void APot::BeginPlay()
 
 	InitGaugeWidget();
 	InitStatusWidget();
+	InitIconWidget();
 }
 
 UMaterialInstanceDynamic* APot::LoadNoneMaterial()
@@ -106,6 +111,19 @@ void APot::InitStatusWidget()
 		StatusWidget = Cast<UCookStatusWidget>(UserWidget);
 	}
 	InitWidgetSetting(StatusWidgetComponent);
+}
+
+void APot::InitIconWidget()
+{
+	IconWidgetComponent->SetWidgetClass(SubclassIconWidget); // WBP 위젯으로 설정
+	UUserWidget* UserWidget = IconWidgetComponent->GetUserWidgetObject();
+	if (nullptr != UserWidget)
+	{
+		IconWidget = Cast<UIngredientIconWidget>(UserWidget);
+		SetIcon(TEXT("MissingIngredient"));
+	}
+	InitWidgetSetting(IconWidgetComponent);
+	IconWidgetComponent->bHiddenInGame = false;
 }
 
 void APot::InitWidgetSetting(UWidgetComponent* WidgetComponent)
@@ -281,6 +299,9 @@ void APot::SetAction_Implementation()
 		// 0.2에서 0.6까지 컬러 러프
 		bColorChanging = true;
 		TargetColor = FLinearColor(0.6f, 0.6f, 0.6f, 1.0f);
+
+
+		SetIcon(TEXT("RiceIcon"));
 		break;
 	}
 	case EPotState::BOILING:
@@ -348,7 +369,7 @@ void APot::SetAction_Implementation()
 		bIsBlinking = false;
 
 		StatusWidgetComponent->bHiddenInGame = true;
-
+		SetIcon(TEXT("BurntFood"));
 		break;
 	}
 	default:
@@ -370,6 +391,13 @@ UTexture2D* APot::GetTexture(const FString& RowName)
 	UTexture* NewTexture = UOC2GlobalData::GetResourceTexture(GetWorld(), *RowName);
 	UTexture2D* NewTexture2D = Cast<UTexture2D>(NewTexture);
 	return NewTexture2D;
+}
+
+void APot::SetIcon(const FString& RowName)
+{
+	FString TextureName = RowName;
+	UTexture2D* Texture = GetTexture(TextureName);
+	IconWidget->SetTexture(Texture);
 }
 
 void APot::CanBlink()
@@ -489,8 +517,12 @@ void APot::ResetPot()
 	bIsCooked = false;
 	bIsBlinking = false;
 	CookingTimeRatio = 0.0f;
+	
 	StatusWidgetComponent->bHiddenInGame = true;
 	GaugeWidgetComponent->bHiddenInGame = true;
+
+	SetIcon(TEXT("MissingIngredient"));
+	IconWidgetComponent->bHiddenInGame = false;
 
 	ChangeNoneMaterial();
 }
