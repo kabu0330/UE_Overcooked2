@@ -40,7 +40,7 @@ public:
 		return bIsOccupied;
 	}
 
-
+	void SetIngredientOffset(AIngredient* Ingredient);
 
 protected:
 	// Called when the game starts or when spawned
@@ -51,7 +51,7 @@ protected:
 
 	class UTimeEventComponent* TimeEvent = nullptr;
 
-	// 상호작용 중인가?
+	// 상호작용 중인가?a
 	bool bIsInteracting = false;
 
 	bool bIsOccupied = false;
@@ -74,6 +74,7 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	bool bCanOvercook = false;
 
-
+	FRotator IngreRotation = FRotator::ZeroRotator;
+	FVector IngreLocation = FVector::ZeroVector;
 
 };
