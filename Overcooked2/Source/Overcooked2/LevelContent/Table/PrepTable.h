@@ -24,6 +24,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual ACooking* Interact(AActor* ChefActor) override;
 
+	UFUNCTION(Server, Reliable)
+	void RequestSpawnPlate();
+	void RequestSpawnPlate_Implementation();
+
 private:
 
 };
