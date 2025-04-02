@@ -37,33 +37,29 @@ void UPlateIconWidget::SetIngredientTextures(const TArray<UTexture2D*>& InTextur
 
 	if (1 == InTextures.Num())
 	{
-		Slots[0]->SetRenderTranslation(FVector2D(32.0f, 0.0f));
+		Slots[0]->SetRenderTranslation(FVector2D(0.0f, 0.0f));
 	}
 	else if (2 == InTextures.Num())
 	{
-		const FVector2D Offset(0.0f, 0.0f); // Y축 아래로
-
 		for (int32 i = 0; i < Slots.Num(); ++i)
 		{
 			if (Slots[i] && Slots[i]->Visibility == ESlateVisibility::Visible)
 			{
 				Slots[i]->SetRenderTranslation(FVector2D::ZeroVector);
-				Slots[i]->SetRenderTranslation(Offset);
+				//Slots[i]->SetRenderTranslation(Offset);
 			}
 		}
 	}
 	else
 	{
+		const FVector2D Offset(0.0f, -100.0f); // Y축 아래로
 		// 3개 다 있을 경우엔 위치 초기화 (위로 다시 올림)
 		for (int32 i = 0; i < Slots.Num(); ++i)
 		{
 			if (Slots[i])
 			{
 				Slots[i]->SetRenderTranslation(FVector2D::ZeroVector);
-			}
-			if (2 == i)
-			{
-				Slots[i]->SetRenderTranslation(FVector2D(0.0f, 0.0f));
+				Slots[i]->SetRenderTranslation(Offset);
 			}
 		}
 	}
