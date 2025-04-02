@@ -69,10 +69,16 @@ private:
 	bool bTimerActivated = false;
 	bool bChoppingDone = false;
 
+	float Ratio = 0.0f;
+
 	class AOC2Character* ChefPtr = nullptr;
 
-	UPROPERTY(VisibleAnywhere, Category = UI)
+	UPROPERTY()
 	class UWidgetComponent* ProgressBarComponent = nullptr;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Table", meta = (AllowprivateAccess = "true"))
+	TSubclassOf<UUserWidget> TSubClassWidget = nullptr;
+
+	class UGaugeTextureWidget* WidgetPtr = nullptr;
 	//class ATableProgressBar* ProgressBar = nullptr;
 };

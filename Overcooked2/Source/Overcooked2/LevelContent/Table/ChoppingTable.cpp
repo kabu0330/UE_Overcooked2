@@ -6,6 +6,7 @@
 #include <Global/OC2Enum.h>
 #include "Global/GameMode/OC2GameMode.h"
 #include "Components/WidgetComponent.h"
+#include <LevelContent/Cook/Widget/GaugeTextureWidget.h>
 
 AChoppingTable::AChoppingTable()
 {
@@ -14,20 +15,36 @@ AChoppingTable::AChoppingTable()
 
 	ProgressBarComponent = CreateDefaultSubobject<UWidgetComponent>("ProgressBar");
 	ProgressBarComponent->SetupAttachment(RootComponent);
-	ProgressBarComponent->SetHiddenInGame(true);
 
-	//static ConstructorHelpers::FClassFinder<UUserWidget> Widget(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/Blueprints/LevelContent/Table/BP_ProgressBarWidget.BP_ProgressBarWidget''"));	
-	//if (true == Widget.Succeeded())
-	//{
-	//	ProgressBarWidget->SetWidgetClass(Widget.Class);
-	//	ProgressBarWidget->SetWidgetSpace(EWidgetSpace::Screen);
-	//}
+
+	/*static ConstructorHelpers::FClassFinder<UUserWidget> Widget(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/Blueprints/LevelContent/Table/BP_ProgressBarWidget.BP_ProgressBarWidget''"));	
+	if (true == Widget.Succeeded())
+	{
+		ProgressBarComponent->SetWidgetClass(Widget.Class);
+		ProgressBarComponent->SetWidgetSpace(EWidgetSpace::Screen);
+	}*/
 
 }
 
 void AChoppingTable::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// 위젯 클래스 지정
+	ProgressBarComponent->SetWidgetClass(TSubClassWidget); // WBP 위젯으로 설정
+	UUserWidget* UserWidget = ProgressBarComponent->GetUserWidgetObject();
+	if (nullptr != UserWidget)
+	{
+		WidgetPtr = Cast<UGaugeTextureWidget>(UserWidget);
+	}
+	ProgressBarComponent->SetDrawAtDesiredSize(true);   // 위젯의 실제 크기로 렌더
+	ProgressBarComponent->SetPivot(FVector2D(0.5f, 0.5f)); // 중심 정렬
+	ProgressBarComponent->SetWidgetSpace(EWidgetSpace::Screen); // 월드 공간에서 3D처럼 보이게
+	ProgressBarComponent->bHiddenInGame = false;
+
+	// 카메라를 향하도록 설정
+	ProgressBarComponent->SetTwoSided(true);
+	ProgressBarComponent->SetTickWhenOffscreen(true);
 }
 
 void AChoppingTable::Tick(float DeltaTime)
@@ -43,6 +60,9 @@ void AChoppingTable::Tick(float DeltaTime)
 			bChoppingDone = true;
 		}
 	}
+	Ratio += DeltaTime * 1.0f;
+
+	WidgetPtr->SetProgressTimeRatio(Ratio);
 
 	if (bChoppingDone == true)
 	{
@@ -87,6 +107,7 @@ void AChoppingTable::ChopIngredient(AActor* ChefActor)
 				GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Magenta, "Chopping...");
 
 				ProgressBarComponent->SetHiddenInGame(false);
+
 
 				/*ProgressBar = GetWorld()->SpawnActor<ATableProgressBar>();
 				ProgressBar->SetActorLocation(ComponentForProgressBar->GetComponentLocation());
