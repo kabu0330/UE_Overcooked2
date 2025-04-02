@@ -48,6 +48,16 @@ public:
 	void CleanPlate();
 	void CleanPlate_Implementation();
 
+	TArray<FRecipe> GetIngredients() const
+	{
+		return Ingredients;
+	}
+
+	FRecipe GetIngredient(int32 Index) const
+	{
+		return Ingredients[Index];
+	}
+
 
 protected:
 	// Called when the game starts or when spawned

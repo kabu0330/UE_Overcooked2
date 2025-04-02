@@ -5,11 +5,17 @@
 #include "Overcooked2.h"
 
 #include "AssetRegistry/AssetRegistryModule.h"
+#include "Kismet/GameplayStatics.h"
+
 #include "Global/OC2GameInstance.h"
-#include "LevelContent/Cook/Ingredient.h"
 #include "Global/GameMode/OC2GameMode.h"
 #include "Global/GameFramework/OC2Actor.h"
-#include "Kismet/GameplayStatics.h"
+#include "Global/State/GameState/CookingGameState.h"
+
+#include "LevelContent/Cook/Ingredient.h"
+#include "LevelContent/Cook/Cooking.h"
+#include "LevelContent/Cook/Plate.h"
+
 
 void UOC2Global::GetAssetPackageName(UClass* Class, const FString& AssetName, FString& Path)
 {
@@ -76,4 +82,69 @@ void UOC2Global::TravelServer(UWorld* World, const FString& LevelName)
 void UOC2Global::StartCookingStage(UWorld* World)
 {
 	UOC2Global::GetOC2GameInstance(World)->StartGame();
+}
+
+void UOC2Global::SubmitPlate(UWorld* World, ACooking* Plate)
+{
+	if (nullptr != Plate)
+	{
+		UE_LOG(OVERCOOKED_LOG, Error, TEXT("Plate is nullptr"));
+		return;
+	}
+
+	ACookingGameState* GameState = Cast<ACookingGameState>(UGameplayStatics::GetGameState(World));
+
+	if (nullptr != GameState)
+	{
+		UE_LOG(OVERCOOKED_LOG, Error, TEXT("GameState is nullptr"));
+		return;
+	}
+
+	GameState->Server_SubmitPlate(Plate);
+}
+
+void UOC2Global::CheckPlateToRecipe(UWorld* World, APlate* Plate)
+{
+	TArray<FRecipe> Recipes;
+
+	for (int i = 0; i < Plate->GetIngredients().Num(); i++)
+	{
+		FRecipe Recipe;
+
+		Recipe.IngredientState = Plate->GetIngredient(i).IngredientState;
+		Recipe.IngredientType = Plate->GetIngredient(i).IngredientType;
+
+		Recipes.Add(Recipe);
+	}
+
+	static FPlateInitData EmptyArray;
+	TArray<FRecipeDataRow*> FindRecipes;
+
+	//TArray<FName> RowNames = RecipeDataTable->GetRowNames();
+
+	//for (const FName& RowName : RowNames)
+	//{
+	//	// 현재 행을 가져오기
+	//	FRecipeDataRow* RecipeData = RecipeDataTable->FindRow<FRecipeDataRow>(RowName, nullptr);
+
+	//	if (RecipeData->RequireIngredients.Num() == Recipes.Num()
+	//		&& true == FindRecipe(RecipeData, Recipes))
+	//	{
+	//		FPlateInitData PlateInitData;
+	//		PlateInitData.StaticMesh = RecipeData->FoodMesh;
+	//		PlateInitData.OffsetLocation = RecipeData->OffsetLocation;
+	//		PlateInitData.OffsetRotation = RecipeData->OffsetRotation;
+	//		PlateInitData.OffsetScale = RecipeData->OffsetScale;
+
+	//		for (int j = 0; j < RecipeData->RequireIngredients.Num(); j++)
+	//		{
+	//			PlateInitData.IngredientTextures.Push(RecipeData->RequireIngredients[j].IngredientTexture);
+	//		}
+
+	//		return PlateInitData;
+	//	}
+	//}
+
+	//return EmptyArray;
+
 }

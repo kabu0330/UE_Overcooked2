@@ -12,6 +12,7 @@
 #include "CookingGameState.generated.h"
 
 class ASpawnManager;
+class ACooking;
 
 /**
  * 
@@ -30,6 +31,9 @@ public:
 
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_BlinkOrderUI();
+
+	UFUNCTION(Server, Reliable)
+	void Server_SubmitPlate(ACooking* Plate);
 
 private:
 	int FindOrderIndex(FOrder& Order);
