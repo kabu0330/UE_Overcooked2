@@ -89,11 +89,13 @@ protected:
 
 	void InitGaugeWidget();
 	void InitStatusWidget();
+	void InitIconWidget();
 
 	void InitWidgetSetting(class UWidgetComponent* WidgetComponent);
 	void UpdateGaugeWidget();
 
 	UTexture2D* GetTexture(const FString& RowName);
+	void SetIcon(const FString& RowName);
 
 
 	void ChangeState(EPotState CurState, EPotState NextState, float TransitionTime);
@@ -165,6 +167,15 @@ private:
 	UPROPERTY(Replicated)
 	bool bCanBlink = false; // 플레이어가 냄비를 들고 내릴 때 블링크 여부를 결정짓는 변수
 	//
+
+	// 
+	class UWidgetComponent* IconWidgetComponent = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowprivateAccess = "true"))
+	TSubclassOf<UUserWidget> SubclassIconWidget = nullptr; // 에디터에서 가져올 WBP 지정
+
+	UPROPERTY()
+	class UIngredientIconWidget* IconWidget = nullptr; // 세팅한 위젯 객체 저장 및 함수 호출용
 
 
 	UPROPERTY(Replicated)

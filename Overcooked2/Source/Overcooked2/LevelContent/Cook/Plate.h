@@ -92,4 +92,13 @@ private:
 	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	TArray<class UBillboardComponent*> TextureBillboards;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowprivateAccess = "true"))
+	class UWidgetComponent* WidgetComponent = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowprivateAccess = "true"))
+	TSubclassOf<UUserWidget> SubclassWidget = nullptr; // 에디터에서 가져올 WBP 지정
+
+	UPROPERTY()
+	class UPlateIconWidget* IconWidget = nullptr; // 세팅한 위젯 객체 저장 및 함수 호출용
+
 };

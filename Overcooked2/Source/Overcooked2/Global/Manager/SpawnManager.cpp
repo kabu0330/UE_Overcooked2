@@ -40,7 +40,6 @@ void ASpawnManager::BeginPlay()
 		{
 			APlate* SpawnedPlate = GetWorld()->SpawnActor<APlate>(PlateClass);
 			PrepTableActor->PlaceItem(SpawnedPlate);
-			Plate = SpawnedPlate;
 		}
 		else if (PrepTableActor->Tags.Contains("Pot"))
 		{
@@ -58,16 +57,6 @@ void ASpawnManager::BeginPlay()
 void ASpawnManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	CheckTime += DeltaTime;
-
-	if (CheckTime > 10.0f)
-	{
-		CheckTime = 0.0f;
-
-		PlateSpawner->SetPlate(Plate);
-
-	}
 
 }
 
