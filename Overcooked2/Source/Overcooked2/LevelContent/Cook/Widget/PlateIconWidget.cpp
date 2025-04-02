@@ -37,11 +37,11 @@ void UPlateIconWidget::SetIngredientTextures(const TArray<UTexture2D*>& InTextur
 
 	if (1 == InTextures.Num())
 	{
-		Slots[0]->SetRenderTranslation(FVector2D(50.0f, 100.0f));
+		Slots[0]->SetRenderTranslation(FVector2D(32.0f, 0.0f));
 	}
 	else if (2 == InTextures.Num())
 	{
-		const FVector2D Offset(0.0f, 100.0f); // Y축 아래로
+		const FVector2D Offset(0.0f, 0.0f); // Y축 아래로
 
 		for (int32 i = 0; i < Slots.Num(); ++i)
 		{
@@ -63,7 +63,7 @@ void UPlateIconWidget::SetIngredientTextures(const TArray<UTexture2D*>& InTextur
 			}
 			if (2 == i)
 			{
-				Slots[i]->SetRenderTranslation(FVector2D(0.0f, 30.0f));
+				Slots[i]->SetRenderTranslation(FVector2D(0.0f, 0.0f));
 			}
 		}
 	}

@@ -98,6 +98,7 @@ void APot::InitGaugeWidget()
 	if (nullptr != UserWidget)
 	{
 		GaugeWidget = Cast<UGaugeTextureWidget>(UserWidget);
+		GaugeWidget->SetPosition(FVector2D(0.0f, 50.0f));
 	}
 	InitWidgetSetting(GaugeWidgetComponent);
 }
@@ -124,6 +125,7 @@ void APot::InitIconWidget()
 	}
 	InitWidgetSetting(IconWidgetComponent);
 	IconWidgetComponent->bHiddenInGame = false;
+
 }
 
 void APot::InitWidgetSetting(UWidgetComponent* WidgetComponent)
