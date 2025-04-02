@@ -7,6 +7,8 @@
 #include "Net/UnrealNetwork.h"
 #include <Global/Data/OC2GlobalData.h>
 #include "Components/BillboardComponent.h"  
+#include "Components/WidgetComponent.h"
+#include <LevelContent/Cook/Widget/PlateIconWidget.h>
 
 // Sets default values
 APlate::APlate()
@@ -23,15 +25,18 @@ APlate::APlate()
 	FVector Scale = FVector(2.0f, 2.0f, 2.0f);
 	StaticMeshComponent->SetRelativeScale3D(Scale);
 
+	WidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
+	WidgetComponent->SetupAttachment(RootComponent);
 
-	int MaxTexture = 3;
-	for (int i = 0; i < MaxTexture; i++)
-	{
-		FString ComponentName = FString::Printf(TEXT("TextureBillboard_%d"), i);
-		UBillboardComponent* BillboardComponent = CreateDefaultSubobject<UBillboardComponent>(*ComponentName);
-		BillboardComponent->SetupAttachment(RootComponent);
-		TextureBillboards.Add(BillboardComponent);
-	}
+
+	//int MaxTexture = 3;
+	//for (int i = 0; i < MaxTexture; i++)
+	//{
+	//	FString ComponentName = FString::Printf(TEXT("TextureBillboard_%d"), i);
+	//	UBillboardComponent* BillboardComponent = CreateDefaultSubobject<UBillboardComponent>(*ComponentName);
+	//	BillboardComponent->SetupAttachment(RootComponent);
+	//	TextureBillboards.Add(BillboardComponent);
+	//}
 
 	// Debug
 	//SetActorLocation(FVector(0.0f, -200.0f, 10.0f));
@@ -51,6 +56,24 @@ void APlate::BeginPlay()
 {
 	ACooking::BeginPlay();
 	
+	// 위젯 클래스 지정
+	WidgetComponent->SetWidgetClass(SubclassWidget); // WBP 위젯으로 설정
+	UUserWidget* UserWidget = WidgetComponent->GetUserWidgetObject();
+	if (nullptr != UserWidget)
+	{
+		IconWidget = Cast<UPlateIconWidget>(UserWidget);
+	}
+
+	WidgetComponent->SetDrawAtDesiredSize(true);   // 위젯의 실제 크기로 렌더
+	WidgetComponent->SetPivot(FVector2D(0.5f, 0.5f)); // 중심 정렬
+	WidgetComponent->SetWidgetSpace(EWidgetSpace::Screen); // 월드 공간에서 3D처럼 보이게
+	WidgetComponent->bHiddenInGame = false;
+
+	// 카메라를 향하도록 설정
+	WidgetComponent->SetTwoSided(true);
+	WidgetComponent->SetTickWhenOffscreen(true);
+
+	IconWidget->Init();
 }
 
 // Called every frame
@@ -90,10 +113,11 @@ void APlate::CleanPlate_Implementation()
 	PlateState = EPlateState::EMPTY;
 	IngredientMesh->SetStaticMesh(nullptr);
 	Ingredients.Empty();
-	for (int i = 0; i < TextureBillboards.Num(); i++)
-	{
-		TextureBillboards[i]->SetSprite(nullptr);
-	}
+	//for (int i = 0; i < TextureBillboards.Num(); i++)
+	//{
+	//	TextureBillboards[i]->SetSprite(nullptr);
+	//}
+	IconWidget->Reset();
 	bIsCombinationSuccessful = false;
 }
 
@@ -246,59 +270,68 @@ void APlate::SetIngredinetMesh(FPlateInitData Data)
 
 void APlate::SetIngredinetTextures(FPlateInitData Data)
 {
-	TArray<UTexture*> Textures = Data.IngredientTextures;
-	if (true == Textures.IsEmpty())
+	TArray<UTexture2D*> Textures;
+	for (size_t i = 0; i < Data.IngredientTextures.Num(); i++)
 	{
-		return;
-	}
-
-	int32 NumTextures = Textures.Num(); // 텍스처 개수
-	int32 NumBillboard = TextureBillboards.Num(); // 텍스처 최대 개수 : 3개(생성자에서 설정함)
-	int32 NumRows = (NumTextures + 1) / 2; // 몇 행인지. (올림 처리)
-
-	float BaseZ = 70.0f; // 최초 z축 위치
-	float VertialSpacing = 40.0f; // 상하 간격
-	float HorizontalSpacing = 40.0f; // 좌우 간격
-	for (int32 i = 0; i < NumTextures; i++) // 이번에 들어온 텍스처 수만큼 반복
-	{
-		int32 RowIndex = i / 2; 
-		int32 ColIndex = i % 2;
-
-		int32 ActualRow = NumRows - 1 - RowIndex; // 실제 행 0번부터
-		float CurrentZ = BaseZ + ActualRow * VertialSpacing; // 행 간 간격
-
-		bool bIsRowFull = true;
-		// 마지막 텍스처인데 홀수라면 그 텍스처만 가운데에 맞춰야 하니까
-		if ((RowIndex == NumRows - 1) && (NumTextures % 2 != 0)) 
-		{
-			bIsRowFull = false; // 해당 변수를 이용해서 
-		}
-
-		float CurrentX = 0.0f;
-		if (true == bIsRowFull) // 한 행에 두 개씩 존재하면 좌우 간격 맞추고
-		{
-			if (0 == ColIndex)
-			{
-				CurrentX = HorizontalSpacing / 2.0f;
-			}
-			else
-			{
-				CurrentX = -HorizontalSpacing / 2.0f;
-			}
-		}
-		else // 한 행에 남은 텍스처가 하나면 가운데 맞추자.
-		{
-			CurrentX = 0.0f;
-		}
-
-		FVector NewLocation(CurrentX, 0.0f, CurrentZ);
-
-		UTexture2D* Texture = Cast<UTexture2D>(Textures[i]);
+		UTexture2D* Texture = Cast<UTexture2D>(Data.IngredientTextures[i]);
 		if (nullptr != Texture)
 		{
-			TextureBillboards[i]->SetSprite(Texture);
-			TextureBillboards[i]->bHiddenInGame = false; // 안 켜면 안보임
-			TextureBillboards[i]->SetRelativeLocation(NewLocation);
+			Textures.Add(Texture);
 		}
 	}
+	IconWidget->SetIngredientTextures(Textures);
+	//if (true == Textures.IsEmpty())
+	//{
+	//	return;
+	//}
+
+	//int32 NumTextures = Textures.Num(); // 텍스처 개수
+	//int32 NumBillboard = TextureBillboards.Num(); // 텍스처 최대 개수 : 3개(생성자에서 설정함)
+	//int32 NumRows = (NumTextures + 1) / 2; // 몇 행인지. (올림 처리)
+
+	//float BaseZ = 70.0f; // 최초 z축 위치
+	//float VertialSpacing = 40.0f; // 상하 간격
+	//float HorizontalSpacing = 40.0f; // 좌우 간격
+	//for (int32 i = 0; i < NumTextures; i++) // 이번에 들어온 텍스처 수만큼 반복
+	//{
+	//	int32 RowIndex = i / 2; 
+	//	int32 ColIndex = i % 2;
+
+	//	int32 ActualRow = NumRows - 1 - RowIndex; // 실제 행 0번부터
+	//	float CurrentZ = BaseZ + ActualRow * VertialSpacing; // 행 간 간격
+
+	//	bool bIsRowFull = true;
+	//	// 마지막 텍스처인데 홀수라면 그 텍스처만 가운데에 맞춰야 하니까
+	//	if ((RowIndex == NumRows - 1) && (NumTextures % 2 != 0)) 
+	//	{
+	//		bIsRowFull = false; // 해당 변수를 이용해서 
+	//	}
+
+	//	float CurrentX = 0.0f;
+	//	if (true == bIsRowFull) // 한 행에 두 개씩 존재하면 좌우 간격 맞추고
+	//	{
+	//		if (0 == ColIndex)
+	//		{
+	//			CurrentX = HorizontalSpacing / 2.0f;
+	//		}
+	//		else
+	//		{
+	//			CurrentX = -HorizontalSpacing / 2.0f;
+	//		}
+	//	}
+	//	else // 한 행에 남은 텍스처가 하나면 가운데 맞추자.
+	//	{
+	//		CurrentX = 0.0f;
+	//	}
+
+	//	FVector NewLocation(CurrentX, 0.0f, CurrentZ);
+
+	//	UTexture2D* Texture = Cast<UTexture2D>(Textures[i]);
+	//	if (nullptr != Texture)
+	//	{
+	//		TextureBillboards[i]->SetSprite(Texture);
+	//		TextureBillboards[i]->bHiddenInGame = false; // 안 켜면 안보임
+	//		TextureBillboards[i]->SetRelativeLocation(NewLocation);
+	//	}
+	//}
 }

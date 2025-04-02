@@ -32,15 +32,24 @@ public:
 	{
 		for (AIngredient* Ingredient : Ingredients)
 		{
-			Ingredient->Destroy();
+			if (nullptr != Ingredient)
+			{
+				Ingredient->Destroy();
+			}
 		}
 		for (APlate* Plate : Plates)
 		{
-			Plate->Destroy();
+			if (nullptr != Plate)
+			{
+				Plate->Destroy();
+			}
 		}
 		for (APlate* Dish : Dishes)
 		{
-			Dish->Destroy();
+			if (nullptr != Dish)
+			{
+				Dish->Destroy();
+			}
 		}
 
 		Ingredients.Empty();

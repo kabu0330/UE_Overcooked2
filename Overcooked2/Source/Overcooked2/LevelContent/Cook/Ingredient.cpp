@@ -55,6 +55,26 @@ void AIngredient::BeginPlay()
 	Init(IngredientType);
 }
 
+void AIngredient::InitIconWidget()
+{
+	// 위젯 클래스 지정
+	WidgetComponent->SetWidgetClass(SubclassWidget); // WBP 위젯으로 설정
+	UUserWidget* UserWidget = WidgetComponent->GetUserWidgetObject();
+	if (nullptr != UserWidget)
+	{
+		IconWidget = Cast<UIngredientIconWidget>(UserWidget);
+	}
+
+	WidgetComponent->SetDrawAtDesiredSize(true);   // 위젯의 실제 크기로 렌더
+	WidgetComponent->SetPivot(FVector2D(0.5f, 0.5f)); // 중심 정렬
+	WidgetComponent->SetWidgetSpace(EWidgetSpace::Screen); // 월드 공간에서 3D처럼 보이게
+	WidgetComponent->bHiddenInGame = false;
+
+	// 카메라를 향하도록 설정
+	WidgetComponent->SetTwoSided(true);
+	WidgetComponent->SetTickWhenOffscreen(true);
+}
+
 AIngredient* AIngredient::Init(EIngredientType Type)
 {
 	// 6. 서버에서 한 번 호출, 클라에서도 각 한 번씩 호출
@@ -96,26 +116,6 @@ AIngredient* AIngredient::Init(EIngredientType Type)
 	}
 
 	return this;
-}
-
-void AIngredient::InitIconWidget()
-{
-	// 위젯 클래스 지정
-	WidgetComponent->SetWidgetClass(SubclassWidget); // WBP 위젯으로 설정
-	UUserWidget* UserWidget = WidgetComponent->GetUserWidgetObject();
-	if (nullptr != UserWidget)
-	{
-		IconWidget = Cast<UIngredientIconWidget>(UserWidget);
-	}
-
-	WidgetComponent->SetDrawAtDesiredSize(true);   // 위젯의 실제 크기로 렌더
-	WidgetComponent->SetPivot(FVector2D(0.5f, 0.5f)); // 중심 정렬
-	WidgetComponent->SetWidgetSpace(EWidgetSpace::Screen); // 월드 공간에서 3D처럼 보이게
-	WidgetComponent->bHiddenInGame = false;
-
-	// 카메라를 향하도록 설정
-	WidgetComponent->SetTwoSided(true);
-	WidgetComponent->SetTickWhenOffscreen(true);
 }
 
 // Called every frame
