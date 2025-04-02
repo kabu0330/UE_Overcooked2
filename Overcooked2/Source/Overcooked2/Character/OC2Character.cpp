@@ -321,8 +321,11 @@ void AOC2Character::Interact_Implementation()
 			{
 				APot* Pot = Cast<APot>(Cook);
 				APlate* Plate = Cast<APlate>(Cook);
+
+				//잡고있는 타입 캐스트
 				AIngredient* GrabIng = Cast<AIngredient>(GrabbedObject);
 				APlate* GrabPlate= Cast<APlate>(GrabbedObject);
+				APot* GrabPot = Cast<APot>(GrabbedObject);
 				if (GrabIng != nullptr)
 				{
 					if (Pot != nullptr)
@@ -345,6 +348,14 @@ void AOC2Character::Interact_Implementation()
 				else if (GrabPlate != nullptr)
 				{
 
+				}
+				else if (GrabPot != nullptr)
+				{
+					if (Plate != nullptr)
+					{
+						// GrabPot에서 Pot은 초기화
+						Plate->Add(GrabPot->GetRice());
+					}
 				}
 
 				Table->PlaceItem(Cook);
