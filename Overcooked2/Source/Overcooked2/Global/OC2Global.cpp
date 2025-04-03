@@ -84,9 +84,11 @@ void UOC2Global::StartCookingStage(UWorld* World)
 	UOC2Global::GetOC2GameInstance(World)->StartGame();
 }
 
-void UOC2Global::SubmitPlate(UWorld* World, ACooking* Plate)
+void UOC2Global::SubmitPlate(UWorld* World, ACooking* Cooking)
 {
-	if (nullptr != Plate)
+	APlate* Plate = Cast<APlate>(Cooking);
+
+	if (nullptr == Plate)
 	{
 		UE_LOG(OVERCOOKED_LOG, Error, TEXT("Plate is nullptr"));
 		return;
@@ -94,13 +96,41 @@ void UOC2Global::SubmitPlate(UWorld* World, ACooking* Plate)
 
 	ACookingGameState* GameState = Cast<ACookingGameState>(UGameplayStatics::GetGameState(World));
 
-	if (nullptr != GameState)
+	if (nullptr == GameState)
 	{
 		UE_LOG(OVERCOOKED_LOG, Error, TEXT("GameState is nullptr"));
 		return;
 	}
 
-	GameState->Server_SubmitPlate(Plate);
+	UOC2GameInstance* GameInstance = UOC2Global::GetOC2GameInstance(World);
+
+	if (nullptr == GameInstance)
+	{
+		UE_LOG(OVERCOOKED_LOG, Error, TEXT("GameInstance is nullptr"));
+		return;
+	}
+
+	TArray<FRecipe> Recipes;
+
+	for (int i = 0; i < Plate->GetIngredients().Num(); i++)
+	{
+		FRecipe Recipe;
+
+		Recipe.IngredientState = Plate->GetIngredient(i).IngredientState;
+		Recipe.IngredientType = Plate->GetIngredient(i).IngredientType;
+
+		Recipes.Add(Recipe);
+	}
+
+	if (true == GameInstance->CheckRecipe(Recipes))
+	{
+		GameState->Server_SubmitPlate(Plate);
+	}
+	else
+	{
+		// TODO: 틀린 레시피를 제출했을 때 발생하는 기능 구현
+
+	}
 }
 
 void UOC2Global::CheckPlateToRecipe(UWorld* World, APlate* Plate)

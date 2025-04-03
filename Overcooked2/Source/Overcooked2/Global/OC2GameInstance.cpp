@@ -211,7 +211,6 @@ const FResourceNiagaraDataRow& UOC2GameInstance::GetResourceNiagaraDataRow(const
 FPlateInitData UOC2GameInstance::GetPlateMesh(TArray<FRecipe>& Recipes)
 {
 	static FPlateInitData EmptyArray;
-	TArray<FRecipeDataRow*> FindRecipes;
 	
 	TArray<FName> RowNames = RecipeDataTable->GetRowNames();
 
@@ -245,7 +244,6 @@ bool UOC2GameInstance::FindRecipe(const FRecipeDataRow* RecipeDataRow, TArray<FR
 {
 	if (nullptr == RecipeDataRow || 0 == RecipeDataRow->RequireIngredients.Num()|| 0 == Recipes.Num())
 	{
-		// UE_LOG(LogTemp, )
 		return false;
 	}
 
@@ -255,6 +253,7 @@ bool UOC2GameInstance::FindRecipe(const FRecipeDataRow* RecipeDataRow, TArray<FR
 		EIngredientState IngredientState = RecipeDataRow->RequireIngredients[i].IngredientState;
 
 		bool bFound = false;
+
 		for (int j = 0; j < Recipes.Num(); j++)
 		{
 			if (Recipes[j].IngredientType == IngredientType && Recipes[j].IngredientState == IngredientState)
@@ -271,6 +270,26 @@ bool UOC2GameInstance::FindRecipe(const FRecipeDataRow* RecipeDataRow, TArray<FR
 	}
 
 	return true;
+}
+
+bool UOC2GameInstance::CheckRecipe(TArray<FRecipe>& Recipes)
+{
+	TArray<FName> RowNames = RecipeDataTable->GetRowNames();
+
+	for (const FName& RowName : RowNames)
+	{
+		// 현재 행을 가져오기
+		FRecipeDataRow* RecipeData = RecipeDataTable->FindRow<FRecipeDataRow>(RowName, nullptr);
+
+		if (RecipeData->RequireIngredients.Num() == Recipes.Num()
+			&& true == FindRecipe(RecipeData, Recipes))
+		{
+			
+			return true;
+		}
+	}
+
+	return false;
 }
 
 FOrder UOC2GameInstance::GetOrderByStageAndIndex(EOC2Stage OC2Stage, int Index)

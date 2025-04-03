@@ -20,6 +20,7 @@ class AOC2Actor;
 class ACookingGameState;
 class ACookingTable;
 class ASpawnManager;
+class AStageManager;
 
 /**
  * 요리 게임 모드 클래스 (ACookingGameMode)
@@ -83,6 +84,12 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<ASpawnManager> SpawnManagerClass = nullptr;
+
+	/** 스테이지 매니저 객체 */
+	AStageManager* StageManager = nullptr;
+
+	UPROPERTY(EditAnywhere, Category = "Global|Manager")
+	TSubclassOf<AStageManager> StageManagerSpawner = nullptr;
 
 private:
 	/** 주문을 관리하는 컴포넌트 */

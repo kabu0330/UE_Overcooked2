@@ -23,6 +23,13 @@ class OVERCOOKED2_API ACookingGameState : public AOC2GameState
 	GENERATED_BODY()
 
 public:
+	ACookingGameState();
+
+protected:
+	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
+
+public:
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_CreateNewOrder(FOrder Order);
 
@@ -31,6 +38,9 @@ public:
 
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_BlinkOrderUI();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_AddScore(int Score);
 
 	UFUNCTION(Server, Reliable)
 	void Server_SubmitPlate(ACooking* Plate);

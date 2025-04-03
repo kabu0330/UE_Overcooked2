@@ -4,6 +4,8 @@
 #include "LevelContent/Table/NonTable/ServingTable.h"
 #include "LevelContent/Cook/Plate.h"
 
+#include "Global/OC2Global.h"
+
 AServingTable::AServingTable()
 {
 
@@ -25,4 +27,6 @@ void AServingTable::PlaceItem(ACooking* ReceivedCooking)
 	{
 		CookingPtr = ReceivedCooking;
 	}
+
+	UOC2Global::SubmitPlate(GetWorld(), ReceivedCooking);
 }
