@@ -581,19 +581,19 @@ void AOC2Character::OnRep_PlateSet()
 	}
 }
 
+
 void AOC2Character::StopDash()
 {
 	bIsDashing = false;
 	GetCharacterMovement()->StopMovementImmediately();
 }
 
-void AOC2Character::OnOverlapCheck_Implementation(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void AOC2Character::OnOverlapCheck(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (OtherActor && HasAuthority())
+	if (OtherActor)
 	{
-		//GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Green, "Hit");
 		AIngredient* Ingredient = Cast<AIngredient>(OtherActor);
-		if (Ingredient) // 캡슐과 충돌한 경우
+		if (Ingredient) // 캡슐과 충돌한 경우w
 		{
 			if (Ingredient->IsThrowing() && Ingredient->GetThrower() != this && GrabbedObject == nullptr)
 			{
@@ -607,14 +607,23 @@ void AOC2Character::OnOverlapCheck_Implementation(UPrimitiveComponent* Overlappe
 				}
 				Ingredient->SetThrowing(false);
 				GrabbedObject = Ingredient;
-				FVector Dir = SweepResult.ImpactPoint - GetActorLocation();
+				FVector Dir = (Ingredient->GetThrower()->GetActorLocation() - GetActorLocation());
 				Dir.Z = 0;
+				Dir = Dir.GetSafeNormal();
+				
 
-				SetActorRotation(-GetActorRotation().Quaternion());
+				if (GetController() != nullptr)
+				{
+					GetController()->SetControlRotation(Dir.Rotation());
+				}
+
+
 			}
 		}
 	}
 }
+
+
 
 void AOC2Character::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {

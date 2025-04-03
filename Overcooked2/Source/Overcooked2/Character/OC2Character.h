@@ -111,14 +111,13 @@ public:
 	UFUNCTION()
 	void OnRep_PlateSet();
 
-
 	UFUNCTION(Reliable, Server)
 	void Dash();
 
 	UFUNCTION(BlueprintCallable)
 	void StopDash();
 
-	UFUNCTION(Reliable, Server)
+	UFUNCTION()
 	void OnOverlapCheck(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	UFUNCTION()
@@ -209,6 +208,5 @@ private :
 	float DashDuration = 0.5f;
 	UPROPERTY(EditAnywhere, Replicated, BlueprintReadWrite, Category = "Dash", meta = (AllowPrivateAccess = "true"))
 	float DashTimer = 0.0f;
-
 
 };
