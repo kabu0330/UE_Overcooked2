@@ -43,6 +43,7 @@ void AIngredient::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* Othe
 	}
 
 	StaticMeshComponent->SetPhysicsLinearVelocity(FVector::ZeroVector);
+	bIsThrowing = false;
 }
 
 // Called when the game starts or when spawned
