@@ -229,3 +229,17 @@ FVector UOC2GlobalData::GetResourceNiagaraScale(UWorld* World, const FName& RowN
 
 	return FVector::ZeroVector;
 }
+
+FOrder UOC2GlobalData::GetOrderByIngredients(UWorld* World, ACooking* Cooking)
+{
+	FOrder Result;
+
+	UOC2GameInstance* GameInstance = UOC2Global::GetOC2GameInstance(World);
+
+	if (nullptr != GameInstance)
+	{
+		return GameInstance->GetOrderByRecipes(Cooking);
+	}
+
+	return Result;
+}

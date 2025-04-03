@@ -25,8 +25,14 @@ void AServingTable::PlaceItem(ACooking* ReceivedCooking)
 {
 	if (ECookingType::ECT_PLATE == ReceivedCooking->GetCookingType())
 	{
-		CookingPtr = ReceivedCooking;
+	}
+	else
+	{
+		return;
 	}
 
 	UOC2Global::SubmitPlate(GetWorld(), ReceivedCooking);
+
+	Super::PlaceItem(ReceivedCooking);
+	CookingPtr = nullptr;
 }
