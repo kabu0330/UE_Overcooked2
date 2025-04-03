@@ -52,7 +52,7 @@ void UPlateIconWidget::SetIngredientTextures(const TArray<UTexture2D*>& InTextur
 	}
 	else
 	{
-		const FVector2D Offset(0.0f, -100.0f); // Y축 아래로
+		const FVector2D Offset(0.0f, -250.0f); // Y축 아래로
 		// 3개 다 있을 경우엔 위치 초기화 (위로 다시 올림)
 		for (int32 i = 0; i < Slots.Num(); ++i)
 		{
