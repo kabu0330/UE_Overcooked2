@@ -148,6 +148,8 @@ void APot::Tick(float DeltaTime)
 	SetAction();
 	BlinkTexture(DeltaTime);
 	UpdateTextureVisibilityOnTable();
+
+	UpdateChangingColor();
 	ChangeSoupColor(DeltaTime);
 
 	UpdateGaugeWidget();
@@ -169,6 +171,14 @@ void APot::UpdateGaugeWidget()
 	{
 		GaugeWidgetComponent->bHiddenInGame = false;
 		GaugeWidget->SetProgressTimeRatio(CookingTimeRatio); // 비율대로 채워주고
+	}
+}
+
+void APot::UpdateChangingColor()
+{
+	if (true == bColorChanging && true == IsBoiling())
+	{
+		bCanColorChange = true;
 	}
 }
 
@@ -300,6 +310,7 @@ void APot::SetAction_Implementation()
 
 		// 0.2에서 0.6까지 컬러 러프
 		bColorChanging = true;
+		bCanColorChange = true;
 		TargetColor = FLinearColor(0.6f, 0.6f, 0.6f, 1.0f);
 
 
@@ -315,7 +326,7 @@ void APot::SetAction_Implementation()
 		bIsCooked = true; // 조리완료
 
 		bColorChanging = true;
-		TargetColor = FLinearColor(0.3f, 0.3f, 0.3f, 1.0f);
+		TargetColor = FLinearColor(0.8f, 0.8f, 0.8f, 1.0f);
 
 		FString TextureName = TEXT("CookingTick");
 		UTexture2D* Texture = GetTexture(TextureName);
@@ -331,7 +342,7 @@ void APot::SetAction_Implementation()
 	case EPotState::COOKED_WARNING:
 	{
 		bColorChanging = true;
-		TargetColor = FLinearColor(0.1f, 0.1f, 0.1f, 1.0f);
+		TargetColor = FLinearColor(0.4f, 0.4f, 0.4f, 1.0f);
 
 		// 경고 텍스처 활성화
 		bIsBlinking = true;
@@ -348,7 +359,7 @@ void APot::SetAction_Implementation()
 	case EPotState::COOKED_DANGER:
 	{
 		bColorChanging = true;
-		TargetColor = FLinearColor(0.07f, 0.07f, 0.07f, 1.0f);
+		TargetColor = FLinearColor(0.2f, 0.2f, 0.2f, 1.0f);
 
 		BlinkTime = 0.2f;
 		break;
@@ -463,7 +474,7 @@ void APot::UpdateTextureVisibilityOnTable()
 
 void APot::ChangeSoupColor(float DeltaTime)
 {
-	if (true == bColorChanging)
+	if (true == bColorChanging && true == bCanColorChange)
 	{
 		CurrentColor = FMath::Lerp(CurrentColor, TargetColor, DeltaTime * ColorChangeSpeed);
 
@@ -518,6 +529,8 @@ void APot::ResetPot()
 	bIsCombinationSuccessful = false;
 	bIsCooked = false;
 	bIsBlinking = false;
+	bColorChanging = false;
+	bCanColorChange = false;
 	CookingTimeRatio = 0.0f;
 	
 	StatusWidgetComponent->bHiddenInGame = true;
@@ -566,6 +579,10 @@ void APot::ForwardAttachToChef()
 
 	bCanBlink = false; // 블링크 효과 끔
 
+	if (true == bCanColorChange)
+	{
+		bCanColorChange = false; // 색상 변하지 않게
+	}
 }
 
 void APot::ForwardDetachToChef()

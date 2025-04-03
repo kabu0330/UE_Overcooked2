@@ -94,6 +94,8 @@ protected:
 	void InitWidgetSetting(class UWidgetComponent* WidgetComponent);
 	void UpdateGaugeWidget();
 
+	void UpdateChangingColor();
+
 	UTexture2D* GetTexture(const FString& RowName);
 	void SetIcon(const FString& RowName);
 
@@ -194,6 +196,9 @@ private:
 
 	UPROPERTY()
 	bool bColorChanging = false;    // 색상이 변하는 중인지
+
+	UPROPERTY(Replicated)
+	bool bCanColorChange = false; // 색상이 변할 수 있는 상태인지, 캐릭터가 들고 내릴 때 판단
 	// 
 
 

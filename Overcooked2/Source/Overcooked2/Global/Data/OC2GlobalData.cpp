@@ -167,3 +167,65 @@ UTexture* UOC2GlobalData::GetResourceTexture(UWorld* World, const FName& RowName
 
 	return nullptr;
 }
+
+const FResourceNiagaraDataRow& UOC2GlobalData::GetResourceNiagaraDataRow(UWorld* World, const FName& RowName)
+{
+	static FResourceNiagaraDataRow EmptyData;
+
+	UOC2GameInstance* GameInstance = UOC2Global::GetOC2GameInstance(World);
+
+	if (nullptr != GameInstance)
+	{
+		return GameInstance->GetResourceNiagaraDataRow(RowName);
+	}
+
+	return EmptyData;
+}
+
+UNiagaraSystem* UOC2GlobalData::GetResourceNiagaraSystem(UWorld* World, const FName& RowName)
+{
+	UOC2GameInstance* GameInstance = UOC2Global::GetOC2GameInstance(World);
+
+	if (nullptr != GameInstance)
+	{
+		return GameInstance->GetResourceNiagaraDataRow(RowName).NiagaraSystem;
+	}
+
+	return nullptr;
+}
+
+FVector UOC2GlobalData::GetResourceNiagaraLocation(UWorld* World, const FName& RowName)
+{
+	UOC2GameInstance* GameInstance = UOC2Global::GetOC2GameInstance(World);
+
+	if (nullptr != GameInstance)
+	{
+		return GameInstance->GetResourceNiagaraDataRow(RowName).Location;
+	}
+
+	return FVector::ZeroVector;
+}
+
+FRotator UOC2GlobalData::GetResourceNiagaraRotator(UWorld* World, const FName& RowName)
+{
+	UOC2GameInstance* GameInstance = UOC2Global::GetOC2GameInstance(World);
+
+	if (nullptr != GameInstance)
+	{
+		return GameInstance->GetResourceNiagaraDataRow(RowName).Rotation;
+	}
+
+	return FRotator::ZeroRotator;
+}
+
+FVector UOC2GlobalData::GetResourceNiagaraScale(UWorld* World, const FName& RowName)
+{
+	UOC2GameInstance* GameInstance = UOC2Global::GetOC2GameInstance(World);
+
+	if (nullptr != GameInstance)
+	{
+		return GameInstance->GetResourceNiagaraDataRow(RowName).Scale;
+	}
+
+	return FVector::ZeroVector;
+}

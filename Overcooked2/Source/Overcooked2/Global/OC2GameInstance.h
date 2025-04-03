@@ -9,6 +9,7 @@
 #include "Global/Data/IngredientDataTable.h"
 #include "Global/Data/OrderDataTable.h"
 #include "Global/Data/ResourceTextureTable.h"
+#include "Global/Data/ResourceNiagaraTable.h"
 
 #include "Global/OC2Struct.h"
 #include "Global/OC2Enum.h"
@@ -87,6 +88,7 @@ public:
 	 */
 	const FIngredientDataRow& GetIngredientDataRow(EIngredientType IngredientType);
 	const FResourceTextureDataRow& GetResourceTextureDataRow(const FName& RowName);
+	const FResourceNiagaraDataRow& GetResourceNiagaraDataRow(const FName& RowName);
 
 	FPlateInitData GetPlateMesh(TArray<FRecipe>& Recipes);
 	bool FindRecipe(const FRecipeDataRow* RecipeDataRow, TArray<FRecipe>& Recipes);
@@ -128,6 +130,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
 	UDataTable* ResourceTextureDataTable = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
+	UDataTable* ResourceNiagaraDataTable = nullptr;
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Global|Data")
