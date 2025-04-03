@@ -191,6 +191,23 @@ const FResourceTextureDataRow& UOC2GameInstance::GetResourceTextureDataRow(const
 	return EmptyData;
 }
 
+const FResourceNiagaraDataRow& UOC2GameInstance::GetResourceNiagaraDataRow(const FName& RowName)
+{
+	static FResourceNiagaraDataRow EmptyData;
+
+	if (nullptr != ResourceNiagaraDataTable)
+	{
+		FResourceNiagaraDataRow* ResourceNiagaraDataRow = ResourceNiagaraDataTable->FindRow<FResourceNiagaraDataRow>(RowName, nullptr);
+
+		if (nullptr != ResourceNiagaraDataRow)
+		{
+			return *ResourceNiagaraDataRow;
+		}
+	}
+
+	return EmptyData;
+}
+
 FPlateInitData UOC2GameInstance::GetPlateMesh(TArray<FRecipe>& Recipes)
 {
 	static FPlateInitData EmptyArray;

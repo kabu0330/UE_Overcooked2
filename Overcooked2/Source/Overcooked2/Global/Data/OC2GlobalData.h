@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "NiagaraSystem.h"
 
 #include "Global/OC2Struct.h"
 #include "Global/OC2Enum.h"
@@ -11,6 +12,7 @@
 #include "Global/Data/IngredientDataTable.h"
 #include "Global/Data/OrderDataTable.h"
 #include "Global/Data/ResourceTextureTable.h"
+#include "Global/Data/ResourceNiagaraTable.h"
 
 #include "OC2GlobalData.generated.h"
 
@@ -119,5 +121,14 @@ public:
 	 * @return UTexture* 해당하는 리소스 텍스처입니다.
 	 */
 	static UTexture* GetResourceTexture(UWorld* World, const FName& RowName);
+
+public:
+	static const FResourceNiagaraDataRow& GetResourceNiagaraDataRow(UWorld* World, const FName& RowName);
+	static UNiagaraSystem* GetResourceNiagaraSystem(UWorld* World, const FName& RowName);
+	static FVector GetResourceNiagaraLocation(UWorld* World, const FName& RowName);
+	static FRotator GetResourceNiagaraRotator(UWorld* World, const FName& RowName);
+	static FVector GetResourceNiagaraScale(UWorld* World, const FName& RowName);
+
+
 
 };
