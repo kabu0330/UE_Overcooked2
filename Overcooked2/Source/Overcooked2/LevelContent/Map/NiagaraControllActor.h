@@ -26,6 +26,7 @@ public:
 		InitDelayTime = InitDelay;
 	}
 
+	UFUNCTION(BlueprintCallable)
 	void InitDelay(float InitDelay = 0.0f)
 	{
 		InitDelayTime = InitDelay;

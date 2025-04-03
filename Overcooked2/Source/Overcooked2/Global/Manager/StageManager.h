@@ -35,10 +35,17 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Global|CookingStage")
 	void AddScore(int Value);
 
+	UFUNCTION(BlueprintCallable, Category = "Global|CookingStage")
+	void CompleteOrder(FOrder Order);
+
+private:
+	int FindOrderIndex(FOrder& Order);
+
 public:
 	ACookingGameState* CookingGameState = nullptr;
 	int Score = 0;
 	float CurTime = 0.0f;
 	TArray<int> OrderNumberArray;
+	TArray<FOrder> OrderArray;
 	int CurOrderIndex = 0;
 };
