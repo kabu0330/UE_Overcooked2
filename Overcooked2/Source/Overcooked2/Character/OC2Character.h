@@ -12,6 +12,8 @@
 #include "Components/SphereComponent.h"
 #include "OC2Character.generated.h"
 
+class UCaptureComponent2D;
+
 USTRUCT(BlueprintType)
 struct FCharacterData
 {
@@ -161,6 +163,9 @@ private :
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Grab", meta = (AllowPrivateAccess = "true"))
 	UTimeEventComponent* TimeEvent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Capture", meta = (AllowPrivateAccess = "true"))
+	UCaptureComponent2D* CaptureComponent = nullptr;
 
 
 	// 잡은 오브젝트가 위치할 Transform을 가지고 있는 Component

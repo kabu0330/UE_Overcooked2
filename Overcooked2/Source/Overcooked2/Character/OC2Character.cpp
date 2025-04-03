@@ -10,6 +10,7 @@
 #include "LevelContent/Table/BurnerTable.h"
 #include "LevelContent/Table/NonTable/GarbageCan.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "UI/Cooking/CaptureComponent2D.h"
 #include "Net/UnrealNetwork.h"
 
 
@@ -27,6 +28,9 @@ AOC2Character::AOC2Character()
 
 	GrabComponent = CreateDefaultSubobject<USceneComponent>("GrabPosition");
 	GrabComponent->SetupAttachment(RootComponent);
+
+	CaptureComponent = CreateDefaultSubobject<UCaptureComponent2D>("CaptureComponent");
+	CaptureComponent->SetupAttachment(RootComponent);
 
 	CheckOverlap = CreateDefaultSubobject<USphereComponent>("CheckOverlap");
 	CheckOverlap->SetupAttachment(RootComponent);
