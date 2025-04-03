@@ -124,7 +124,7 @@ void UCookingWidget::PlayTimeoutWidget()
 }
 
 
-void UCookingWidget::OrderComplete(int Index)
+void UCookingWidget::OrderComplete(int Index, int Score)
 {
     if (!ColorCurve) return;
     if (Index >= Orders.Num()) return;
@@ -167,13 +167,25 @@ void UCookingWidget::OrderComplete(int Index)
 
         if (CookingScoreWidget != nullptr)
         {
-            // test
-            int testnum = 0;
-            CookingScoreWidget->PlayOderCompleteAnimation(testnum);
+            CookingScoreWidget->PlayOderCompleteAnimation(Score);
         }
 
         GetWorld()->GetTimerManager().SetTimer(OpacityTimerHandle, this, &UCookingWidget::UpdateImageOpacity, 0.01f, true);
     }
+}
+
+void UCookingWidget::CheckFeverTime(int TipCount)
+{
+    if (TipCount == 4)
+    {
+        CookingScoreWidget->PlayCoinFlameAnimation();
+    }
+    else
+    {
+        CookingScoreWidget->StopCoinFlameAnimation();
+    }
+
+    CookingScoreWidget->SetTipCount(TipCount);
 }
 
 void UCookingWidget::CreateNewOrder(FOrder& Order)

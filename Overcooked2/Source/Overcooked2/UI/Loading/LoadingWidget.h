@@ -4,24 +4,29 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "WorldMapUserWidget.generated.h"
+#include "LoadingWidget.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class OVERCOOKED2_API UWorldMapUserWidget : public UUserWidget
+class OVERCOOKED2_API ULoadingWidget : public UUserWidget
 {
 	GENERATED_BODY()
 public:
-	//UFUNCTION(BlueprintCallable, Category = "OC2UI")
-	//void PlayZoomInAnimation();
 
-	void PlayZoomInAnimation(TFunction<void()> Func);
+	void SetProgress(float Value);
 
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
+	class UProgressBar* LoadingProgressBar = nullptr;
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
 	class UImage* TransitionImg = nullptr;
+
+
+	void PlayZoomOutAnimation();
+
+	void PlayZoomInAnimation();
 
 
 protected:
@@ -32,6 +37,6 @@ private:
 	class UMaterialInstanceDynamic* TransitionMaterial = nullptr;
 	FTimerHandle AnimationTimer;
 
-	TFunction<void()> AnimFinishFuction;
 
 };
+

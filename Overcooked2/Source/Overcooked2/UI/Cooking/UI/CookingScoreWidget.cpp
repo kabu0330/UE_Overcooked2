@@ -62,6 +62,30 @@ void UCookingScoreWidget::NativeTick(const FGeometry& MyGeometry, float DeltaTim
     
 }
 
+
+void UCookingScoreWidget::SetTipCount(int TipCount)
+{
+    //FString TexturePath = TEXT("/Game/Resources/UI/Order/Dish/ui_cheeseburger.ui_cheeseburger");
+    //class UTexture2D* Texture = Cast<UTexture2D>(StaticLoadObject(UTexture2D::StaticClass(), nullptr, *TexturePath));
+
+    if (TipCount <= 1)
+    {
+       // CoinBannerBar->SetBrushFromTexture(Texture);
+    }
+    else if (TipCount == 2)
+    {
+
+    }
+    else if (TipCount == 3)
+    {
+
+    }
+    else if (TipCount == 4)
+    {
+
+    }
+}
+
 void UCookingScoreWidget::PlayCoinFlameAnimation()
 {
     if (!CoinFlameMaterial) return;

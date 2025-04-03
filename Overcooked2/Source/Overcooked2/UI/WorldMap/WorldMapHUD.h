@@ -13,5 +13,22 @@ UCLASS()
 class OVERCOOKED2_API AWorldMapHUD : public AHUD
 {
 	GENERATED_BODY()
-	
+public:
+	UFUNCTION(BlueprintCallable, Category = "OC2UI")
+	void ShowLoadingWidget();
+
+protected:
+	virtual void BeginPlay() override;
+
+public:
+	UPROPERTY(EditAnywhere, Category = "OC2UI")
+	class UWorldMapUserWidget* WorldMapUserWidget = nullptr;
+
+	UPROPERTY(EditAnywhere, Category = "OC2UI")
+	TSubclassOf<class UWorldMapUserWidget> WorldWidgetObject;
+
+	class ULoadingWidget* LoadingWidget = nullptr;
+
+	UPROPERTY(EditAnywhere, Category = "OC2UI")
+	TSubclassOf<class ULoadingWidget> LoadingWidgetObject;
 };
