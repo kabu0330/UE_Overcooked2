@@ -41,6 +41,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "OC2UI")
 	void StopCoinFlameAnimation();
 
+	void SetTipCount(int TipCount);
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
+	class UImage* CoinBannerBar = nullptr;
+
+
 protected:
 	virtual void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float DeltaTime) override;
