@@ -15,6 +15,7 @@
 #include "Global/GameMode/CookingGameMode.h"
 #include "Global/Data/OC2GlobalData.h"
 #include "Global/OC2GameInstance.h"
+#include "Global/Manager/StageManager.h"
 
 ACookingGameState::ACookingGameState()
 {
@@ -32,7 +33,7 @@ void ACookingGameState::Tick(float DeltaTime)
 }
 
 
-void ACookingGameState::Multicast_CompleteOrder_Implementation(FOrder Order)
+void ACookingGameState::Multicast_CompleteOrder_Implementation(int OrderIndex)
 {
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
 
@@ -42,8 +43,6 @@ void ACookingGameState::Multicast_CompleteOrder_Implementation(FOrder Order)
 
 		if (nullptr != CookingHUD && nullptr != CookingHUD->CookWidget)
 		{
-			int OrderIndex = FindOrderIndex(Order);
-
 			if (-1 != OrderIndex)
 			{
 				CookingHUD->CookWidget->OrderComplete(OrderIndex);
@@ -86,15 +85,21 @@ void ACookingGameState::Multicast_BlinkOrderUI_Implementation()
 	}
 }
 
-void ACookingGameState::Server_SubmitPlate_Implementation(ACooking* Plate)
+void ACookingGameState::Server_SubmitPlate_Implementation(ACooking* Cooking)
 {
+	APlate* Plate = Cast<APlate>(Cooking);
+
 	if (true == HasAuthority())
 	{
 		ACookingGameMode* GameMode = Cast<ACookingGameMode>(UGameplayStatics::GetGameMode(this));
 
 		if (nullptr != GameMode)
 		{
-			/*if(Plate)*/
+			FOrder Order;
+			
+			Order = UOC2GlobalData::GetOrderByIngredients(GetWorld(), Plate);
+			
+			GameMode->StageManager->CompleteOrder(Order);
 		}
 	}
 }

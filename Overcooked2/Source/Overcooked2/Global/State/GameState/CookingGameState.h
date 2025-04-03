@@ -34,7 +34,7 @@ public:
 	void Multicast_CreateNewOrder(FOrder Order);
 
 	UFUNCTION(NetMulticast, Reliable)
-	void Multicast_CompleteOrder(FOrder Order);
+	void Multicast_CompleteOrder(int OrderIndex);
 
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_BlinkOrderUI();

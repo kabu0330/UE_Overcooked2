@@ -18,7 +18,7 @@
 
 class AIngredient;
 struct FRecipeDataRow;
-
+class ACooking;
 /**
  * 
  */
@@ -95,6 +95,7 @@ public:
 	bool CheckRecipe(TArray<FRecipe>& Recipes);
 
 	FOrder GetOrderByStageAndIndex(EOC2Stage OC2Stage, int Index);
+	FOrder GetOrderByRecipes(ACooking* Cooking);
 
 public:
 	FString GetChefHeadName() const;

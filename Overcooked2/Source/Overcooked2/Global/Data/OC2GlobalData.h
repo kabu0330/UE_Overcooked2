@@ -17,6 +17,7 @@
 #include "OC2GlobalData.generated.h"
 
 class AIngredient;
+class ACooking;
 
 /**
  * 
@@ -128,6 +129,9 @@ public:
 	static FVector GetResourceNiagaraLocation(UWorld* World, const FName& RowName);
 	static FRotator GetResourceNiagaraRotator(UWorld* World, const FName& RowName);
 	static FVector GetResourceNiagaraScale(UWorld* World, const FName& RowName);
+
+public:
+	static FOrder GetOrderByIngredients(UWorld* World, ACooking* Cooking);
 
 
 

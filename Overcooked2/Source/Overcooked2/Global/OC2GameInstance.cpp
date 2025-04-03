@@ -13,6 +13,9 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 
+#include "LevelContent/Cook/Cooking.h"
+#include "LevelContent/Cook/Plate.h"
+
 UOC2GameInstance::UOC2GameInstance()
 {
 	ChefHeadNames.Add(UOC2Const::ChefEagleHeadName);
@@ -326,6 +329,42 @@ FOrder UOC2GameInstance::GetOrderByStageAndIndex(EOC2Stage OC2Stage, int Index)
 	}
 
 	return Result;
+}
+
+FOrder UOC2GameInstance::GetOrderByRecipes(ACooking* Cooking)
+{
+	APlate* Plate = Cast<APlate>(Cooking);
+
+	TArray<FRecipe> Recipes;
+
+	for (int i = 0; i < Plate->GetIngredients().Num(); i++)
+	{
+		FRecipe Recipe;
+
+		Recipe.IngredientState = Plate->GetIngredient(i).IngredientState;
+		Recipe.IngredientType = Plate->GetIngredient(i).IngredientType;
+
+		Recipes.Add(Recipe);
+	}
+
+	FOrder Order;
+
+	TArray<FName> RowNames = RecipeDataTable->GetRowNames();
+
+	for (const FName& RowName : RowNames)
+	{
+		// 현재 행을 가져오기
+		FRecipeDataRow* RecipeData = RecipeDataTable->FindRow<FRecipeDataRow>(RowName, nullptr);
+
+		if (RecipeData->RequireIngredients.Num() == Recipes.Num()
+			&& true == FindRecipe(RecipeData, Recipes))
+		{
+			Order.OrderTexutre = RecipeData->OrderTexutre;
+			Order.RequireIngredients = RecipeData->RequireIngredients;
+		}
+	}
+
+	return Order;
 }
 
 FString UOC2GameInstance::GetChefHeadName() const

@@ -55,12 +55,16 @@ void AStageManager::Tick(float DeltaTime)
 	
 	if (CurTime > UOC2Const::OrderSpawnDelay)
 	{
-		FOrder Order = UOC2GlobalData::GetOrderByStageAndIndex(GetWorld(), UOC2Global::GetOC2GameInstance(GetWorld())->GetCurStage(), OrderNumberArray[CurOrderIndex++]);
-		CookingGameState->Multicast_CreateNewOrder(Order);
-
-		if (CurOrderIndex == OrderNumberArray.Num())
+		if (OrderArray.Num() < UOC2Const::MaxOrderCount)
 		{
-			CurOrderIndex = 0;
+			FOrder Order = UOC2GlobalData::GetOrderByStageAndIndex(GetWorld(), UOC2Global::GetOC2GameInstance(GetWorld())->GetCurStage(), OrderNumberArray[CurOrderIndex++]);
+			CookingGameState->Multicast_CreateNewOrder(Order);
+			OrderArray.Add(Order);
+
+			if (CurOrderIndex == OrderNumberArray.Num())
+			{
+				CurOrderIndex = 0;
+			}
 		}
 
 		CurTime = 0.0f;
@@ -71,4 +75,31 @@ void AStageManager::Tick(float DeltaTime)
 void AStageManager::AddScore(int InScore)
 {
 	Score += InScore;
+}
+
+void AStageManager::CompleteOrder(FOrder Order)
+{
+	int OrderIndex = FindOrderIndex(Order);
+	if (OrderIndex != -1)
+	{
+		CookingGameState->Multicast_CompleteOrder(OrderIndex);
+	}
+	else
+	{
+		UE_LOG(OVERCOOKED_LOG, Error, TEXT("Order Index is a -1"));
+	}
+}
+
+int AStageManager::FindOrderIndex(FOrder& Order)
+{
+	for (int i = 0; i < OrderArray.Num(); i++)
+	{
+		if (Order.OrderTexutre == OrderArray[i].OrderTexutre)
+		{
+			OrderArray.RemoveAt(i);
+			return i;
+		}
+	}
+
+	return -1;
 }
