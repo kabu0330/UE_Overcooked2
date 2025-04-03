@@ -21,6 +21,7 @@ public:
 
 protected:
 	void BeginPlay();
+	void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction);
 private:
 
 };

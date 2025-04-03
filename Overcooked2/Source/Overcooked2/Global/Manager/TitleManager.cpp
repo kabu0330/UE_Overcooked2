@@ -19,7 +19,10 @@ void ATitleManager::InitCharacter()
 {
 	if (nullptr != OC2CharacterClass)
 	{
-		AOC2Character* OC2Character = GetWorld()->SpawnActor<AOC2Character>(OC2CharacterClass, FVector::ZeroVector, FRotator::ZeroRotator);
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+		AOC2Character* OC2Character = GetWorld()->SpawnActor<AOC2Character>(OC2CharacterClass, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
 		OC2Character->SetActorLocation(UOC2Const::TitleCharacterSpawnLocation);
 		OC2Character->SetActorRotation(UOC2Const::TitleCharacterSpawnRotation);
 		OC2Character->SetCharacterName(UOC2Const::ChefEagleHeadName);

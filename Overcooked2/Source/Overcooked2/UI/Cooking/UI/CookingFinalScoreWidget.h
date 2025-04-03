@@ -18,6 +18,10 @@ public:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
 	class UCanvasPanel* PlayerCanvas = nullptr;
 
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
+	class UImage* PlayerImg_0 = nullptr;
+	
+
 protected:
 	virtual void NativeOnInitialized() override;
 
