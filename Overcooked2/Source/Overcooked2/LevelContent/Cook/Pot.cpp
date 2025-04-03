@@ -14,6 +14,9 @@
 #include <LevelContent/Cook/Widget/CookStatusWidget.h>
 #include "Components/WidgetComponent.h"
 #include <LevelContent/Cook/Widget/IngredientIconWidget.h>
+#include "NiagaraComponent.h"
+#include "NiagaraSystem.h"
+#include "NiagaraFunctionLibrary.h"
 
 APot::APot()
 {
@@ -21,6 +24,8 @@ APot::APot()
 	bReplicates = true;
 
 	SetReplicateMovement(true);
+
+	StaticMeshComponent->SetRelativeLocation(InitPos);
 
 	CookingType = ECookingType::ECT_POT;
 
@@ -37,9 +42,12 @@ APot::APot()
 	IconWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("IconWidgetComponent"));
 	IconWidgetComponent->SetupAttachment(RootComponent);
 
+	NiagaraComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NiagaraComponent"));
+	NiagaraComponent->SetupAttachment(RootComponent);
+	NiagaraComponent->SetAutoActivate(false); // 자동 이펙트 시작 방지
+
 	TimeEventComponent = CreateDefaultSubobject<UTimeEventComponent>(TEXT("TimeEventComponent"));
 
-	StaticMeshComponent->SetRelativeLocation(InitPos);
 }
 
 void APot::BeginPlay()
@@ -53,7 +61,11 @@ void APot::BeginPlay()
 	InitGaugeWidget();
 	InitStatusWidget();
 	InitIconWidget();
+
+	InitNiagara();
+
 }
+
 
 UMaterialInstanceDynamic* APot::LoadNoneMaterial()
 {
@@ -138,6 +150,23 @@ void APot::InitWidgetSetting(UWidgetComponent* WidgetComponent)
 	// 카메라를 향하도록 설정
 	WidgetComponent->SetTwoSided(true);
 	WidgetComponent->SetTickWhenOffscreen(true);
+}
+
+void APot::InitNiagara()
+{
+	if (nullptr != NiagaraComponent)
+	{
+		FString ResourceName = TEXT("Steam");
+		FResourceNiagaraDataRow NiagaraDataRow = UOC2GlobalData::GetResourceNiagaraDataRow(GetWorld(), *ResourceName);
+		if (nullptr != NiagaraDataRow.NiagaraSystem)
+		{
+			UNiagaraSystem* SteamFX = NiagaraDataRow.NiagaraSystem;
+			NiagaraComponent->SetAsset(SteamFX);
+
+			NiagaraComponent->SetRelativeLocation(NiagaraDataRow.Location);
+			NiagaraComponent->SetRelativeRotation(NiagaraDataRow.Rotation);
+		}
+	}
 }
 
 void APot::Tick(float DeltaTime)
@@ -337,6 +366,8 @@ void APot::SetAction_Implementation()
 			{
 				StatusWidgetComponent->bHiddenInGame = true;
 			});
+
+		SetNiagaraAsset(TEXT("Steam"));
 		break;
 	}
 	case EPotState::COOKED_WARNING:
@@ -383,6 +414,8 @@ void APot::SetAction_Implementation()
 
 		StatusWidgetComponent->bHiddenInGame = true;
 		SetIcon(TEXT("BurntFood"));
+
+		SetNiagaraAsset(TEXT("SteamDark"));
 		break;
 	}
 	default:
@@ -520,7 +553,7 @@ AIngredient* APot::GetRice()
 	return Rice;
 }
 
-void APot::ResetPot()
+void APot::ResetPot_Implementation()
 {
 	PrevPotState = EPotState::MAX;
 	PotState = EPotState::IDLE;
@@ -540,6 +573,8 @@ void APot::ResetPot()
 	IconWidgetComponent->bHiddenInGame = false;
 
 	ChangeNoneMaterial();
+
+	SetNiagara(false);
 }
 
 void APot::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -558,6 +593,7 @@ void APot::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProp
 	DOREPLIFETIME(APot, bCanBlink);
 	DOREPLIFETIME(APot, bIsCombinationSuccessful);
 	DOREPLIFETIME(APot, TargetColor);
+	DOREPLIFETIME(APot, NiagaraComponent);
 }
 
 // Table이 SetCookingTable 함수를 호출해주면 여기서 세팅
@@ -590,4 +626,37 @@ void APot::ForwardDetachToChef()
 	FRotator Rotation = FRotator(0, 180, 0);
 	StaticMeshComponent->SetRelativeLocation(InitPos);
 	StaticMeshComponent->SetRelativeRotation(Rotation);
+}
+
+void APot::SetNiagara(bool IsActivate)
+{
+	if (nullptr != NiagaraComponent->GetAsset())
+	{
+		if (true == IsActivate)
+		{
+			NiagaraComponent->Activate(true);
+		}
+		else
+		{
+			NiagaraComponent->Deactivate();
+		}	
+	}
+}
+
+void APot::SetNiagaraAsset(const FString& Name)
+{
+	if (nullptr != NiagaraComponent)
+	{
+		FString ResourceName = Name;
+		FResourceNiagaraDataRow NiagaraDataRow = UOC2GlobalData::GetResourceNiagaraDataRow(GetWorld(), *ResourceName);
+		if (nullptr != NiagaraDataRow.NiagaraSystem)
+		{
+			UNiagaraSystem* SteamFX = NiagaraDataRow.NiagaraSystem;
+			NiagaraComponent->SetAsset(SteamFX);
+
+			NiagaraComponent->SetRelativeLocation(NiagaraDataRow.Location);
+			NiagaraComponent->SetRelativeRotation(NiagaraDataRow.Rotation);
+			SetNiagara(true);
+		}
+	}
 }
