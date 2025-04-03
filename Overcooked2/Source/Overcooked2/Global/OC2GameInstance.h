@@ -92,6 +92,7 @@ public:
 
 	FPlateInitData GetPlateMesh(TArray<FRecipe>& Recipes);
 	bool FindRecipe(const FRecipeDataRow* RecipeDataRow, TArray<FRecipe>& Recipes);
+	bool CheckRecipe(TArray<FRecipe>& Recipes);
 
 	FOrder GetOrderByStageAndIndex(EOC2Stage OC2Stage, int Index);
 

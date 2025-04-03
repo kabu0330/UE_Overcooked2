@@ -50,7 +50,7 @@ public:
 	static void StartCookingStage(UWorld* World);
 
 	UFUNCTION(BlueprintCallable)
-	static void SubmitPlate(UWorld* World, ACooking* Plate);
+	static void SubmitPlate(UWorld* World, ACooking* Cooking);
 
 	UFUNCTION(BlueprintCallable)
 	static void CheckPlateToRecipe(UWorld* World, APlate* Plate);

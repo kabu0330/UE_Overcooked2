@@ -12,6 +12,7 @@
 #include "Global/OC2Global.h"
 #include "Global/State/GameState/CookingGameState.h"
 #include "Global/Manager/SpawnManager.h"
+#include "Global/Manager/StageManager.h"
 
 #include "UI/Cooking/CookingHUD.h"
 #include "UI/Cooking/UI/CookingWidget.h"
@@ -39,6 +40,10 @@ void ACookingGameMode::BeginPlay()
 	if (true == HasAuthority()) // 서버에서만 실행
 	{
 		SpawnManagerActor = GetWorld()->SpawnActor<ASpawnManager>(SpawnManagerClass);
+	}
+	if (true == HasAuthority())
+	{
+		StageManager = GetWorld()->SpawnActor<AStageManager>(StageManagerSpawner);
 	}
 
 	CurIdx = 0;
@@ -128,29 +133,29 @@ void ACookingGameMode::Stage(float DeltaTime)
 {
 	CheckTime += DeltaTime;
 
-	if (CheckTime >= UOC2Const::OrderSpawnDelay)
-	{
+	//if (CheckTime >= UOC2Const::OrderSpawnDelay)
+	//{
 
-		if (CookingGameState != nullptr)
-		{
-			FOrder Order = UOC2GlobalData::GetOrderByStageAndIndex(GetWorld(), UOC2Global::GetOC2GameInstance(GetWorld())->GetCurStage(), 1);
-			CookingGameState->Multicast_CreateNewOrder(Order);
-		}
-	}
+	//	if (CookingGameState != nullptr)
+	//	{
+	//		FOrder Order = UOC2GlobalData::GetOrderByStageAndIndex(GetWorld(), UOC2Global::GetOC2GameInstance(GetWorld())->GetCurStage(), 0);
+	//		CookingGameState->Multicast_CreateNewOrder(Order);
+	//	}
+	//}
 
-	if (CheckTime >= 6.0f)
-	{
-		if (CookingGameState != nullptr)
-		{
-			FOrder Order = UOC2GlobalData::GetOrderByStageAndIndex(GetWorld(), UOC2Global::GetOC2GameInstance(GetWorld())->GetCurStage(), 1);
+	//if (CheckTime >= 6.0f)
+	//{
+	//	if (CookingGameState != nullptr)
+	//	{
+	//		FOrder Order = UOC2GlobalData::GetOrderByStageAndIndex(GetWorld(), UOC2Global::GetOC2GameInstance(GetWorld())->GetCurStage(), 0);
 
-			CookingGameState->Multicast_CompleteOrder(Order);
-			CookingGameState->Multicast_BlinkOrderUI();
+	//		CookingGameState->Multicast_CompleteOrder(Order);
+	//		CookingGameState->Multicast_BlinkOrderUI();
 
-			CheckTime = 0.0f;
+	//		CheckTime = 0.0f;
 
-		}
-	}
+	//	}
+	//}
 }
 
 void ACookingGameMode::EntryScore()

@@ -4,10 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "LevelContent/Cook/Cooking.h"
-
 #include "Global/OC2Const.h"
 #include "Global/OC2Struct.h"
 #include "Global/OC2Enum.h"
+
 
 #include "Pot.generated.h"
 
@@ -43,7 +43,9 @@ public:
 	}
 
 	// 냄비에 들어있는 모든 데이터 삭제
+	UFUNCTION(NetMulticast, Reliable)
 	void ResetPot();
+	void ResetPot_Implementation();
 	
 	bool IsCombinationSuccessful() const
 	{
@@ -57,36 +59,41 @@ public:
 	}
 
 protected:
+	// override
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 
-	UMaterialInstanceDynamic* LoadNoneMaterial();
-	void Cook(float DeltaTime);
-
-	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
-	void SetAction();
-	void SetAction_Implementation();
-
-	void ChangeMaterialColor(FVector4 Color);
-
-	UFUNCTION()
-	void SetSoupMaterial();
-
-
-	bool IsBoiling();
-
-	void CanBlink();
-	void BlinkTexture(float DeltaTime);
-	void UpdateTextureVisibilityOnTable();
-
-	void ChangeNoneMaterial();
-
-	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
-
+	// Attach & Deatach
 	virtual void ForwardCookingTable(class ACookingTable* Table) override;
 	virtual void ForwardAttachToChef() override;
 	virtual void ForwardDetachToChef() override;
 
+	// Network
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
+
+
+	// 냄비 상태 동기화 함수, Pot 로직 핵심 함수
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	void SetAction(); 
+	void SetAction_Implementation();
+
+	bool IsBoiling();
+	void Cook(float DeltaTime);
+	void ChangeState(EPotState CurState, EPotState NextState, float TransitionTime);
+
+
+	// Mesh And Dynamic Material
+	UMaterialInstanceDynamic* LoadNoneMaterial();
+	void ChangeNoneMaterial();
+
+	UFUNCTION()
+	void SetSoupMaterial();
+	void ChangeSoupColor(float DeltaTime);
+	void ChangeMaterialColor(FVector4 Color);
+	void UpdateChangingColor();
+
+
+	// Texture
 	void InitGaugeWidget();
 	void InitStatusWidget();
 	void InitIconWidget();
@@ -94,15 +101,20 @@ protected:
 	void InitWidgetSetting(class UWidgetComponent* WidgetComponent);
 	void UpdateGaugeWidget();
 
-	void UpdateChangingColor();
-
 	UTexture2D* GetTexture(const FString& RowName);
 	void SetIcon(const FString& RowName);
 
 
-	void ChangeState(EPotState CurState, EPotState NextState, float TransitionTime);
-	void ChangeSoupColor(float DeltaTime);
+	// Blink Effect
+	void CanBlink();
+	void BlinkTexture(float DeltaTime);
+	void UpdateTextureVisibilityOnTable();
 
+
+	// Niagara
+	void InitNiagara();
+	void SetNiagara(bool IsActivate);
+	void SetNiagaraAsset(const FString& Name);
 
 private:
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowprivateAccess = "true"))
@@ -200,6 +212,12 @@ private:
 	UPROPERTY(Replicated)
 	bool bCanColorChange = false; // 색상이 변할 수 있는 상태인지, 캐릭터가 들고 내릴 때 판단
 	// 
+
+
+	// 이펙트
+	UPROPERTY(Replicated)
+	class UNiagaraComponent* NiagaraComponent = nullptr;
+
 
 
 	UPROPERTY()

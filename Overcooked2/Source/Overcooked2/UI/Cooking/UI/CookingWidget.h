@@ -19,7 +19,7 @@ public:
 
     // 주문 완료 처리
     UFUNCTION(BlueprintCallable, Category = "OC2UI")
-    void OrderComplete(int Index);
+    void OrderComplete(int Index, int Score = 10);
 
     // 새로운 주문 생성
     UFUNCTION(BlueprintCallable, Category = "OC2UI")
@@ -34,6 +34,9 @@ public:
 
     UFUNCTION(BlueprintCallable, Category = "OC2UI")
     void ShowReadyImageAnim();
+
+    void CheckFeverTime(int TipCount);
+
 
     // UI 바인딩 (총 5개의 주문 슬롯)
     UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
