@@ -13,6 +13,24 @@
 #include "UI/Cooking/UI/CookingWidget.h"
 
 #include "Global/GameMode/CookingGameMode.h"
+#include "Global/Data/OC2GlobalData.h"
+#include "Global/OC2GameInstance.h"
+
+ACookingGameState::ACookingGameState()
+{
+}
+
+void ACookingGameState::BeginPlay()
+{
+	Super::BeginPlay();
+}
+
+void ACookingGameState::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+}
+
 
 void ACookingGameState::Multicast_CompleteOrder_Implementation(FOrder Order)
 {
@@ -77,6 +95,22 @@ void ACookingGameState::Server_SubmitPlate_Implementation(ACooking* Plate)
 		if (nullptr != GameMode)
 		{
 			/*if(Plate)*/
+		}
+	}
+}
+
+void ACookingGameState::Multicast_AddScore_Implementation(int Score)
+{
+	// 모든 클라이언트에서 실행됨
+	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
+
+	if (nullptr != PlayerController)
+	{
+		ACookingHUD* CookingHUD = Cast<ACookingHUD>(PlayerController->GetHUD());
+
+		if (nullptr != CookingHUD && nullptr != CookingHUD->CookWidget)
+		{
+			CookingHUD->CookWidget->WrongOrder();
 		}
 	}
 }
