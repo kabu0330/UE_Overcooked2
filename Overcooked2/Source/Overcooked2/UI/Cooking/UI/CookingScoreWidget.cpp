@@ -65,26 +65,30 @@ void UCookingScoreWidget::NativeTick(const FGeometry& MyGeometry, float DeltaTim
 
 void UCookingScoreWidget::SetTipCount(int TipCount)
 {
-    //FString TexturePath = TEXT("/Game/Resources/UI/Order/Dish/ui_cheeseburger.ui_cheeseburger");
-    //class UTexture2D* Texture = Cast<UTexture2D>(StaticLoadObject(UTexture2D::StaticClass(), nullptr, *TexturePath));
+
+    FString TexturePath = TEXT("/Game/Resources/UI/Cooking/Coin/coin_banner_bar.coin_banner_bar");
 
     if (TipCount <= 1)
     {
-       // CoinBannerBar->SetBrushFromTexture(Texture);
+        TexturePath = TEXT("/Game/Resources/UI/Cooking/Coin/coin_banner_bar.coin_banner_bar");
     }
     else if (TipCount == 2)
     {
-
+        TexturePath = TEXT("/Game/Resources/UI/Cooking/Coin/coin_banner_bar_01.coin_banner_bar_01");
     }
     else if (TipCount == 3)
     {
-
+        TexturePath = TEXT("/Game/Resources/UI/Cooking/Coin/coin_banner_bar_02.coin_banner_bar_02");
     }
     else if (TipCount == 4)
     {
-
+        TexturePath = TEXT("/Game/Resources/UI/Cooking/Coin/coin_banner_bar_03.coin_banner_bar_03");
     }
+
+    class UTexture2D* Texture = Cast<UTexture2D>(StaticLoadObject(UTexture2D::StaticClass(), nullptr, *TexturePath));
+    CoinBannerBar->SetBrushFromTexture(Texture);
 }
+
 
 void UCookingScoreWidget::PlayCoinFlameAnimation()
 {

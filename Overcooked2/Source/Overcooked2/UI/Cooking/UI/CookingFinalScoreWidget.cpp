@@ -4,7 +4,11 @@
 #include "UI/Cooking/UI/CookingFinalScoreWidget.h"
 #include "Components/CanvasPanel.h"
 #include "Components/Image.h"
+#include "UI/Cooking/CaptureComponent2D.h"
+#include "Character/OC2Character.h"
+#include "Engine/TextureRenderTarget2D.h"
 
+#include "Kismet/GameplayStatics.h"
 
 void UCookingFinalScoreWidget::NativeOnInitialized()
 {
@@ -18,8 +22,33 @@ void UCookingFinalScoreWidget::NativeOnInitialized()
 	}
 }
 
+
+
 void UCookingFinalScoreWidget::ShowPlayers(int Index)
 {
+    {
+        AOC2Character* PlayerCharacter = Cast<AOC2Character>(UGameplayStatics::GetPlayerCharacter(this, 0));
+        if (!PlayerCharacter) return;
+
+        UCaptureComponent2D* CaptureComponent = PlayerCharacter->FindComponentByClass<UCaptureComponent2D>();
+        if (!CaptureComponent) return;
+
+        UTextureRenderTarget2D* RenderedTexture = CaptureComponent->TextureTarget;
+        if (!RenderedTexture) return;
+
+
+        UMaterialInstanceDynamic* DynamicMaterial = PlayerImg_0->GetDynamicMaterial();
+        if (DynamicMaterial)
+        {
+            DynamicMaterial->SetTextureParameterValue(FName("TextureParam"), Cast<UTexture>(RenderedTexture));
+
+            PlayerImg_0->SetBrushFromMaterial(DynamicMaterial);
+        }
+
+
+    }
+
+
     FString PlayerNum = "Player_" + FString::FromInt(Index);
     UCanvasPanel* Player = FindChildWidget<UCanvasPanel>(PlayerNum, PlayerCanvas);
 
