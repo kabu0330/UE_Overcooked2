@@ -60,6 +60,42 @@ void UCookingWidget::NativeOnInitialized()
 
 }
 
+void UCookingWidget::ShowReadyImageAnim()
+{
+    ReadyCanvas->SetRenderScale({ 0.0f, 0.0f });
+    ReadyCanvas->SetVisibility(ESlateVisibility::Visible);
+
+    GetWorld()->GetTimerManager().SetTimer(ReadyTimerHandle, this, &UCookingWidget::PlayReadyImageAnim, 0.01f, true);
+}
+
+
+void UCookingWidget::PlayReadyImageAnim()
+{
+    if (ReadyTimeElapsed >= 3.0f)
+    {
+        GoCanvas->SetVisibility(ESlateVisibility::Collapsed);
+        GetWorld()->GetTimerManager().ClearTimer(ReadyTimerHandle);
+    }
+
+    if (ReadyCanvas->GetRenderTransform().Scale.X < 1.0f && ReadyTimeElapsed < 2.0f)
+    {
+        ReadyCanvas->SetRenderScale({ ReadyCanvas->GetRenderTransform().Scale.X + ReadyOffset, ReadyCanvas->GetRenderTransform().Scale.Y + ReadyOffset });
+    }
+    else if (ReadyCanvas->GetRenderTransform().Scale.X >= 1.0f && ReadyTimeElapsed <= 2.1f && ReadyTimeElapsed >= 2.0f)
+    {
+        ReadyCanvas->SetVisibility(ESlateVisibility::Collapsed);
+        ReadyOffset = 0.0f;
+        GoCanvas->SetRenderScale({ 0.0f, 0.0f });
+        GoCanvas->SetVisibility(ESlateVisibility::Visible);
+    }
+    else if (GoCanvas->GetRenderTransform().Scale.X <= 1.0f && ReadyTimeElapsed < 3.0f)
+    {
+        GoCanvas->SetRenderScale({ GoCanvas->GetRenderTransform().Scale.X + ReadyOffset, GoCanvas->GetRenderTransform().Scale.Y + ReadyOffset });
+    }
+
+    ReadyTimeElapsed += 0.01;
+    ReadyOffset += 0.01;
+}
 
 
 void UCookingWidget::NativeTick(const FGeometry& MyGeometry, float DeltaTime)
@@ -72,6 +108,10 @@ void UCookingWidget::NativeTick(const FGeometry& MyGeometry, float DeltaTime)
         UpdateOrderTime(i, DeltaTime);
     }
 }
+
+
+
+
 
 void UCookingWidget::PlayTimeoutWidget()
 {

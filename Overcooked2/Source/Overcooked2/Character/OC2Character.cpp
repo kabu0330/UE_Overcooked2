@@ -59,18 +59,14 @@ void AOC2Character::MoveCharacter(const FInputActionValue& Value)
 	//	GetMovementComponent()->AddInputVector(MovementInput);
 	//}
 
+	FQuat ActorRot = GetActorForwardVector().Rotation().Quaternion();
+	FQuat TargetRot = FRotationMatrix::MakeFromX(MovementInput).Rotator().Quaternion();
 
-	float CurrentYaw = GetActorRotation().Yaw;
-	float TargetYaw = MovementInput.Rotation().Yaw;
+	// 두 쿼터니언의 Yaw 차이를 계산
+	float DeltaYaw = (TargetRot * ActorRot.Inverse()).Rotator().Yaw;
 
-	float InterpSpeed = 10.0f; // 회전 속도 조절 가능
-	float NewYaw = FMath::FInterpTo(CurrentYaw, TargetYaw, GetWorld()->GetDeltaSeconds(), InterpSpeed);
-
-	float YawDelta = FMath::FindDeltaAngleDegrees(CurrentYaw, NewYaw);
-
-	AddControllerYawInput(YawDelta);
-
-
+	// Alpha 값을 곱해 부드럽게 회전 적용
+	AddControllerYawInput(DeltaYaw * Alpha);
 }
 
 // Called when the game starts or when spawned
