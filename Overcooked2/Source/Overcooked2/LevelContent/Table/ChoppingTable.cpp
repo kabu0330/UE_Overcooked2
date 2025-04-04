@@ -40,7 +40,7 @@ void AChoppingTable::BeginPlay()
 	ProgressBarComponent->SetDrawAtDesiredSize(true);   // 위젯의 실제 크기로 렌더
 	ProgressBarComponent->SetPivot(FVector2D(0.5f, 0.5f)); // 중심 정렬
 	ProgressBarComponent->SetWidgetSpace(EWidgetSpace::Screen); // 월드 공간에서 3D처럼 보이게
-	ProgressBarComponent->bHiddenInGame = false;
+	ProgressBarComponent->bHiddenInGame = true;
 
 	// 카메라를 향하도록 설정
 	ProgressBarComponent->SetTwoSided(true);
@@ -67,6 +67,8 @@ void AChoppingTable::Tick(float DeltaTime)
 	if (bChoppingDone == true)
 	{
 		ChoppingIsDone();
+		FVector Loc = CookingPtr->GetActorLocation();
+		int a = 0;
 	}
 }
 
@@ -127,7 +129,7 @@ void AChoppingTable::ChoppingIsDone()
 	PlacedIngredient->ChangeState(EIngredientState::EIS_CHOPPED);
 	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Turquoise, "Chopping Done");
 	CookingPtr = Cast<ACooking>(PlacedIngredient);
-
+	ProgressBarComponent->SetHiddenInGame(true);
 	//ProgressBar->bDestroy = true;
 	//ProgressBar = nullptr;
 
