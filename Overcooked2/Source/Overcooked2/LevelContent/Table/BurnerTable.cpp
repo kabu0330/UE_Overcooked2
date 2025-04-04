@@ -30,6 +30,23 @@ void ABurnerTable::BeginPlay()
 void ABurnerTable::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (nullptr != CookingPtr)
+	{
+		APot* TempPot = Cast<APot>(CookingPtr);
+		if (true == TempPot->IsRiceInPot())
+		{
+			FlameMeshComponent->SetHiddenInGame(false);
+		}
+		else
+		{
+			FlameMeshComponent->SetHiddenInGame(true);
+		}
+	}
+	else
+	{
+		FlameMeshComponent->SetHiddenInGame(true);
+	}
 }
 
 ACooking* ABurnerTable::Interact(AActor* ChefActor)
