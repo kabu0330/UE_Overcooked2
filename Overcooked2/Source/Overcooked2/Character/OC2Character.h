@@ -51,6 +51,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	bool IsDashing() { return bIsDashing; }
+
+	UFUNCTION(BlueprintCallable)
+	bool IsWashing() { return bIsWashing; }
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
