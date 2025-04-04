@@ -45,6 +45,7 @@ void AChoppingTable::BeginPlay()
 void AChoppingTable::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	CheckChefIsChopping();
 
 	if (true == bTimerActivated)
 	{
@@ -137,4 +138,17 @@ void AChoppingTable::TimerUpdate(float DeltaTime)
 {
 	Timer += DeltaTime;
 	CurTime = Timer;
+}
+
+void AChoppingTable::CheckChefIsChopping()
+{
+	if (nullptr != ChefPtr)
+	{
+		if (false == ChefPtr->IsCooking())
+		{
+			bTimerActivated = false;
+			ChefPtr = nullptr;
+			ProgressBarComponent->SetHiddenInGame(true);
+		}
+	}
 }
