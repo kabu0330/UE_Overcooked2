@@ -23,5 +23,19 @@ public:
 
 	virtual void PlaceItem(ACooking* ReceivedCooking) override;
 
-	void DoTheDishes();
+	void DoTheDishes(class AOC2Character* ChefActor);
+
+	void CheckChefIsWashing();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CleanPlate")
+	USceneComponent* CleanPlateComponent = nullptr;
+
+	class AOC2Character* ChefPtr = nullptr;
+
+protected:
+
+	float Timer = 0.0f;
+	bool bTimerActivated = false;
+	bool bWashingDone = false;
+
 };
