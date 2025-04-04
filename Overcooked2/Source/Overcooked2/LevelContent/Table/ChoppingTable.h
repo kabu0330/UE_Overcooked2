@@ -58,6 +58,8 @@ public:
 		return CurTime;
 	}
 
+	void CheckChefIsChopping();
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking")
 	USceneComponent* ComponentForProgressBar = nullptr;
 
