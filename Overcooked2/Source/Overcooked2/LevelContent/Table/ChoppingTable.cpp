@@ -15,15 +15,10 @@ AChoppingTable::AChoppingTable()
 
 	ProgressBarComponent = CreateDefaultSubobject<UWidgetComponent>("ProgressBar");
 	ProgressBarComponent->SetupAttachment(RootComponent);
+
+	KnifeMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>("Knife");
+	KnifeMeshComponent->SetupAttachment(RootComponent);
 	 
-
-	/*static ConstructorHelpers::FClassFinder<UUserWidget> Widget(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/Blueprints/LevelContent/Table/BP_ProgressBarWidget.BP_ProgressBarWidget''"));	
-	if (true == Widget.Succeeded())
-	{
-		ProgressBarComponent->SetWidgetClass(Widget.Class);
-		ProgressBarComponent->SetWidgetSpace(EWidgetSpace::Screen);
-	}*/
-
 }
 
 void AChoppingTable::BeginPlay()
@@ -45,6 +40,10 @@ void AChoppingTable::BeginPlay()
 	// 카메라를 향하도록 설정
 	ProgressBarComponent->SetTwoSided(true);
 	ProgressBarComponent->SetTickWhenOffscreen(true);
+
+	UStaticMesh* Mesh = LoadObject<UStaticMesh>(nullptr, TEXT("/Game/Resources/LevelResource/TableResource/Countertop/Knife"));
+	KnifeMeshComponent->SetStaticMesh(Mesh);
+	KnifeMeshComponent->SetHiddenInGame(false);
 }
 
 void AChoppingTable::Tick(float DeltaTime)
@@ -69,6 +68,15 @@ void AChoppingTable::Tick(float DeltaTime)
 		ChoppingIsDone();
 		FVector Loc = CookingPtr->GetActorLocation();
 		int a = 0;
+	}
+
+	if (nullptr != CookingPtr)
+	{
+		KnifeMeshComponent->SetHiddenInGame(true);
+	}
+	else
+	{
+		KnifeMeshComponent->SetHiddenInGame(false);
 	}
 }
 
@@ -144,3 +152,4 @@ void AChoppingTable::TimerUpdate(float DeltaTime)
 	CurTime = Timer;
 }
 
+// / Game / Resources / LevelResource / TableResource / Countertop / Knife
