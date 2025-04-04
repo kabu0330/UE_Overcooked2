@@ -10,15 +10,11 @@
 
 AChoppingTable::AChoppingTable()
 {
-	/*ComponentForProgressBar = CreateDefaultSubobject<USceneComponent>("ProgressBar");
-	ComponentForProgressBar->SetupAttachment(RootComponent);*/
-
 	ProgressBarComponent = CreateDefaultSubobject<UWidgetComponent>("ProgressBar");
 	ProgressBarComponent->SetupAttachment(RootComponent);
 
 	KnifeMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>("Knife");
 	KnifeMeshComponent->SetupAttachment(RootComponent);
-	 
 }
 
 void AChoppingTable::BeginPlay()
@@ -38,7 +34,7 @@ void AChoppingTable::BeginPlay()
 	ProgressBarComponent->bHiddenInGame = true;
 
 	// 카메라를 향하도록 설정
-	ProgressBarComponent->SetTwoSided(true);
+	ProgressBarComponent->SetTwoSided(true); 
 	ProgressBarComponent->SetTickWhenOffscreen(true);
 
 	UStaticMesh* Mesh = LoadObject<UStaticMesh>(nullptr, TEXT("/Game/Resources/LevelResource/TableResource/Countertop/Knife"));
@@ -54,20 +50,19 @@ void AChoppingTable::Tick(float DeltaTime)
 	{
 		TimerUpdate(DeltaTime);
 
-		if (Timer > 2.0f)
+		if (Timer > 4.0f)
 		{
 			bChoppingDone = true;
 		}
 	}
-	Ratio += DeltaTime * 1.0f;
 
+	Timer += DeltaTime;
+	Ratio = (Timer / 0.8f) * 0.2f;
 	WidgetPtr->SetProgressTimeRatio(Ratio);
 
 	if (bChoppingDone == true)
 	{
 		ChoppingIsDone();
-		FVector Loc = CookingPtr->GetActorLocation();
-		int a = 0;
 	}
 
 	if (nullptr != CookingPtr)
@@ -108,7 +103,7 @@ void AChoppingTable::ChopIngredient(AActor* ChefActor)
 		{
 			AIngredient* PlacedIngredient = Cast<AIngredient>(CookingPtr);
 
-			//if (true == PlacedIngredient->IsChoppable())
+			if (true == PlacedIngredient->IsChoppable())
 			{
 				ChefPtr->Chopping(true);
 
@@ -118,12 +113,6 @@ void AChoppingTable::ChopIngredient(AActor* ChefActor)
 
 				ProgressBarComponent->SetHiddenInGame(false);
 
-
-				/*ProgressBar = GetWorld()->SpawnActor<ATableProgressBar>();
-				ProgressBar->SetActorLocation(ComponentForProgressBar->GetComponentLocation());
-				FVector Scale = CookingPtr->GetActorScale3D();
-				ProgressBar->SetActorScale3D(Scale * 0.3);
-				ProgressBar->AddActorWorldRotation({ 0.0, 00.0, -60.0 });*/
 			}
 		}
 	}
@@ -138,8 +127,6 @@ void AChoppingTable::ChoppingIsDone()
 	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Turquoise, "Chopping Done");
 	CookingPtr = Cast<ACooking>(PlacedIngredient);
 	ProgressBarComponent->SetHiddenInGame(true);
-	//ProgressBar->bDestroy = true;
-	//ProgressBar = nullptr;
 
 	ChefPtr->Chopping(false);
 	ChefPtr = nullptr;
@@ -151,5 +138,3 @@ void AChoppingTable::TimerUpdate(float DeltaTime)
 	Timer += DeltaTime;
 	CurTime = Timer;
 }
-
-// / Game / Resources / LevelResource / TableResource / Countertop / Knife
