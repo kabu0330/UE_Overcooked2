@@ -25,7 +25,12 @@ public:
 
 	void DoTheDishes(class AOC2Character* ChefActor);
 
+	void WashingIsDone();
+	
 	void CheckChefIsWashing();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking")
+	USceneComponent* ComponentForProgressBar = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CleanPlate")
 	USceneComponent* CleanPlateComponent = nullptr;
@@ -37,5 +42,15 @@ protected:
 	float Timer = 0.0f;
 	bool bTimerActivated = false;
 	bool bWashingDone = false;
+
+	float Ratio = 0.0f;
+
+	UPROPERTY()
+	class UWidgetComponent* ProgressBarComponent = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Table", meta = (AllowprivateAccess = "true"))
+	TSubclassOf<UUserWidget> TSubClassWidget = nullptr;
+
+	class UGaugeTextureWidget* WidgetPtr = nullptr;
 
 };

@@ -51,14 +51,13 @@ void AChoppingTable::Tick(float DeltaTime)
 	{
 		TimerUpdate(DeltaTime);
 
-		if (Timer > 4.0f)
+		if (Timer > 2.0f)
 		{
 			bChoppingDone = true;
 		}
 	}
 
-	Timer += DeltaTime;
-	Ratio = (Timer / 0.8f) * 0.2f;
+	Ratio = (Timer / 0.4f) * 0.2f;
 	WidgetPtr->SetProgressTimeRatio(Ratio);
 
 	if (bChoppingDone == true)
