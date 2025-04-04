@@ -21,6 +21,15 @@ public:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
 	class UImage* PlayerImg_0 = nullptr;
 	
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
+	class UImage* PlayerImg_1 = nullptr;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RenderTarget")
+	UTextureRenderTarget2D* RenderTarget0;
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RenderTarget")
+	UTextureRenderTarget2D* RenderTarget1;
 
 protected:
 	virtual void NativeOnInitialized() override;

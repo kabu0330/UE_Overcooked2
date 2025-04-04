@@ -19,6 +19,8 @@ public:
 
 	void ShowOnlyActor(class AActor* Character);
 
+
+
 protected:
 	void BeginPlay();
 	void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction);
