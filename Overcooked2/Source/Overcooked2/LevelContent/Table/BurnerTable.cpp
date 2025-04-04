@@ -9,12 +9,17 @@
 
 ABurnerTable::ABurnerTable()
 {
-
+	FlameMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>("Flame");
+	FlameMeshComponent->SetupAttachment(RootComponent);
 }
 
 void ABurnerTable::BeginPlay()
 {
 	Super::BeginPlay();
+
+	UStaticMesh* Mesh = LoadObject<UStaticMesh>(nullptr, TEXT("/Game/Resources/LevelResource/TableResource/BurnerTable/SM_CookerFlame"));
+	FlameMeshComponent->SetStaticMesh(Mesh);
+	FlameMeshComponent->SetHiddenInGame(true);
 
 	if (bSpawnWhenGameStarted)
 	{
