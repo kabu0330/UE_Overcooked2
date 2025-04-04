@@ -34,6 +34,9 @@ public:
 	void RequestSpawnPot();
 	void RequestSpawnPot_Implementation();
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking")
+	class UStaticMeshComponent* FlameMeshComponent = nullptr;
+
 private:
 
 };

@@ -76,5 +76,6 @@ private:
 
 	FRotator IngreRotation = FRotator::ZeroRotator;
 	FVector IngreLocation = FVector::ZeroVector;
+	FVector IngreScale = FVector::ZeroVector;
 
 };

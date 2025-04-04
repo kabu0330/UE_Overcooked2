@@ -61,6 +61,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking")
 	USceneComponent* ComponentForProgressBar = nullptr;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking")
+	class UStaticMeshComponent* KnifeMeshComponent = nullptr;
+
 protected:
 
 private:
@@ -81,4 +84,5 @@ private:
 
 	class UGaugeTextureWidget* WidgetPtr = nullptr;
 	//class ATableProgressBar* ProgressBar = nullptr;
+
 };

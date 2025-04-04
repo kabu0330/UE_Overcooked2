@@ -39,17 +39,22 @@ void ACookingTable::PlaceItem(ACooking* ReceivedCooking)
 	CookingPtr = ReceivedCooking;
 	CookingPtr->SetCookingTable_Implementation(this);
 	CookingPtr->AttachToComponent(ComponentForCooking, FAttachmentTransformRules::KeepRelativeTransform);
-
-	//AIngredient* TempIngredient = Cast<AIngredient>(CookingPtr);
-	//if (nullptr != TempIngredient)
-	//{
-	//	SetIngredientOffset(TempIngredient);
-	//	CookingPtr->GetStaticMeshComponent()->SetRelativeRotation(IngreRotation);
-	//	CookingPtr->GetStaticMeshComponent()->SetRelativeLocation(IngreLocation);
-	//}
-
 	CookingPtr->SetActorLocation(ComponentForCooking->GetComponentLocation());
-	bIsOccupied = true;
+	
+	AIngredient* TempIngredient = Cast<AIngredient>(CookingPtr);
+	if (nullptr != TempIngredient)
+	{
+		SetIngredientOffset(TempIngredient);
+		CookingPtr->GetStaticMeshComponent()->SetRelativeRotation(IngreRotation);
+		CookingPtr->GetStaticMeshComponent()->SetRelativeScale3D(IngreScale);
+		if (EIngredientType::EIT_PRAWN == TempIngredient->GetIngredientType())
+		{
+			IngreLocation += FVector::UnitZ() * 40.0f;
+		}
+			CookingPtr->SetActorRelativeLocation(IngreLocation);
+	}
+
+	//bIsOccupied = true;
 }
 
 void ACookingTable::SetIngredientOffset(AIngredient* Ingredient)
@@ -61,4 +66,5 @@ void ACookingTable::SetIngredientOffset(AIngredient* Ingredient)
 	const FIngredientDataRow* IngredientDataTable = &GameInst->GetIngredientDataRow(Name);
 	IngreRotation = IngredientDataTable->Rotation;
 	IngreLocation = IngredientDataTable->Location;
+	IngreScale = IngredientDataTable->Scale;
 }

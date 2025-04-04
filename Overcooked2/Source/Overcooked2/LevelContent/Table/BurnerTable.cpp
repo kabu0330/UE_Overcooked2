@@ -9,12 +9,17 @@
 
 ABurnerTable::ABurnerTable()
 {
-
+	FlameMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>("Flame");
+	FlameMeshComponent->SetupAttachment(RootComponent);
 }
 
 void ABurnerTable::BeginPlay()
 {
 	Super::BeginPlay();
+
+	UStaticMesh* Mesh = LoadObject<UStaticMesh>(nullptr, TEXT("/Game/Resources/LevelResource/TableResource/BurnerTable/SM_CookerFlame"));
+	FlameMeshComponent->SetStaticMesh(Mesh);
+	FlameMeshComponent->SetHiddenInGame(true);
 
 	if (bSpawnWhenGameStarted)
 	{
@@ -25,6 +30,23 @@ void ABurnerTable::BeginPlay()
 void ABurnerTable::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (nullptr != CookingPtr)
+	{
+		APot* TempPot = Cast<APot>(CookingPtr);
+		if (true == TempPot->IsRiceInPot())
+		{
+			FlameMeshComponent->SetHiddenInGame(false);
+		}
+		else
+		{
+			FlameMeshComponent->SetHiddenInGame(true);
+		}
+	}
+	else
+	{
+		FlameMeshComponent->SetHiddenInGame(true);
+	}
 }
 
 ACooking* ABurnerTable::Interact(AActor* ChefActor)

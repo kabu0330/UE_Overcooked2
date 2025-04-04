@@ -9,6 +9,7 @@
 #include "LevelContent/Table/ChoppingTable.h"
 #include "LevelContent/Table/BurnerTable.h"
 #include "LevelContent/Table/NonTable/GarbageCan.h"
+#include "LevelContent/Table/NonTable/SinkTable.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "UI/Cooking/CaptureComponent2D.h"
 #include "Net/UnrealNetwork.h"
@@ -52,6 +53,11 @@ void AOC2Character::MoveCharacter(const FInputActionValue& Value)
 	{
 		Chopping(false);
 		Cast<AChoppingTable>(SelectedOC2Actor)->TimerSwitch(false);
+	}
+
+	if (bIsWashing == true)
+	{
+		Washing(false);
 	}
 
 	if (bIsDashing == false && bCanThrowing == false)
@@ -120,8 +126,8 @@ void AOC2Character::CheckDash(float DeltaTime)
 		}
 		else
 		{
-			
-			SetActorLocation(GetActorLocation() + GetActorForwardVector()*DashPower*DeltaTime, true);
+
+			SetActorLocation(GetActorLocation() + GetActorForwardVector() * DashPower * DeltaTime, true);
 		}
 	}
 }
@@ -279,7 +285,7 @@ void AOC2Character::Interact_Implementation()
 			{
 				Plate->SetPlateState(EPlateState::EMPTY);
 			}
-			else if(Ingredient != nullptr)
+			else if (Ingredient != nullptr)
 			{
 				Table->PlaceItem(Ingredient);
 			}
@@ -324,7 +330,7 @@ void AOC2Character::Interact_Implementation()
 
 				//잡고있는 타입 캐스트
 				AIngredient* GrabIng = Cast<AIngredient>(GrabbedObject);
-				APlate* GrabPlate= Cast<APlate>(GrabbedObject);
+				APlate* GrabPlate = Cast<APlate>(GrabbedObject);
 				APot* GrabPot = Cast<APot>(GrabbedObject);
 				if (GrabIng != nullptr)
 				{
@@ -412,10 +418,17 @@ void AOC2Character::DoActionPress_Implementation()
 	}
 	else
 	{
-		AChoppingTable* Table = Cast<AChoppingTable>(SelectedOC2Actor);
+		ACookingTable* Table = Cast<ACookingTable>(SelectedOC2Actor);
 		if (Table != nullptr)
 		{
-			Table->ChopIngredient(this);
+			if (Table->IsA<AChoppingTable>())
+			{
+				Cast<AChoppingTable>(Table)->ChopIngredient(this);
+			}
+			if (Table->IsA<ASinkTable>())
+			{
+				Washing(true);
+			}
 		}
 	}
 }
@@ -441,13 +454,14 @@ void AOC2Character::Throwing_Implementation()
 		if (PrimitiveComp)
 		{
 			GrabbedObject->DetachFromChef(this);
-			GrabbedObject->SetActorLocation(GrabComponent->GetComponentLocation());
+			GrabbedObject->SetActorLocation(GrabComponent->GetComponentLocation() + FVector(0, 0, 10));
 			ThrowingObject->SetThrower(this);
 			ThrowingObject->SetThrowing(true);
 
 			// 4️⃣ 던질 방향과 세기 설정
-			FVector ThrowDirection = GetActorForwardVector();  // 캐릭터가 바라보는 방향
-			float ThrowStrength = 1500.0f;  // 던지는 힘 조절
+			FVector ThrowDirection = (GetActorForwardVector() + FVector(0, 0, 0.2f)).GetSafeNormal();  // 캐릭터가 바라보는 방향
+
+			float ThrowStrength = 1200.0f;  // 던지는 힘 조절
 
 			// 5️⃣ 물리적 임펄스 추가 (던지기)
 			PrimitiveComp->AddImpulse(ThrowDirection * ThrowStrength, NAME_None, true);
@@ -456,9 +470,7 @@ void AOC2Character::Throwing_Implementation()
 		// 6️⃣ 잡고 있던 객체 초기화
 		bCanThrowing = false;
 		GrabbedObject = nullptr;
-
 	}
-
 }
 
 void AOC2Character::Chopping_Implementation(bool State)
@@ -501,7 +513,7 @@ void AOC2Character::CheckInteract()
 		QueryParams
 	);
 
-	UE_LOG(LogTemp, Log, TEXT("%d"), HitResults.Num());
+	//UE_LOG(LogTemp, Log, TEXT("%d"), HitResults.Num());
 
 	if (bHit)
 	{
@@ -597,7 +609,7 @@ void AOC2Character::OnOverlapCheck(UPrimitiveComponent* OverlappedComponent, AAc
 	if (OtherActor)
 	{
 		AIngredient* Ingredient = Cast<AIngredient>(OtherActor);
-		if (Ingredient) // 캡슐과 충돌한 경우w
+		if (Ingredient != nullptr) // 캡슐과 충돌한 경우w
 		{
 			if (Ingredient->IsThrowing() && Ingredient->GetThrower() != this && GrabbedObject == nullptr)
 			{
@@ -614,13 +626,13 @@ void AOC2Character::OnOverlapCheck(UPrimitiveComponent* OverlappedComponent, AAc
 				FVector Dir = (Ingredient->GetThrower()->GetActorLocation() - GetActorLocation());
 				Dir.Z = 0;
 				Dir = Dir.GetSafeNormal();
-				
 
 				if (GetController() != nullptr)
 				{
 					GetController()->SetControlRotation(Dir.Rotation());
 				}
 
+				DrawDebugSphere(GetWorld(), OverlappedComponent->GetComponentLocation(), CheckOverlap->GetScaledSphereRadius(), 20, FColor::Green, false, 0.0f);
 
 			}
 		}
