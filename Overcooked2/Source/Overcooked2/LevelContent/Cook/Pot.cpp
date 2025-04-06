@@ -426,7 +426,7 @@ void APot::SetAction_Implementation()
 void APot::ChangeMaterialColor(FVector4 Color)
 {
 	int32 NumSoupMaterials = SoupSkeletalMeshComponent->GetMaterials().Num();
-	for (int32 i = 1; i < NumSoupMaterials; i++)
+	for (int32 i = 0; i < NumSoupMaterials; i++)
 	{
 		SoupDynamicMaterial[i]->SetVectorParameterValue(FName("Tint"), Color);
 	}
