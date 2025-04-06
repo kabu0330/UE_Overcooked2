@@ -25,5 +25,5 @@ protected:
 	void BeginPlay();
 	void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction);
 private:
-
+	float CaptureTimer = 0.0f;
 };

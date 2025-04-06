@@ -67,26 +67,40 @@ void UCookingScoreWidget::SetTipCount(int TipCount)
 {
 
     FString TexturePath = TEXT("/Game/Resources/UI/Cooking/Coin/coin_banner_bar.coin_banner_bar");
-
+    FString Tip = TEXT("");
     if (TipCount <= 1)
     {
+        TipText->SetVisibility(ESlateVisibility::Hidden);
         TexturePath = TEXT("/Game/Resources/UI/Cooking/Coin/coin_banner_bar.coin_banner_bar");
     }
     else if (TipCount == 2)
     {
         TexturePath = TEXT("/Game/Resources/UI/Cooking/Coin/coin_banner_bar_01.coin_banner_bar_01");
+
+        TipText->SetVisibility(ESlateVisibility::Visible);
+        Tip = TEXT("TIP X 2");
+
     }
     else if (TipCount == 3)
     {
         TexturePath = TEXT("/Game/Resources/UI/Cooking/Coin/coin_banner_bar_02.coin_banner_bar_02");
+
+        TipText->SetVisibility(ESlateVisibility::Visible);
+        Tip = TEXT("TIP X 3");
+
     }
     else if (TipCount == 4)
     {
         TexturePath = TEXT("/Game/Resources/UI/Cooking/Coin/coin_banner_bar_03.coin_banner_bar_03");
+
+        TipText->SetVisibility(ESlateVisibility::Visible);
+        Tip = TEXT("TIP X 4");
+
     }
 
     class UTexture2D* Texture = Cast<UTexture2D>(StaticLoadObject(UTexture2D::StaticClass(), nullptr, *TexturePath));
     CoinBannerBar->SetBrushFromTexture(Texture);
+    TipText->SetText(FText::FromString(Tip));
 }
 
 
