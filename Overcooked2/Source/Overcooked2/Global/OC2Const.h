@@ -25,5 +25,7 @@ public:
 
 	static FVector TitleCharacterSpawnLocation;
 	static FRotator TitleCharacterSpawnRotation;
+
+	static FVector PlateSubmitLocation;
 	
 };
