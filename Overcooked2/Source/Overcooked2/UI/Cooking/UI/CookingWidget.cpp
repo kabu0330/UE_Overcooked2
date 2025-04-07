@@ -107,6 +107,7 @@ void UCookingWidget::NativeTick(const FGeometry& MyGeometry, float DeltaTime)
     {
         UpdateOrderTime(i, DeltaTime);
     }
+
 }
 
 
@@ -122,6 +123,7 @@ void UCookingWidget::PlayTimeoutWidget()
     CookingFinalScoreWidget->SetVisibility(ESlateVisibility::Visible);
     CookingFinalScoreWidget->ShowCapturePlayers();
     bIsFinish = true;
+    //SetVisibility(ESlateVisibility::Hidden);
 }
 
 
@@ -143,8 +145,15 @@ void UCookingWidget::OrderComplete(int Index, int Score)
 
         if (ImgPanel == nullptr || Panel == nullptr || IBackPanel == nullptr) return;
 
-        UImage* ToolImg = FindChildImage("Tool_", ImgPanel);
-        ToolImg->SetVisibility(ESlateVisibility::Hidden);
+        for (int i = 0; i < 3; i++)
+        {
+            UImage* ToolImg = FindChildImage("Tool" + FString::FromInt(i), ImgPanel);
+            if (ToolImg != nullptr)
+            {
+                ToolImg->SetVisibility(ESlateVisibility::Hidden);
+            }
+        }
+
 
         UImage* BImg = FindChildImage("BIngredient1", IBackPanel);
         UCanvasPanelSlot* BackSlot = Cast<UCanvasPanelSlot>(BImg->Slot);
