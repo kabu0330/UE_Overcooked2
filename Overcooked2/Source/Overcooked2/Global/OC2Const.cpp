@@ -13,3 +13,5 @@ FString UOC2Const::ChefPigHeadName		= "Pig";
 
 FVector UOC2Const::TitleCharacterSpawnLocation = FVector(80.0f, 140.0f, 300.0f);
 FRotator UOC2Const::TitleCharacterSpawnRotation = FRotator(360.0f, -180.0f, 0.0f);
+
+FVector UOC2Const::PlateSubmitLocation = FVector(-2200.0f, 1700.0f, 20.0f);

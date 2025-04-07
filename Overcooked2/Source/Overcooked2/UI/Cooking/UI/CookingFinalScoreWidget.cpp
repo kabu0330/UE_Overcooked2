@@ -23,30 +23,43 @@ void UCookingFinalScoreWidget::NativeOnInitialized()
 }
 
 
-
 void UCookingFinalScoreWidget::ShowPlayers(int Index)
 {
     {
-        AOC2Character* PlayerCharacter = Cast<AOC2Character>(UGameplayStatics::GetPlayerCharacter(this, 0));
-        if (!PlayerCharacter) return;
+
+        AOC2Character* PlayerCharacter = nullptr;
+        for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
+        {
+            APlayerController* PC = It->Get();
+            if (!PC) continue;
+
+            PlayerCharacter = Cast<AOC2Character>(PC->GetPawn());
+            if (PlayerCharacter)
+            {
+                UE_LOG(LogTemp, Warning, TEXT("플레이어 컨트롤러를 통해 찾은 캐릭터: %s"), *PlayerCharacter->GetName());
+            }
+        }
+
 
         UCaptureComponent2D* CaptureComponent = PlayerCharacter->FindComponentByClass<UCaptureComponent2D>();
         if (!CaptureComponent) return;
-
+        CaptureComponent->TextureTarget = RenderTarget0;
         UTextureRenderTarget2D* RenderedTexture = CaptureComponent->TextureTarget;
-        if (!RenderedTexture) return;
+        if (!RenderedTexture || !RenderedTexture->IsValidLowLevelFast()) return;
 
 
         UMaterialInstanceDynamic* DynamicMaterial = PlayerImg_0->GetDynamicMaterial();
         if (DynamicMaterial)
         {
-            DynamicMaterial->SetTextureParameterValue(FName("TextureParam"), Cast<UTexture>(RenderedTexture));
+            DynamicMaterial->SetTextureParameterValue(FName("TextureParam"), RenderedTexture);
 
             PlayerImg_0->SetBrushFromMaterial(DynamicMaterial);
+            PlayerImg_0->SynchronizeProperties();
         }
 
 
     }
+
 
 
     FString PlayerNum = "Player_" + FString::FromInt(Index);
