@@ -427,7 +427,8 @@ void AOC2Character::DoActionPress_Implementation()
 			}
 			if (Table->IsA<ASinkTable>())
 			{
-				Washing(true);
+				Cast<ASinkTable>(Table)->DoTheDishes(this);
+				//Washing(true);
 			}
 		}
 	}
