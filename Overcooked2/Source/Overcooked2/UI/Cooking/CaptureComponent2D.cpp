@@ -14,6 +14,11 @@ UCaptureComponent2D::UCaptureComponent2D()
 	OrthoWidth = 180.0f;
 	bCaptureEveryFrame = false;
 	bCaptureOnMovement = true;
+
+	ShowFlags.SetDynamicShadows(false);
+	ShowFlags.SetAmbientOcclusion(false);
+	ShowFlags.SetGlobalIllumination(false);
+
 	//TextureTarget = CreateDefaultSubobject<UTextureRenderTarget2D>(TEXT("C++RenderTarget"));
 	//if (TextureTarget)
 	//{

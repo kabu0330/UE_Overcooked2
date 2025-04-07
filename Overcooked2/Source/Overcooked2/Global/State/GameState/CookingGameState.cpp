@@ -89,8 +89,6 @@ void ACookingGameState::Server_SubmitPlate_Implementation(ACooking* Cooking)
 {
 	APlate* Plate = Cast<APlate>(Cooking);
 
-	Cooking->SetActorLocation(UOC2Const::PlateSubmitLocation);
-
 	if (true == HasAuthority())
 	{
 		ACookingGameMode* GameMode = Cast<ACookingGameMode>(UGameplayStatics::GetGameMode(this));
@@ -102,6 +100,8 @@ void ACookingGameState::Server_SubmitPlate_Implementation(ACooking* Cooking)
 			Order = UOC2GlobalData::GetOrderByIngredients(GetWorld(), Plate);
 			
 			GameMode->StageManager->CompleteOrder(Order);
+
+			Plate->SubmitPlate();
 		}
 	}
 }

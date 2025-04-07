@@ -91,6 +91,8 @@ void AOC2Character::BeginPlay()
 
 	Plane->SetVisibility(IsLocallyControlled());
 
+	CaptureComponent->ShowOnlyActor(this);
+
 	// 임시 :
 	//SetCharacterHead("Alien_Green");
 

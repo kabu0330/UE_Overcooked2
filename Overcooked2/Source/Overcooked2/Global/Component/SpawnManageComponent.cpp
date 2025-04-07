@@ -50,9 +50,9 @@ APlate* USpawnManageComponent::SpawnPlateActor(TSubclassOf<APlate> PlateTopSpawn
 		return nullptr;
 	}
 
-	PlateActor->SetPlateState(PlateState);
 
 	PlateActor->FinishSpawning(PlateTransform);
+	PlateActor->SetPlateState(PlateState);
 
 	return PlateActor;
 }
