@@ -16,11 +16,6 @@ void UCookingFinalScoreWidget::NativeOnInitialized()
 
     CurPlayerCount = 4;
 
-	for (int i = 0; i < CurPlayerCount; i++)
-	{
-        ShowPlayers(i);
-	}
-
     RenderTargets = { RenderTarget0, RenderTarget1, RenderTarget2, RenderTarget3 };
     PlayerImgs = { PlayerImg_0, PlayerImg_1, PlayerImg_2, PlayerImg_3 };
 
@@ -32,6 +27,7 @@ void UCookingFinalScoreWidget::NativeTick(const FGeometry& MyGeometry, float Del
 
 
 }
+
 void UCookingFinalScoreWidget::ShowCapturePlayers()
 {
     TArray<AActor*> FoundCharacters;
@@ -44,6 +40,14 @@ void UCookingFinalScoreWidget::ShowCapturePlayers()
             PlayerCharacters.Add(Character);
         }
     }
+
+    CurPlayerCount = PlayerCharacters.Num();
+
+    for (int i = 0; i < CurPlayerCount; i++)
+    {
+        ShowPlayers(i);
+    }
+
 
     for (int32 i = 0; i < PlayerCharacters.Num() && i < RenderTargets.Num() && i < PlayerImgs.Num(); ++i)
     {
@@ -78,7 +82,6 @@ void UCookingFinalScoreWidget::ShowCapturePlayers()
 
 void UCookingFinalScoreWidget::ShowPlayers(int Index)
 {
-
 
     FString PlayerNum = "Player_" + FString::FromInt(Index);
     UCanvasPanel* Player = FindChildWidget<UCanvasPanel>(PlayerNum, PlayerCanvas);
