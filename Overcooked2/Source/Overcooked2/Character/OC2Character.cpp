@@ -32,6 +32,8 @@ AOC2Character::AOC2Character()
 
 	CaptureComponent = CreateDefaultSubobject<UCaptureComponent2D>("CaptureComponent");
 	CaptureComponent->SetupAttachment(RootComponent);
+	CaptureComponent->SetRelativeLocation({ 400.f,250.0f,-30.0f });
+	CaptureComponent->SetRelativeRotation({ 0.0f, 210.0f, 0.0f });
 
 	CheckOverlap = CreateDefaultSubobject<USphereComponent>("CheckOverlap");
 	CheckOverlap->SetupAttachment(RootComponent);
