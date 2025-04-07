@@ -27,6 +27,8 @@ public:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
 	class UImage* CoinFlameImage = nullptr;
 
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
+	class UTextBlock* TipText = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OC2UI")
 	UCurveFloat* ScoreCurve = nullptr;

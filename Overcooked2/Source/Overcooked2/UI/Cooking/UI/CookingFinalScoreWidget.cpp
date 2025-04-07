@@ -20,46 +20,64 @@ void UCookingFinalScoreWidget::NativeOnInitialized()
 	{
         ShowPlayers(i);
 	}
+
+    RenderTargets = { RenderTarget0, RenderTarget1, RenderTarget2, RenderTarget3 };
+    PlayerImgs = { PlayerImg_0, PlayerImg_1, PlayerImg_2, PlayerImg_3 };
+
 }
+
+void UCookingFinalScoreWidget::NativeTick(const FGeometry& MyGeometry, float DeltaTime)
+{
+    Super::NativeTick(MyGeometry, DeltaTime);
+
+
+}
+void UCookingFinalScoreWidget::ShowCapturePlayers()
+{
+    TArray<AActor*> FoundCharacters;
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(), AOC2Character::StaticClass(), FoundCharacters);
+
+    for (AActor* Actor : FoundCharacters)
+    {
+        if (AOC2Character* Character = Cast<AOC2Character>(Actor))
+        {
+            PlayerCharacters.Add(Character);
+        }
+    }
+
+    for (int32 i = 0; i < PlayerCharacters.Num() && i < RenderTargets.Num() && i < PlayerImgs.Num(); ++i)
+    {
+        AOC2Character* PlayerCharacter = PlayerCharacters[i];
+        if (!PlayerCharacter) continue;
+
+        UCaptureComponent2D* CaptureComponent = PlayerCharacter->FindComponentByClass<UCaptureComponent2D>();
+        if (!CaptureComponent) continue;
+
+
+        CaptureComponent->TextureTarget = nullptr;
+        CaptureComponent->TextureTarget = RenderTargets[i];
+
+        CaptureComponent->bAlwaysPersistRenderingState = true;
+        CaptureComponent->MarkRenderStateDirty();
+        CaptureComponent->CaptureScene();
+
+        UTextureRenderTarget2D* RenderedTexture = CaptureComponent->TextureTarget;
+        if (!RenderedTexture || !RenderedTexture->IsValidLowLevelFast()) continue;
+
+        UMaterialInstanceDynamic* DynamicMaterial = PlayerImgs[i]->GetDynamicMaterial();
+        if (!DynamicMaterial) continue;
+
+        DynamicMaterial->SetTextureParameterValue(FName("TextureParam"), RenderedTexture);
+        PlayerImgs[i]->SetBrushFromMaterial(DynamicMaterial);
+        PlayerImgs[i]->SynchronizeProperties();
+    }
+}
+
+
 
 
 void UCookingFinalScoreWidget::ShowPlayers(int Index)
 {
-    {
-
-        AOC2Character* PlayerCharacter = nullptr;
-        for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
-        {
-            APlayerController* PC = It->Get();
-            if (!PC) continue;
-
-            PlayerCharacter = Cast<AOC2Character>(PC->GetPawn());
-            if (PlayerCharacter)
-            {
-                UE_LOG(LogTemp, Warning, TEXT("플레이어 컨트롤러를 통해 찾은 캐릭터: %s"), *PlayerCharacter->GetName());
-            }
-        }
-
-
-        UCaptureComponent2D* CaptureComponent = PlayerCharacter->FindComponentByClass<UCaptureComponent2D>();
-        if (!CaptureComponent) return;
-        CaptureComponent->TextureTarget = RenderTarget0;
-        UTextureRenderTarget2D* RenderedTexture = CaptureComponent->TextureTarget;
-        if (!RenderedTexture || !RenderedTexture->IsValidLowLevelFast()) return;
-
-
-        UMaterialInstanceDynamic* DynamicMaterial = PlayerImg_0->GetDynamicMaterial();
-        if (DynamicMaterial)
-        {
-            DynamicMaterial->SetTextureParameterValue(FName("TextureParam"), RenderedTexture);
-
-            PlayerImg_0->SetBrushFromMaterial(DynamicMaterial);
-            PlayerImg_0->SynchronizeProperties();
-        }
-
-
-    }
-
 
 
     FString PlayerNum = "Player_" + FString::FromInt(Index);

@@ -120,6 +120,7 @@ void UCookingWidget::PlayTimeoutWidget()
         Orders[i]->SetVisibility(ESlateVisibility::Hidden);
     }
     CookingFinalScoreWidget->SetVisibility(ESlateVisibility::Visible);
+    CookingFinalScoreWidget->ShowCapturePlayers();
     bIsFinish = true;
 }
 
@@ -413,11 +414,16 @@ void UCookingWidget::SettingIngredientImages(FOrder& Order)
             TimeImg->SetRenderScale({ 1.0f, 1.0f });
             TimeImg->SetRenderTranslation({ 0.f, 0.0f });
 
-            if (Order.RequireIngredients[i].IngredientState == EIngredientState::EIS_BOILABLE)
+            if (Order.RequireIngredients[i].IngredientState == EIngredientState::EIS_BOILED)
             {
-                UImage* Toolimg = FindChildImage("Tool_", ImgPanel);
+                UImage* Toolimg = FindChildImage("Tool" + FString::FromInt(i), ImgPanel);
                 Toolimg->SetVisibility(ESlateVisibility::Visible);
                 BackSlot->SetSize(ILongSize);
+            }
+            else
+            {
+                UImage* Toolimg = FindChildImage("Tool" + FString::FromInt(i), ImgPanel);
+                Toolimg->SetVisibility(ESlateVisibility::Hidden);
             }
 
 
@@ -443,6 +449,14 @@ void UCookingWidget::SettingIngredientImages(FOrder& Order)
             UImage* BImg = FindChildImage("BIngredient" + FString::FromInt(i), IBackPanel);
             Img->SetVisibility(ESlateVisibility::Hidden);
             BImg->SetVisibility(ESlateVisibility::Hidden);
+
+
+            UImage* Toolimg = FindChildImage("Tool" + FString::FromInt(i), ImgPanel);
+            if (Toolimg != nullptr)
+            {
+                Toolimg->SetVisibility(ESlateVisibility::Hidden);
+            }
+
         }
 
 

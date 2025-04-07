@@ -12,25 +12,29 @@ UCaptureComponent2D::UCaptureComponent2D()
 	ProjectionType = ECameraProjectionMode::Orthographic;
 	CaptureSource = ESceneCaptureSource::SCS_SceneColorHDR;
 	OrthoWidth = 180.0f;
-
-	TextureTarget = CreateDefaultSubobject<UTextureRenderTarget2D>(TEXT("C++RenderTarget"));
-	if (TextureTarget)
-	{
-		TextureTarget->InitAutoFormat(256, 256);
-	}
+	bCaptureEveryFrame = false;
+	bCaptureOnMovement = true;
+	//TextureTarget = CreateDefaultSubobject<UTextureRenderTarget2D>(TEXT("C++RenderTarget"));
+	//if (TextureTarget)
+	//{
+	//	TextureTarget->InitAutoFormat(256, 256);
+	//}
 }
 
 void UCaptureComponent2D::BeginPlay()
 {
 	Super::BeginPlay();
 	CaptureScene();
-
+		
 
 }
 
 void UCaptureComponent2D::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+
+		CaptureScene();
 
 
 }
