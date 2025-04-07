@@ -97,7 +97,7 @@ void ASinkTable::WashingIsDone()
 	bTimerActivated = false;
 
 	APlate* PlacedPlate = Cast<APlate>(CookingPtr);
-	PlacedPlate->WashPlate_Implementation();
+	PlacedPlate->WashPlate();
 	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Turquoise, "Washing Done");
 	CookingPtr = Cast<APlate>(PlacedPlate);
 
