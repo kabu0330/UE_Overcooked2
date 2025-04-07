@@ -9,6 +9,9 @@
 #include "Components/BillboardComponent.h"  
 #include "Components/WidgetComponent.h"
 #include <LevelContent/Cook/Widget/PlateIconWidget.h>
+#include "LevelContent/Table/CookingTable.h"
+#include "LevelContent/Table/NonTable/PlateSpawner.h"
+#include "EngineUtils.h"
 
 // Sets default values
 APlate::APlate()
@@ -51,6 +54,32 @@ void APlate::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimePr
 	DOREPLIFETIME(APlate, PlateState);
 }
 
+void APlate::SubmitPlate_Implementation()
+{
+	SetActorLocation(UOC2Const::PlateSubmitLocation);
+	CleanPlate();
+	SetPlateState(EPlateState::DIRTY);
+
+	FTimerHandle TimerHandle;
+
+	GetWorld()->GetTimerManager().SetTimer(
+		TimerHandle,
+		this,
+		&APlate::SpawnPlate,
+		3.0f,   // 3초 뒤 실행
+		false   // 반복 여부(false면 1회 실행)
+	);
+}
+
+void APlate::SpawnPlate()
+{
+	if (nullptr != PlateSpawner)
+	{
+		PlateSpawner->PlaceItem(this);
+		PlateSpawner->SetPlate(this);
+	}
+}
+
 // Called when the game starts or when spawned
 void APlate::BeginPlay()
 {
@@ -74,6 +103,17 @@ void APlate::BeginPlay()
 	WidgetComponent->SetTickWhenOffscreen(true);
 
 	IconWidget->Init();
+
+	// TActorIterator를 사용하여 월드 내 모든 APrepTable 액터를 순회
+
+	for (TActorIterator<ACookingTable> It(GetWorld()); It; ++It)
+	{
+		ACookingTable* PrepTableActor = *It;
+		if (PrepTableActor->Tags.Contains("PlateSpawner"))
+		{
+			PlateSpawner = Cast<APlateSpawner>(PrepTableActor);
+		}
+	}
 }
 
 // Called every frame
@@ -144,7 +184,7 @@ void APlate::SetMaterialTexture(UTexture* Texture)
 	if (nullptr != MaterialInstanceDynamic)
 	{
 		// 3. 기존 머티리얼 인스턴스 다이나믹을 그대로 사용하고
-		MaterialInstanceDynamic->SetTextureParameterValue(FName(TEXT("DiffuseAdd")), Texture);
+		MaterialInstanceDynamic->SetTextureParameterValue(FName(TEXT("DiffuseColorMap")), Texture);
 		StaticMeshComponent->SetMaterial(0, MaterialInstanceDynamic);
 		return;
 	}
