@@ -51,6 +51,21 @@ void ACookingGameState::Multicast_CompleteOrder_Implementation(int OrderIndex)
 	}
 }
 
+void ACookingGameState::Multicast_StartGame_Implementation()
+{
+	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
+
+	if (nullptr != PlayerController)
+	{
+		ACookingHUD* CookingHUD = Cast<ACookingHUD>(PlayerController->GetHUD());
+
+		if (nullptr != CookingHUD && nullptr != CookingHUD->CookWidget)
+		{
+			CookingHUD->CookWidget->StartGame();
+		}
+	}
+}
+
 void ACookingGameState::Multicast_CreateNewOrder_Implementation(FOrder Order)
 {
 	// 모든 클라이언트에서 실행됨

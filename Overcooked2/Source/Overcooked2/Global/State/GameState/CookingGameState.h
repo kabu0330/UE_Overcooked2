@@ -42,6 +42,9 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_AddScore(int Score);
 
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_StartGame();
+
 	UFUNCTION(Server, Reliable)
 	void Server_SubmitPlate(ACooking* Plate);
 

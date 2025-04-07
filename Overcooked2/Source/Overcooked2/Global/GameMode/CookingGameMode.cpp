@@ -116,9 +116,24 @@ void ACookingGameMode::Stay(float DeltaTime)
 {
 	CheckTime += DeltaTime;
 
-	if (CheckTime > 3.0f)
+	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
+
+	if (nullptr != PlayerController)
 	{
-		ChangeState(ECookingGameModeState::ECS_Stage);
+		ACookingHUD* CookingHUD = Cast<ACookingHUD>(PlayerController->GetHUD());
+
+		if (nullptr != CookingHUD && nullptr != CookingHUD->CookWidget)
+		{
+			if (true == CookingHUD->CookWidget->GetIsReady())
+			{
+				ChangeState(ECookingGameModeState::ECS_Stage);
+
+				if (nullptr != CookingGameState)
+				{
+					CookingGameState->Multicast_StartGame();
+				}
+			}
+		}
 	}
 }
 
