@@ -91,6 +91,8 @@ void AOC2Character::BeginPlay()
 
 	Plane->SetVisibility(IsLocallyControlled());
 
+	CaptureComponent->ShowOnlyActor(this);
+
 	// 임시 :
 	//SetCharacterHead("Alien_Green");
 
@@ -456,8 +458,11 @@ void AOC2Character::Throwing_Implementation()
 
 		if (PrimitiveComp)
 		{
+			//GrabbedObject->SetActorLocation(GrabComponent->GetComponentTransform().TransformPosition(FVector(0, 0, 100)));
+			
 			GrabbedObject->DetachFromChef(this);
-			GrabbedObject->SetActorLocation(GrabComponent->GetComponentLocation() + FVector(0, 0, 10));
+			GrabbedObject->SetActorLocation(GrabComponent->GetComponentTransform().TransformPosition(FVector(30, 0, 80)));
+			
 			ThrowingObject->SetThrower(this);
 			ThrowingObject->SetThrowing(true);
 

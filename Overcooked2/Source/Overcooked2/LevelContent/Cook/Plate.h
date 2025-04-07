@@ -5,8 +5,10 @@
 #include "CoreMinimal.h"
 #include <LevelContent/Cook/Cooking.h>
 #include <Global/OC2Enum.h>
-
+#include <Global/OC2Const.h>
 #include "Plate.generated.h"
+
+class APlateSpawner;
 
 // 접시 ~ 접시에 올라간 조리된 요리 ~ 요리들의 조합 ~ 완성된 요리
 UCLASS()
@@ -57,6 +59,10 @@ public:
 	{
 		return Ingredients[Index];
 	}
+	UFUNCTION(NetMulticast, Reliable)
+	void SubmitPlate();
+
+	void SpawnPlate();
 
 
 protected:
@@ -110,5 +116,8 @@ private:
 
 	UPROPERTY()
 	class UPlateIconWidget* IconWidget = nullptr; // 세팅한 위젯 객체 저장 및 함수 호출용
+
+	UPROPERTY()
+	APlateSpawner* PlateSpawner = nullptr;
 
 };

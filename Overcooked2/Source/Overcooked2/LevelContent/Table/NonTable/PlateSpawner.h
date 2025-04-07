@@ -23,6 +23,6 @@ public:
 
 	void SetPlate(class APlate* Plate);
 
-private:
+public:
 	void PlaceItem(ACooking* ReceivedCooking) override;
 };

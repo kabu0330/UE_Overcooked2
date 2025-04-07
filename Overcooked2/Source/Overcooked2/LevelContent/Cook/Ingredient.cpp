@@ -8,6 +8,7 @@
 #include <LevelContent/Cook/Widget/IngredientIconWidget.h>
 #include "Kismet/KismetMathLibrary.h"
 #include "Components/WidgetComponent.h"
+#include "LevelContent/Table/CookingTable.h"
 
 // Sets default values
 AIngredient::AIngredient()
@@ -44,6 +45,7 @@ void AIngredient::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* Othe
 
 	StaticMeshComponent->SetPhysicsLinearVelocity(FVector::ZeroVector);
 	bIsThrowing = false;
+	//ThrownTime = 0.0f;
 }
 
 // Called when the game starts or when spawned
@@ -123,6 +125,20 @@ AIngredient* AIngredient::Init(EIngredientType Type)
 void AIngredient::Tick(float DeltaTime)
 {
 	ACooking::Tick(DeltaTime);
+
+	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Green, FString::Printf(TEXT("%f"), StaticMeshComponent->GetPhysicsLinearVelocity().Length()));
+	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Green, FString::Printf(TEXT("%f"), ThrownTime));
+	if (bIsThrowing)
+	{
+		ThrownTime += DeltaTime;
+	}
+	if (StaticMeshComponent->GetPhysicsLinearVelocity().Length() < 0.5f && ThrownTime > 0.1f )
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Green, "Hit");
+		CheckPlacement();
+	}
+
+	//	DrawDebugSphere(GetWorld(), GetActorLocation(), 100.0f, 20, FColor::Red, false);
 
 }
 
@@ -221,6 +237,59 @@ bool AIngredient::IsCooked()
 		break;
 	}
 	return false;
+}
+
+void AIngredient::CheckPlacement()
+{
+	FVector TraceLocation = GetActorLocation(); // SceneComponent 위치 가져오기
+
+	// 감지할 오브젝트 유형 설정 (예: WorldDynamic)
+	FCollisionObjectQueryParams ObjectQueryParams;
+	ObjectQueryParams.AddObjectTypesToQuery(ECC_GameTraceChannel1);
+
+	// 트레이스 설정
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActor(this); // 자기 자신 무시
+
+	// 결과 저장 배열
+	TArray<FHitResult> HitResults;
+
+	// Sphere Trace 실행
+	bool bHit = GetWorld()->SweepMultiByObjectType(
+		HitResults,
+		TraceLocation, TraceLocation,  // Start와 End 동일 (정지된 구)
+		FQuat::Identity,
+		ObjectQueryParams,
+		FCollisionShape::MakeSphere(100.0f),
+		QueryParams
+	);
+
+	//UE_LOG(LogTemp, Log, TEXT("%d"), HitResults.Num());
+
+	if (bHit)
+	{
+		HitResults.Sort([TraceLocation](const FHitResult& A, const FHitResult& B) {
+			return FVector::DistSquared(TraceLocation, A.GetActor()->GetActorLocation()) < FVector::DistSquared(TraceLocation, B.GetActor()->GetActorLocation());
+			});
+
+		// maybe Interactable.
+		ACookingTable* ClosestTable = nullptr;
+		for (auto Result : HitResults)
+		{
+			if (Result.GetActor()->IsA<ACookingTable>())
+			{
+				ClosestTable = Cast<ACookingTable>(Result.GetActor());
+				break;
+			}
+		}
+		if (ClosestTable != nullptr)
+		{
+			AttachToChef(ClosestTable);
+			ClosestTable->PlaceItem(this);
+			bIsThrowing = false;
+			ThrownTime = 0.0f;
+		}
+	}
 }
 
 const FIngredientCookDataRow& AIngredient::CheckState(EIngredientState State)
