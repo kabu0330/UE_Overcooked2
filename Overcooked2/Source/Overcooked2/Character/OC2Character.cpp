@@ -459,7 +459,7 @@ void AOC2Character::Throwing_Implementation()
 			//GrabbedObject->SetActorLocation(GrabComponent->GetComponentTransform().TransformPosition(FVector(0, 0, 100)));
 			
 			GrabbedObject->DetachFromChef(this);
-			GrabbedObject->SetActorLocation(GrabComponent->GetComponentTransform().TransformPosition(FVector(10, 0, 50)));
+			GrabbedObject->SetActorLocation(GrabComponent->GetComponentTransform().TransformPosition(FVector(30, 0, 80)));
 			
 			ThrowingObject->SetThrower(this);
 			ThrowingObject->SetThrowing(true);

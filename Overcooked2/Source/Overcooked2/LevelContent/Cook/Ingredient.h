@@ -82,6 +82,8 @@ public:
 		return bIsThrowing;
 	}
 
+	void CheckPlacement();
+
 
 	UFUNCTION(NetMulticast, Reliable)
 	void SetThrower(AActor* Actor);
@@ -104,6 +106,7 @@ public:
 	//{
 	//	return TextureBillboard;
 	//}
+	float ThrownTime = 0.0f;
 
 protected:
 	// Called when the game starts or when spawned
