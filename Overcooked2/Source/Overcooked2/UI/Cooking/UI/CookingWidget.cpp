@@ -13,6 +13,7 @@
 #include "UI/Cooking/UI/CookingFinalScoreWidget.h"
 #include "UI/Cooking/UI/CookingTimeWidget.h"
 #include "UI/Cooking/UI/CookingReceiptWidget.h"
+#include "UI/Cooking/UI/CookingReadyWidget.h"
 
 
 void UCookingWidget::NativeOnInitialized()
@@ -44,20 +45,53 @@ void UCookingWidget::NativeOnInitialized()
     {
         CookingScoreWidget = Cast<UCookingScoreWidget>(CreateWidget(GetWorld(), ScoreSubWidget));
         CookingFinalScoreWidget = Cast<UCookingFinalScoreWidget>(CreateWidget(GetWorld(), FinalScoreSubWidget));
-        UCookingTimeWidget* CookingTimerWidget = Cast<UCookingTimeWidget>(CreateWidget(GetWorld(), TimeSubWidget));
+        CookingTimerWidget = Cast<UCookingTimeWidget>(CreateWidget(GetWorld(), TimeSubWidget));
+        CookingReadyWidget = Cast<UCookingReadyWidget>(CreateWidget(GetWorld(), ReadySubWidget));
 
 
-        if (CookingScoreWidget != nullptr && CookingTimerWidget != nullptr && CookingFinalScoreWidget != nullptr)
+        if (CookingScoreWidget != nullptr && CookingTimerWidget != nullptr && CookingFinalScoreWidget != nullptr && CookingReadyWidget != nullptr)
         {
             CookingFinalScoreWidget->SetVisibility(ESlateVisibility::Hidden);
-  
+            CookingScoreWidget->SetVisibility(ESlateVisibility::Hidden);
+            CookingTimerWidget->SetVisibility(ESlateVisibility::Hidden);
+            //SetVisibility(ESlateVisibility::Hidden);
+
             CookingScoreWidget->AddToViewport();
             CookingTimerWidget->AddToViewport();
             CookingFinalScoreWidget->AddToViewport();
+            CookingReadyWidget->AddToViewport();
 
         }
     }
 
+}
+
+void UCookingWidget::NativeTick(const FGeometry& MyGeometry, float DeltaTime)
+{
+    Super::NativeTick(MyGeometry, DeltaTime);
+    WrongOrderTimeline.TickTimeline(DeltaTime);
+    CompleteOrderTimeline.TickTimeline(DeltaTime);
+    for (int i = 0; i < CurOrderCount; i++)
+    {
+        UpdateOrderTime(i, DeltaTime);
+    }
+
+
+}
+
+bool UCookingWidget::GetIsReady()
+{
+    return CookingReadyWidget->bIsReady;
+}
+
+void UCookingWidget::StartGame()
+{
+    CookingScoreWidget->SetVisibility(ESlateVisibility::Visible);
+    CookingTimerWidget->SetVisibility(ESlateVisibility::Visible);
+    CookingReadyWidget->SetVisibility(ESlateVisibility::Hidden);
+    SetVisibility(ESlateVisibility::Visible);
+    ShowReadyImageAnim();
+    CookingReadyWidget->bIsReady = false;
 }
 
 void UCookingWidget::ShowReadyImageAnim()
@@ -98,18 +132,6 @@ void UCookingWidget::PlayReadyImageAnim()
 }
 
 
-void UCookingWidget::NativeTick(const FGeometry& MyGeometry, float DeltaTime)
-{
-    Super::NativeTick(MyGeometry, DeltaTime);
-    WrongOrderTimeline.TickTimeline(DeltaTime);
-    CompleteOrderTimeline.TickTimeline(DeltaTime);
-    for (int i = 0; i < CurOrderCount; i++)
-    {
-        UpdateOrderTime(i, DeltaTime);
-    }
-
-}
-
 
 
 
@@ -123,7 +145,7 @@ void UCookingWidget::PlayTimeoutWidget()
     CookingFinalScoreWidget->SetVisibility(ESlateVisibility::Visible);
     CookingFinalScoreWidget->ShowCapturePlayers();
     bIsFinish = true;
-    //SetVisibility(ESlateVisibility::Hidden);
+    SetVisibility(ESlateVisibility::Hidden);
 }
 
 
