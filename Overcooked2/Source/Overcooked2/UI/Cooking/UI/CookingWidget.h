@@ -10,33 +10,25 @@ class OVERCOOKED2_API UCookingWidget : public UUserWidget
     GENERATED_BODY()
 
 public:
-    // 완료된 주문 개수 설정 및 반환
-    UFUNCTION(BlueprintCallable, Category = "OC2UI")
-    void SetCompleteOrderNum(int num) { CompleteOrderNum = num; }
-
-    UFUNCTION(BlueprintCallable, Category = "OC2UI")
-    int GetCompleteOrderNum() { return CompleteOrderNum; }
 
     // 주문 완료 처리
-    UFUNCTION(BlueprintCallable, Category = "OC2UI")
     void OrderComplete(int Index, int Score = 10);
 
     // 새로운 주문 생성
-    UFUNCTION(BlueprintCallable, Category = "OC2UI")
     void CreateNewOrder(struct FOrder& Order);
 
-    UFUNCTION(BlueprintCallable, Category = "OC2UI")
     void WrongOrder();
     //void SubmitWrongOrder();
 
     UFUNCTION(BlueprintCallable, Category = "OC2UI")
     void PlayTimeoutWidget();
 
-    UFUNCTION(BlueprintCallable, Category = "OC2UI")
-    void ShowReadyImageAnim();
 
     void CheckFeverTime(int TipCount);
 
+    void StartGame();
+
+    bool GetIsReady();
 
     // UI 바인딩 (총 5개의 주문 슬롯)
     UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
@@ -82,12 +74,14 @@ protected:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OC2UI")
     TSubclassOf<UUserWidget> FinalScoreSubWidget;
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OC2UI")
+    TSubclassOf<UUserWidget> ReadySubWidget;
 
 private:
     class UCookingScoreWidget* CookingScoreWidget = nullptr;
     class UCookingFinalScoreWidget* CookingFinalScoreWidget = nullptr;
-
-
+    class UCookingReadyWidget* CookingReadyWidget = nullptr;
+    class UCookingTimeWidget* CookingTimerWidget = nullptr;
 
     // 주문 관련 변수
     int CompleteOrderNum = 0;
@@ -124,6 +118,8 @@ private:
 
 
     // 내부 함수
+    void ShowReadyImageAnim();
+
     void UpdateImageOpacity();
     void UpdateImagePosition();
     void UpdateIngredientImagePosition();
