@@ -9,6 +9,8 @@
 
 ASpawnTable::ASpawnTable()
 {
+	TimeEventComponent = CreateDefaultSubobject<UTimeEventComponent>(TEXT("TimeEventComponent"));
+
 }
 
 void ASpawnTable::BeginPlay()
@@ -20,6 +22,16 @@ void ASpawnTable::BeginPlay()
 void ASpawnTable::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (true == bCanAnimation && false == bIsAnimation) // 매 프레임마다 호출하게 된다.
+	{
+		bIsAnimation = true;
+		TimeEventComponent->AddEndEvent(0.5f, [this]()
+			{
+				bCanAnimation = false;
+			});
+	}
+
 }
 
 void ASpawnTable::SetIngredient(EIngredientType IngredientTypeSetting)
@@ -37,6 +49,9 @@ ACooking* ASpawnTable::Interact(AActor* ChefActor)
 	if (CookingPtr == nullptr && false == Chef->IsHolding()) // 테이블이 비어있다.
 	{
 		RequestSpawn();
+		
+		bCanAnimation = true;
+		bIsAnimation = false;
 		return SpawnedIngredient;
 	}
 	else
