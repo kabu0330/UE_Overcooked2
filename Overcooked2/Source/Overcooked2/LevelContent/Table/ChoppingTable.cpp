@@ -7,14 +7,19 @@
 #include "Global/GameMode/OC2GameMode.h"
 #include "Components/WidgetComponent.h"
 #include <LevelContent/Cook/Widget/GaugeTextureWidget.h>
+#include <Net/UnrealNetwork.h>
 
 AChoppingTable::AChoppingTable()
 {
+	PrimaryActorTick.bCanEverTick = true;
+	bReplicates = true;
+
 	ProgressBarComponent = CreateDefaultSubobject<UWidgetComponent>("ProgressBar");
 	ProgressBarComponent->SetupAttachment(RootComponent);
 
 	KnifeMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>("Knife");
 	KnifeMeshComponent->SetupAttachment(RootComponent);
+	KnifeMeshComponent->SetIsReplicated(true);
 }
 
 void AChoppingTable::BeginPlay()
@@ -37,9 +42,6 @@ void AChoppingTable::BeginPlay()
 	ProgressBarComponent->SetTwoSided(true); 
 	ProgressBarComponent->SetTickWhenOffscreen(true);
 
-	UStaticMesh* Mesh = LoadObject<UStaticMesh>(nullptr, TEXT("/Game/Resources/LevelResource/TableResource/Countertop/Knife"));
-	KnifeMeshComponent->SetStaticMesh(Mesh);
-	KnifeMeshComponent->SetHiddenInGame(false);
 }
 
 void AChoppingTable::Tick(float DeltaTime)
@@ -65,14 +67,7 @@ void AChoppingTable::Tick(float DeltaTime)
 		ChoppingIsDone();
 	}
 
-	if (nullptr != CookingPtr)
-	{
-		KnifeMeshComponent->SetHiddenInGame(true);
-	}
-	else
-	{
-		KnifeMeshComponent->SetHiddenInGame(false);
-	}
+	HideKnife();
 }
 
 ACooking* AChoppingTable::Interact(AActor* ChefActor)
@@ -93,6 +88,27 @@ ACooking* AChoppingTable::Interact(AActor* ChefActor)
 
 }
 
+void AChoppingTable::HideKnife_Implementation()
+{
+	if (nullptr != CookingPtr)
+	{
+		bCheckHidden = true;
+	}
+	else
+	{
+		bCheckHidden = false;
+	}
+
+	if (true == bCheckHidden)
+	{
+		KnifeMeshComponent->SetHiddenInGame(true);
+	}
+	else
+	{
+		KnifeMeshComponent->SetHiddenInGame(false);
+	}
+}
+
 void AChoppingTable::ChopIngredient(AActor* ChefActor)
 {
 	ChefPtr = Cast<AOC2Character>(ChefActor);
@@ -111,10 +127,15 @@ void AChoppingTable::ChopIngredient(AActor* ChefActor)
 				bTimerActivated = true;
 				//GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Magenta, "Chopping...");
 
-				ProgressBarComponent->SetHiddenInGame(false);
+				ShowProgressBar(false);
 			}
 		}
 	}
+}
+
+void AChoppingTable::ShowProgressBar_Implementation(bool Value)
+{
+	ProgressBarComponent->SetHiddenInGame(Value);
 }
 
 void AChoppingTable::ChoppingIsDone()
@@ -149,4 +170,16 @@ void AChoppingTable::CheckChefIsChopping()
 			ProgressBarComponent->SetHiddenInGame(true);
 		}
 	}
+}
+
+void AChoppingTable::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AChoppingTable, bCheckHidden);
+	DOREPLIFETIME(AChoppingTable, ProgressBarComponent);
+	DOREPLIFETIME(AChoppingTable, Ratio);
+	DOREPLIFETIME(AChoppingTable, Timer);
+	DOREPLIFETIME(AChoppingTable, bTimerActivated);
+	DOREPLIFETIME(AChoppingTable, bChoppingDone);
 }
