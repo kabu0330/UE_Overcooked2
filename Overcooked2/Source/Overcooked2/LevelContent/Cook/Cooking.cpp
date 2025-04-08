@@ -9,8 +9,7 @@ ACooking::ACooking()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	bReplicates = true;
-	SetReplicates(true);
-	SetReplicateMovement(true);
+	
 
 
 	if (nullptr != StaticMeshComponent)
@@ -49,6 +48,7 @@ void ACooking::BeginPlay()
 {
 	AOC2Actor::BeginPlay();
 	
+	SetReplicateMovement(true);
 }
 
 // Called every frame

@@ -148,31 +148,10 @@ void ACookingGameMode::EntryStage()
 
 void ACookingGameMode::Stage(float DeltaTime)
 {
-	CheckTime += DeltaTime;
-
-	//if (CheckTime >= UOC2Const::OrderSpawnDelay)
-	//{
-
-	//	if (CookingGameState != nullptr)
-	//	{
-	//		FOrder Order = UOC2GlobalData::GetOrderByStageAndIndex(GetWorld(), UOC2Global::GetOC2GameInstance(GetWorld())->GetCurStage(), 0);
-	//		CookingGameState->Multicast_CreateNewOrder(Order);
-	//	}
-	//}
-
-	//if (CheckTime >= 6.0f)
-	//{
-	//	if (CookingGameState != nullptr)
-	//	{
-	//		FOrder Order = UOC2GlobalData::GetOrderByStageAndIndex(GetWorld(), UOC2Global::GetOC2GameInstance(GetWorld())->GetCurStage(), 0);
-
-	//		CookingGameState->Multicast_CompleteOrder(Order);
-	//		CookingGameState->Multicast_BlinkOrderUI();
-
-	//		CheckTime = 0.0f;
-
-	//	}
-	//}
+	if (nullptr != CookingGameState)
+	{
+		CookingGameState->Multicast_SettingTimer(DeltaTime);
+	}
 }
 
 void ACookingGameMode::EntryScore()

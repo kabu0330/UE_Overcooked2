@@ -84,6 +84,8 @@ protected:
 	virtual void ForwardAttachToChef() override;
 	virtual void ForwardDetachToChef() override;
 
+	virtual void PostInitializeComponents() override;
+
 private:
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	TArray<FRecipe> Ingredients;
@@ -104,9 +106,6 @@ private:
 
 	UPROPERTY(Replicated)
 	bool bIsCombinationSuccessful = false;
-
-	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
-	TArray<class UBillboardComponent*> TextureBillboards;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowprivateAccess = "true"))
 	class UWidgetComponent* WidgetComponent = nullptr;
