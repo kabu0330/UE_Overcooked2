@@ -63,6 +63,9 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OC2UI", meta = (AllowPrivateAccess = "true"))
     bool bIsFinish = false;
 
+
+    float StartTimerTick(float DeltaTime);
+
 protected:
     virtual void NativeOnInitialized() override;
     virtual void NativeTick(const FGeometry& MyGeometry, float DeltaTime) override;

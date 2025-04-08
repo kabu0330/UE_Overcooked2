@@ -86,6 +86,11 @@ void UCookingWidget::NativeTick(const FGeometry& MyGeometry, float DeltaTime)
 
 }
 
+float UCookingWidget::StartTimerTick(float DeltaTime)
+{
+    return CookingTimerWidget->StartTimerTick(DeltaTime);
+}
+
 void UCookingWidget::StartTimer()
 {
     CookingTimerWidget->SetStartTimer(true);
