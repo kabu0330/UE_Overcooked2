@@ -21,6 +21,8 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
+
 	UFUNCTION(BlueprintCallable)
 	virtual ACooking* Interact(AActor* ChefActor) override;
 	
@@ -63,8 +65,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking")
 	USceneComponent* ComponentForProgressBar = nullptr;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking")
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Cooking")
 	class UStaticMeshComponent* KnifeMeshComponent = nullptr;
+
+	UPROPERTY(Replicated)
+	bool bCheckHidden = false;
 
 protected:
 
@@ -86,5 +91,7 @@ private:
 
 	class UGaugeTextureWidget* WidgetPtr = nullptr;
 	//class ATableProgressBar* ProgressBar = nullptr;
+
+	void HideKnife();
 
 };
