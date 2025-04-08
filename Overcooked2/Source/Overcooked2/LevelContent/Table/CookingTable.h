@@ -40,7 +40,14 @@ public:
 		return bIsOccupied;
 	}
 
+	bool IsUsing() const
+	{
+		return CookingPtr != nullptr;
+	}
+
 	void SetIngredientOffset(AIngredient* Ingredient);
+
+	ACooking* GetCookingPtr() const{ return CookingPtr; }
 
 protected:
 	// Called when the game starts or when spawned

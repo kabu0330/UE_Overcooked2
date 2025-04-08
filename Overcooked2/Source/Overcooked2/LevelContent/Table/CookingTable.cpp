@@ -6,6 +6,7 @@
 #include <Global/Data/IngredientDataTable.h>
 #include <Global/OC2GameInstance.h>
 #include "Kismet/GameplayStatics.h"
+#include "Net/UnrealNetwork.h"
 //#include "Global/Component/TimeEventComponent.h"
 
 // Sets default values
@@ -51,7 +52,7 @@ void ACookingTable::PlaceItem(ACooking* ReceivedCooking)
 		{
 			IngreLocation += FVector::UnitZ() * 40.0f;
 		}
-			CookingPtr->SetActorRelativeLocation(IngreLocation);
+		CookingPtr->SetActorRelativeLocation(IngreLocation);
 	}
 
 	//bIsOccupied = true;
@@ -68,3 +69,4 @@ void ACookingTable::SetIngredientOffset(AIngredient* Ingredient)
 	IngreLocation = IngredientDataTable->Location;
 	IngreScale = IngredientDataTable->Scale;
 }
+
