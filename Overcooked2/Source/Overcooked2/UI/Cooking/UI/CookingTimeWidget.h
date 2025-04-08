@@ -46,7 +46,7 @@ private:
 
 	bool bIsStart = false;
 	bool bIsTimesUP = false;
-	float TotalTime = 5.0f;
+	float TotalTime = 180.0f;
 	float CurTime = 0.0f;
 
 
