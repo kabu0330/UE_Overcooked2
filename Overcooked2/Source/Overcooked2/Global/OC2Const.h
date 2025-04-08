@@ -22,6 +22,7 @@ public:
 	static FString ChefMouseHeadName;
 	static FString ChefPandaHeadName;
 	static FString ChefPigHeadName;
+	static FString ChefOwlHeadName;
 
 	static FVector TitleCharacterSpawnLocation;
 	static FRotator TitleCharacterSpawnRotation;
