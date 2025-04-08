@@ -13,6 +13,9 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "UI/WorldMap/WorldMapHUD.h"
+#include "UI/WorldMap/UI/WorldMapUserWidget.h"
+#include "UI/Loading/LoadingWidget.h"
 
 FVector AWorldPlayer::WorldPlayerLocation = UWorldMapData::START_LOC;
 
@@ -79,7 +82,16 @@ void AWorldPlayer::OnSelectMap()
 {
 	if (Controller && HasAuthority())
 	{
-		UOC2Global::GetOC2GameInstance(GetWorld())->StartCookingStage();
+		APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
+		AWorldMapHUD* WorldMapHUD = Cast<AWorldMapHUD>(PlayerController->GetHUD());
+		
+		if (WorldMapHUD->WorldMapUserWidget != nullptr && WorldMapHUD != nullptr)
+		{
+			WorldMapHUD->WorldMapUserWidget->PlayZoomInAnimation([this]()
+				{
+					UOC2Global::GetOC2GameInstance(GetWorld())->StartCookingStage();
+				});
+		}
 	}
 }
 

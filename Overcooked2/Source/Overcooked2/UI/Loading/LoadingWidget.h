@@ -27,16 +27,20 @@ public:
 	void PlayZoomOutAnimation();
 
 	void PlayZoomInAnimation();
+	void PlayLoadingAnimation(TFunction<void()> Func);
 
 
 protected:
 	virtual void NativeConstruct() override;
+	virtual void NativeTick(const FGeometry& MyGeometry, float DeltaTime);
 
 
 private:
 	class UMaterialInstanceDynamic* TransitionMaterial = nullptr;
 	FTimerHandle AnimationTimer;
+	FTimerHandle LoadingAnimationTimer;
 
-
+	bool bIsLoadingStart = false;
+	float ProgressTime = 0.0f;
 };
 
