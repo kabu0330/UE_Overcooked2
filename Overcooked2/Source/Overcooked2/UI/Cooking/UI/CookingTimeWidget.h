@@ -34,21 +34,21 @@ public:
 	}
 
 	void SetStartTimer(bool IsStart);
+	float StartTimerTick(float DeltaTime);
 
 
 protected:
-	virtual void NativeTick(const FGeometry& MyGeometry, float DeltaTime) override;
+	//virtual void NativeTick(const FGeometry& MyGeometry, float DeltaTime) override;
 	virtual void NativeConstruct() override;
 
 
 private:
-	void StartTimer(float Deltatime);
+	float StartTimer(float Deltatime);
 
 	bool bIsStart = false;
 	bool bIsTimesUP = false;
 	float TotalTime = 180.0f;
 	float CurTime = 0.0f;
-
 
 
 };

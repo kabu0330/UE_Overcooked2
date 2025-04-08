@@ -3,6 +3,9 @@
 
 #include "UI/WorldMap/UI/WorldMapUserWidget.h"
 #include "Components/Image.h" 
+#include "UI/WorldMap/WorldMapHUD.h"
+#include "UI/Loading/LoadingWidget.h"
+#include "Kismet/GameplayStatics.h"
 
 void UWorldMapUserWidget::NativeConstruct()
 {
@@ -43,12 +46,13 @@ void UWorldMapUserWidget::PlayZoomInAnimation(TFunction<void()> Func)
                 GetWorld()->GetTimerManager().ClearTimer(AnimationTimer);
 
                 //TransitionImg->SetVisibility(ESlateVisibility::Hidden);
-
-                if (AnimFinishFuction)
+                APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
+                AWorldMapHUD* WorldMapHUD = Cast<AWorldMapHUD>(PlayerController->GetHUD());
+                if (WorldMapHUD != nullptr && WorldMapHUD->LoadingWidget != nullptr)
                 {
-                    AnimFinishFuction();
+                    WorldMapHUD->LoadingWidget->SetVisibility(ESlateVisibility::Visible);
+                    WorldMapHUD->LoadingWidget->PlayLoadingAnimation(AnimFinishFuction);
                 }
-
                 return;
             }
 
