@@ -21,11 +21,17 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
+
 	UFUNCTION(BlueprintCallable)
 	virtual ACooking* Interact(AActor* ChefActor) override;
 	
 	UFUNCTION(BlueprintCallable)
 	void ChopIngredient(AActor* ChefActor);
+
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	void ShowProgressBar(bool Value);
+	void ShowProgressBar_Implementation(bool Value);
 
 	void ChoppingIsDone();
 
@@ -63,22 +69,36 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking")
 	USceneComponent* ComponentForProgressBar = nullptr;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking")
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Cooking")
 	class UStaticMeshComponent* KnifeMeshComponent = nullptr;
+
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Cooking")
+	bool bCheckHidden = false;
+
+	//UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	void HideKnife();
+	void HideKnife_Implementation();
 
 protected:
 
 private:
+	UPROPERTY(Replicated)
 	float Timer = 0.0f;
+
 	float CurTime = 0.0f;
+	UPROPERTY(Replicated)
 	bool bTimerActivated = false;
+
+	UPROPERTY(Replicated)
 	bool bChoppingDone = false;
 
+	UPROPERTY(Replicated)
 	float Ratio = 0.0f;
 
 	class AOC2Character* ChefPtr = nullptr;
 
-	UPROPERTY()
+	UPROPERTY(Replicated)
 	class UWidgetComponent* ProgressBarComponent = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Table", meta = (AllowprivateAccess = "true"))
@@ -86,5 +106,7 @@ private:
 
 	class UGaugeTextureWidget* WidgetPtr = nullptr;
 	//class ATableProgressBar* ProgressBar = nullptr;
+
+	
 
 };

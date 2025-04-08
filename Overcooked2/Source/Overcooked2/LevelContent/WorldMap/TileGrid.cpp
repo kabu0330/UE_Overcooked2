@@ -40,22 +40,9 @@ void ATileGrid::CreateTiles(TMap<int8, FTileData>& _RefMap, int _Size)
 
 void ATileGrid::SetStaticMeshes(TMap<int8, FTileData>& _Tiles)
 {
-	FString MeshName = "Mesh_TileDesertGrassBlend";
-	FString MeshPath = "";
-
-	UOC2Global::GetAssetPackageName(UStaticMesh::StaticClass(), MeshName, MeshPath);
-	if (!MeshPath.IsEmpty())
+	for (TPair<int8, FTileData>& Elem : _Tiles)
 	{
-		ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(*MeshPath);
-		if (!MeshAsset.Succeeded())
-		{
-			UE_LOG(LogTemp, Fatal, TEXT("Check the mesh: %s"), *MeshName);
-		}
-
-		for (TPair<int8, FTileData>& Elem : _Tiles)
-		{
-			Elem.Value.TileInst->SetStaticMesh(TestMesh);
-		}
+		Elem.Value.TileInst->SetStaticMesh(TestMesh);
 	}
 }
 

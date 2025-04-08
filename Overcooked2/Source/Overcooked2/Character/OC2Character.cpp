@@ -10,6 +10,7 @@
 #include "LevelContent/Table/BurnerTable.h"
 #include "LevelContent/Table/NonTable/GarbageCan.h"
 #include "LevelContent/Table/NonTable/SinkTable.h"
+#include "LevelContent/Table/NonTable/ServingTable.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "UI/Cooking/CaptureComponent2D.h"
 #include "Net/UnrealNetwork.h"
@@ -249,28 +250,41 @@ void AOC2Character::Interact_Implementation()
 				UE_LOG(LogTemp, Log, TEXT("This is a plate!"));
 				if (GrabbedIng != nullptr)
 				{
+					int32 PlateNum = Plate->GetIngredients().Num();
 					Plate->Add(GrabbedIng);
-					//성공하면 GrabbedObject를 null로 만든다.
-					if (Plate->IsCombinationSuccessful())
+					if (PlateNum != Plate->GetIngredients().Num())
 					{
 						GrabbedObject = nullptr;
 					}
+
 				}
 				else if (GrabbedPot != nullptr)
 				{
 					AIngredient* Rice = GrabbedPot->GetRice();
-					Plate->Add(Rice);
-					//성공하면 GrabbedObject를 null로 만든다.
+					if (Rice != nullptr)
+					{
+						int32 PlateNum = Plate->GetIngredients().Num();
+						Plate->Add(GrabbedIng);
+						if (PlateNum != Plate->GetIngredients().Num())
+						{
+							GrabbedObject = nullptr;
+						}
+					}
 				}
 			}
 			else if (APot* Pot = Cast<APot>(Cooking))
 			{
 				UE_LOG(LogTemp, Log, TEXT("This is a pot!"));
-				Pot->Add(Cast<AIngredient>(GrabbedObject));
-				if (Pot->IsCombinationSuccessful())
+				//Try
+				if (Pot->IsRiceInPot() == false)
 				{
-					GrabbedObject = nullptr;
+					Pot->Add(Cast<AIngredient>(GrabbedObject));
+					if (Pot->IsRiceInPot() == true)
+					{
+						GrabbedObject = nullptr;
+					}
 				}
+
 			}
 			else
 			{
@@ -292,6 +306,14 @@ void AOC2Character::Interact_Implementation()
 			else if (Ingredient != nullptr)
 			{
 				Table->PlaceItem(Ingredient);
+				GrabbedObject = nullptr;
+			}
+		}
+		else if (Table->IsA(ASinkTable::StaticClass()) == true)
+		{
+			APlate* Plate = Cast<APlate>(GrabbedObject);
+			if (Plate != nullptr && Plate->IsDirtyPlate())
+			{
 				GrabbedObject = nullptr;
 			}
 		}
@@ -341,16 +363,20 @@ void AOC2Character::Interact_Implementation()
 				{
 					if (Pot != nullptr)
 					{
-						Pot->Add(GrabIng);
-						if (Pot->IsCombinationSuccessful())
+						if (Pot->IsRiceInPot() == false)
 						{
-							GrabbedObject = nullptr;
+							Pot->Add(Cast<AIngredient>(GrabbedObject));
+							if (Pot->IsRiceInPot() == true)
+							{
+								GrabbedObject = nullptr;
+							}
 						}
 					}
 					else if (Plate != nullptr)
 					{
+						int32 IngSize = Plate->GetIngredients().Num();
 						Plate->Add(GrabIng);
-						if (Plate->IsCombinationSuccessful())
+						if (IngSize != Plate->GetIngredients().Num())
 						{
 							GrabbedObject = nullptr;
 						}
@@ -460,10 +486,10 @@ void AOC2Character::Throwing_Implementation()
 		if (PrimitiveComp)
 		{
 			//GrabbedObject->SetActorLocation(GrabComponent->GetComponentTransform().TransformPosition(FVector(0, 0, 100)));
-			
+
 			GrabbedObject->DetachFromChef(this);
 			GrabbedObject->SetActorLocation(GrabComponent->GetComponentTransform().TransformPosition(FVector(50, 0, 100)));
-			
+
 			ThrowingObject->SetThrower(this);
 			ThrowingObject->SetThrowing(true);
 
@@ -534,6 +560,10 @@ void AOC2Character::CheckInteract()
 
 		// maybe Interactable.
 		AOC2Actor* ClosestActor = Cast<AOC2Actor>(HitResults[0].GetActor());
+		if (ClosestActor->IsA<AServingTable>() == true)
+		{
+			if(GrabbedObject == nullptr || GrabbedObject->IsA<>() )
+		}
 		if (SelectedOC2Actor != nullptr)
 		{
 			if (ClosestActor != SelectedOC2Actor)
