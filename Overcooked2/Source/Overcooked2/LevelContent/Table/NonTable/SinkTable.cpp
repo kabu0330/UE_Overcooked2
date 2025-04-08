@@ -61,6 +61,15 @@ void ASinkTable::Tick(float DeltaTime)
 	}
 }
 
+ACooking* ASinkTable::Interact(AActor* ChefActor)
+{
+	ACooking* CookingReturn = CookingPtr;
+	CookingPtr = nullptr;
+
+	return CookingReturn;
+}
+
+
 void ASinkTable::PlaceItem(ACooking* ReceivedCooking)
 {
 	if (ECookingType::ECT_PLATE == ReceivedCooking->GetCookingType())
