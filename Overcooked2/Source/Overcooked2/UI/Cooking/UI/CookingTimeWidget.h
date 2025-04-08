@@ -21,21 +21,32 @@ public:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
 	class UProgressBar* TimeProgressBar = nullptr;
 
-	UFUNCTION(BlueprintCallable, Category = "OC2UI")
-	void SetbIsStart(bool Value)
+
+
+	bool GetIsTimesUP()
 	{
-		bIsStart = Value;
+		return bIsTimesUP;
 	}
+
+	void SetIsTimesUP(bool IsStart)
+	{
+		bIsTimesUP = IsStart;
+	}
+
+	void SetStartTimer(bool IsStart);
+
 
 protected:
 	virtual void NativeTick(const FGeometry& MyGeometry, float DeltaTime) override;
+	virtual void NativeConstruct() override;
 
 
 private:
 	void StartTimer(float Deltatime);
 
 	bool bIsStart = false;
-	float TotalTime = 180.0f;
+	bool bIsTimesUP = false;
+	float TotalTime = 5.0f;
 	float CurTime = 0.0f;
 
 

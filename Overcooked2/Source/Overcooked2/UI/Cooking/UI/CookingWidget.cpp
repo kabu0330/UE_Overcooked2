@@ -16,6 +16,7 @@
 #include "UI/Cooking/UI/CookingReadyWidget.h"
 
 
+
 void UCookingWidget::NativeOnInitialized()
 {
     Super::NativeOnInitialized();
@@ -76,8 +77,20 @@ void UCookingWidget::NativeTick(const FGeometry& MyGeometry, float DeltaTime)
         UpdateOrderTime(i, DeltaTime);
     }
 
+    if (CookingTimerWidget->GetIsTimesUP() == true)
+    {
+        ShowTimesUPAnim();
+        CookingTimerWidget->SetIsTimesUP(false);
+        CookingTimerWidget->SetStartTimer(false);
+    }
 
 }
+
+void UCookingWidget::StartTimer()
+{
+    CookingTimerWidget->SetStartTimer(true);
+}
+
 
 bool UCookingWidget::GetIsReady()
 {
@@ -108,7 +121,11 @@ void UCookingWidget::PlayReadyImageAnim()
     if (ReadyTimeElapsed >= 3.0f)
     {
         GoCanvas->SetVisibility(ESlateVisibility::Collapsed);
+        StartTimer();
+
         GetWorld()->GetTimerManager().ClearTimer(ReadyTimerHandle);
+        return;
+
     }
 
     if (ReadyCanvas->GetRenderTransform().Scale.X < 1.0f && ReadyTimeElapsed < 2.0f)
@@ -131,21 +148,48 @@ void UCookingWidget::PlayReadyImageAnim()
     ReadyOffset += 0.01;
 }
 
+void UCookingWidget::ShowTimesUPAnim()
+{
+    TimesUpCanvas->SetRenderScale({ 0.0f, 0.0f });
+    TimesUpCanvas->SetVisibility(ESlateVisibility::Visible);
 
+    GetWorld()->GetTimerManager().SetTimer(TimesUPTimerHandle, this, &UCookingWidget::PlayTimesUPAnim, 0.01f, true);
+}
+
+
+void UCookingWidget::PlayTimesUPAnim()
+{
+    if (TimesUpTimeElapsed >= 2.0f)
+    {
+        TimesUpCanvas->SetVisibility(ESlateVisibility::Collapsed);
+        GetWorld()->GetTimerManager().ClearTimer(TimesUPTimerHandle);
+        PlayTimeoutWidget();
+        return;
+    }
+
+    if (TimesUpCanvas->GetRenderTransform().Scale.X < 1.0f && TimesUpTimeElapsed < 2.0f)
+    {
+        TimesUpCanvas->SetRenderScale({ TimesUpCanvas->GetRenderTransform().Scale.X + TimesUpOffset, TimesUpCanvas->GetRenderTransform().Scale.Y + TimesUpOffset });
+    }
+
+
+    TimesUpTimeElapsed += 0.01;
+    TimesUpOffset += 0.01;
+}
 
 
 
 
 void UCookingWidget::PlayTimeoutWidget()
 {
+    bIsFinish = true;
     for (int i = 0; i < Orders.Num(); i++)
     {
         Orders[i]->SetVisibility(ESlateVisibility::Hidden);
     }
     CookingFinalScoreWidget->SetVisibility(ESlateVisibility::Visible);
     CookingFinalScoreWidget->ShowCapturePlayers();
-    bIsFinish = true;
-    SetVisibility(ESlateVisibility::Hidden);
+    //SetVisibility(ESlateVisibility::Hidden);
 }
 
 
