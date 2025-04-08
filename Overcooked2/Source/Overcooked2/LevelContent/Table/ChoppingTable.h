@@ -29,6 +29,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void ChopIngredient(AActor* ChefActor);
 
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	void ShowProgressBar(bool Value);
+	void ShowProgressBar_Implementation(bool Value);
+
 	void ChoppingIsDone();
 
 	bool IsChoppingDone()
@@ -79,16 +83,22 @@ public:
 protected:
 
 private:
+	UPROPERTY(Replicated)
 	float Timer = 0.0f;
+
 	float CurTime = 0.0f;
+	UPROPERTY(Replicated)
 	bool bTimerActivated = false;
+
+	UPROPERTY(Replicated)
 	bool bChoppingDone = false;
 
+	UPROPERTY(Replicated)
 	float Ratio = 0.0f;
 
 	class AOC2Character* ChefPtr = nullptr;
 
-	UPROPERTY()
+	UPROPERTY(Replicated)
 	class UWidgetComponent* ProgressBarComponent = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Table", meta = (AllowprivateAccess = "true"))

@@ -127,10 +127,15 @@ void AChoppingTable::ChopIngredient(AActor* ChefActor)
 				bTimerActivated = true;
 				//GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Magenta, "Chopping...");
 
-				ProgressBarComponent->SetHiddenInGame(false);
+				ShowProgressBar(false);
 			}
 		}
 	}
+}
+
+void AChoppingTable::ShowProgressBar_Implementation(bool Value)
+{
+	ProgressBarComponent->SetHiddenInGame(Value);
 }
 
 void AChoppingTable::ChoppingIsDone()
@@ -172,4 +177,9 @@ void AChoppingTable::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AChoppingTable, bCheckHidden);
+	DOREPLIFETIME(AChoppingTable, ProgressBarComponent);
+	DOREPLIFETIME(AChoppingTable, Ratio);
+	DOREPLIFETIME(AChoppingTable, Timer);
+	DOREPLIFETIME(AChoppingTable, bTimerActivated);
+	DOREPLIFETIME(AChoppingTable, bChoppingDone);
 }
