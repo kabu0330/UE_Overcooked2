@@ -21,6 +21,8 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 
+	virtual ACooking* Interact(AActor* ChefActor) override;
+
 	virtual void PlaceItem(ACooking* ReceivedCooking) override;
 
 	void DoTheDishes(class AOC2Character* ChefActor);
