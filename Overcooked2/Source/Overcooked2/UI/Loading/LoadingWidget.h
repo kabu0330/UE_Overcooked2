@@ -23,6 +23,12 @@ public:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
 	class UImage* TransitionImg = nullptr;
 
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
+	class UImage* ConnectingImage = nullptr;
+
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
+	class UCanvasPanel* ConnectingCanvas = nullptr;
 
 	void PlayZoomOutAnimation();
 
@@ -37,10 +43,17 @@ protected:
 
 private:
 	class UMaterialInstanceDynamic* TransitionMaterial = nullptr;
+	class UMaterialInstanceDynamic* ConnectingMaterial = nullptr;
+
 	FTimerHandle AnimationTimer;
 	FTimerHandle LoadingAnimationTimer;
 
-	bool bIsLoadingStart = false;
+	bool bIsConnecting = false;
 	float ProgressTime = 0.0f;
+	float AnimationTotalIndex = 0.45f;
+	float CurIndex = 0.0f;
+	float CurTime = 0.0f;
+
+	TFunction<void()> Function;
 };
 
