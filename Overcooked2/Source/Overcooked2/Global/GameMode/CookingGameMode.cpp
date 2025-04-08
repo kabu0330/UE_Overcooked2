@@ -21,6 +21,7 @@
 
 #include "Kismet/GameplayStatics.h"
 
+
 ACookingGameMode::ACookingGameMode()
 {
 	OrderManager = CreateDefaultSubobject<UOrderManageComponent>(TEXT("OrderManager"));
@@ -116,46 +117,41 @@ void ACookingGameMode::Stay(float DeltaTime)
 {
 	CheckTime += DeltaTime;
 
-	if (CheckTime > 3.0f)
+	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
+
+	if (nullptr != PlayerController)
 	{
-		ChangeState(ECookingGameModeState::ECS_Stage);
+		ACookingHUD* CookingHUD = Cast<ACookingHUD>(PlayerController->GetHUD());
+
+		if (nullptr != CookingHUD && nullptr != CookingHUD->CookWidget)
+		{
+			if (true == CookingHUD->CookWidget->GetIsReady())
+			{
+				ChangeState(ECookingGameModeState::ECS_Stage);
+
+				if (nullptr != CookingGameState)
+				{
+					CookingGameState->Multicast_StartGame();
+				}
+			}
+		}
 	}
 }
 
 void ACookingGameMode::EntryStage()
 {
 	InitChef();
+	StageManager->bProgress = true;
 
 	CheckTime = 0.0f;
 }
 
 void ACookingGameMode::Stage(float DeltaTime)
 {
-	CheckTime += DeltaTime;
-
-	//if (CheckTime >= UOC2Const::OrderSpawnDelay)
-	//{
-
-	//	if (CookingGameState != nullptr)
-	//	{
-	//		FOrder Order = UOC2GlobalData::GetOrderByStageAndIndex(GetWorld(), UOC2Global::GetOC2GameInstance(GetWorld())->GetCurStage(), 0);
-	//		CookingGameState->Multicast_CreateNewOrder(Order);
-	//	}
-	//}
-
-	//if (CheckTime >= 6.0f)
-	//{
-	//	if (CookingGameState != nullptr)
-	//	{
-	//		FOrder Order = UOC2GlobalData::GetOrderByStageAndIndex(GetWorld(), UOC2Global::GetOC2GameInstance(GetWorld())->GetCurStage(), 0);
-
-	//		CookingGameState->Multicast_CompleteOrder(Order);
-	//		CookingGameState->Multicast_BlinkOrderUI();
-
-	//		CheckTime = 0.0f;
-
-	//	}
-	//}
+	if (nullptr != CookingGameState)
+	{
+		CookingGameState->Multicast_SettingTimer(DeltaTime);
+	}
 }
 
 void ACookingGameMode::EntryScore()

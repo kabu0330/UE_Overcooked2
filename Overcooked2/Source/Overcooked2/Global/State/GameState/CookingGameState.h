@@ -29,6 +29,20 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+protected:
+	void WaitingToStart(float DeltaTime);
+	void InProgress(float DeltaTime);
+	void WaitingPostMatch(float DeltaTime);
+
+
+public:
+	void ChangeState(ECookingStageState ChangeState);
+	void EntryWaitingToStart();
+	void EntryInProgress();
+	void EntryWaitingPostMatch();
+
 public:
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_CreateNewOrder(FOrder Order);
@@ -40,15 +54,31 @@ public:
 	void Multicast_BlinkOrderUI();
 
 	UFUNCTION(NetMulticast, Reliable)
-	void Multicast_AddScore(int Score);
+	void Multicast_AddScore(int InScore);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_StartGame();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_SettingTimer(float DeltaTime);
 
 	UFUNCTION(Server, Reliable)
 	void Server_SubmitPlate(ACooking* Plate);
+
+	virtual void OnRep_MatchState() override;
 
 private:
 	int FindOrderIndex(FOrder& Order);
 
 private:
 	TArray<FOrder> OrderList;
-	
+
+	UPROPERTY(Replicated)
+	ECookingStageState CurStatgeState = ECookingStageState::ESS_NONE;
+
+	float CurTime = 0.0f;
+	int Score = 0;
+	TArray<int> OrderNumberArray;
+	TArray<FOrder> OrderArray;
+	int CurOrderIndex = 0;
 };

@@ -48,4 +48,5 @@ public:
 	TArray<int> OrderNumberArray;
 	TArray<FOrder> OrderArray;
 	int CurOrderIndex = 0;
+	bool bProgress = false;
 };

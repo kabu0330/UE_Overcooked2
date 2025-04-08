@@ -31,8 +31,11 @@ void AServingTable::PlaceItem(ACooking* ReceivedCooking)
 		return;
 	}
 
+	Super::PlaceItem(ReceivedCooking);
+
+	CookingPtr->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+
 	UOC2Global::SubmitPlate(GetWorld(), ReceivedCooking);
 
-	Super::PlaceItem(ReceivedCooking);
 	CookingPtr = nullptr;
 }

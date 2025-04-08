@@ -24,13 +24,13 @@ void ALobbyGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
-	UOC2GameInstance* GameInstance = Cast<UOC2GameInstance>(GetGameInstance());
+	//UOC2GameInstance* GameInstance = Cast<UOC2GameInstance>(GetGameInstance());
 
-	if (GameInstance != nullptr)
-	{
-		GameInstance->SetChefHeadName(ChefHeadNames[CurIdx]);
-		CurIdx++;
-	}
+	//if (GameInstance != nullptr)
+	//{
+	//	GameInstance->SetChefHeadName(ChefHeadNames[CurIdx]);
+	//	CurIdx++;
+	//}
 
 }
 

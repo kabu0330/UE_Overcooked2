@@ -16,6 +16,15 @@ enum class ECookingGameModeState : uint8
 };
 
 UENUM(BlueprintType)
+enum class ECookingStageState : uint8
+{
+	ESS_NONE				UMETA(DisplayName = "None"),
+	ESS_WAITING_TO_START	UMETA(DisplayName = "대기 중"),
+	ESS_IN_PROGRESS			UMETA(DisplayName = "진행 중"),
+	ESS_WAITING_POST_MATCH	UMETA(DisplayName = "대기 중 (포스트 매치)"),
+};
+
+UENUM(BlueprintType)
 enum class EPotState : uint8
 {
 	IDLE 			UMETA(DisplayName = "대기"),

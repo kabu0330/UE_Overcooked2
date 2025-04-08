@@ -22,7 +22,25 @@ void ULoadingWidget::NativeConstruct()
     TransitionImg->SetVisibility(ESlateVisibility::Hidden);
 
 }
+void ULoadingWidget::NativeTick(const FGeometry& MyGeometry, float DeltaTime)
+{
+    Super::NativeTick(MyGeometry, DeltaTime);
 
+
+    if (bIsLoadingStart)
+    {
+        ProgressTime += DeltaTime;
+
+        float ProgressRatio = FMath::Clamp(ProgressTime / 5.0f, 0.0f, 1.0f);
+        SetProgress(ProgressRatio);
+
+        if (ProgressRatio >= 1.0f)
+        {
+            bIsLoadingStart = false;
+            PlayZoomInAnimation();
+        }
+    }
+}
 
 
 void ULoadingWidget::SetProgress(float Value)
@@ -34,6 +52,34 @@ void ULoadingWidget::SetProgress(float Value)
 }
 
 
+void ULoadingWidget::PlayLoadingAnimation(TFunction<void()> Func)
+{
+
+    float CurrentTime = 0.0f;
+    float TimeStep = 0.1f;
+
+    TFunction<void()> Function = Func;
+    GetWorld()->GetTimerManager().ClearTimer(LoadingAnimationTimer);
+
+    GetWorld()->GetTimerManager().SetTimer(LoadingAnimationTimer, [this, CurrentTime, TimeStep, Function]() mutable
+        {
+            if (CurrentTime >= 6.0f)
+            {
+                GetWorld()->GetTimerManager().ClearTimer(LoadingAnimationTimer);
+                PlayZoomInAnimation();
+                Function();
+                return;
+            }
+            float ProgressRatio = FMath::Clamp(CurrentTime / 5.0f, 0.0f, 1.0f); // 5ÃÊ ±âÁØ
+            SetProgress(ProgressRatio);
+            CurrentTime += TimeStep;
+
+        }, TimeStep, true);
+
+}
+
+
+
 void ULoadingWidget::PlayZoomOutAnimation()
 {
     if (!TransitionMaterial) return;
@@ -42,13 +88,13 @@ void ULoadingWidget::PlayZoomOutAnimation()
 
     float AnimationDuration = 10.0f;
     float TimeStep = 0.01f;
-    float CurrentTime = AnimationDuration; 
+    float CurrentTime = AnimationDuration;
 
     GetWorld()->GetTimerManager().ClearTimer(AnimationTimer);
 
     GetWorld()->GetTimerManager().SetTimer(AnimationTimer, [this, AnimationDuration, TimeStep, CurrentTime]() mutable
         {
-            if (CurrentTime <= 0.0f) 
+            if (CurrentTime <= 0.0f)
             {
                 GetWorld()->GetTimerManager().ClearTimer(AnimationTimer);
                 TransitionImg->SetVisibility(ESlateVisibility::Hidden);
@@ -62,7 +108,7 @@ void ULoadingWidget::PlayZoomOutAnimation()
             TransitionMaterial->SetScalarParameterValue(TEXT("Value1"), Value1);
             TransitionMaterial->SetScalarParameterValue(TEXT("Value2"), Value2);
 
-            CurrentTime -= TimeStep * 20.0f; 
+            CurrentTime -= TimeStep * 20.0f;
 
         }, TimeStep, true);
 
@@ -92,7 +138,7 @@ void ULoadingWidget::PlayZoomInAnimation()
 
                 //if (AnimFinishFuction)
                 {
-               //     AnimFinishFuction();
+                    //     AnimFinishFuction();
                 }
 
                 return;

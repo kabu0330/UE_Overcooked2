@@ -10,33 +10,25 @@ class OVERCOOKED2_API UCookingWidget : public UUserWidget
     GENERATED_BODY()
 
 public:
-    // 완료된 주문 개수 설정 및 반환
-    UFUNCTION(BlueprintCallable, Category = "OC2UI")
-    void SetCompleteOrderNum(int num) { CompleteOrderNum = num; }
-
-    UFUNCTION(BlueprintCallable, Category = "OC2UI")
-    int GetCompleteOrderNum() { return CompleteOrderNum; }
 
     // 주문 완료 처리
-    UFUNCTION(BlueprintCallable, Category = "OC2UI")
     void OrderComplete(int Index, int Score = 10);
 
     // 새로운 주문 생성
-    UFUNCTION(BlueprintCallable, Category = "OC2UI")
     void CreateNewOrder(struct FOrder& Order);
 
-    UFUNCTION(BlueprintCallable, Category = "OC2UI")
     void WrongOrder();
     //void SubmitWrongOrder();
 
     UFUNCTION(BlueprintCallable, Category = "OC2UI")
     void PlayTimeoutWidget();
 
-    UFUNCTION(BlueprintCallable, Category = "OC2UI")
-    void ShowReadyImageAnim();
-
     void CheckFeverTime(int TipCount);
 
+    void StartGame();
+    void StartTimer();
+
+    bool GetIsReady();
 
     // UI 바인딩 (총 5개의 주문 슬롯)
     UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
@@ -61,12 +53,18 @@ public:
     UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
     class UCanvasPanel* GoCanvas = nullptr;
 
+    UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
+    class UCanvasPanel* TimesUpCanvas = nullptr;
+
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OC2UI")
     UCurveFloat* ColorCurve = nullptr;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OC2UI", meta = (AllowPrivateAccess = "true"))
     bool bIsFinish = false;
+
+
+    float StartTimerTick(float DeltaTime);
 
 protected:
     virtual void NativeOnInitialized() override;
@@ -82,12 +80,14 @@ protected:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OC2UI")
     TSubclassOf<UUserWidget> FinalScoreSubWidget;
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OC2UI")
+    TSubclassOf<UUserWidget> ReadySubWidget;
 
 private:
     class UCookingScoreWidget* CookingScoreWidget = nullptr;
     class UCookingFinalScoreWidget* CookingFinalScoreWidget = nullptr;
-
-
+    class UCookingReadyWidget* CookingReadyWidget = nullptr;
+    class UCookingTimeWidget* CookingTimerWidget = nullptr;
 
     // 주문 관련 변수
     int CompleteOrderNum = 0;
@@ -105,7 +105,9 @@ private:
     float IngredientTimeElapsed = 0.0f;
     float MoveTimeElapsed = 0.0f;
     float ReadyTimeElapsed = 0.0f;
+    float TimesUpTimeElapsed = 0.0f;
     float ReadyOffset = 0.0f;
+    float TimesUpOffset = 0.0f;
 
     FVector2D TargetOffset = FVector2D(50.0f, 0.0f);
     FVector2D IngredientTargetOffset = FVector2D(0.0f, 10.0f);
@@ -121,9 +123,12 @@ private:
     FTimerHandle MoveTimerHandle;
     FTimerHandle IngredientTimerHandle;
     FTimerHandle ReadyTimerHandle;
+    FTimerHandle TimesUPTimerHandle;
 
 
     // 내부 함수
+    void ShowReadyImageAnim();
+
     void UpdateImageOpacity();
     void UpdateImagePosition();
     void UpdateIngredientImagePosition();
@@ -133,6 +138,10 @@ private:
     void PlayReadyImageAnim();
 
     void FindOrderImgRecursive(class UWidget* Widget, const FLinearColor& Color);
+
+    void ShowTimesUPAnim();
+    void PlayTimesUPAnim();
+
 
 
     FTimeline WrongOrderTimeline;
