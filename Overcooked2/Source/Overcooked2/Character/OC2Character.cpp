@@ -87,7 +87,7 @@ void AOC2Character::BeginPlay()
 	Super::BeginPlay();
 
 	//CheckOverlap->OnComponentHit.AddDynamic(this, &AOC2Character::OnHit);
-	CheckOverlap->OnComponentBeginOverlap.AddDynamic(this, &AOC2Character::OnOverlapCheck);
+	//CheckOverlap->OnComponentBeginOverlap.AddDynamic(this, &AOC2Character::OnOverlapCheck);
 
 	Plane->SetVisibility(IsLocallyControlled());
 
@@ -290,6 +290,7 @@ void AOC2Character::Interact_Implementation()
 			else if (Ingredient != nullptr)
 			{
 				Table->PlaceItem(Ingredient);
+				GrabbedObject = nullptr;
 			}
 		}
 		else
@@ -300,7 +301,7 @@ void AOC2Character::Interact_Implementation()
 			if (GrabbedObject == nullptr && Cook != nullptr)
 			{
 				Grab(Cook);
-				GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Cyan, Cook->GetName());
+				//GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Cyan, Cook->GetName());
 			}
 			// 잡은 물건이 있는데 테이블이 비어있으면
 			else if (GrabbedObject != nullptr && Cook == nullptr)
@@ -459,7 +460,7 @@ void AOC2Character::Throwing_Implementation()
 			//GrabbedObject->SetActorLocation(GrabComponent->GetComponentTransform().TransformPosition(FVector(0, 0, 100)));
 			
 			GrabbedObject->DetachFromChef(this);
-			GrabbedObject->SetActorLocation(GrabComponent->GetComponentTransform().TransformPosition(FVector(30, 0, 80)));
+			GrabbedObject->SetActorLocation(GrabComponent->GetComponentTransform().TransformPosition(FVector(50, 0, 100)));
 			
 			ThrowingObject->SetThrower(this);
 			ThrowingObject->SetThrowing(true);
@@ -467,7 +468,7 @@ void AOC2Character::Throwing_Implementation()
 			// 4️⃣ 던질 방향과 세기 설정
 			FVector ThrowDirection = (GetActorForwardVector() + FVector(0, 0, 0.2f)).GetSafeNormal();  // 캐릭터가 바라보는 방향
 
-			float ThrowStrength = 1200.0f;  // 던지는 힘 조절
+			float ThrowStrength = 800.0f;  // 던지는 힘 조절
 
 			// 5️⃣ 물리적 임펄스 추가 (던지기)
 			PrimitiveComp->AddImpulse(ThrowDirection * ThrowStrength, NAME_None, true);

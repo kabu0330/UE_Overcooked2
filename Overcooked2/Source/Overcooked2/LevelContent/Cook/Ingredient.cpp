@@ -8,12 +8,15 @@
 #include <LevelContent/Cook/Widget/IngredientIconWidget.h>
 #include "Kismet/KismetMathLibrary.h"
 #include "Components/WidgetComponent.h"
+#include "LevelContent/Cook/Pot.h"
 #include "LevelContent/Table/CookingTable.h"
+#include "LevelContent/Table/NonTable/SinkTable.h" 
+#include "Character/OC2Character.h"
 
 // Sets default values
 AIngredient::AIngredient()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	bReplicates = true;
 	SetReplicateMovement(true);
@@ -22,7 +25,8 @@ AIngredient::AIngredient()
 
 	WidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
 	WidgetComponent->SetupAttachment(RootComponent);
-	
+
+
 }
 
 void AIngredient::SetType_Implementation(EIngredientType Type)
@@ -35,17 +39,18 @@ void AIngredient::SetType_Implementation(EIngredientType Type)
 void AIngredient::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit)
 {
 	TArray<FName> OtherComponentTags = OtherComponent->ComponentTags;
- 	if (nullptr != OtherActor && true == OtherComponent->ComponentHasTag(TEXT("Floor")))
+	if (nullptr != OtherActor && true == OtherComponent->ComponentHasTag(TEXT("Floor")))
 	{
 		//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, TEXT("재료와 바닥 충돌"));
 		//StaticMeshComponent->BodyInstance.bLockXRotation = true;
-		StaticMeshComponent->BodyInstance.bLockYRotation = true;
-		StaticMeshComponent->BodyInstance.bLockZRotation = true;
+		//StaticMeshComponent->BodyInstance.bLockYRotation = true;
+		//StaticMeshComponent->BodyInstance.bLockZRotation = true;
 	}
 
 	StaticMeshComponent->SetPhysicsLinearVelocity(FVector::ZeroVector);
+	CheckPlacement();
 	bIsThrowing = false;
-	//ThrownTime = 0.0f;
+	ThrownTime = 0.0f;
 }
 
 // Called when the game starts or when spawned
@@ -126,17 +131,15 @@ void AIngredient::Tick(float DeltaTime)
 {
 	ACooking::Tick(DeltaTime);
 
-	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Green, FString::Printf(TEXT("%f"), StaticMeshComponent->GetPhysicsLinearVelocity().Length()));
-	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Green, FString::Printf(TEXT("%f"), ThrownTime));
+	//GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Green, FString::Printf(TEXT("%f"), StaticMeshComponent->GetPhysicsLinearVelocity().Length()));
+	//GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Green, FString::Printf(TEXT("%f"), ThrownTime));
 	if (bIsThrowing)
 	{
 		ThrownTime += DeltaTime;
 	}
-	if (StaticMeshComponent->GetPhysicsLinearVelocity().Length() < 0.5f && ThrownTime > 0.1f )
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Green, "Hit");
-		CheckPlacement();
-	}
+
+	//	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Green, "Hit");
+	CheckPlacement();
 
 	//	DrawDebugSphere(GetWorld(), GetActorLocation(), 100.0f, 20, FColor::Red, false);
 
@@ -246,6 +249,7 @@ void AIngredient::CheckPlacement()
 	// 감지할 오브젝트 유형 설정 (예: WorldDynamic)
 	FCollisionObjectQueryParams ObjectQueryParams;
 	ObjectQueryParams.AddObjectTypesToQuery(ECC_GameTraceChannel1);
+	ObjectQueryParams.AddObjectTypesToQuery(ECC_GameTraceChannel2);
 
 	// 트레이스 설정
 	FCollisionQueryParams QueryParams;
@@ -254,15 +258,19 @@ void AIngredient::CheckPlacement()
 	// 결과 저장 배열
 	TArray<FHitResult> HitResults;
 
-	// Sphere Trace 실행
-	bool bHit = GetWorld()->SweepMultiByObjectType(
-		HitResults,
-		TraceLocation, TraceLocation,  // Start와 End 동일 (정지된 구)
-		FQuat::Identity,
-		ObjectQueryParams,
-		FCollisionShape::MakeSphere(100.0f),
-		QueryParams
-	);
+	bool bHit = false;
+	if (StaticMeshComponent->GetPhysicsLinearVelocity().Length() < 0.2f && ThrownTime > 0.1f)
+	{
+		// Sphere Trace 실행
+		bHit = GetWorld()->SweepMultiByObjectType(
+			HitResults,
+			TraceLocation, TraceLocation,  // Start와 End 동일 (정지된 구)
+			FQuat::Identity,
+			ObjectQueryParams,
+			FCollisionShape::MakeSphere(100.0f),
+			QueryParams
+		);
+	}
 
 	//UE_LOG(LogTemp, Log, TEXT("%d"), HitResults.Num());
 
@@ -272,11 +280,23 @@ void AIngredient::CheckPlacement()
 			return FVector::DistSquared(TraceLocation, A.GetActor()->GetActorLocation()) < FVector::DistSquared(TraceLocation, B.GetActor()->GetActorLocation());
 			});
 
+		
 		// maybe Interactable.
 		ACookingTable* ClosestTable = nullptr;
 		for (auto Result : HitResults)
 		{
-			if (Result.GetActor()->IsA<ACookingTable>())
+			if (Result.GetActor()->IsA<AOC2Character>())
+			{
+				AOC2Character* Chef = Cast<AOC2Character>(Result.GetActor());
+				if (Chef != Thrower)
+				{
+					Chef->Grab(this);
+					bIsThrowing = false;
+					ThrownTime = 0.0f;
+					break;
+				}
+			}
+			else if (Result.GetActor()->IsA<ACookingTable>())
 			{
 				ClosestTable = Cast<ACookingTable>(Result.GetActor());
 				break;
@@ -284,8 +304,19 @@ void AIngredient::CheckPlacement()
 		}
 		if (ClosestTable != nullptr)
 		{
-			AttachToChef(ClosestTable);
-			ClosestTable->PlaceItem(this);
+			if (ClosestTable->IsUsing() == false && false == ClosestTable->IsA<ASinkTable>())
+			{
+				AttachToChef(ClosestTable);
+				ClosestTable->PlaceItem(this);
+			}
+			else
+			{
+				APot* Pot = Cast<APot>(ClosestTable->GetCookingPtr());
+				if (Pot != nullptr)
+				{
+					Pot->Add(this);
+				}
+			}
 			bIsThrowing = false;
 			ThrownTime = 0.0f;
 		}
@@ -366,4 +397,5 @@ void AIngredient::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifet
 
 	DOREPLIFETIME(AIngredient, IngredientType);
 	DOREPLIFETIME(AIngredient, CurIngredientState);
+	DOREPLIFETIME(AIngredient, Thrower);
 }
