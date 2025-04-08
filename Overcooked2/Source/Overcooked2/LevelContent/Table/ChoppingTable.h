@@ -68,8 +68,13 @@ public:
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Cooking")
 	class UStaticMeshComponent* KnifeMeshComponent = nullptr;
 
-	UPROPERTY(Replicated)
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Cooking")
 	bool bCheckHidden = false;
+
+	//UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	void HideKnife();
+	void HideKnife_Implementation();
 
 protected:
 
@@ -92,6 +97,6 @@ private:
 	class UGaugeTextureWidget* WidgetPtr = nullptr;
 	//class ATableProgressBar* ProgressBar = nullptr;
 
-	void HideKnife();
+	
 
 };

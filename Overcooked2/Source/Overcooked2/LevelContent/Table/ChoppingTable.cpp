@@ -42,9 +42,6 @@ void AChoppingTable::BeginPlay()
 	ProgressBarComponent->SetTwoSided(true); 
 	ProgressBarComponent->SetTickWhenOffscreen(true);
 
-	//UStaticMesh* Mesh = LoadObject<UStaticMesh>(nullptr, TEXT("/Game/Resources/LevelResource/TableResource/Countertop/Knife"));
-	//KnifeMeshComponent->SetStaticMesh(Mesh);
-	//KnifeMeshComponent->SetHiddenInGame(false);
 }
 
 void AChoppingTable::Tick(float DeltaTime)
@@ -70,15 +67,6 @@ void AChoppingTable::Tick(float DeltaTime)
 		ChoppingIsDone();
 	}
 
-	if (nullptr != CookingPtr)
-	{
-		bCheckHidden = true;
-	}
-	else
-	{
-		bCheckHidden = false;
-	}
-
 	HideKnife();
 }
 
@@ -100,8 +88,17 @@ ACooking* AChoppingTable::Interact(AActor* ChefActor)
 
 }
 
-void AChoppingTable::HideKnife()
+void AChoppingTable::HideKnife_Implementation()
 {
+	if (nullptr != CookingPtr)
+	{
+		bCheckHidden = true;
+	}
+	else
+	{
+		bCheckHidden = false;
+	}
+
 	if (true == bCheckHidden)
 	{
 		KnifeMeshComponent->SetHiddenInGame(true);
