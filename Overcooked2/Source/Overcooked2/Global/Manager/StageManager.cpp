@@ -13,8 +13,6 @@ AStageManager::AStageManager()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	int a = 0;
-
 	OrderNumberArray.Add(1);
 	OrderNumberArray.Add(0);
 	OrderNumberArray.Add(0);
@@ -51,25 +49,28 @@ void AStageManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	CurTime += DeltaTime;
-	
-	if (CurTime > UOC2Const::OrderSpawnDelay)
+	if (true == bProgress)
 	{
-		if (OrderArray.Num() < UOC2Const::MaxOrderCount)
-		{
-			FOrder Order = UOC2GlobalData::GetOrderByStageAndIndex(GetWorld(), UOC2Global::GetOC2GameInstance(GetWorld())->GetCurStage(), OrderNumberArray[CurOrderIndex++]);
-			CookingGameState->Multicast_CreateNewOrder(Order);
-			OrderArray.Add(Order);
+		CurTime += DeltaTime;
 
-			if (CurOrderIndex == OrderNumberArray.Num())
+		if (CurTime > UOC2Const::OrderSpawnDelay)
+		{
+			if (OrderArray.Num() < UOC2Const::MaxOrderCount)
 			{
-				CurOrderIndex = 0;
+				FOrder Order = UOC2GlobalData::GetOrderByStageAndIndex(GetWorld(), UOC2Global::GetOC2GameInstance(GetWorld())->GetCurStage(), OrderNumberArray[CurOrderIndex++]);
+				CookingGameState->Multicast_CreateNewOrder(Order);
+				OrderArray.Add(Order);
+
+				if (CurOrderIndex == OrderNumberArray.Num())
+				{
+					CurOrderIndex = 0;
+				}
 			}
+
+			CurTime = 0.0f;
 		}
 
-		CurTime = 0.0f;
 	}
-
 }
 
 void AStageManager::AddScore(int InScore)

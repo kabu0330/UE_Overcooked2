@@ -5,6 +5,7 @@
 #include "Overcooked2.h"
 
 #include "Kismet/GameplayStatics.h"
+#include "Net/UnrealNetwork.h"
 
 #include "LevelContent/Cook/Plate.h"
 #include "LevelContent/Cook/Cooking.h"
@@ -24,12 +25,91 @@ ACookingGameState::ACookingGameState()
 void ACookingGameState::BeginPlay()
 {
 	Super::BeginPlay();
+
+	OrderNumberArray.Add(1);
+	OrderNumberArray.Add(0);
+	OrderNumberArray.Add(0);
+	OrderNumberArray.Add(1);
+	OrderNumberArray.Add(0);
+	OrderNumberArray.Add(0);
+	OrderNumberArray.Add(1);
+	OrderNumberArray.Add(1);
+	OrderNumberArray.Add(0);
+
+	ChangeState(ECookingStageState::ESS_WAITING_TO_START);
+
 }
 
 void ACookingGameState::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	switch (CurStatgeState)
+	{
+	case ECookingStageState::ESS_WAITING_TO_START:
+		WaitingToStart(DeltaTime);
+		break;
+	case ECookingStageState::ESS_IN_PROGRESS:
+		InProgress(DeltaTime);
+		break;
+	case ECookingStageState::ESS_WAITING_POST_MATCH:
+		WaitingPostMatch(DeltaTime);
+		break;
+	}
+
+}
+
+void ACookingGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ACookingGameState, CurStatgeState);
+}
+
+void ACookingGameState::ChangeState(ECookingStageState ChangeState)
+{
+	if (true == HasAuthority())
+	{
+		CurStatgeState = ChangeState;
+		switch (CurStatgeState)
+		{
+		case ECookingStageState::ESS_WAITING_TO_START:
+			EntryWaitingToStart();
+			break;
+		case ECookingStageState::ESS_IN_PROGRESS:
+			EntryInProgress();
+			break;
+		case ECookingStageState::ESS_WAITING_POST_MATCH:
+			EntryWaitingPostMatch();
+			break;
+		}
+	}
+}
+
+void ACookingGameState::EntryWaitingToStart()
+{
+	SetMatchState(MatchState::WaitingToStart);
+}
+
+void ACookingGameState::WaitingToStart(float DeltaTime)
+{
+}
+
+void ACookingGameState::EntryInProgress()
+{
+}
+
+void ACookingGameState::InProgress(float DeltaTime)
+{
+	
+}
+
+void ACookingGameState::EntryWaitingPostMatch()
+{
+}
+
+void ACookingGameState::WaitingPostMatch(float DeltaTime)
+{
 }
 
 
@@ -121,11 +201,11 @@ void ACookingGameState::Server_SubmitPlate_Implementation(ACooking* Cooking)
 	}
 }
 
-void ACookingGameState::Multicast_AddScore_Implementation(int Score)
+void ACookingGameState::Multicast_AddScore_Implementation(int InScore)
 {
 	// 모든 클라이언트에서 실행됨
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
-
+	int Test = InScore;
 	if (nullptr != PlayerController)
 	{
 		ACookingHUD* CookingHUD = Cast<ACookingHUD>(PlayerController->GetHUD());
@@ -135,6 +215,13 @@ void ACookingGameState::Multicast_AddScore_Implementation(int Score)
 			CookingHUD->CookWidget->WrongOrder();
 		}
 	}
+}
+
+void ACookingGameState::OnRep_MatchState()
+{
+	Super::OnRep_MatchState();
+
+
 }
 
 int ACookingGameState::FindOrderIndex(FOrder& Order)
