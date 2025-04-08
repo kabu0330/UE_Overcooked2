@@ -23,6 +23,12 @@ public:
 
 	void SetPlate(class APlate* Plate);
 
+	virtual ACooking* Interact(AActor* ChefActor) override;
+
 public:
 	void PlaceItem(ACooking* ReceivedCooking) override;
+
+	int PlateNum = 0;
+
+	TMap<int, ACooking*> PlateMap;
 };

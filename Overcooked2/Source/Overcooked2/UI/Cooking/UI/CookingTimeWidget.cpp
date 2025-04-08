@@ -5,18 +5,32 @@
 #include "Components/TextBlock.h"
 #include "Components/ProgressBar.h"
 
+void UCookingTimeWidget::NativeConstruct()
+{
+	Super::NativeConstruct();
+
+	CurTime = TotalTime;
+}
+
 void UCookingTimeWidget::NativeTick(const FGeometry& MyGeometry, float DeltaTime)
 {
 	Super::NativeTick(MyGeometry, DeltaTime);
 
-	if (true == bIsStart)
+	if (true == bIsStart && CurTime > 0.0f)
 	{
 		StartTimer(DeltaTime);
 	}
-	else
+	else if (true == bIsStart && CurTime <= 0.0f)
 	{
-		CurTime = TotalTime;
+		bIsTimesUP = true;
 	}
+
+	
+}
+
+void UCookingTimeWidget::SetStartTimer(bool IsStart)
+{
+	bIsStart = IsStart;
 }
 
 

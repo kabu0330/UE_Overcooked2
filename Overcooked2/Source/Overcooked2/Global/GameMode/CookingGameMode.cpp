@@ -21,6 +21,7 @@
 
 #include "Kismet/GameplayStatics.h"
 
+
 ACookingGameMode::ACookingGameMode()
 {
 	OrderManager = CreateDefaultSubobject<UOrderManageComponent>(TEXT("OrderManager"));
@@ -140,6 +141,7 @@ void ACookingGameMode::Stay(float DeltaTime)
 void ACookingGameMode::EntryStage()
 {
 	InitChef();
+	StageManager->bProgress = true;
 
 	CheckTime = 0.0f;
 }
