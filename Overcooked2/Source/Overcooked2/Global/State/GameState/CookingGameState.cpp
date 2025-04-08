@@ -180,6 +180,22 @@ void ACookingGameState::Multicast_BlinkOrderUI_Implementation()
 	}
 }
 
+void ACookingGameState::Multicast_SettingTimer_Implementation(float DeltaTime)
+{
+	// 모든 클라이언트에서 실행됨
+	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
+
+	if (nullptr != PlayerController)
+	{
+		ACookingHUD* CookingHUD = Cast<ACookingHUD>(PlayerController->GetHUD());
+
+		if (nullptr != CookingHUD && nullptr != CookingHUD->CookWidget)
+		{
+			CookingHUD->CookWidget->StartTimerTick(DeltaTime);
+		}
+	}
+}
+
 void ACookingGameState::Server_SubmitPlate_Implementation(ACooking* Cooking)
 {
 	APlate* Plate = Cast<APlate>(Cooking);

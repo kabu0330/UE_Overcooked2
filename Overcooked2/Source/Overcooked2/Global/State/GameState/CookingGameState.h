@@ -59,6 +59,9 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_StartGame();
 
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_SettingTimer(float DeltaTime);
+
 	UFUNCTION(Server, Reliable)
 	void Server_SubmitPlate(ACooking* Plate);
 
