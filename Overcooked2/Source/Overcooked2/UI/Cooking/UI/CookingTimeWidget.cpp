@@ -12,20 +12,21 @@ void UCookingTimeWidget::NativeConstruct()
 	CurTime = TotalTime;
 }
 
-void UCookingTimeWidget::NativeTick(const FGeometry& MyGeometry, float DeltaTime)
+float UCookingTimeWidget::StartTimerTick(float DeltaTime)
 {
-	Super::NativeTick(MyGeometry, DeltaTime);
+	float curtime = 0.0f;
 
 	if (true == bIsStart && CurTime > 0.0f)
 	{
-		StartTimer(DeltaTime);
+		curtime = StartTimer(DeltaTime);
 	}
 	else if (true == bIsStart && CurTime <= 0.0f)
 	{
 		bIsTimesUP = true;
 	}
 
-	
+	return curtime;
+
 }
 
 void UCookingTimeWidget::SetStartTimer(bool IsStart)
@@ -34,7 +35,7 @@ void UCookingTimeWidget::SetStartTimer(bool IsStart)
 }
 
 
-void UCookingTimeWidget::StartTimer(float DeltaTime)
+float UCookingTimeWidget::StartTimer(float DeltaTime)
 {
 
 	int Min = static_cast<int>(CurTime / 60);
@@ -94,4 +95,5 @@ void UCookingTimeWidget::StartTimer(float DeltaTime)
 
 	CurTime -= DeltaTime;
 
+	return CurTime;
 }
