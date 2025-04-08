@@ -22,6 +22,7 @@ UOC2GameInstance::UOC2GameInstance()
 	ChefHeadNames.Add(UOC2Const::ChefMouseHeadName);
 	ChefHeadNames.Add(UOC2Const::ChefPandaHeadName);
 	ChefHeadNames.Add(UOC2Const::ChefPigHeadName);
+	ChefHeadNames.Add(UOC2Const::ChefOwlHeadName);
 }
 
 UOC2GameInstance::~UOC2GameInstance()
