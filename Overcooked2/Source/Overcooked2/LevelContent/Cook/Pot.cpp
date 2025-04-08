@@ -594,6 +594,7 @@ void APot::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProp
 	DOREPLIFETIME(APot, bIsCombinationSuccessful);
 	DOREPLIFETIME(APot, TargetColor);
 	DOREPLIFETIME(APot, NiagaraComponent);
+	DOREPLIFETIME(APot, bCanColorChange);
 }
 
 // Table이 SetCookingTable 함수를 호출해주면 여기서 세팅
