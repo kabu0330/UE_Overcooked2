@@ -3,6 +3,7 @@
 
 #include "Global/GameFramework/OC2Actor.h"
 #include "Net/UnrealNetwork.h"
+#include <Components/WidgetComponent.h>
 
 AOC2Actor::AOC2Actor()
 {
@@ -86,6 +87,10 @@ void AOC2Actor::BeginPlay()
 	for (UMeshComponent* Mesh : MeshComponents)
 	{
 		if (nullptr == Mesh)
+		{
+			continue;
+		}
+		if (nullptr != Cast<UWidgetComponent>(Mesh))
 		{
 			continue;
 		}
