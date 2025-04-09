@@ -288,9 +288,10 @@ void AIngredient::CheckPlacement()
 			if (Result.GetActor()->IsA<AOC2Character>())
 			{
 				AOC2Character* Chef = Cast<AOC2Character>(Result.GetActor());
-				if (Chef != Thrower)
+				if (Chef != Thrower && false == Chef->IsHolding())
 				{
 					Chef->Grab(this);
+					Chef->();
 					bIsThrowing = false;
 					ThrownTime = 0.0f;
 					break;
