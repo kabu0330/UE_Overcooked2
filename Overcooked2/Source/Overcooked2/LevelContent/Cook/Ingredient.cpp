@@ -398,4 +398,5 @@ void AIngredient::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifet
 	DOREPLIFETIME(AIngredient, IngredientType);
 	DOREPLIFETIME(AIngredient, CurIngredientState);
 	DOREPLIFETIME(AIngredient, Thrower);
+	DOREPLIFETIME(AIngredient, bIsThrowing);
 }

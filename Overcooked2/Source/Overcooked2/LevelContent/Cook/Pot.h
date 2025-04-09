@@ -123,7 +123,7 @@ private:
 	UPROPERTY()
 	TArray<UMaterialInstanceDynamic*> SoupDynamicMaterial; // 조리 시간에 따라 색상 바꿀 머티리얼들
 
-	UPROPERTY(Replicated)
+	UPROPERTY()
 	UMaterialInstanceDynamic* NoneMaterial = nullptr; // 투명 머티리얼
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowprivateAccess = "true"))
