@@ -78,15 +78,13 @@ public:
 
 	void SpawnPlate();
 
-	// 접시 메시를 보이게 할지 숨길지 설정
-	UFUNCTION(NetMulticast, Reliable)
-	void SetVisibility(bool Value);
-	void SetVisibility_Implementation(bool Value);
-
 	TArray<APlate*>& GetAnotherPlatesRef()
 	{
 		return AnotherPlates;
 	}
+
+	// 깨끗한 접시 중 하나를 꺼낸다.
+	APlate* TakeCleanPlate();
 
 protected:
 	// Called when the game starts or when spawned
@@ -110,6 +108,7 @@ protected:
 	virtual void PostInitializeComponents() override;
 
 	void ChangePlateMesh();
+	void HideAnotherPlates();
 
 private:
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))

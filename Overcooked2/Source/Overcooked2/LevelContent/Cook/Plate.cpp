@@ -66,11 +66,6 @@ void APlate::SpawnPlate()
 	}
 }
 
-void APlate::SetVisibility_Implementation(bool Value)
-{
-	StaticMeshComponent->SetVisibility(Value);
-}
-
 // Called when the game starts or when spawned
 void APlate::BeginPlay()
 {
@@ -329,12 +324,7 @@ void APlate::ChangePlateMesh()
 {
 	int Count = AnotherPlates.Num();
 
-	// 접시 다 숨긴다.
-	for (int i = 0; i < Count; i++)
-	{
-		AnotherPlates[i]->SetVisibility(false);
-		AnotherPlates[i]->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
-	}
+	HideAnotherPlates();
 
 	switch (Count)
 	{
@@ -372,6 +362,42 @@ void APlate::ChangePlateMesh()
 	}
 	default:
 		break;
+	}
+}
+
+APlate* APlate::TakeCleanPlate()
+{
+	int32 Count = AnotherPlates.Num();
+	if (0 == Count) // 내가 가지고 있는 다른 접시가 없다면 내 포인터를 넘겨준다.
+	{
+		return this;
+	}
+
+	// Clean Plate가 아니라면 하나만 꺼내 줄 수 없다. 쌓인 접시들을 모두 들고 다녀야 한다.
+	if (EPlateState::EMPTY != AnotherPlates[0]->PlateState) 
+	{
+		return this;
+	}
+
+	// 꺼내 줄 때는 다시 숨김 설정을 해제한다.
+	AnotherPlates[0]->SetActorHiddenInGame(false);
+	AnotherPlates[0]->SetActorEnableCollision(true);
+	AnotherPlates[0]->SetActorTickEnabled(true);
+
+	APlate* AnotherPlate = AnotherPlates[0];
+	AnotherPlates.RemoveAt(0);
+
+	return AnotherPlate; 
+}
+
+void APlate::HideAnotherPlates()
+{
+	// 접시 다 숨긴다.
+	for (int i = 0; i < AnotherPlates.Num(); i++)
+	{
+		AnotherPlates[i]->SetActorHiddenInGame(true);
+		AnotherPlates[i]->SetActorEnableCollision(false); // 충돌 끈다.
+		AnotherPlates[i]->SetActorTickEnabled(false);
 	}
 }
 
