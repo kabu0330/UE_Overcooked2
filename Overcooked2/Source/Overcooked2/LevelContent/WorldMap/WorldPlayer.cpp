@@ -3,16 +3,20 @@
 
 #include "LevelContent/WorldMap/WorldPlayer.h"
 #include "LevelContent/WorldMap/WorldMapData.h"
-#include "Global/OC2GameInstance.h"
-#include "Global/OC2Global.h"
+
 #include "Components/CapsuleComponent.h"
+#include "Camera/CameraActor.h"
+#include "Camera/CameraComponent.h"
 #include "Engine/SkeletalMesh.h"
 #include "Net/UnrealNetwork.h"
 #include "Kismet/GameplayStatics.h"
-#include "Camera/CameraActor.h"
-#include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+
+#include "Global/OC2GameInstance.h"
+#include "Global/OC2Global.h"
+#include "Global/State/GameState/WorldGameState.h"
+
 #include "UI/WorldMap/WorldMapHUD.h"
 #include "UI/WorldMap/UI/WorldMapUserWidget.h"
 #include "UI/Loading/LoadingWidget.h"
@@ -51,6 +55,8 @@ void AWorldPlayer::BeginPlay()
 	}
 
 	SetActorLocation(UWorldMapData::START_LOC);
+
+	WorldGameState = Cast<AWorldGameState>(UGameplayStatics::GetGameState(this));
 }
 
 void AWorldPlayer::Tick(float DeltaTime)
@@ -82,15 +88,9 @@ void AWorldPlayer::OnSelectMap()
 {
 	if (Controller && HasAuthority())
 	{
-		APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
-		AWorldMapHUD* WorldMapHUD = Cast<AWorldMapHUD>(PlayerController->GetHUD());
-		
-		if (WorldMapHUD->WorldMapUserWidget != nullptr && WorldMapHUD != nullptr)
+		if (nullptr != WorldGameState)
 		{
-			WorldMapHUD->WorldMapUserWidget->PlayZoomInAnimation([this]()
-				{
-					UOC2Global::GetOC2GameInstance(GetWorld())->StartCookingStage();
-				});
+			WorldGameState->Multicast_PlayZoomInAnmationUI();
 		}
 	}
 }

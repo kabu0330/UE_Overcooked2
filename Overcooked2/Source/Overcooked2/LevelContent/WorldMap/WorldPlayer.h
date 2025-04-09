@@ -7,6 +7,8 @@
 #include "LevelContent/WorldMap/WorldMapData.h"
 #include "WorldPlayer.generated.h"
 
+class AWorldGameState;
+
 UCLASS()
 class OVERCOOKED2_API AWorldPlayer : public ACharacter
 {
@@ -51,4 +53,6 @@ private:
 	float DefaultGravity = 0.f;
 
 	static FVector WorldPlayerLocation;
+
+	AWorldGameState* WorldGameState = nullptr;
 };
