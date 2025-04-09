@@ -17,9 +17,20 @@ class OVERCOOKED2_API ALobbyGameState : public AOC2GameState
 	GENERATED_BODY()
 
 public:
+	ALobbyGameState();
+
+protected:
+	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
+	
+public:
 	UFUNCTION(BlueprintCallable)
 	ALobbyManager* GetLobbyManager() const;
 
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_PlayZoomInAnmationUI();
+
+public:
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	
 public:
@@ -28,5 +39,8 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<ALobbyManager> LobbyManagerClass = nullptr;
+
+	const FString LOBBY_LEVEL = "LobbyDevLevel";
+	const FString PLAY_LEVEL = "Sushi1-3StageLevel";
 
 };

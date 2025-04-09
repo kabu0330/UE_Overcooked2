@@ -15,6 +15,8 @@
 #include "UI/Loading/LoadingWidget.h"
 #include "Kismet/GameplayStatics.h"
 
+#include "Global/State/GameState/LobbyGameState.h"
+
 
 void ULobbyUserWidget::NativeConstruct()
 {
@@ -50,24 +52,23 @@ void ULobbyUserWidget::NativeConstruct()
 
 void ULobbyUserWidget::MoveToPlayLevel()
 {
+    ALobbyGameState* LobbyGameState = nullptr;
 
+    if (nullptr != GetWorld())
+    {
+        AGameStateBase* GamesStateBase = GetWorld()->GetGameState();
 
-	// Only server
-	if (GetWorld()->GetAuthGameMode())
-	{
-
-        APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
-        ALobbyHUD* LobbyHUD = Cast<ALobbyHUD>(PlayerController->GetHUD());
-
-        if (LobbyHUD->LobbyZoomInWidget != nullptr && LobbyHUD != nullptr)
+        if (nullptr != GamesStateBase)
         {
-            LobbyHUD->LobbyZoomInWidget->PlayZoomInAnimation([this]()
-                {
-                    UOC2Global::TravelServer(GetWorld(), PLAY_LEVEL);
-                });
-        }
+            LobbyGameState = Cast<ALobbyGameState>(GamesStateBase);
 
-	}
+            if (nullptr != LobbyGameState)
+            {
+                // 여기서 사용 가능!
+                LobbyGameState->Multicast_PlayZoomInAnmationUI();
+            }
+        }
+    }
 }
 
 void ULobbyUserWidget::Ready()
