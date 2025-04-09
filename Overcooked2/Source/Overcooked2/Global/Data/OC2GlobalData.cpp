@@ -230,6 +230,30 @@ FVector UOC2GlobalData::GetResourceNiagaraScale(UWorld* World, const FName& RowN
 	return FVector::ZeroVector;
 }
 
+UStaticMesh* UOC2GlobalData::GetResourceStaticMesh(UWorld* World, const FName& RowName)
+{
+	UOC2GameInstance* GameInstance = UOC2Global::GetOC2GameInstance(World);
+
+	if (nullptr != GameInstance)
+	{
+		return GameInstance->GetResourceStaticMeshDataRow(RowName).StaticMesh;
+	}
+
+	return nullptr;
+}
+
+UMaterial* UOC2GlobalData::GetResourceMaterial(UWorld* World, const FName& RowName)
+{
+	UOC2GameInstance* GameInstance = UOC2Global::GetOC2GameInstance(World);
+
+	if (nullptr != GameInstance)
+	{
+		return GameInstance->GetResourceMaterialDataRow(RowName).Material;
+	}
+
+	return nullptr;
+}
+
 FOrder UOC2GlobalData::GetOrderByIngredients(UWorld* World, ACooking* Cooking)
 {
 	FOrder Result;
