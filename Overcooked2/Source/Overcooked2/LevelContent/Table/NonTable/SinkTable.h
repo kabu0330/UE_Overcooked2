@@ -59,6 +59,9 @@ protected:
 	UPROPERTY(Replicated)
 	float Ratio = 0.0f;
 
+	/*UPROPERTY(Replicated)
+	bool KeepWashing = false;*/
+
 	UPROPERTY(Replicated)
 	class UWidgetComponent* ProgressBarComponent = nullptr;
 

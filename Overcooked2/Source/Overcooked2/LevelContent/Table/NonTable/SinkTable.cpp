@@ -165,12 +165,17 @@ void ASinkTable::WashingIsDone()
 	//ProgressBarComponent->SetHiddenInGame(true);
 	HideProgressBar(true);
 
-	if (DirtyPlates.Num() == 0)
+	if (DirtyPlates.Num() == 0 || false == ChefPtr->IsWashing())
 	{
 		ChefPtr->Washing(false);
 		ChefPtr = nullptr;
 		bWashingDone = false;
 	}
+	else
+	{
+		DoTheDishes(ChefPtr);
+	}
+	
 }
 
 void ASinkTable::HideProgressBar_Implementation(bool Value)
@@ -205,4 +210,7 @@ void ASinkTable::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifeti
 	DOREPLIFETIME(ASinkTable, ComponentForDishes2);
 	DOREPLIFETIME(ASinkTable, ComponentForDishes3);
 	DOREPLIFETIME(ASinkTable, ComponentForDishes4);
+	DOREPLIFETIME(ASinkTable, DirtyPlateComponents);
+	DOREPLIFETIME(ASinkTable, DirtyPlates);
+	DOREPLIFETIME(ASinkTable, CleanPlates);
 }
