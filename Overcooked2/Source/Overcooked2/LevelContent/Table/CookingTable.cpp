@@ -7,6 +7,8 @@
 #include <Global/OC2GameInstance.h>
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
+#include "LevelContent/Cook/Plate.h"
+
 //#include "Global/Component/TimeEventComponent.h"
 
 // Sets default values
@@ -48,13 +50,28 @@ void ACookingTable::PlaceItem(ACooking* ReceivedCooking)
 		SetIngredientOffset(TempIngredient);
 		CookingPtr->GetStaticMeshComponent()->SetRelativeRotation(IngreRotation);
 		CookingPtr->GetStaticMeshComponent()->SetRelativeScale3D(IngreScale);
-		if (EIngredientType::EIT_PRAWN == TempIngredient->GetIngredientType())
+		/*if (EIngredientType::EIT_PRAWN == TempIngredient->GetIngredientType())
 		{
 			IngreLocation += FVector::UnitZ() * 40.0f;
-		}
+		}*/
 		CookingPtr->SetActorRelativeLocation(IngreLocation);
 	}
 
+	APlate* TempPlate = Cast<APlate>(CookingPtr);
+	if (nullptr != TempPlate)
+	{
+		if (true == TempPlate->IsDirtyPlate())
+		{
+			if (1 == TempPlate->GetAnotherPlatesRef().Num())
+			{
+				TempPlate->AddActorLocalOffset(FVector(0, 0, 10));
+			}
+			if (3 == TempPlate->GetAnotherPlatesRef().Num())
+			{
+				TempPlate->AddActorLocalOffset(FVector(0, 0, 50));
+			}
+		}
+	}
 	//bIsOccupied = true;
 }
 
