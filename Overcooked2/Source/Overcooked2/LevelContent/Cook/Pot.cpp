@@ -586,7 +586,6 @@ void APot::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProp
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(APot, SoupSkeletalMeshComponent);
-	DOREPLIFETIME(APot, NoneMaterial);
 	DOREPLIFETIME(APot, PotState);
 	DOREPLIFETIME(APot, bIsCombinationSuccessful);
 	DOREPLIFETIME(APot, bIsRiceInPot);

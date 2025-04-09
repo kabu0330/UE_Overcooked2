@@ -9,6 +9,13 @@
 /**
  * 
  */
+UENUM(BlueprintType)
+enum class ELevelChangType : uint8
+{
+	WorldMapToSushi UMETA(DisplayName = "World Map to Sushi Level"),
+	LobbyToWorldMap UMETA(DisplayName = "Lobby to World Map")
+};
+
 UCLASS()
 class OVERCOOKED2_API ULoadingWidget : public UUserWidget
 {
@@ -30,10 +37,17 @@ public:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
 	class UCanvasPanel* ConnectingCanvas = nullptr;
 
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
+	class UCanvasPanel* WorldMapToSushiLevel = nullptr;
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
+	class UCanvasPanel* LobbyToWorldMap = nullptr;
+
+	void PlayLoadingAnimation(TFunction<void()> Func , ELevelChangType LevelEnum = ELevelChangType::LobbyToWorldMap);
+
 	void PlayZoomOutAnimation();
 
 	void PlayZoomInAnimation();
-	void PlayLoadingAnimation(TFunction<void()> Func);
 
 
 protected:

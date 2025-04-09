@@ -67,13 +67,27 @@ void ULoadingWidget::SetProgress(float Value)
 }
 
 
-void ULoadingWidget::PlayLoadingAnimation(TFunction<void()> Func)
+void ULoadingWidget::PlayLoadingAnimation(TFunction<void()> Func, ELevelChangType LevelEnum)
 {
 
     float CurrentTime = 0.0f;
     float TimeStep = 0.1f;
 
+    if (LevelEnum == ELevelChangType::LobbyToWorldMap)
+    {
+        LobbyToWorldMap->SetVisibility(ESlateVisibility::Visible);
+        WorldMapToSushiLevel->SetVisibility(ESlateVisibility::Hidden);
+    }
+    else if (LevelEnum == ELevelChangType::WorldMapToSushi)
+    {
+        LobbyToWorldMap->SetVisibility(ESlateVisibility::Hidden);
+        WorldMapToSushiLevel->SetVisibility(ESlateVisibility::Visible);
+    }
+
+
+    PlayZoomOutAnimation();
     Function = Func;
+
     GetWorld()->GetTimerManager().ClearTimer(LoadingAnimationTimer);
 
     GetWorld()->GetTimerManager().SetTimer(LoadingAnimationTimer, [this, CurrentTime, TimeStep]() mutable
