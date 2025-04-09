@@ -63,6 +63,27 @@ protected:
 	class UWidgetComponent* ProgressBarComponent = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Table", meta = (AllowprivateAccess = "true"))
+	USceneComponent* ComponentForDishes1 = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Table", meta = (AllowprivateAccess = "true"))
+	USceneComponent* ComponentForDishes2 = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Table", meta = (AllowprivateAccess = "true"))
+	USceneComponent* ComponentForDishes3 = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Table", meta = (AllowprivateAccess = "true"))
+	USceneComponent* ComponentForDishes4 = nullptr;
+
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Table", meta = (AllowPrivateAccess = "true"))
+	TArray<USceneComponent*> DirtyPlateComponents;					   
+																	   
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Table", meta = (AllowPrivateAccess = "true"))
+	TArray<class APlate*> DirtyPlates;
+
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Table", meta = (AllowPrivateAccess = "true"))
+	TArray<class APlate*> CleanPlates;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Table", meta = (AllowprivateAccess = "true"))
 	TSubclassOf<UUserWidget> TSubClassWidget = nullptr;
 
 	class UGaugeTextureWidget* WidgetPtr = nullptr;

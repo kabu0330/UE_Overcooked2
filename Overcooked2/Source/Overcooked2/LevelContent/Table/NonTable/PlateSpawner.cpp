@@ -43,6 +43,10 @@ void APlateSpawner::SetPlate(class APlate* Plate)
 		{
 			OwnedPlate->AddActorLocalOffset(FVector(0, 0, 10));
 		}
+		if (3 == OwnedPlate->GetAnotherPlatesRef().Num())
+		{
+			OwnedPlate->AddActorLocalOffset(FVector(0, 0, 50));
+		}
 	}
 	//PlateNum++;
 	//PlateMap.Add(PlateNum, CookingPtr);
