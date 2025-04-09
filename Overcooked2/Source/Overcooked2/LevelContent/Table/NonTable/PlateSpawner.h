@@ -28,7 +28,9 @@ public:
 public:
 	void PlaceItem(ACooking* ReceivedCooking) override;
 
-	int PlateNum = 0;
+	//int PlateNum = 0;
 
-	TMap<int, ACooking*> PlateMap;
+	//TMap<int, ACooking*> PlateMap;
+
+	class APlate* OwnedPlate;
 };

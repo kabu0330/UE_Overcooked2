@@ -110,6 +110,9 @@ protected:
 	void ChangePlateMesh();
 	void HideAnotherPlates();
 
+	void InitWidgetComponent();
+	void FindPlateSpawner();
+
 private:
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	TArray<FRecipe> Ingredients;
