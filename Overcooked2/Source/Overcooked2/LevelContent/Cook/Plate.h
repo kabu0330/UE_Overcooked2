@@ -113,6 +113,8 @@ protected:
 	void InitWidgetComponent();
 	void FindPlateSpawner();
 
+	void StackUpPlate(EPlateStackStatus Status, FName Name);
+
 private:
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	TArray<FRecipe> Ingredients;
