@@ -113,6 +113,9 @@ void ASinkTable::PlaceItem(ACooking* ReceivedCooking)
 				DirtyPlates[i + CurPlateNum]->AttachToComponent(DirtyPlateComponents[i + CurPlateNum], FAttachmentTransformRules::KeepRelativeTransform);
 				DirtyPlates[i + CurPlateNum]->SetActorLocation(DirtyPlateComponents[i + CurPlateNum]->GetComponentLocation());
 			}
+
+			// i + curPlateNum이 4를 안 넘을지?
+
 			//CookingPtr = ReceivedCooking;
 			//CookingPtr->SetCookingTable_Implementation(this);
 			//CookingPtr->AttachToComponent(ComponentForCooking, FAttachmentTransformRules::KeepRelativeTransform);
