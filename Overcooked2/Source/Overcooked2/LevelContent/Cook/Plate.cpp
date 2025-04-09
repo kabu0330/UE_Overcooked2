@@ -71,6 +71,15 @@ void APlate::BeginPlay()
 {
 	ACooking::BeginPlay();
 	
+	InitWidgetComponent();
+
+	FindPlateSpawner();
+
+	// Debug
+}
+
+void APlate::InitWidgetComponent()
+{
 	// 위젯 클래스 지정
 	WidgetComponent->SetWidgetClass(SubclassWidget); // WBP 위젯으로 설정
 	UUserWidget* UserWidget = WidgetComponent->GetUserWidgetObject();
@@ -89,7 +98,10 @@ void APlate::BeginPlay()
 	WidgetComponent->SetTickWhenOffscreen(true);
 
 	IconWidget->Init();
+}
 
+void APlate::FindPlateSpawner()
+{
 	// TActorIterator를 사용하여 월드 내 모든 APrepTable 액터를 순회
 
 	for (TActorIterator<ACookingTable> It(GetWorld()); It; ++It)
@@ -100,8 +112,6 @@ void APlate::BeginPlay()
 			PlateSpawner = Cast<APlateSpawner>(PrepTableActor);
 		}
 	}
-
-	// Debug
 }
 
 // Called every frame
@@ -194,9 +204,7 @@ void APlate::SetMaterialTexture(UTexture* Texture)
 void APlate::ForwardAttachToChef()
 {
 	FVector Offset = FVector(90, 0, -40);
-	//FRotator Rotation = FRotator(0, 90, 0);
 	StaticMeshComponent->SetRelativeLocation(Offset);
-	//StaticMeshComponent->SetRelativeRotation(Rotation);
 }
 
 void APlate::ForwardDetachToChef()
@@ -395,9 +403,9 @@ void APlate::HideAnotherPlates()
 	// 접시 다 숨긴다.
 	for (int i = 0; i < AnotherPlates.Num(); i++)
 	{
-		AnotherPlates[i]->SetActorHiddenInGame(true);
-		AnotherPlates[i]->SetActorEnableCollision(false); // 충돌 끈다.
-		AnotherPlates[i]->SetActorTickEnabled(false);
+		AnotherPlates[i]->SetActorHiddenInGame(true);		// 렌더 끄고
+		AnotherPlates[i]->SetActorEnableCollision(false);	// 충돌 끄고
+		AnotherPlates[i]->SetActorTickEnabled(false);		// Tick 끄고
 	}
 }
 
