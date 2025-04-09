@@ -54,6 +54,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	bool IsWashing() { return bIsWashing; }
+
+	UFUNCTION(BlueprintCallable)
+	void SetMoveEnabled(bool Value);
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -116,6 +119,10 @@ public:
 	UFUNCTION()
 	void OnRep_PlateSet();
 
+	UFUNCTION()
+	void OnRep_ShowDir();
+
+
 	UFUNCTION(Reliable, Server)
 	void Dash();
 
@@ -175,8 +182,11 @@ private :
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Grab", meta = (AllowPrivateAccess = "true"))
 	USceneComponent* GrabComponent;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Grab", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* Plane;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UStaticMeshComponent* ThrowDir;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Grab", meta = (AllowPrivateAccess = "true"))
 	USphereComponent* CheckOverlap;
@@ -189,7 +199,7 @@ private :
 	UPROPERTY(VisibleAnywhere, Replicated, BlueprintReadOnly, Category = "Grab", meta = (AllowPrivateAccess = "true"))
 	ACooking* GrabbedObject = nullptr;
 
-	UPROPERTY(EditAnywhere, Replicated, BlueprintReadWrite, Category = "Dash", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, ReplicatedUsing = OnRep_ShowDir, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	bool bCanThrowing = false;
 
 	
@@ -216,5 +226,7 @@ private :
 	float DashDuration = 0.5f;
 	UPROPERTY(EditAnywhere, Replicated, BlueprintReadWrite, Category = "Dash", meta = (AllowPrivateAccess = "true"))
 	float DashTimer = 0.0f;
+
+	bool bIsMoveEnabled = true;
 
 };

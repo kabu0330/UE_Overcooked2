@@ -44,10 +44,17 @@ AOC2Character::AOC2Character()
 
 	Plane = CreateDefaultSubobject<UStaticMeshComponent>("Plane");
 	Plane->SetupAttachment(RootComponent);
+
+	ThrowDir = CreateDefaultSubobject<UStaticMeshComponent>("ThrowPlane");
+	ThrowDir->SetupAttachment(Plane);
+
+	
 }
 
 void AOC2Character::MoveCharacter(const FInputActionValue& Value)
 {
+	if (bIsMoveEnabled == false) return;
+
 	FVector MovementInput = Value.Get<FVector>();
 
 	MovementInput.Normalize();
@@ -82,6 +89,11 @@ void AOC2Character::MoveCharacter(const FInputActionValue& Value)
 	AddControllerYawInput(DeltaYaw * Alpha);
 }
 
+void AOC2Character::SetMoveEnabled(bool Value)
+{
+	bIsMoveEnabled = Value;
+}
+
 // Called when the game starts or when spawned
 void AOC2Character::BeginPlay()
 {
@@ -91,6 +103,7 @@ void AOC2Character::BeginPlay()
 	//CheckOverlap->OnComponentBeginOverlap.AddDynamic(this, &AOC2Character::OnOverlapCheck);
 
 	Plane->SetVisibility(IsLocallyControlled());
+	ThrowDir->SetVisibility(false);
 
 	CaptureComponent->ShowOnlyActor(this);
 
@@ -131,7 +144,6 @@ void AOC2Character::CheckDash(float DeltaTime)
 		}
 		else
 		{
-
 			SetActorLocation(GetActorLocation() + GetActorForwardVector() * DashPower * DeltaTime, true);
 		}
 	}
@@ -295,7 +307,7 @@ void AOC2Character::Interact_Implementation()
 	}
 	else if (Table != nullptr)
 	{
-		if (Table->IsA(AGarbageCan::StaticClass()) == true)
+		if (Table->IsA<AGarbageCan>() == true)
 		{
 			APlate* Plate = Cast<APlate>(GrabbedObject);
 			AIngredient* Ingredient = Cast<AIngredient>(GrabbedObject);
@@ -309,14 +321,26 @@ void AOC2Character::Interact_Implementation()
 				GrabbedObject = nullptr;
 			}
 		}
-		else if (Table->IsA(ASinkTable::StaticClass()) == true)
+		else if (Table->IsA<ASinkTable>() == true)
 		{
-			APlate* Plate = Cast<APlate>(GrabbedObject);
-			if (Plate != nullptr && Plate->IsDirtyPlate())
+			if (GrabbedObject != nullptr)
 			{
-				Table->PlaceItem(Plate);
-				GrabbedObject = nullptr;
+				APlate* Plate = Cast<APlate>(GrabbedObject);
+				if (Plate != nullptr && Plate->IsDirtyPlate())
+				{
+					Table->PlaceItem(Plate);
+					GrabbedObject = nullptr;
+				}
 			}
+			else
+			{
+				ACooking* Cook = Table->Interact(this);
+				if (Cook != nullptr)
+				{
+					Grab(Cook);
+				}
+			}
+
 		}
 		else
 		{
@@ -446,6 +470,7 @@ void AOC2Character::DoActionPress_Implementation()
 		if (!GrabbedObject->IsA(APlate::StaticClass()))
 		{
 			bCanThrowing = true;
+			OnRep_ShowDir();
 		}
 	}
 	else
@@ -471,6 +496,7 @@ void AOC2Character::DoActionRelease_Implementation()
 	if (bCanThrowing == true)
 	{
 		Throwing();
+		OnRep_ShowDir();
 	}
 }
 
@@ -635,6 +661,11 @@ void AOC2Character::OnRep_PlateSet()
 	//{
 	//	GetMesh()->SetMaterial(PlateMaterial.Key, TransparentMat);
 	//}
+}
+
+void AOC2Character::OnRep_ShowDir()
+{
+	ThrowDir->SetVisibility(bCanThrowing && IsLocallyControlled());
 }
 
 

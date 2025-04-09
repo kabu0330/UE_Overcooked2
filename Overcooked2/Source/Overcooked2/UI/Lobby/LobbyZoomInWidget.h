@@ -4,21 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "WorldMapUserWidget.generated.h"
+#include "LobbyZoomInWidget.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class OVERCOOKED2_API UWorldMapUserWidget : public UUserWidget
+class OVERCOOKED2_API ULobbyZoomInWidget : public UUserWidget
 {
 	GENERATED_BODY()
 public:
-	//UFUNCTION(BlueprintCallable, Category = "OC2UI")
-	//void PlayZoomInAnimation();
 
 	void PlayZoomInAnimation(TFunction<void()> Func);
-	void PlayZoomOutAnimation();
 
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")

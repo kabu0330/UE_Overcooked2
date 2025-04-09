@@ -323,6 +323,18 @@ void APlate::StackPlate_Implementation(APlate* Plate)
 		if (PlateState == Plate->PlateState) // 동일한 상태인 녀석만 쌓을 수 있다.
 		{
 			AnotherPlates.Add(Plate);
+			
+			// 이미 쌓여있는 접시를 합치는 거라면
+			// Debug 필요. Plate->AnotherPlates[i]->AnotherPlates는 항상 0이라고 확신할 수 있을까?
+			if (false == Plate->AnotherPlates.IsEmpty())
+			{
+				for (size_t i = 0; i < Plate->AnotherPlates.Num(); i++)
+				{
+					AnotherPlates.Add(Plate->AnotherPlates[i]);
+				}
+				Plate->AnotherPlates.Empty();
+			}
+
 			ChangePlateMesh();
 		}
 	}
@@ -338,39 +350,35 @@ void APlate::ChangePlateMesh()
 	{
 	case 0:
 	{
-		PlateStackStatus = EPlateStackStatus::SINGLE;
-
-		UStaticMesh* NewStaticMesh = UOC2GlobalData::GetResourceStaticMesh(GetWorld(), TEXT("SinglePlate"));
-		StaticMeshComponent->SetStaticMesh(NewStaticMesh);
+		StackUpPlate(EPlateStackStatus::SINGLE, TEXT("SinglePlate"));
 		break;
 	}
 	case 1:
 	{
-		PlateStackStatus = EPlateStackStatus::DOUBLE;
-
-		UStaticMesh* NewStaticMesh = UOC2GlobalData::GetResourceStaticMesh(GetWorld(), TEXT("DoublePlate"));
-		StaticMeshComponent->SetStaticMesh(NewStaticMesh);
+		StackUpPlate(EPlateStackStatus::DOUBLE, TEXT("DoublePlate"));
 		break;
 	}
 	case 2:
 	{
-		PlateStackStatus = EPlateStackStatus::TRIPLE;
-
-		UStaticMesh* NewStaticMesh = UOC2GlobalData::GetResourceStaticMesh(GetWorld(), TEXT("TriplePlate"));
-		StaticMeshComponent->SetStaticMesh(NewStaticMesh);
+		StackUpPlate(EPlateStackStatus::TRIPLE, TEXT("TriplePlate"));
 		break;
 	}
 	case 3:
 	{
-		PlateStackStatus = EPlateStackStatus::FULL;
-
-		UStaticMesh* NewStaticMesh = UOC2GlobalData::GetResourceStaticMesh(GetWorld(), TEXT("FullPlate"));
-		StaticMeshComponent->SetStaticMesh(NewStaticMesh);
+		StackUpPlate(EPlateStackStatus::FULL, TEXT("FullPlate"));
 		break;
 	}
 	default:
 		break;
 	}
+}
+
+void APlate::StackUpPlate(EPlateStackStatus Status, FName Name)
+{
+	PlateStackStatus = Status;
+
+	UStaticMesh* NewStaticMesh = UOC2GlobalData::GetResourceStaticMesh(GetWorld(), Name);
+	StaticMeshComponent->SetStaticMesh(NewStaticMesh);
 }
 
 APlate* APlate::TakeCleanPlate()
@@ -381,21 +389,24 @@ APlate* APlate::TakeCleanPlate()
 		return this;
 	}
 
-	// Clean Plate가 아니라면 하나만 꺼내 줄 수 없다. 쌓인 접시들을 모두 들고 다녀야 한다.
-	if (EPlateState::EMPTY != AnotherPlates[0]->PlateState) 
+	// 설거지된 접시를 찾아서 하나 꺼내준다.
+	for (size_t i = 0; i < AnotherPlates.Num(); i++)
 	{
-		return this;
+		if (EPlateState::EMPTY == AnotherPlates[i]->PlateState)
+		{
+			// 꺼내 줄 때는 다시 숨김 설정을 해제한다.
+			AnotherPlates[i]->SetActorHiddenInGame(false);
+			AnotherPlates[i]->SetActorEnableCollision(true);
+			AnotherPlates[i]->SetActorTickEnabled(true);
+
+			APlate* AnotherPlate = AnotherPlates[i];
+			AnotherPlates.RemoveAt(i);
+			return AnotherPlate;
+		}
 	}
 
-	// 꺼내 줄 때는 다시 숨김 설정을 해제한다.
-	AnotherPlates[0]->SetActorHiddenInGame(false);
-	AnotherPlates[0]->SetActorEnableCollision(true);
-	AnotherPlates[0]->SetActorTickEnabled(true);
-
-	APlate* AnotherPlate = AnotherPlates[0];
-	AnotherPlates.RemoveAt(0);
-
-	return AnotherPlate; 
+	return nullptr; // 꺼내줄 녀석이 없다.
+	// 꺼낼 녀석이 없다면 this를 줘야 할까?
 }
 
 void APlate::HideAnotherPlates()
@@ -417,4 +428,6 @@ void APlate::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimePr
 	DOREPLIFETIME(APlate, IngredientMesh);
 	DOREPLIFETIME(APlate, PlateState);
 	DOREPLIFETIME(APlate, bIsCombinationSuccessful);
+	DOREPLIFETIME(APlate, AnotherPlates);
+	DOREPLIFETIME(APlate, PlateStackStatus);
 }

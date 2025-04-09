@@ -1,13 +1,14 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "UI/WorldMap/UI/WorldMapUserWidget.h"
+#include "UI/Lobby/LobbyZoomInWidget.h"
+
 #include "Components/Image.h" 
-#include "UI/WorldMap/WorldMapHUD.h"
+#include "Lobby/LobbyHUD.h"
 #include "UI/Loading/LoadingWidget.h"
 #include "Kismet/GameplayStatics.h"
 
-void UWorldMapUserWidget::NativeConstruct()
+void ULobbyZoomInWidget::NativeConstruct()
 {
     Super::NativeConstruct();
 
@@ -21,12 +22,12 @@ void UWorldMapUserWidget::NativeConstruct()
             TransitionMaterial = TransitionImg->GetDynamicMaterial();
         }
     }
-    PlayZoomOutAnimation();
+    TransitionImg->SetVisibility(ESlateVisibility::Hidden);
 
 }
 
 
-void UWorldMapUserWidget::PlayZoomInAnimation(TFunction<void()> Func)
+void ULobbyZoomInWidget::PlayZoomInAnimation(TFunction<void()> Func)
 {
     if (!TransitionMaterial) return;
     TransitionImg->SetVisibility(ESlateVisibility::Visible);
@@ -47,11 +48,11 @@ void UWorldMapUserWidget::PlayZoomInAnimation(TFunction<void()> Func)
 
                 //TransitionImg->SetVisibility(ESlateVisibility::Hidden);
                 APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
-                AWorldMapHUD* WorldMapHUD = Cast<AWorldMapHUD>(PlayerController->GetHUD());
-                if (WorldMapHUD != nullptr && WorldMapHUD->LoadingWidget != nullptr)
+                ALobbyHUD* LobbyHUD = Cast<ALobbyHUD>(PlayerController->GetHUD());
+                if (LobbyHUD != nullptr && LobbyHUD->LoadingWidget != nullptr)
                 {
-                    WorldMapHUD->LoadingWidget->SetVisibility(ESlateVisibility::Visible);
-                    WorldMapHUD->LoadingWidget->PlayLoadingAnimation(AnimFinishFuction, ELevelChangType::WorldMapToSushi);
+                    LobbyHUD->LoadingWidget->SetVisibility(ESlateVisibility::Visible);
+                    LobbyHUD->LoadingWidget->PlayLoadingAnimation(AnimFinishFuction, ELevelChangType::LobbyToWorldMap);
                 }
                 return;
             }
@@ -71,39 +72,4 @@ void UWorldMapUserWidget::PlayZoomInAnimation(TFunction<void()> Func)
                 CurrentTime += TimeStep * 40.0f;
             }
         }, TimeStep, true);
-}
-
-
-void UWorldMapUserWidget::PlayZoomOutAnimation()
-{
-    if (!TransitionMaterial) return;
-
-    TransitionImg->SetVisibility(ESlateVisibility::Visible);
-
-    float AnimationDuration = 10.0f;
-    float TimeStep = 0.01f;
-    float CurrentTime = AnimationDuration;
-
-    GetWorld()->GetTimerManager().ClearTimer(AnimationTimer);
-
-    GetWorld()->GetTimerManager().SetTimer(AnimationTimer, [this, AnimationDuration, TimeStep, CurrentTime]() mutable
-        {
-            if (CurrentTime <= 0.0f)
-            {
-                GetWorld()->GetTimerManager().ClearTimer(AnimationTimer);
-                TransitionImg->SetVisibility(ESlateVisibility::Hidden);
-
-                return;
-            }
-
-            float Value1 = CurrentTime;
-            float Value2 = (Value1 - 1.0f) / 2.0f;
-
-            TransitionMaterial->SetScalarParameterValue(TEXT("Value1"), Value1);
-            TransitionMaterial->SetScalarParameterValue(TEXT("Value2"), Value2);
-
-            CurrentTime -= TimeStep * 20.0f;
-
-        }, TimeStep, true);
-
 }
