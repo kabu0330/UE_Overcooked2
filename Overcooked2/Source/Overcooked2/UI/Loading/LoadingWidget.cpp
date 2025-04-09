@@ -3,6 +3,7 @@
 
 #include "UI/Loading/LoadingWidget.h"
 #include "Components/ProgressBar.h"
+#include "Components/CanvasPanel.h" 
 #include "Components/Image.h" 
 
 void ULoadingWidget::NativeConstruct()
@@ -19,6 +20,17 @@ void ULoadingWidget::NativeConstruct()
             TransitionMaterial = TransitionImg->GetDynamicMaterial();
         }
     }
+    if (ConnectingImage != nullptr)
+    {
+        ConnectingMaterial = ConnectingImage->GetDynamicMaterial();
+
+        if (!ConnectingMaterial)
+        {
+            ConnectingMaterial = ConnectingImage->GetDynamicMaterial();
+        }
+    }
+
+
     TransitionImg->SetVisibility(ESlateVisibility::Hidden);
 
 }
@@ -26,19 +38,22 @@ void ULoadingWidget::NativeTick(const FGeometry& MyGeometry, float DeltaTime)
 {
     Super::NativeTick(MyGeometry, DeltaTime);
 
-
-    if (bIsLoadingStart)
+    if (bIsConnecting == true)
     {
-        ProgressTime += DeltaTime;
-
-        float ProgressRatio = FMath::Clamp(ProgressTime / 5.0f, 0.0f, 1.0f);
-        SetProgress(ProgressRatio);
-
-        if (ProgressRatio >= 1.0f)
+        CurTime += DeltaTime;
+        if (CurTime >= 0.02f)
         {
-            bIsLoadingStart = false;
-            PlayZoomInAnimation();
+            if (CurIndex >= AnimationTotalIndex)
+            {
+                CurIndex = 0.0f;
+            }
+
+            ConnectingMaterial->SetScalarParameterValue(TEXT("ConnectingTime"), CurIndex);
+            CurIndex += 0.01;
+            CurTime = 0.0f;
         }
+
+        
     }
 }
 
@@ -58,19 +73,18 @@ void ULoadingWidget::PlayLoadingAnimation(TFunction<void()> Func)
     float CurrentTime = 0.0f;
     float TimeStep = 0.1f;
 
-    TFunction<void()> Function = Func;
+    Function = Func;
     GetWorld()->GetTimerManager().ClearTimer(LoadingAnimationTimer);
 
-    GetWorld()->GetTimerManager().SetTimer(LoadingAnimationTimer, [this, CurrentTime, TimeStep, Function]() mutable
+    GetWorld()->GetTimerManager().SetTimer(LoadingAnimationTimer, [this, CurrentTime, TimeStep]() mutable
         {
-            if (CurrentTime >= 6.0f)
+            if (CurrentTime >= 3.0f)
             {
                 GetWorld()->GetTimerManager().ClearTimer(LoadingAnimationTimer);
                 PlayZoomInAnimation();
-                Function();
                 return;
             }
-            float ProgressRatio = FMath::Clamp(CurrentTime / 5.0f, 0.0f, 1.0f); // 5초 기준
+            float ProgressRatio = FMath::Clamp(CurrentTime / 3.0f, 0.0f, 1.0f); // 5초 기준
             SetProgress(ProgressRatio);
             CurrentTime += TimeStep;
 
@@ -120,8 +134,6 @@ void ULoadingWidget::PlayZoomInAnimation()
     if (!TransitionMaterial) return;
     TransitionImg->SetVisibility(ESlateVisibility::Visible);
 
-    //AnimFinishFuction = Func;
-
     float AnimationDuration = 20.0f;
     float TimeStep = 0.01f;
     float CurrentTime = 0.0f;
@@ -133,14 +145,9 @@ void ULoadingWidget::PlayZoomInAnimation()
             if (CurrentTime >= AnimationDuration)
             {
                 GetWorld()->GetTimerManager().ClearTimer(AnimationTimer);
-
-                //TransitionImg->SetVisibility(ESlateVisibility::Hidden);
-
-                //if (AnimFinishFuction)
-                {
-                    //     AnimFinishFuction();
-                }
-
+                ConnectingCanvas->SetVisibility(ESlateVisibility::Visible);
+                bIsConnecting = true;
+                Function();
                 return;
             }
 
