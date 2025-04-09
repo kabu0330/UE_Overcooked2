@@ -19,7 +19,7 @@ AChoppingTable::AChoppingTable()
 
 	KnifeMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>("Knife");
 	KnifeMeshComponent->SetupAttachment(RootComponent);
-	KnifeMeshComponent->SetIsReplicated(true);
+	//KnifeMeshComponent->SetIsReplicated(true);
 }
 
 void AChoppingTable::BeginPlay()
@@ -180,6 +180,7 @@ void AChoppingTable::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 
 	DOREPLIFETIME(AChoppingTable, bCheckHidden);
 	DOREPLIFETIME(AChoppingTable, ProgressBarComponent);
+	DOREPLIFETIME(AChoppingTable, KnifeMeshComponent);
 	DOREPLIFETIME(AChoppingTable, Ratio);
 	DOREPLIFETIME(AChoppingTable, Timer);
 	DOREPLIFETIME(AChoppingTable, bTimerActivated);
