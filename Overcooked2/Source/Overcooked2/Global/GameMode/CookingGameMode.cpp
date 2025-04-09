@@ -76,7 +76,7 @@ void ACookingGameMode::PostLogin(APlayerController* NewPlayerController)
 
 	PlayerControllerArray.Add(NewPlayerController);
 
-	if (PlayerControllerArray.Num() == 4)
+	if (PlayerControllerArray.Num() == 2)
 	{
 		ChangeState(ECookingGameModeState::ECS_Stay);
 	}
