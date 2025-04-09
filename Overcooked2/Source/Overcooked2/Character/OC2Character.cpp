@@ -223,6 +223,7 @@ void AOC2Character::ClearMaterials()
 //상호작용 : Space Key
 void AOC2Character::Interact_Implementation()
 {
+	if (bIsMoveEnabled == false) return;
 	// 만약 지금 상호작용을 시도할 수 있는 개체가 있으면
 	if (!SelectedOC2Actor)
 	{
@@ -461,6 +462,7 @@ void AOC2Character::Drop_Implementation()
 
 void AOC2Character::DoActionPress_Implementation()
 {
+	if (bIsMoveEnabled == false) return;
 	if (GrabbedObject == nullptr && SelectedOC2Actor == nullptr)
 	{
 		return;
@@ -623,6 +625,7 @@ void AOC2Character::CheckInteract()
 
 void AOC2Character::Dash_Implementation()
 {
+	if (bIsMoveEnabled == false) return;
 	if (bIsDashing == false)
 	{
 		bIsDashing = true;
