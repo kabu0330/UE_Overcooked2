@@ -70,3 +70,9 @@ void ACookingTable::SetIngredientOffset(AIngredient* Ingredient)
 	IngreScale = IngredientDataTable->Scale;
 }
 
+void ACookingTable::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ACookingTable, CookingPtr);
+}

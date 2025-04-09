@@ -53,6 +53,10 @@ public:
 	void Reset_Implementation();
 
 	UFUNCTION(BlueprintCallable, Reliable, Server)
+	void StackPlate();
+	void StackPlate_Implementation();
+
+	UFUNCTION(BlueprintCallable, Reliable, Server)
 	void CleanPlate();
 	void CleanPlate_Implementation();
 

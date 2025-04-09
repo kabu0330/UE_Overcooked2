@@ -6,9 +6,13 @@
 #include <Character/OC2Character.h>
 #include "Components/WidgetComponent.h"
 #include <LevelContent/Cook/Widget/GaugeTextureWidget.h>
+#include <Net/UnrealNetwork.h>
 
 ASinkTable::ASinkTable()
 {
+	PrimaryActorTick.bCanEverTick = true;
+	bReplicates = true;
+
 	ProgressBarComponent = CreateDefaultSubobject<UWidgetComponent>("ProgressBar");
 	ProgressBarComponent->SetupAttachment(RootComponent);
 
@@ -97,7 +101,8 @@ void ASinkTable::DoTheDishes(AOC2Character* ChefActor)
 		bTimerActivated = true;
 		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Magenta, "Washing...");
 
-		ProgressBarComponent->SetHiddenInGame(false);
+		HideProgressBar(false);
+		//ProgressBarComponent->SetHiddenInGame(false);
 	}
 }
 
@@ -113,11 +118,17 @@ void ASinkTable::WashingIsDone()
 	//CookingPtr->DetachAllSceneComponents();
 	CookingPtr->AttachToComponent(CleanPlateComponent, FAttachmentTransformRules::KeepRelativeTransform);
 	CookingPtr->SetActorLocation(CleanPlateComponent->GetComponentLocation());
-	ProgressBarComponent->SetHiddenInGame(true);
+	//ProgressBarComponent->SetHiddenInGame(true);
+	HideProgressBar(true);
 
 	ChefPtr->Washing(false);
 	ChefPtr = nullptr;
 	bWashingDone = false;
+}
+
+void ASinkTable::HideProgressBar_Implementation(bool Value)
+{
+	ProgressBarComponent->SetHiddenInGame(Value);
 }
 
 void ASinkTable::CheckChefIsWashing()
@@ -128,7 +139,20 @@ void ASinkTable::CheckChefIsWashing()
 		{
 			bTimerActivated = false;
 			ChefPtr = nullptr;
-			ProgressBarComponent->SetHiddenInGame(true);
+			//ProgressBarComponent->SetHiddenInGame(true);
+			HideProgressBar(true);
 		}
 	}
+}
+
+void ASinkTable::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ASinkTable, ChefPtr);
+	DOREPLIFETIME(ASinkTable, Timer);
+	DOREPLIFETIME(ASinkTable, bTimerActivated);
+	DOREPLIFETIME(ASinkTable, bWashingDone);
+	DOREPLIFETIME(ASinkTable, Ratio);
+	DOREPLIFETIME(ASinkTable, ProgressBarComponent);
 }

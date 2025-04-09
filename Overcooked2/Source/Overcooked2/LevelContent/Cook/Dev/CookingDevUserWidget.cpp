@@ -81,6 +81,16 @@ void UCookingDevUserWidget::Wash()
 	}
 }
 
+void UCookingDevUserWidget::StackPlate()
+{
+	APlayerController* Controller = GetOwningPlayer();
+	ACookingDevPlayerState* PlayerState = Controller->GetPlayerState<ACookingDevPlayerState>();
+	if (nullptr != PlayerState)
+	{
+		PlayerState->StackPlate();
+	}
+}
+
 void UCookingDevUserWidget::CleanPlate()
 {
 	APlayerController* Controller = GetOwningPlayer();

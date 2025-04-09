@@ -30,8 +30,8 @@ public:
 	void ChopIngredient(AActor* ChefActor);
 
 	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
-	void ShowProgressBar(bool Value);
-	void ShowProgressBar_Implementation(bool Value);
+	void HideProgressBar(bool Value);
+	void HideProgressBar_Implementation(bool Value);
 
 	void ChoppingIsDone();
 
@@ -96,6 +96,7 @@ private:
 	UPROPERTY(Replicated)
 	float Ratio = 0.0f;
 
+	UPROPERTY(Replicated)
 	class AOC2Character* ChefPtr = nullptr;
 
 	UPROPERTY(Replicated)

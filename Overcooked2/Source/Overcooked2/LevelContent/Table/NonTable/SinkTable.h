@@ -17,6 +17,8 @@ class OVERCOOKED2_API ASinkTable : public ACookingTable
 public:
 	ASinkTable();
 
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
+
 	virtual void BeginPlay() override;
 
 	virtual void Tick(float DeltaTime) override;
@@ -31,23 +33,33 @@ public:
 	
 	void CheckChefIsWashing();
 
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	void HideProgressBar(bool Value);
+	void HideProgressBar_Implementation(bool Value);
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking")
 	USceneComponent* ComponentForProgressBar = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CleanPlate")
 	USceneComponent* CleanPlateComponent = nullptr;
 
+	UPROPERTY(Replicated)
 	class AOC2Character* ChefPtr = nullptr;
 
 protected:
-
+	UPROPERTY(Replicated)
 	float Timer = 0.0f;
+
+	UPROPERTY(Replicated)
 	bool bTimerActivated = false;
+	
+	UPROPERTY(Replicated)
 	bool bWashingDone = false;
 
+	UPROPERTY(Replicated)
 	float Ratio = 0.0f;
 
-	UPROPERTY()
+	UPROPERTY(Replicated)
 	class UWidgetComponent* ProgressBarComponent = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Table", meta = (AllowprivateAccess = "true"))
