@@ -76,6 +76,11 @@ void APlate::SpawnPlate()
 	}
 }
 
+void APlate::SetVisibility(bool Value)
+{
+	StaticMeshComponent->SetVisibility(Value);
+}
+
 // Called when the game starts or when spawned
 void APlate::BeginPlay()
 {
@@ -110,6 +115,8 @@ void APlate::BeginPlay()
 			PlateSpawner = Cast<APlateSpawner>(PrepTableActor);
 		}
 	}
+
+	// Debug
 }
 
 // Called every frame
@@ -135,6 +142,7 @@ void APlate::WashPlate_Implementation()
 	{
 		PlateState = EPlateState::EMPTY;
 		SetMesh();
+		SetVisibility(false); // Á¢½Ã ¼û±è
 	}
 }
 
