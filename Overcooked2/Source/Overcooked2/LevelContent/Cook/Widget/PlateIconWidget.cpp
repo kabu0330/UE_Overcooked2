@@ -43,7 +43,7 @@ void UPlateIconWidget::SetIngredientTextures(const TArray<UTexture2D*>& InTextur
 	{
 		for (int32 i = 0; i < Slots.Num(); ++i)
 		{
-			if (Slots[i] && Slots[i]->Visibility == ESlateVisibility::Visible)
+			if (Slots[i] && Slots[i]->GetVisibility() == ESlateVisibility::Visible)
 			{
 				Slots[i]->SetRenderTranslation(FVector2D::ZeroVector);
 				//Slots[i]->SetRenderTranslation(Offset);
