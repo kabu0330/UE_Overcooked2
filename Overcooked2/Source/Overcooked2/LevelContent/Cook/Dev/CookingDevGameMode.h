@@ -11,7 +11,6 @@
 #include <LevelContent/Cook/Dev/CookingDevPlayerState.h>
 #include <LevelContent/Cook/Dev/CookingObjectManager.h>
 #include <LevelContent/Cook/Pot.h>
-#include <LevelContent/Cook/FireExtinguisher.h>
 #include "CookingDevGameMode.generated.h"
 
 /**
@@ -49,7 +48,8 @@ public:
 
 	void AddPlate(APlate* Plate)
 	{
-		Plate->SetActorLocation(FVector(300, -100, 10));
+		PlateInitPos += FVector(0, 0, 20);
+		Plate->SetActorLocation(PlateInitPos);
 		CookingObjectManager->GetPlates().Add(Plate);
 	}
 
@@ -61,6 +61,8 @@ public:
 	{
 		CookingObjectManager->Reset();
 	}
+
+	void StackPlate();
 
 	void CleanPlate();
 
@@ -79,11 +81,7 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	APot* Pot = nullptr;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<AFireExtinguisher> SubclassFireExtinguisher = nullptr;
+	FVector PlateInitPos = FVector(300, -100, 0);
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
-	AFireExtinguisher* FireExtinguisher = nullptr;
-
-
+	APlate* StackBasePlate = nullptr;
 };

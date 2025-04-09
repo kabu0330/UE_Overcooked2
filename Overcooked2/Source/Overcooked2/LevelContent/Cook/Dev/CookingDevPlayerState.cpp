@@ -86,6 +86,15 @@ void ACookingDevPlayerState::Reset_Implementation()
 	}
 }
 
+void ACookingDevPlayerState::StackPlate_Implementation()
+{
+	ACookingDevGameMode* GameMode = Cast<ACookingDevGameMode>(GetWorld()->GetAuthGameMode());
+	if (nullptr != GameMode)
+	{
+		GameMode->StackPlate();
+	}
+}
+
 void ACookingDevPlayerState::CleanPlate_Implementation()
 {
 	ACookingDevGameMode* GameMode = Cast<ACookingDevGameMode>(GetWorld()->GetAuthGameMode());

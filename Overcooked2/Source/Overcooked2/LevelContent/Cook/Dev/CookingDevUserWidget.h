@@ -39,6 +39,10 @@ public:
 
 
 	UFUNCTION(BlueprintCallable)
+	void StackPlate();
+
+
+	UFUNCTION(BlueprintCallable)
 	void CleanPlate();
 
 
