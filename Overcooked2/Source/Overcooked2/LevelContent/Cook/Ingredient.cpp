@@ -291,7 +291,6 @@ void AIngredient::CheckPlacement()
 				if (Chef != Thrower && false == Chef->IsHolding())
 				{
 					Chef->Grab(this);
-					Chef->();
 					bIsThrowing = false;
 					ThrownTime = 0.0f;
 					break;
