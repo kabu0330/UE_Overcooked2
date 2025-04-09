@@ -40,16 +40,6 @@ void APlate::PostInitializeComponents()
 	IngredientMesh->SetIsReplicated(true); // 컴포넌트 네트워크 동기화
 }
 
-void APlate::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	DOREPLIFETIME(APlate, Ingredients);
-	DOREPLIFETIME(APlate, IngredientMesh);
-	DOREPLIFETIME(APlate, PlateState);
-	DOREPLIFETIME(APlate, bIsCombinationSuccessful);
-}
-
 void APlate::SubmitPlate_Implementation()
 {
 	SetActorLocation(UOC2Const::PlateSubmitLocation);
@@ -74,11 +64,6 @@ void APlate::SpawnPlate()
 		PlateSpawner->PlaceItem(this);
 		PlateSpawner->SetPlate(this);
 	}
-}
-
-void APlate::SetVisibility(bool Value)
-{
-	StaticMeshComponent->SetVisibility(Value);
 }
 
 // Called when the game starts or when spawned
@@ -142,7 +127,6 @@ void APlate::WashPlate_Implementation()
 	{
 		PlateState = EPlateState::EMPTY;
 		SetMesh();
-		SetVisibility(false); // 접시 숨김
 	}
 }
 
@@ -271,6 +255,7 @@ void APlate::Add_Implementation(AIngredient* Ingredient)
 	else // 3-2. 데이터를 획득하는데 성공했다면 
 	{
 		IngredientMesh->SetStaticMesh(InitData.StaticMesh); // 메시 변경
+		PlateState = EPlateState::OCCUPIED;
 		if (nullptr != IngredientMesh)
 		{
 			// 3-3. 접시 위에 올라갈 요리 메시 세팅
@@ -321,4 +306,107 @@ void APlate::SetIngredinetTextures(FPlateInitData Data)
 	}
 	IconWidget->SetIngredientTextures(Textures);
 
+}
+
+void APlate::StackPlate_Implementation(APlate* Plate)
+{
+	if (PlateState == EPlateState::EMPTY || PlateState == EPlateState::DIRTY)
+	{
+		if (PlateState == Plate->PlateState) // 동일한 상태인 녀석만 쌓을 수 있다.
+		{
+			AnotherPlates.Add(Plate);
+			ChangePlateMesh();
+		}
+	}
+}
+
+void APlate::ChangePlateMesh()
+{
+	int Count = AnotherPlates.Num();
+
+	HideAnotherPlates();
+
+	switch (Count)
+	{
+	case 0:
+	{
+		PlateStackStatus = EPlateStackStatus::SINGLE;
+
+		UStaticMesh* NewStaticMesh = UOC2GlobalData::GetResourceStaticMesh(GetWorld(), TEXT("SinglePlate"));
+		StaticMeshComponent->SetStaticMesh(NewStaticMesh);
+		break;
+	}
+	case 1:
+	{
+		PlateStackStatus = EPlateStackStatus::DOUBLE;
+
+		UStaticMesh* NewStaticMesh = UOC2GlobalData::GetResourceStaticMesh(GetWorld(), TEXT("DoublePlate"));
+		StaticMeshComponent->SetStaticMesh(NewStaticMesh);
+		break;
+	}
+	case 2:
+	{
+		PlateStackStatus = EPlateStackStatus::TRIPLE;
+
+		UStaticMesh* NewStaticMesh = UOC2GlobalData::GetResourceStaticMesh(GetWorld(), TEXT("TriplePlate"));
+		StaticMeshComponent->SetStaticMesh(NewStaticMesh);
+		break;
+	}
+	case 3:
+	{
+		PlateStackStatus = EPlateStackStatus::FULL;
+
+		UStaticMesh* NewStaticMesh = UOC2GlobalData::GetResourceStaticMesh(GetWorld(), TEXT("FullPlate"));
+		StaticMeshComponent->SetStaticMesh(NewStaticMesh);
+		break;
+	}
+	default:
+		break;
+	}
+}
+
+APlate* APlate::TakeCleanPlate()
+{
+	int32 Count = AnotherPlates.Num();
+	if (0 == Count) // 내가 가지고 있는 다른 접시가 없다면 내 포인터를 넘겨준다.
+	{
+		return this;
+	}
+
+	// Clean Plate가 아니라면 하나만 꺼내 줄 수 없다. 쌓인 접시들을 모두 들고 다녀야 한다.
+	if (EPlateState::EMPTY != AnotherPlates[0]->PlateState) 
+	{
+		return this;
+	}
+
+	// 꺼내 줄 때는 다시 숨김 설정을 해제한다.
+	AnotherPlates[0]->SetActorHiddenInGame(false);
+	AnotherPlates[0]->SetActorEnableCollision(true);
+	AnotherPlates[0]->SetActorTickEnabled(true);
+
+	APlate* AnotherPlate = AnotherPlates[0];
+	AnotherPlates.RemoveAt(0);
+
+	return AnotherPlate; 
+}
+
+void APlate::HideAnotherPlates()
+{
+	// 접시 다 숨긴다.
+	for (int i = 0; i < AnotherPlates.Num(); i++)
+	{
+		AnotherPlates[i]->SetActorHiddenInGame(true);
+		AnotherPlates[i]->SetActorEnableCollision(false); // 충돌 끈다.
+		AnotherPlates[i]->SetActorTickEnabled(false);
+	}
+}
+
+void APlate::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(APlate, Ingredients);
+	DOREPLIFETIME(APlate, IngredientMesh);
+	DOREPLIFETIME(APlate, PlateState);
+	DOREPLIFETIME(APlate, bIsCombinationSuccessful);
 }
