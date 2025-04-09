@@ -85,7 +85,15 @@ void ASinkTable::Tick(float DeltaTime)
 
 ACooking* ASinkTable::Interact(AActor* ChefActor)
 {
-	return CleanPlates.Pop();
+	if (CleanPlates.Num() > 0)
+	{
+		CookingPtr = Cast<ACooking>(CleanPlates.Pop());
+		return CookingPtr;
+	}
+	else
+	{
+		return nullptr;
+	}
 }
 
 void ASinkTable::PlaceItem(ACooking* ReceivedCooking)
@@ -193,5 +201,8 @@ void ASinkTable::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifeti
 	DOREPLIFETIME(ASinkTable, bTimerActivated);
 	DOREPLIFETIME(ASinkTable, bWashingDone);
 	DOREPLIFETIME(ASinkTable, Ratio);
-	DOREPLIFETIME(ASinkTable, ProgressBarComponent);
+	DOREPLIFETIME(ASinkTable, ComponentForDishes1);
+	DOREPLIFETIME(ASinkTable, ComponentForDishes2);
+	DOREPLIFETIME(ASinkTable, ComponentForDishes3);
+	DOREPLIFETIME(ASinkTable, ComponentForDishes4);
 }
