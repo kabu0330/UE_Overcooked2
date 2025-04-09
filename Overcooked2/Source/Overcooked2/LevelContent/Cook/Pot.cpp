@@ -23,8 +23,6 @@ APot::APot()
 	PrimaryActorTick.bCanEverTick = true;
 	bReplicates = true;
 
-	SetReplicateMovement(true);
-
 	StaticMeshComponent->SetRelativeLocation(InitPos);
 
 	CookingType = ECookingType::ECT_POT;
@@ -54,6 +52,8 @@ void APot::BeginPlay()
 {
 	ACooking::BeginPlay();
 
+	SetReplicateMovement(true);
+
 	NoneMaterial = LoadNoneMaterial(); // 여기서 해줘야 클라도 NULL 머티리얼 생성된다.
 	SetSoupMaterial();
 	ChangeNoneMaterial();
@@ -63,9 +63,7 @@ void APot::BeginPlay()
 	InitIconWidget();
 
 	InitNiagara();
-
 }
-
 
 UMaterialInstanceDynamic* APot::LoadNoneMaterial()
 {

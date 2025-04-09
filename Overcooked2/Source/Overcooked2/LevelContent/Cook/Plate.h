@@ -64,6 +64,8 @@ public:
 
 	void SpawnPlate();
 
+	// 접시 메시를 보이게 할지 숨길지 설정
+	void SetVisibility(bool Value);
 
 protected:
 	// Called when the game starts or when spawned
