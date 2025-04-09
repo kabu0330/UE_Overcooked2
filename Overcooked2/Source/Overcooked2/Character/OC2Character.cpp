@@ -560,10 +560,10 @@ void AOC2Character::CheckInteract()
 
 		// maybe Interactable.
 		AOC2Actor* ClosestActor = Cast<AOC2Actor>(HitResults[0].GetActor());
-		if (ClosestActor->IsA<AServingTable>() == true)
-		{
-			if(GrabbedObject == nullptr || GrabbedObject->IsA<>() )
-		}
+		//if (ClosestActor->IsA<AServingTable>() == true)
+		//{
+		//	if(GrabbedObject == nullptr || GrabbedObject->IsA<>() )
+		//}
 		if (SelectedOC2Actor != nullptr)
 		{
 			if (ClosestActor != SelectedOC2Actor)
