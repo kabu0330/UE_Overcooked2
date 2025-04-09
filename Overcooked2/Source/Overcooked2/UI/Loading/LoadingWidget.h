@@ -43,6 +43,16 @@ public:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
 	class UCanvasPanel* LobbyToWorldMap = nullptr;
 
+
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSoftObjectPtr<UMaterialInterface> BugerMaterialAsset;
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSoftObjectPtr<UMaterialInterface> PizzaMaterialAsset;
+
+
+
 	void PlayLoadingAnimation(TFunction<void()> Func , ELevelChangType LevelEnum = ELevelChangType::LobbyToWorldMap);
 
 	void PlayZoomOutAnimation();
@@ -64,9 +74,13 @@ private:
 
 	bool bIsConnecting = false;
 	float ProgressTime = 0.0f;
-	float AnimationTotalIndex = 0.45f;
+	float BugerAnimationTotalIndex = 0.84f;
+	float PizzaAnimationTotalIndex =  0.92f;
 	float CurIndex = 0.0f;
 	float CurTime = 0.0f;
+
+
+	ELevelChangType CurPanelType = ELevelChangType::WorldMapToSushi;
 
 	TFunction<void()> Function;
 };
