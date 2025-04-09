@@ -101,6 +101,26 @@ void ACookingDevGameMode::Wash()
 	Plates[0]->WashPlate();
 }
 
+void ACookingDevGameMode::StackPlate()
+{
+	TArray<APlate*>& Plates = CookingObjectManager->GetPlates();
+	if (true == Plates.IsEmpty()) 
+	{
+		return;
+	}
+	if (nullptr == StackBasePlate)
+	{
+		StackBasePlate = Plates[0];
+		StackBasePlate->SetActorLocation(PlateInitPos + FVector(-100, 0, 0));
+		Plates.RemoveAt(0);
+		return;
+	}
+
+	StackBasePlate->StackPlate(Plates[0]);
+	Plates.RemoveAt(0);
+
+}
+
 void ACookingDevGameMode::CleanPlate()
 {
 	TArray<APlate*>& Plates = CookingObjectManager->GetPlates();
@@ -119,12 +139,6 @@ void ACookingDevGameMode::BeginPlay()
 	{
 		Pot = GetWorld()->SpawnActor<APot>(SubclassPot);
 		Pot->SetActorLocation(FVector(-400, 0, 10));
-	}
-
-	if (nullptr != SubclassFireExtinguisher)
-	{
-		FireExtinguisher = GetWorld()->SpawnActor<AFireExtinguisher>(SubclassFireExtinguisher);
-		FireExtinguisher->SetActorLocation(FVector(-400, 100, 10));
 	}
 	
 }

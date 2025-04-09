@@ -8,6 +8,15 @@
 #include <Global/OC2Const.h>
 #include "Plate.generated.h"
 
+UENUM(BlueprintType)
+enum class EPlateStackStatus : uint8
+{
+	SINGLE		UMETA(DisplayName = "1개"),
+	DOUBLE		UMETA(DisplayName = "2개"),
+	TRIPLE		UMETA(DisplayName = "3개"),
+	FULL		UMETA(DisplayName = "4개")
+};
+
 class APlateSpawner;
 
 // 접시 ~ 접시에 올라간 조리된 요리 ~ 요리들의 조합 ~ 완성된 요리
@@ -50,6 +59,11 @@ public:
 	void CleanPlate();
 	void CleanPlate_Implementation();
 
+	// 접시를 쌓기 위해 호출해야 할 함수 (메시 변환 자동)
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	void StackPlate(APlate* Plate);
+	void StackPlate_Implementation(APlate* Plate);
+
 	TArray<FRecipe> GetIngredients() const
 	{
 		return Ingredients;
@@ -65,7 +79,14 @@ public:
 	void SpawnPlate();
 
 	// 접시 메시를 보이게 할지 숨길지 설정
+	UFUNCTION(NetMulticast, Reliable)
 	void SetVisibility(bool Value);
+	void SetVisibility_Implementation(bool Value);
+
+	TArray<APlate*>& GetAnotherPlatesRef()
+	{
+		return AnotherPlates;
+	}
 
 protected:
 	// Called when the game starts or when spawned
@@ -88,6 +109,8 @@ protected:
 
 	virtual void PostInitializeComponents() override;
 
+	void ChangePlateMesh();
+
 private:
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	TArray<FRecipe> Ingredients;
@@ -98,6 +121,14 @@ private:
 	// 접시 상태
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	EPlateState PlateState = EPlateState::EMPTY;
+
+	// 접시가 쌓인 상태
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	EPlateStackStatus PlateStackStatus = EPlateStackStatus::SINGLE;
+
+	// 나 말고 다른 접시가 나한테 쌓였다면 다른 녀석들의 포인터를 가지고 있을 것임
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	TArray<APlate*> AnotherPlates;
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))

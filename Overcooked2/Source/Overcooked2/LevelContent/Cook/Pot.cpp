@@ -55,6 +55,7 @@ void APot::BeginPlay()
 	SetReplicateMovement(true);
 
 	NoneMaterial = LoadNoneMaterial(); // 여기서 해줘야 클라도 NULL 머티리얼 생성된다.
+
 	SetSoupMaterial();
 	ChangeNoneMaterial();
 
@@ -67,10 +68,15 @@ void APot::BeginPlay()
 
 UMaterialInstanceDynamic* APot::LoadNoneMaterial()
 {
-	const FString NoneMaterialName = TEXT("/Game/Resources/LevelResource/CookObject/Object/Pot/Soup/M_NONE");
-	UMaterial* NewMaterial = LoadObject<UMaterial>(nullptr, *NoneMaterialName);
-	UMaterialInstanceDynamic* NewMaterialInstanceDynamic = UMaterialInstanceDynamic::Create(NewMaterial, this);
-	return NewMaterialInstanceDynamic;
+	UMaterial* NewMaterial = UOC2GlobalData::GetResourceMaterial(GetWorld(), TEXT("M_NONE"));
+	if (nullptr != NewMaterial)
+	{
+		UMaterialInstanceDynamic* NewMaterialInstanceDynamic = UMaterialInstanceDynamic::Create(NewMaterial, this);
+		return NewMaterialInstanceDynamic;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("Pot NONE 머티리얼 인스턴스 다이나믹 생성 실패"));
+	return nullptr;
 }
 
 void APot::SetSoupMaterial()
