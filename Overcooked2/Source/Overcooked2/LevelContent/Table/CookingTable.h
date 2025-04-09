@@ -21,6 +21,8 @@ public:
 	// Sets default values for this actor's properties
 	ACookingTable();
 
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
+
 	virtual ACooking* Interact(AActor* ChefActor) 
 	{ 
 		return CookingPtr; 
@@ -63,6 +65,7 @@ protected:
 
 	bool bIsOccupied = false;
 
+	UPROPERTY(Replicated)
 	class ACooking* CookingPtr = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking")
