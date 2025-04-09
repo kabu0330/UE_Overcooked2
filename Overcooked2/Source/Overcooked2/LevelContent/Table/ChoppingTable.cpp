@@ -127,13 +127,13 @@ void AChoppingTable::ChopIngredient(AActor* ChefActor)
 				bTimerActivated = true;
 				//GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Magenta, "Chopping...");
 
-				ShowProgressBar(false);
+				HideProgressBar(false);
 			}
 		}
 	}
 }
 
-void AChoppingTable::ShowProgressBar_Implementation(bool Value)
+void AChoppingTable::HideProgressBar_Implementation(bool Value)
 {
 	ProgressBarComponent->SetHiddenInGame(Value);
 }
@@ -146,7 +146,8 @@ void AChoppingTable::ChoppingIsDone()
 	PlacedIngredient->ChangeState(EIngredientState::EIS_CHOPPED);
 	//GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Turquoise, "Chopping Done");
 	CookingPtr = Cast<ACooking>(PlacedIngredient);
-	ProgressBarComponent->SetHiddenInGame(true);
+	//ProgressBarComponent->SetHiddenInGame(true);
+	HideProgressBar(true);
 
 	ChefPtr->Chopping(false);
 	ChefPtr = nullptr;
@@ -167,7 +168,8 @@ void AChoppingTable::CheckChefIsChopping()
 		{
 			bTimerActivated = false;
 			ChefPtr = nullptr;
-			ProgressBarComponent->SetHiddenInGame(true);
+			//ProgressBarComponent->SetHiddenInGame(true);
+			HideProgressBar(true);
 		}
 	}
 }
@@ -182,4 +184,5 @@ void AChoppingTable::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 	DOREPLIFETIME(AChoppingTable, Timer);
 	DOREPLIFETIME(AChoppingTable, bTimerActivated);
 	DOREPLIFETIME(AChoppingTable, bChoppingDone);
+	DOREPLIFETIME(AChoppingTable, ChefPtr);
 }
