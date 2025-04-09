@@ -48,8 +48,6 @@ void ACookingGameMode::BeginPlay()
 	}
 
 	CurIdx = 0;
-
-	ChangeState(ECookingGameModeState::ECS_Stay);
 }
 
 void ACookingGameMode::Tick(float DeltaTime)
@@ -75,6 +73,13 @@ void ACookingGameMode::Tick(float DeltaTime)
 void ACookingGameMode::PostLogin(APlayerController* NewPlayerController)
 {
 	Super::PostLogin(NewPlayerController);
+
+	PlayerControllerArray.Add(NewPlayerController);
+
+	if (PlayerControllerArray.Num() == 2)
+	{
+		ChangeState(ECookingGameModeState::ECS_Stay);
+	}
 }
 
 void ACookingGameMode::InitChef()
@@ -111,6 +116,33 @@ void ACookingGameMode::InitChef()
 void ACookingGameMode::EntryStay()
 {
 	CheckTime = 0.0f;
+
+	UWorld* World = GetWorld();
+
+	if (nullptr == World)
+	{
+		return;
+	}
+
+	for (FConstPlayerControllerIterator Iterator = World->GetPlayerControllerIterator(); Iterator; ++Iterator)
+	{
+		APlayerController* PlayerController = Iterator->Get();
+
+		if (nullptr != PlayerController)
+		{
+			ACharacter* DefaultCharacter = PlayerController->GetCharacter();
+
+			if (nullptr != DefaultCharacter)
+			{
+				AOC2Character* OC2Character = Cast<AOC2Character>(DefaultCharacter);
+
+				if (nullptr != OC2Character)
+				{
+					OC2Character->SetMoveEnabled(false); // 이동 불가
+				}
+			}
+		}
+	}
 }
 
 void ACookingGameMode::Stay(float DeltaTime)
@@ -142,6 +174,33 @@ void ACookingGameMode::EntryStage()
 {
 	InitChef();
 	StageManager->bProgress = true;
+
+	UWorld* World = GetWorld();
+
+	if (nullptr == World)
+	{
+		return;
+	}
+
+	for (FConstPlayerControllerIterator Iterator = World->GetPlayerControllerIterator(); Iterator; ++Iterator)
+	{
+		APlayerController* PlayerController = Iterator->Get();
+
+		if (nullptr != PlayerController)
+		{
+			ACharacter* DefaultCharacter = PlayerController->GetCharacter();
+
+			if (nullptr != DefaultCharacter)
+			{
+				AOC2Character* OC2Character = Cast<AOC2Character>(DefaultCharacter);
+
+				if (nullptr != OC2Character)
+				{
+					OC2Character->SetMoveEnabled(true); // 이동 불가
+				}
+			}
+		}
+	}
 
 	CheckTime = 0.0f;
 }

@@ -29,11 +29,12 @@ void ULoadingWidget::NativeConstruct()
             ConnectingMaterial = ConnectingImage->GetDynamicMaterial();
         }
     }
-
-
+    
     TransitionImg->SetVisibility(ESlateVisibility::Hidden);
 
 }
+
+
 void ULoadingWidget::NativeTick(const FGeometry& MyGeometry, float DeltaTime)
 {
     Super::NativeTick(MyGeometry, DeltaTime);
@@ -43,10 +44,21 @@ void ULoadingWidget::NativeTick(const FGeometry& MyGeometry, float DeltaTime)
         CurTime += DeltaTime;
         if (CurTime >= 0.02f)
         {
-            if (CurIndex >= AnimationTotalIndex)
+            if (CurPanelType == ELevelChangType::WorldMapToSushi)
             {
-                CurIndex = 0.0f;
+                if (CurIndex >= BugerAnimationTotalIndex)
+                {
+                    CurIndex = 0.0f;
+                }
             }
+            else
+            {
+                if (CurIndex >= PizzaAnimationTotalIndex)
+                {
+                    CurIndex = 0.0f;
+                }
+            }
+
 
             ConnectingMaterial->SetScalarParameterValue(TEXT("ConnectingTime"), CurIndex);
             CurIndex += 0.01;
@@ -72,17 +84,39 @@ void ULoadingWidget::PlayLoadingAnimation(TFunction<void()> Func, ELevelChangTyp
 
     float CurrentTime = 0.0f;
     float TimeStep = 0.1f;
-
+    CurPanelType = LevelEnum;
     if (LevelEnum == ELevelChangType::LobbyToWorldMap)
     {
         LobbyToWorldMap->SetVisibility(ESlateVisibility::Visible);
         WorldMapToSushiLevel->SetVisibility(ESlateVisibility::Hidden);
+
+
+        UMaterialInterface* PizzaMaterial = PizzaMaterialAsset.LoadSynchronous();
+        if (PizzaMaterial)
+        {
+            ConnectingMaterial = UMaterialInstanceDynamic::Create(PizzaMaterial, this);
+            FSlateBrush Brush;
+            Brush.SetResourceObject(ConnectingMaterial);
+            ConnectingImage->SetBrush(Brush);
+        }
+
     }
     else if (LevelEnum == ELevelChangType::WorldMapToSushi)
     {
         LobbyToWorldMap->SetVisibility(ESlateVisibility::Hidden);
         WorldMapToSushiLevel->SetVisibility(ESlateVisibility::Visible);
+
+        UMaterialInterface* BurgerMaterial = BugerMaterialAsset.LoadSynchronous();
+        if (BurgerMaterial)
+        {
+            ConnectingMaterial = UMaterialInstanceDynamic::Create(BurgerMaterial, this);
+            FSlateBrush Brush;
+            Brush.SetResourceObject(ConnectingMaterial);
+            ConnectingImage->SetBrush(Brush);
+        }
     }
+
+
 
 
     PlayZoomOutAnimation();
@@ -161,6 +195,12 @@ void ULoadingWidget::PlayZoomInAnimation()
                 GetWorld()->GetTimerManager().ClearTimer(AnimationTimer);
                 ConnectingCanvas->SetVisibility(ESlateVisibility::Visible);
                 bIsConnecting = true;
+                
+
+
+
+
+
                 Function();
                 return;
             }
