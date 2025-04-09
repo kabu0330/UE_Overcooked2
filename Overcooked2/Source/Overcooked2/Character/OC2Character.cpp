@@ -314,6 +314,7 @@ void AOC2Character::Interact_Implementation()
 			APlate* Plate = Cast<APlate>(GrabbedObject);
 			if (Plate != nullptr && Plate->IsDirtyPlate())
 			{
+				Table->PlaceItem(Plate);
 				GrabbedObject = nullptr;
 			}
 		}
@@ -609,7 +610,7 @@ void AOC2Character::Dash_Implementation()
 void AOC2Character::Washing_Implementation(bool State)
 {
 	bIsWashing = State;
-	OnRep_PlateSet();
+	//OnRep_PlateSet();
 }
 
 void AOC2Character::OnRep_KnifeSet()
@@ -626,14 +627,14 @@ void AOC2Character::OnRep_KnifeSet()
 
 void AOC2Character::OnRep_PlateSet()
 {
-	if (bIsWashing)
-	{
-		GetMesh()->SetMaterial(PlateMaterial.Key, PlateMaterial.Value);
-	}
-	else
-	{
-		GetMesh()->SetMaterial(PlateMaterial.Key, TransparentMat);
-	}
+	//if (bIsWashing)
+	//{
+	//	GetMesh()->SetMaterial(PlateMaterial.Key, PlateMaterial.Value);
+	//}
+	//else
+	//{
+	//	GetMesh()->SetMaterial(PlateMaterial.Key, TransparentMat);
+	//}
 }
 
 
