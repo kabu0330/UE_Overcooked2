@@ -113,4 +113,7 @@ private:
 
 	/** 상태 변경 체크 시간 */
 	float CheckTime = 0.0f;
+
+	TArray<APlayerController*> PlayerControllerArray;
+
 };
