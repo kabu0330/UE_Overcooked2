@@ -13,6 +13,8 @@
 #include "Global/Data/OrderDataTable.h"
 #include "Global/Data/ResourceTextureTable.h"
 #include "Global/Data/ResourceNiagaraTable.h"
+#include "Global/Data/ResourceStaticMeshTable.h"
+#include "Global/Data/ResourceMaterialTable.h"
 
 #include "OC2GlobalData.generated.h"
 
@@ -129,6 +131,12 @@ public:
 	static FVector GetResourceNiagaraLocation(UWorld* World, const FName& RowName);
 	static FRotator GetResourceNiagaraRotator(UWorld* World, const FName& RowName);
 	static FVector GetResourceNiagaraScale(UWorld* World, const FName& RowName);
+
+public:
+	static UStaticMesh* GetResourceStaticMesh(UWorld* World, const FName& RowName);
+
+public:
+	static UMaterial* GetResourceMaterial(UWorld* World, const FName& RowName);
 
 public:
 	static FOrder GetOrderByIngredients(UWorld* World, ACooking* Cooking);
