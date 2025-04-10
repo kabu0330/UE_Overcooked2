@@ -248,6 +248,15 @@ void ASinkTable::WashingIsDone_Implementation()
 		return;
 	}
 
+	if (nullptr != GetWorld()->GetAuthGameMode())
+	{
+		int a = 0;
+	}
+	if (nullptr == GetWorld()->GetAuthGameMode())
+	{
+		int a = 0;
+	}
+
 	// 인덱스의 마지막 접시를 empty 상태로 바꾸고
 	APlate* NewPlate = DirtyPlates.Last();
 	
@@ -265,6 +274,8 @@ void ASinkTable::WashingIsDone_Implementation()
 	//}
 
 	DirtyPlateNum = DirtyPlates.Num();
+	SetPlateVisibility(DirtyPlateNum);
+
 	CleanPlateNum = CleanPlates.Num();
 
 	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Turquoise, "Washing Done");
