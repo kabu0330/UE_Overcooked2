@@ -86,8 +86,8 @@ protected:
 
 	int CleanPlateNum = 0;
 
-	UPROPERTY(Replicated)
-	bool KeepWashing = false;
+	//UPROPERTY(Replicated)
+	//bool KeepWashing = false;
 
 	UPROPERTY(Replicated)
 	class UWidgetComponent* ProgressBarComponent = nullptr;
@@ -118,4 +118,6 @@ protected:
 
 	class UGaugeTextureWidget* WidgetPtr = nullptr;
 
+
+	class UTimeEventComponent* TimeEventComponent = nullptr;
 };

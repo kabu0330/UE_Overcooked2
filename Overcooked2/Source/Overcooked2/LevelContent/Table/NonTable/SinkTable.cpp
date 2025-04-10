@@ -6,6 +6,7 @@
 #include <Character/OC2Character.h>
 #include "Components/WidgetComponent.h"
 #include <LevelContent/Cook/Widget/GaugeTextureWidget.h>
+#include <Global/Component/TimeEventComponent.h>
 #include <Net/UnrealNetwork.h>
 
 ASinkTable::ASinkTable()
@@ -36,6 +37,9 @@ ASinkTable::ASinkTable()
 		ComponentForDishes4->SetupAttachment(ComponentForCooking);
 		DirtyPlateComponents.Add(ComponentForDishes4);
 	}
+
+	TimeEventComponent = CreateDefaultSubobject<UTimeEventComponent>(TEXT("TimeEventComponent"));
+
 }
 
 void ASinkTable::BeginPlay()
@@ -67,40 +71,12 @@ void ASinkTable::InitProgressBar()
 	ProgressBarComponent->SetTickWhenOffscreen(true);
 }
 
-void ASinkTable::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-	// 셰프가 나와의 상호작용을 중단하고 떠났는지
-	CheckChefIsWashing();
-
-	UpdateProgressBar(DeltaTime);
-
-	WashingIsDone();
-
-	// 1. 설거지가 끝났을 때
-	if (true == bWashingDone)
-	{
-		DoTheDishes(ChefPtr); // 셰프가 처음에 한 번 불러준다. 이후에는 내가 불러줌
-		bWashingDone = false;
-	}
-
-
-	//if (DirtyPlates.Num() == 0 || false == ChefPtr->IsWashing())
-	//{
-	//	ChefPtr->Washing(false);
-	//	ChefPtr = nullptr;
-	//	bWashingDone = false;
-	//}
-
-}
-
 ACooking* ASinkTable::Interact(AActor* ChefActor)
 {
 	// 설거지된 접시가 하나 이상 있으면 캐릭터에게 하나를 줄 수 있다.
 	if (CleanPlates.Num() > 0)
 	{
-		APlate* NewPlate = CleanPlates.Last(); 
+		APlate* NewPlate = CleanPlates.Last();
 		CookingPtr = Cast<ACooking>(NewPlate);
 		if (nullptr != CookingPtr)
 		{
@@ -125,22 +101,6 @@ ACooking* ASinkTable::Interact(AActor* ChefActor)
 void ASinkTable::PlaceItem(ACooking* ReceivedCooking)
 {
 	PlacePlates(ReceivedCooking);
-}
-
-void ASinkTable::UpdateProgressBar(float DeltaTime)
-{
-	if (true == bTimerActivated)
-	{
-		Timer += DeltaTime;
-
-		if (Timer > 2.0f)
-		{
-			bWashingDone = true;
-		}
-	}
-
-	Ratio = (Timer / 0.4f) * 0.2f;
-	WidgetPtr->SetProgressTimeRatio(Ratio);
 }
 
 // 접시가 싱크대로 들어오는 로직
@@ -207,8 +167,69 @@ void ASinkTable::DoTheDishes(AOC2Character* ChefActor)
 		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Magenta, "Washing...");
 
 		HideProgressBar(false);
+		//KeepWashing = true;
 		//ProgressBarComponent->SetHiddenInGame(false);
 	}
+}
+
+void ASinkTable::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	// 셰프가 나와의 상호작용을 중단하고 떠났는지
+	CheckChefIsWashing();
+
+	UpdateProgressBar(DeltaTime);
+
+	WashingIsDone();
+
+	// 1. 설거지가 끝났을 때
+	if (true == bWashingDone && false == DirtyPlates.IsEmpty())
+	{
+		DoTheDishes(ChefPtr); // 셰프가 처음에 한 번 불러준다. 이후에는 내가 불러줌
+		bWashingDone = false;
+		return;
+	}
+	else if (true == bWashingDone)
+	{
+		// 설거지 모션 중단
+		ChefPtr->Washing(false);
+		bWashingDone = false;
+		return;
+	}
+}
+
+void ASinkTable::CheckChefIsWashing()
+{
+	// 셰프가 나와 상호작용을 하던 중에
+	if (nullptr != ChefPtr)
+	{
+		// 다른 행동으로 상호작용이 중단되었다면
+		if (false == ChefPtr->IsWashing())
+		{
+			bTimerActivated = false;
+			ChefPtr = nullptr;
+			HideProgressBar(true);
+			//ProgressBarComponent->SetHiddenInGame(true);
+		}
+	}
+}
+
+void ASinkTable::UpdateProgressBar(float DeltaTime)
+{
+	if (true == bTimerActivated /*&& true == KeepWashing*/)
+	{
+		Timer += DeltaTime;
+
+		if (Timer > 2.0f)
+		{
+			// 트리거 변수
+			bWashingDone = true;
+		}
+	}
+
+	Ratio = (Timer / 0.4f) * 0.2f;
+	WidgetPtr->SetProgressTimeRatio(Ratio);
 }
 
 // 설거지 완료했을 때 한 번 호출, 싱크대로 접시를 하나 이동시킨다.
@@ -218,17 +239,6 @@ void ASinkTable::WashingIsDone_Implementation()
 	if (false == bWashingDone)
 	{
 		return;
-	}
-
-	if (nullptr != GetWorld()->GetAuthGameMode())
-	{
-		// 서버
-		int a = 0;
-	}
-	if (nullptr == GetWorld()->GetAuthGameMode())
-	{
-		// 클라
-		int a = 0;
 	}
 
 	bTimerActivated = false; // 타이머 끄고
@@ -279,12 +289,6 @@ void ASinkTable::WashingIsDone_Implementation()
 	//CookingPtr->DetachAllSceneComponents();
 	//ProgressBarComponent->SetHiddenInGame(true);
 	HideProgressBar(true);
-
-	// 트리거 변수
-	bWashingDone = false; 
-
-	// 설거지 모션 중단
-	ChefPtr->Washing(false);
 }
 
 void ASinkTable::HideProgressBar_Implementation(bool Value)
@@ -312,23 +316,6 @@ void ASinkTable::SetAllPlateHidden/*_Implementation*/()
 void ASinkTable::SetPlateVisibilityWithIndex/*_Implementation*/(int Index, bool Value)
 {
 	DirtyPlateComponents[Index]->SetVisibility(Value);
-}
-
-
-void ASinkTable::CheckChefIsWashing()
-{
-	// 셰프가 나와 상호작용을 하던 중에
-	if (nullptr != ChefPtr)
-	{
-		// 다른 행동으로 상호작용이 중단되었다면
-		if (false == ChefPtr->IsWashing())
-		{
-			bTimerActivated = false;
-			ChefPtr = nullptr;
-			HideProgressBar(true);
-			//ProgressBarComponent->SetHiddenInGame(true);
-		}
-	}
 }
 
 void ASinkTable::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
