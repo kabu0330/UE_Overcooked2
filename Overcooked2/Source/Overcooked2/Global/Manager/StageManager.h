@@ -36,7 +36,7 @@ public:
 	void AddScore(int Value);
 
 	UFUNCTION(BlueprintCallable, Category = "Global|CookingStage")
-	void CompleteOrder(FOrder Order);
+	int CompleteOrder(FOrder Order, int Score);
 
 private:
 	int FindOrderIndex(FOrder& Order);

@@ -59,4 +59,10 @@ private:
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Dialogue", meta = (AllowPrivateAccess = "true"))
 	class AWorldMapDialogue* WorldMapDialogue = nullptr;
+
+
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI", meta = (AllowPrivateAccess = "true"))
+	bool bIsVisible = false;
+
 };

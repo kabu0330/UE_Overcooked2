@@ -113,7 +113,7 @@ void ACookingGameState::WaitingPostMatch(float DeltaTime)
 }
 
 
-void ACookingGameState::Multicast_CompleteOrder_Implementation(int OrderIndex)
+void ACookingGameState::Multicast_CompleteOrder_Implementation(int OrderIndex, int InScore)
 {
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
 
@@ -125,7 +125,7 @@ void ACookingGameState::Multicast_CompleteOrder_Implementation(int OrderIndex)
 		{
 			if (-1 != OrderIndex)
 			{
-				CookingHUD->CookWidget->OrderComplete(OrderIndex);
+				CookingHUD->CookWidget->OrderComplete(OrderIndex, InScore);
 			}
 		}
 	}
@@ -198,21 +198,92 @@ void ACookingGameState::Multicast_SettingTimer_Implementation(float DeltaTime)
 
 void ACookingGameState::Server_SubmitPlate_Implementation(ACooking* Cooking)
 {
-	APlate* Plate = Cast<APlate>(Cooking);
-
 	if (true == HasAuthority())
 	{
-		ACookingGameMode* GameMode = Cast<ACookingGameMode>(UGameplayStatics::GetGameMode(this));
+		APlate* Plate = Cast<APlate>(Cooking);
 
-		if (nullptr != GameMode)
+		if (nullptr == Plate)
 		{
-			FOrder Order;
-			
-			Order = UOC2GlobalData::GetOrderByIngredients(GetWorld(), Plate);
-			
-			GameMode->StageManager->CompleteOrder(Order);
+			UE_LOG(OVERCOOKED_LOG, Error, TEXT("Plate is nullptr"));
+			return;
+		}
 
-			Plate->SubmitPlate();
+		UOC2GameInstance* GameInstance = UOC2Global::GetOC2GameInstance(GetWorld());
+
+		if (nullptr == GameInstance)
+		{
+			UE_LOG(OVERCOOKED_LOG, Error, TEXT("GameInstance is nullptr"));
+			return;
+		}
+
+		TArray<FRecipe> Recipes;
+
+		for (int i = 0; i < Plate->GetIngredients().Num(); i++)
+		{
+			FRecipe Recipe;
+
+			Recipe.IngredientState = Plate->GetIngredient(i).IngredientState;
+			Recipe.IngredientType = Plate->GetIngredient(i).IngredientType;
+
+			Recipes.Add(Recipe);
+		}
+
+		if (true == GameInstance->CheckRecipe(Recipes))
+		{
+			ACookingGameMode* GameMode = Cast<ACookingGameMode>(UGameplayStatics::GetGameMode(this));
+
+			if (nullptr != GameMode)
+			{
+				FOrder Order;
+
+				Order = UOC2GlobalData::GetOrderByIngredients(GetWorld(), Plate);
+
+				int InScore = Order.RequireIngredients.Num() * UOC2Const::ScoreValue;
+
+				if (FeverCount == 0)
+				{
+					InScore += UOC2Const::TipValue;
+
+				}
+				else
+				{
+					InScore += UOC2Const::TipValue * FeverCount;
+				}
+
+				int OrderIndex = GameMode->StageManager->CompleteOrder(Order, InScore);
+
+				if (0 == OrderIndex)
+				{
+					FeverCount++;
+				}
+				else
+				{
+					FeverCount = 0;
+				}
+
+				Multicast_SetFeverUI(FeverCount);
+			}
+		}
+		Plate->Multicast_SubmitPlate();
+	}
+}
+
+void ACookingGameState::Multicast_SetFeverUI_Implementation(int InFeverCount)
+{
+	// 모든 클라이언트에서 실행됨
+	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
+
+	if (nullptr != PlayerController)
+	{
+		ACookingHUD* CookingHUD = Cast<ACookingHUD>(PlayerController->GetHUD());
+
+		if (nullptr != CookingHUD && nullptr != CookingHUD->CookWidget)
+		{
+			if (0 == InFeverCount)
+			{
+				InFeverCount = 1;
+			}
+			CookingHUD->CookWidget->CheckFeverTime(InFeverCount);
 		}
 	}
 }
