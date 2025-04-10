@@ -83,8 +83,9 @@ public:
 		return AnotherPlates;
 	}
 
-	// ±ú²ýÇÑ Á¢½Ã Áß ÇÏ³ª¸¦ ²¨³½´Ù.
-	APlate* TakeCleanPlate();
+	void ResetForCleaning();
+
+	void RestorePlateToWorld();
 
 protected:
 	// Called when the game starts or when spawned
@@ -114,6 +115,7 @@ protected:
 	void FindPlateSpawner();
 
 	void StackUpPlate(EPlateStackStatus Status, FName Name);
+
 
 private:
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))

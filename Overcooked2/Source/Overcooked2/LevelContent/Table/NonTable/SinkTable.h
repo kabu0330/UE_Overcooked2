@@ -29,7 +29,9 @@ public:
 
 	void DoTheDishes(class AOC2Character* ChefActor);
 
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
 	void WashingIsDone();
+	void WashingIsDone_Implementation();
 	
 	void CheckChefIsWashing();
 
@@ -59,7 +61,9 @@ protected:
 	UPROPERTY(Replicated)
 	float Ratio = 0.0f;
 
-	int CurPlateNum = 0;
+	int DirtyPlateNum = 0;
+
+	int CleanPlateNum = 0;
 
 	/*UPROPERTY(Replicated)
 	bool KeepWashing = false;*/
@@ -68,24 +72,24 @@ protected:
 	class UWidgetComponent* ProgressBarComponent = nullptr;
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Table", meta = (AllowprivateAccess = "true"))
-	USceneComponent* ComponentForDishes1 = nullptr;
+	UStaticMeshComponent* ComponentForDishes1 = nullptr;
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Table", meta = (AllowprivateAccess = "true"))
-	USceneComponent* ComponentForDishes2 = nullptr;
+	UStaticMeshComponent* ComponentForDishes2 = nullptr;
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Table", meta = (AllowprivateAccess = "true"))
-	USceneComponent* ComponentForDishes3 = nullptr;
+	UStaticMeshComponent* ComponentForDishes3 = nullptr;
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Table", meta = (AllowprivateAccess = "true"))
-	USceneComponent* ComponentForDishes4 = nullptr;
+	UStaticMeshComponent* ComponentForDishes4 = nullptr;
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Table", meta = (AllowPrivateAccess = "true"))
-	TArray<USceneComponent*> DirtyPlateComponents;					   
+	TArray<UStaticMeshComponent*> DirtyPlateComponents;
 																	   
-	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Table", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(/*Replicated, */EditAnywhere, BlueprintReadOnly, Category = "Table", meta = (AllowPrivateAccess = "true"))
 	TArray<class APlate*> DirtyPlates;
 
-	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Table", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(/*Replicated,*/ EditAnywhere, BlueprintReadOnly, Category = "Table", meta = (AllowPrivateAccess = "true"))
 	TArray<class APlate*> CleanPlates;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Table", meta = (AllowprivateAccess = "true"))

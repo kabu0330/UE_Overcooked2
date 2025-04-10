@@ -345,15 +345,18 @@ void APlate::StackPlate/*_Implementation*/(APlate* Plate)
 			}
 
 			ChangePlateMesh();
+			HideAnotherPlates();
 		}
 	}
 }
 
+// 싱크대에 들어간 plate는 AnotherPlates가 모두 Clear 된 상태여야 한다.
+// 그리고 ChangePlateMesh 함수를 호출해서 메시를 하나짜리로 되돌려야 한다.
+// TakeCleanPlate()를 호출해서 렌더, 충돌, 틱을 모두 켜야한다.
+
 void APlate::ChangePlateMesh()
 {
 	int Count = AnotherPlates.Num();
-
-	HideAnotherPlates();
 
 	switch (Count)
 	{
@@ -390,32 +393,21 @@ void APlate::StackUpPlate(EPlateStackStatus Status, FName Name)
 	StaticMeshComponent->SetStaticMesh(NewStaticMesh);
 }
 
-APlate* APlate::TakeCleanPlate()
+void APlate::ResetForCleaning()
 {
-	int32 Count = AnotherPlates.Num();
-	if (0 == Count) // 내가 가지고 있는 다른 접시가 없다면 내 포인터를 넘겨준다.
-	{
-		return this;
-	}
+	AnotherPlates.Empty(); // 내가 가지고 있는 포인터도 지우고
+	PlateStackStatus = EPlateStackStatus::SINGLE; // 상태도 하나로 바꾸고
+	ChangePlateMesh(); // 메시도 지우고
+}
 
-	// 설거지된 접시를 찾아서 하나 꺼내준다.
-	for (size_t i = 0; i < AnotherPlates.Num(); i++)
-	{
-		if (EPlateState::EMPTY == AnotherPlates[i]->PlateState)
-		{
-			// 꺼내 줄 때는 다시 숨김 설정을 해제한다.
-			AnotherPlates[i]->SetActorHiddenInGame(false);
-			AnotherPlates[i]->SetActorEnableCollision(true);
-			AnotherPlates[i]->SetActorTickEnabled(true);
+void APlate::RestorePlateToWorld()
+{
+	// ChangePlateMesh(); // 메시를 하나짜리로 세팅하고
 
-			APlate* AnotherPlate = AnotherPlates[i];
-			AnotherPlates.RemoveAt(i);
-			return AnotherPlate;
-		}
-	}
-
-	return nullptr; // 꺼내줄 녀석이 없다.
-	// 꺼낼 녀석이 없다면 this를 줘야 할까?
+	// 월드로 다시 편입시키고
+	SetActorHiddenInGame(false);
+	SetActorEnableCollision(true);
+	SetActorTickEnabled(true);
 }
 
 void APlate::HideAnotherPlates()
@@ -426,6 +418,32 @@ void APlate::HideAnotherPlates()
 		AnotherPlates[i]->SetActorHiddenInGame(true);		// 렌더 끄고
 		AnotherPlates[i]->SetActorEnableCollision(false);	// 충돌 끄고
 		AnotherPlates[i]->SetActorTickEnabled(false);		// Tick 끄고
+	}
+}
+
+void APlate::SubmitPlate_Implementation()
+{
+	SetActorLocation(UOC2Const::PlateSubmitLocation);
+	CleanPlate();
+	SetPlateState(EPlateState::DIRTY);
+
+	FTimerHandle TimerHandle;
+
+	GetWorld()->GetTimerManager().SetTimer(
+		TimerHandle,
+		this,
+		&APlate::SpawnPlate,
+		3.0f,   // 3초 뒤 실행
+		false   // 반복 여부(false면 1회 실행)
+	);
+}
+
+void APlate::SpawnPlate()
+{
+	if (nullptr != PlateSpawner)
+	{
+		PlateSpawner->PlaceItem(this);
+		PlateSpawner->SetPlate(this);
 	}
 }
 

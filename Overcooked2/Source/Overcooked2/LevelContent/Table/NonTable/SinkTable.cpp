@@ -20,19 +20,19 @@ ASinkTable::ASinkTable()
 	CleanPlateComponent->SetupAttachment(RootComponent);
 
 	{
-		ComponentForDishes1 = CreateDefaultSubobject<USceneComponent>("DirtyPlate1");
+		ComponentForDishes1 = CreateDefaultSubobject<UStaticMeshComponent>("DirtyPlate1");
 		ComponentForDishes1->SetupAttachment(ComponentForCooking);
 		DirtyPlateComponents.Add(ComponentForDishes1);
 
-		ComponentForDishes2 = CreateDefaultSubobject<USceneComponent>("DirtyPlate2");
+		ComponentForDishes2 = CreateDefaultSubobject<UStaticMeshComponent>("DirtyPlate2");
 		ComponentForDishes2->SetupAttachment(ComponentForCooking);
 		DirtyPlateComponents.Add(ComponentForDishes2);
 
-		ComponentForDishes3 = CreateDefaultSubobject<USceneComponent>("DirtyPlate3");
+		ComponentForDishes3 = CreateDefaultSubobject<UStaticMeshComponent>("DirtyPlate3");
 		ComponentForDishes3->SetupAttachment(ComponentForCooking);
 		DirtyPlateComponents.Add(ComponentForDishes3);
 
-		ComponentForDishes4 = CreateDefaultSubobject<USceneComponent>("DirtyPlate4");
+		ComponentForDishes4 = CreateDefaultSubobject<UStaticMeshComponent>("DirtyPlate4");
 		ComponentForDishes4->SetupAttachment(ComponentForCooking);
 		DirtyPlateComponents.Add(ComponentForDishes4);
 	}
@@ -85,10 +85,23 @@ void ASinkTable::Tick(float DeltaTime)
 
 ACooking* ASinkTable::Interact(AActor* ChefActor)
 {
+	// 설거지된 접시가 하나 이상 있으면 캐릭터에게 하나를 줄 수 있다.
 	if (CleanPlates.Num() > 0)
 	{
-		CookingPtr = Cast<ACooking>(CleanPlates.Pop());
-		return CookingPtr;
+		APlate* NewPlate = CleanPlates.Last(); 
+		CookingPtr = Cast<ACooking>(NewPlate);
+		if (nullptr != CookingPtr)
+		{
+			CleanPlates.Pop();
+
+			CleanPlateNum = CleanPlates.Num();
+			return CookingPtr;
+		}
+		else
+		{
+			return nullptr;
+		}
+
 	}
 	else
 	{
@@ -120,24 +133,31 @@ void ASinkTable::PlaceItem(ACooking* ReceivedCooking)
 		
 				for (int i = 0; i < PlateNum; i++)
 				{
-					APlate* NewPlate = TempPlate->GetAnotherPlatesRef()[i];				
+					APlate* NewPlate = TempPlate->GetAnotherPlatesRef()[i];	
+					NewPlate->ResetForCleaning();
 					DirtyPlates.Add(NewPlate);
 				}
 			}
 
+			// AnotherPlateRef도 정리, 메시 초기화, 보유한 Plates 초기화
+			TempPlate->ResetForCleaning(); 
+
+
 			// 3. 정렬한다.
-			for (int32 i = CurPlateNum; i < DirtyPlates.Num(); i++)
+			for (int32 i = DirtyPlateNum; i < DirtyPlates.Num(); i++)
 			{
 				APlate* NewPlate = DirtyPlates[i];
+				NewPlate->RestorePlateToWorld(); // 월드 재편입
+				
 				NewPlate->SetCookingTable_Implementation(this);
-				NewPlate->AttachToComponent(DirtyPlateComponents[i], FAttachmentTransformRules::KeepRelativeTransform);
-				NewPlate->SetActorLocation(DirtyPlateComponents[i]->GetComponentLocation());
+				//NewPlate->AttachToComponent(DirtyPlateComponents[i], FAttachmentTransformRules::KeepRelativeTransform);
+				//NewPlate->SetActorLocation(DirtyPlateComponents[i]->GetComponentLocation());
 				//DirtyPlates[i + CurPlateNum]->SetCookingTable_Implementation(this);
 				//DirtyPlates[i + CurPlateNum]->AttachToComponent(DirtyPlateComponents[i + CurPlateNum], FAttachmentTransformRules::KeepRelativeTransform);
 				//DirtyPlates[i + CurPlateNum]->SetActorLocation(DirtyPlateComponents[i + CurPlateNum]->GetComponentLocation());
 			}
 
-			CurPlateNum = DirtyPlates.Num();
+			DirtyPlateNum = DirtyPlates.Num();
 
 			// i + curPlateNum이 4를 안 넘을지?
 
@@ -166,25 +186,60 @@ void ASinkTable::DoTheDishes(AOC2Character* ChefActor)
 	}
 }
 
-void ASinkTable::WashingIsDone()
+void ASinkTable::WashingIsDone_Implementation()
 {
+	if (nullptr != GetWorld()->GetAuthGameMode())
+	{
+		// 서버
+		int a = 0;
+	}
+	if (nullptr == GetWorld()->GetAuthGameMode())
+	{
+		// 클라
+		int a = 0;
+	}
 	bTimerActivated = false;
 
-	DirtyPlates.Last()->WashPlate();
-	CleanPlates.Add(DirtyPlates.Pop());
-	CurPlateNum = DirtyPlates.Num();
+	if (0 == DirtyPlates.Num())
+	{
+		return;
+	}
+	// 인덱스의 마지막 접시를 empty 상태로 바꾸고
+	APlate* NewPlate = DirtyPlates.Last();
+	
+	NewPlate->WashPlate(); 
 
-	int PlateNum = CleanPlates.Num();
+	// CleanPlates에 추가, DirtyPlates의 마지막 접시 삭제
+	CleanPlates.Add(NewPlate);
+	DirtyPlates.Pop();
+
+	// 싱크대의 플레이트 렌더링 상태를 바꿔줘야한다.
+	//for (size_t i = 0; i < DirtyPlates.Num(); i++)
+	//{
+
+	//}
+
+	DirtyPlateNum = DirtyPlates.Num();
+	CleanPlateNum = CleanPlates.Num();
+
 	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Turquoise, "Washing Done");
 
-	if (PlateNum - 1 < 0)
+	if (CleanPlateNum == 0)
 	{
 		return;
 	}
 
-	CleanPlates[PlateNum -1]->AttachToComponent(CleanPlateComponent, FAttachmentTransformRules::KeepRelativeTransform);
-	CleanPlates[PlateNum -1]->SetActorLocation(CleanPlateComponent->GetComponentLocation());
-	CleanPlates[PlateNum - 1]->AddActorLocalOffset(FVector::UnitZ() * 30.0f * (PlateNum -1));
+	// 클린 플레이트를 싱크대에 부착시킨다.
+	NewPlate->AttachToComponent(CleanPlateComponent, FAttachmentTransformRules::KeepRelativeTransform);
+	NewPlate->SetActorLocation(CleanPlateComponent->GetComponentLocation());
+
+	// 클린 플레이트의 Num이 증가하면 쌓아준다.
+	NewPlate->AddActorLocalOffset(FVector::UnitZ() * 10.0f * (CleanPlateNum - 1));
+
+
+
+
+
 
 	//APlate* PlacedPlate = Cast<APlate>(CookingPtr);
 	//PlacedPlate->WashPlate();
@@ -202,6 +257,7 @@ void ASinkTable::WashingIsDone()
 	}
 	else
 	{
+		bWashingDone = false;
 		DoTheDishes(ChefPtr);
 	}
 	
@@ -240,6 +296,6 @@ void ASinkTable::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifeti
 	DOREPLIFETIME(ASinkTable, ComponentForDishes3);
 	DOREPLIFETIME(ASinkTable, ComponentForDishes4);
 	DOREPLIFETIME(ASinkTable, DirtyPlateComponents);
-	DOREPLIFETIME(ASinkTable, DirtyPlates);
-	DOREPLIFETIME(ASinkTable, CleanPlates);
+	//DOREPLIFETIME(ASinkTable, DirtyPlates);
+	//DOREPLIFETIME(ASinkTable, CleanPlates);
 }
