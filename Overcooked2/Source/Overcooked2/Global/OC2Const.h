@@ -18,6 +18,9 @@ public:
 	static float OrderSpawnDelay;
 	static float MaxOrderCount;
 
+	static int ScoreValue;
+	static int TipValue;
+
 	static FString ChefEagleHeadName;
 	static FString ChefMouseHeadName;
 	static FString ChefPandaHeadName;

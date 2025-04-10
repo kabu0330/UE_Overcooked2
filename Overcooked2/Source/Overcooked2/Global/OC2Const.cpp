@@ -6,6 +6,9 @@
 float UOC2Const::OrderSpawnDelay = 3.0f;
 float UOC2Const::MaxOrderCount = 5;
 
+int UOC2Const::ScoreValue = 20;
+int UOC2Const::TipValue = 8;
+
 FString UOC2Const::ChefEagleHeadName	= "Eagle";
 FString UOC2Const::ChefMouseHeadName	= "Mouse";
 FString UOC2Const::ChefPandaHeadName	= "Panda";
