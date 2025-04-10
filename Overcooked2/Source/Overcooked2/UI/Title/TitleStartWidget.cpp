@@ -6,17 +6,76 @@
 #include "Components/CanvasPanel.h"
 #include "GameFramework/PlayerController.h"
 
+#include "Input/Reply.h"                   // FReply
+#include "Input/Events.h"                  // FKeyEvent
+
 void UTitleStartWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
+	bIsFocusable = true;
+	this->SetKeyboardFocus();
 
+	APlayerController* PC = GetWorld()->GetFirstPlayerController();
+	if (PC)
+	{
+		FInputModeUIOnly InputMode;
+		InputMode.SetWidgetToFocus(TakeWidget());
+		InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+		PC->SetInputMode(InputMode);
+		PC->bShowMouseCursor = false;
+	}
 
-
+	CurrentPhase = ETitleAnim::OvercookedFadeIn;
 	Background->SetVisibility(ESlateVisibility::Hidden);
 	UEImage->SetVisibility(ESlateVisibility::Hidden);
 
 }
+
+
+void UTitleStartWidget::SkipAnimation()
+{
+	if (CurrentPhase == ETitleAnim::OvercookedFadeIn)
+	{
+		SetGhostTownAnimation();
+		return;
+	}
+
+	if (ImgTimeline.IsPlaying() == true)
+	{
+		ImgTimeline.Stop();
+
+		switch (CurrentPhase)
+		{
+		case ETitleAnim::GhostFadeIn:
+			PlayTeam17Animation();
+			break;
+		case ETitleAnim::Team17FadeIn:
+			PlayUEAnimation();	
+			break;
+		case ETitleAnim::UEFadeIn:
+			EndTitleAnimation();
+			break;
+		default:
+			break;
+		}
+	}
+
+}
+
+FReply UTitleStartWidget::NativeOnKeyDown(const FGeometry& MyGeometry, const FKeyEvent& InKeyEvent)
+{
+	if (InKeyEvent.GetKey() == EKeys::SpaceBar)
+	{
+		SkipAnimation();
+		UE_LOG(LogTemp, Warning, TEXT("Space pressed in UI!"));
+		return FReply::Handled();
+	}
+	return FReply::Unhandled();
+}
+
+
+
 
 void UTitleStartWidget::NativeTick(const FGeometry& MyGeometry, float DeltaTime)
 {
@@ -28,32 +87,38 @@ void UTitleStartWidget::NativeTick(const FGeometry& MyGeometry, float DeltaTime)
 
 	if (StartAnimTime >= 3.0f && bIsGhost == false)
 	{
-		bIsGhost = true;
-		Background->SetVisibility(ESlateVisibility::Visible);
-		StartImg->SetVisibility(ESlateVisibility::Hidden);
-		GhostImg->SetVisibility(ESlateVisibility::Visible);
-		GhostImg->SetRenderOpacity(0.0f);
-		CurImg = GhostImg;
 
-
-		FOnTimelineFloat ProgressFunction;
-		ProgressFunction.BindUFunction(this, FName("StartTitleAnimation"));
-		ImgTimeline.AddInterpFloat(ImgCurve, ProgressFunction);
-
-		FOnTimelineEvent FinishEvent;
-		FinishEvent.BindUFunction(this, FName("PlayTeam17Animation"));
-		ImgTimeline.SetTimelineFinishedFunc(FinishEvent);
-
-
-		ImgTimeline.SetLooping(false);
-		ImgTimeline.SetPlayRate(1.0f);
-		ImgTimeline.Stop();
-		ImgTimeline.PlayFromStart();
-
+		SetGhostTownAnimation();
 		StartAnimTime = 0.0f;
 	}
 }
 
+void UTitleStartWidget::SetGhostTownAnimation()
+{
+	bIsGhost = true;
+
+	Background->SetVisibility(ESlateVisibility::Visible);
+	StartImg->SetVisibility(ESlateVisibility::Hidden);
+	GhostImg->SetVisibility(ESlateVisibility::Visible);
+	GhostImg->SetRenderOpacity(0.0f);
+	CurImg = GhostImg;
+	CurrentPhase = ETitleAnim::GhostFadeIn;
+
+	FOnTimelineFloat ProgressFunction;
+	ProgressFunction.BindUFunction(this, FName("StartTitleAnimation"));
+	ImgTimeline.AddInterpFloat(ImgCurve, ProgressFunction);
+
+	FOnTimelineEvent FinishEvent;
+	FinishEvent.BindUFunction(this, FName("PlayTeam17Animation"));
+	ImgTimeline.SetTimelineFinishedFunc(FinishEvent);
+
+
+	ImgTimeline.SetLooping(false);
+	ImgTimeline.SetPlayRate(1.0f);
+	ImgTimeline.Stop();
+	ImgTimeline.PlayFromStart();
+
+}
 
 void UTitleStartWidget::StartTitleAnimation(float Value)
 {
@@ -69,6 +134,7 @@ void UTitleStartWidget::UpdateImageOpacity(float CurOpacity)
 
 void UTitleStartWidget::PlayTeam17Animation()
 {
+	CurrentPhase = ETitleAnim::Team17FadeIn;
 
 	CurImg->SetVisibility(ESlateVisibility::Hidden);
 	T17Img->SetVisibility(ESlateVisibility::Visible);
@@ -84,7 +150,6 @@ void UTitleStartWidget::PlayTeam17Animation()
 	FinishEvent.BindUFunction(this, FName("PlayUEAnimation"));
 	ImgTimeline.SetTimelineFinishedFunc(FinishEvent);
 
-
 	ImgTimeline.SetLooping(false);
 	ImgTimeline.SetPlayRate(1.0f);
 	ImgTimeline.Stop();
@@ -93,6 +158,7 @@ void UTitleStartWidget::PlayTeam17Animation()
 
 void UTitleStartWidget::PlayUEAnimation()
 {
+	CurrentPhase = ETitleAnim::UEFadeIn;
 
 	CurImg->SetVisibility(ESlateVisibility::Hidden);
 	UEImage->SetVisibility(ESlateVisibility::Visible);
@@ -146,6 +212,5 @@ void UTitleStartWidget::EndTitleAnimation()
 
 void UTitleStartWidget::SetVisibleCollapsed()
 {
-
 	StartWidget->SetVisibility(ESlateVisibility::Collapsed);
 }
