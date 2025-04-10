@@ -59,6 +59,8 @@ protected:
 	UPROPERTY(Replicated)
 	float Ratio = 0.0f;
 
+	int CurPlateNum = 0;
+
 	/*UPROPERTY(Replicated)
 	bool KeepWashing = false;*/
 

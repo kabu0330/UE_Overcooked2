@@ -96,23 +96,48 @@ ACooking* ASinkTable::Interact(AActor* ChefActor)
 	}
 }
 
+// 접시가 싱크대로 들어오는 로직
 void ASinkTable::PlaceItem(ACooking* ReceivedCooking)
 {
 	if (ECookingType::ECT_PLATE == ReceivedCooking->GetCookingType())
 	{
 		APlate* TempPlate = Cast<APlate>(ReceivedCooking);
+		if (nullptr == TempPlate)
+		{
+			return;
+		}
+
+		// 1. 더티 플레이트만 들어올 수 있다.
 		if (true == TempPlate->IsDirtyPlate())
 		{
-			int PlateNum = TempPlate->GetAnotherPlatesRef().Num();
-			int CurPlateNum = DirtyPlates.Num();
-			
-			for (int i = 0; i < PlateNum; i++)
+			// 2-1. 플레이트가 하나만 들어온다면
+			DirtyPlates.Add(TempPlate);
+
+			// 2-2. 플레이트가 여러 개라면
+			if (true != TempPlate->GetAnotherPlatesRef().IsEmpty())
 			{
-				DirtyPlates.Add(TempPlate->GetAnotherPlatesRef()[i]);
-				DirtyPlates[i + CurPlateNum]->SetCookingTable_Implementation(this);
-				DirtyPlates[i + CurPlateNum]->AttachToComponent(DirtyPlateComponents[i + CurPlateNum], FAttachmentTransformRules::KeepRelativeTransform);
-				DirtyPlates[i + CurPlateNum]->SetActorLocation(DirtyPlateComponents[i + CurPlateNum]->GetComponentLocation());
+				int PlateNum = TempPlate->GetAnotherPlatesRef().Num();
+		
+				for (int i = 0; i < PlateNum; i++)
+				{
+					APlate* NewPlate = TempPlate->GetAnotherPlatesRef()[i];				
+					DirtyPlates.Add(NewPlate);
+				}
 			}
+
+			// 3. 정렬한다.
+			for (int32 i = CurPlateNum; i < DirtyPlates.Num(); i++)
+			{
+				APlate* NewPlate = DirtyPlates[i];
+				NewPlate->SetCookingTable_Implementation(this);
+				NewPlate->AttachToComponent(DirtyPlateComponents[i], FAttachmentTransformRules::KeepRelativeTransform);
+				NewPlate->SetActorLocation(DirtyPlateComponents[i]->GetComponentLocation());
+				//DirtyPlates[i + CurPlateNum]->SetCookingTable_Implementation(this);
+				//DirtyPlates[i + CurPlateNum]->AttachToComponent(DirtyPlateComponents[i + CurPlateNum], FAttachmentTransformRules::KeepRelativeTransform);
+				//DirtyPlates[i + CurPlateNum]->SetActorLocation(DirtyPlateComponents[i + CurPlateNum]->GetComponentLocation());
+			}
+
+			CurPlateNum = DirtyPlates.Num();
 
 			// i + curPlateNum이 4를 안 넘을지?
 
@@ -147,6 +172,7 @@ void ASinkTable::WashingIsDone()
 
 	DirtyPlates.Last()->WashPlate();
 	CleanPlates.Add(DirtyPlates.Pop());
+	CurPlateNum = DirtyPlates.Num();
 
 	int PlateNum = CleanPlates.Num();
 	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Turquoise, "Washing Done");
