@@ -74,7 +74,7 @@ public:
 		return Ingredients[Index];
 	}
 	UFUNCTION(NetMulticast, Reliable)
-	void SubmitPlate();
+	void Multicast_SubmitPlate();
 
 	void SpawnPlate();
 

@@ -48,7 +48,7 @@ public:
 	void Multicast_CreateNewOrder(FOrder Order);
 
 	UFUNCTION(NetMulticast, Reliable)
-	void Multicast_CompleteOrder(int OrderIndex);
+	void Multicast_CompleteOrder(int OrderIndex, int InScore);
 
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_BlinkOrderUI();
@@ -61,6 +61,9 @@ public:
 
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_SettingTimer(float DeltaTime);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_SetFeverUI(int InFeverCount);
 
 	UFUNCTION(Server, Reliable)
 	void Server_SubmitPlate(ACooking* Plate);
@@ -81,4 +84,5 @@ private:
 	TArray<int> OrderNumberArray;
 	TArray<FOrder> OrderArray;
 	int CurOrderIndex = 0;
+	int FeverCount = 0;
 };
