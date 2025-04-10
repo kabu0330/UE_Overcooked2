@@ -78,16 +78,18 @@ void AStageManager::AddScore(int InScore)
 	Score += InScore;
 }
 
-void AStageManager::CompleteOrder(FOrder Order)
+int AStageManager::CompleteOrder(FOrder Order, int InScore)
 {
 	int OrderIndex = FindOrderIndex(Order);
 	if (OrderIndex != -1)
 	{
-		CookingGameState->Multicast_CompleteOrder(OrderIndex);
+		CookingGameState->Multicast_CompleteOrder(OrderIndex, InScore);
+		return OrderIndex;
 	}
 	else
 	{
 		UE_LOG(OVERCOOKED_LOG, Error, TEXT("Order Index is a -1"));
+		return OrderIndex;
 	}
 }
 

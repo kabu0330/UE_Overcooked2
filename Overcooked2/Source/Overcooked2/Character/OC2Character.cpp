@@ -62,7 +62,11 @@ void AOC2Character::MoveCharacter(const FInputActionValue& Value)
 	if (bIsChopping == true)
 	{
 		Chopping(false);
-		Cast<AChoppingTable>(SelectedOC2Actor)->TimerSwitch(false);
+		if(CurrentTable != nullptr)
+		{
+			Cast<AChoppingTable>(CurrentTable)->TimerSwitch(false);
+		}
+
 	}
 
 	if (bIsWashing == true)
@@ -294,7 +298,7 @@ void AOC2Character::Interact_Implementation()
 					Pot->Add(Cast<AIngredient>(GrabbedObject));
 					if (Pot->IsRiceInPot() == true)
 					{
-						GrabbedObject = nullptr;
+						GrabbedObject = nullptr; 
 					}
 				}
 
@@ -314,7 +318,7 @@ void AOC2Character::Interact_Implementation()
 			AIngredient* Ingredient = Cast<AIngredient>(GrabbedObject);
 			if (Plate != nullptr)
 			{
-				Plate->SetPlateState(EPlateState::EMPTY);
+				Plate->CleanPlate();
 			}
 			else if (Ingredient != nullptr)
 			{
@@ -483,6 +487,7 @@ void AOC2Character::DoActionPress_Implementation()
 			if (Table->IsA<AChoppingTable>())
 			{
 				Cast<AChoppingTable>(Table)->ChopIngredient(this);
+				CurrentTable = Table;
 			}
 			if (Table->IsA<ASinkTable>())
 			{
@@ -501,8 +506,6 @@ void AOC2Character::DoActionRelease_Implementation()
 		OnRep_ShowDir();
 	}
 }
-
-
 
 void AOC2Character::Throwing_Implementation()
 {

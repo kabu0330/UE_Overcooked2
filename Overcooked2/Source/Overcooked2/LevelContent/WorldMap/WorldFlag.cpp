@@ -4,6 +4,10 @@
 #include "LevelContent/WorldMap/WorldFlag.h"
 #include "LevelContent/WorldMap/WorldMapDialogue.h"
 #include "Components/BillboardComponent.h"
+#include "UI/WorldMap/WorldMapHUD.h"
+#include "UI/WorldMap/UI/WorldMapStageWidget.h"
+#include "Kismet/GameplayStatics.h"
+
 
 AWorldFlag::AWorldFlag()
 {
@@ -86,16 +90,21 @@ void AWorldFlag::OnOverlapFinished(AActor* _OtherActor)
 
 void AWorldFlag::OnIdle()
 {
-	if (WorldMapDialogue->IsHidden() == false)
-	{
-		WorldMapDialogue->SetActorHiddenInGame(true);
-	}
+	//if (WorldMapDialogue->IsHidden() == false)
+	//{
+	//	WorldMapDialogue->SetActorHiddenInGame(true);
+	//}
+
+	bIsVisible = false;
+
 }
 
 void AWorldFlag::OnShowExplain()
 {
-	if (WorldMapDialogue->IsHidden())
-	{
-		WorldMapDialogue->SetActorHiddenInGame(false);
-	}
+	//if (WorldMapDialogue->IsHidden())
+	//{
+	//	//WorldMapDialogue->SetActorHiddenInGame(false);
+	//}
+
+	bIsVisible = true;
 }
