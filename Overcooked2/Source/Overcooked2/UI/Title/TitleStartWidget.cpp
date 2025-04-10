@@ -68,7 +68,6 @@ FReply UTitleStartWidget::NativeOnKeyDown(const FGeometry& MyGeometry, const FKe
 	if (InKeyEvent.GetKey() == EKeys::SpaceBar)
 	{
 		SkipAnimation();
-		UE_LOG(LogTemp, Warning, TEXT("Space pressed in UI!"));
 		return FReply::Handled();
 	}
 	return FReply::Unhandled();
