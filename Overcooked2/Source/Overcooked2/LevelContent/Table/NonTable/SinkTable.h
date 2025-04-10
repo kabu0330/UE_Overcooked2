@@ -59,8 +59,32 @@ protected:
 	UPROPERTY(Replicated)
 	float Ratio = 0.0f;
 
+	/*UPROPERTY(Replicated)
+	bool KeepWashing = false;*/
+
 	UPROPERTY(Replicated)
 	class UWidgetComponent* ProgressBarComponent = nullptr;
+
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Table", meta = (AllowprivateAccess = "true"))
+	USceneComponent* ComponentForDishes1 = nullptr;
+
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Table", meta = (AllowprivateAccess = "true"))
+	USceneComponent* ComponentForDishes2 = nullptr;
+
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Table", meta = (AllowprivateAccess = "true"))
+	USceneComponent* ComponentForDishes3 = nullptr;
+
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Table", meta = (AllowprivateAccess = "true"))
+	USceneComponent* ComponentForDishes4 = nullptr;
+
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Table", meta = (AllowPrivateAccess = "true"))
+	TArray<USceneComponent*> DirtyPlateComponents;					   
+																	   
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Table", meta = (AllowPrivateAccess = "true"))
+	TArray<class APlate*> DirtyPlates;
+
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Table", meta = (AllowPrivateAccess = "true"))
+	TArray<class APlate*> CleanPlates;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Table", meta = (AllowprivateAccess = "true"))
 	TSubclassOf<UUserWidget> TSubClassWidget = nullptr;
