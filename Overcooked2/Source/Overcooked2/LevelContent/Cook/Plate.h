@@ -64,6 +64,10 @@ public:
 	void StackPlate(APlate* Plate);
 	/*void StackPlate_Implementation(APlate* Plate);*/
 
+	UFUNCTION(BlueprintCallable, Reliable, NetMulticast)
+	void SubmitPlate(); 
+	void SubmitPlate_Implementation();
+
 	TArray<FRecipe> GetIngredients() const
 	{
 		return Ingredients;
@@ -86,6 +90,8 @@ public:
 	void ResetForCleaning();
 
 	void RestorePlateToWorld();
+
+	void HiddenPlateToWorld();
 
 protected:
 	// Called when the game starts or when spawned

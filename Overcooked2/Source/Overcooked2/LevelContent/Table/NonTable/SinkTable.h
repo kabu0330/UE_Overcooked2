@@ -27,6 +27,12 @@ public:
 
 	virtual void PlaceItem(ACooking* ReceivedCooking) override;
 
+	void UpdateProgressBar(float DeltaTime);
+
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	void PlacePlates(ACooking* ReceivedCooking);
+	void PlacePlates_Implementation(ACooking* ReceivedCooking);
+
 	void DoTheDishes(class AOC2Character* ChefActor);
 
 	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
@@ -38,6 +44,21 @@ public:
 	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
 	void HideProgressBar(bool Value);
 	void HideProgressBar_Implementation(bool Value);
+
+	//UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	void SetPlateVisibility(int Index);
+	//void SetPlateVisibility_Implementation(int Index);
+
+	//UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	void SetAllPlateHidden();
+	//void SetAllPlateHidden_Implementation();
+	
+	// Æ¯Á¤ ÀÎµ¦½º¸¸, ÄÑ°í ²ö´Ù
+	//UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	void SetPlateVisibilityWithIndex(int Index, bool Value);
+	//void SetPlateVisibilityWithIndex_Implementation(int Index, bool Value);
+
+	void InitProgressBar();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking")
 	USceneComponent* ComponentForProgressBar = nullptr;
@@ -65,8 +86,8 @@ protected:
 
 	int CleanPlateNum = 0;
 
-	/*UPROPERTY(Replicated)
-	bool KeepWashing = false;*/
+	UPROPERTY(Replicated)
+	bool KeepWashing = false;
 
 	UPROPERTY(Replicated)
 	class UWidgetComponent* ProgressBarComponent = nullptr;

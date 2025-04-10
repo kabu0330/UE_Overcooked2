@@ -405,9 +405,16 @@ void APlate::RestorePlateToWorld()
 	// ChangePlateMesh(); // 메시를 하나짜리로 세팅하고
 
 	// 월드로 다시 편입시키고
-	SetActorHiddenInGame(false);
+	SetActorHiddenInGame(false); // 렌더
 	SetActorEnableCollision(true);
 	SetActorTickEnabled(true);
+}
+
+void APlate::HiddenPlateToWorld()
+{
+	SetActorHiddenInGame(true);		// 렌더 끄고
+	SetActorEnableCollision(false);	// 충돌 끄고
+	SetActorTickEnabled(false);		// Tick 끄고
 }
 
 void APlate::HideAnotherPlates()
@@ -436,15 +443,6 @@ void APlate::SubmitPlate_Implementation()
 		3.0f,   // 3초 뒤 실행
 		false   // 반복 여부(false면 1회 실행)
 	);
-}
-
-void APlate::SpawnPlate()
-{
-	if (nullptr != PlateSpawner)
-	{
-		PlateSpawner->PlaceItem(this);
-		PlateSpawner->SetPlate(this);
-	}
 }
 
 void APlate::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
