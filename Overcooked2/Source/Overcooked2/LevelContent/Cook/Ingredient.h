@@ -106,7 +106,6 @@ public:
 	//{
 	//	return TextureBillboard;
 	//}
-	float ThrownTime = 0.0f;
 
 protected:
 	// Called when the game starts or when spawned
@@ -141,6 +140,10 @@ private:
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	bool bIsThrowing = false;
+
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	float ThrownTime = 0.0f;
+
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	AActor* Thrower = nullptr;
