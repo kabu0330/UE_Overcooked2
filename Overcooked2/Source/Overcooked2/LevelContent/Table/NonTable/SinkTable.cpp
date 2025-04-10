@@ -18,6 +18,24 @@ ASinkTable::ASinkTable()
 
 	CleanPlateComponent = CreateDefaultSubobject<USceneComponent>("CleanPlate");
 	CleanPlateComponent->SetupAttachment(RootComponent);
+
+	{
+		ComponentForDishes1 = CreateDefaultSubobject<USceneComponent>("DirtyPlate1");
+		ComponentForDishes1->SetupAttachment(ComponentForCooking);
+		DirtyPlateComponents.Add(ComponentForDishes1);
+
+		ComponentForDishes2 = CreateDefaultSubobject<USceneComponent>("DirtyPlate2");
+		ComponentForDishes2->SetupAttachment(ComponentForCooking);
+		DirtyPlateComponents.Add(ComponentForDishes2);
+
+		ComponentForDishes3 = CreateDefaultSubobject<USceneComponent>("DirtyPlate3");
+		ComponentForDishes3->SetupAttachment(ComponentForCooking);
+		DirtyPlateComponents.Add(ComponentForDishes3);
+
+		ComponentForDishes4 = CreateDefaultSubobject<USceneComponent>("DirtyPlate4");
+		ComponentForDishes4->SetupAttachment(ComponentForCooking);
+		DirtyPlateComponents.Add(ComponentForDishes4);
+	}
 }
 
 void ASinkTable::BeginPlay()
@@ -67,12 +85,16 @@ void ASinkTable::Tick(float DeltaTime)
 
 ACooking* ASinkTable::Interact(AActor* ChefActor)
 {
-	ACooking* CookingReturn = CookingPtr;
-	CookingPtr = nullptr;
-
-	return CookingReturn;
+	if (CleanPlates.Num() > 0)
+	{
+		CookingPtr = Cast<ACooking>(CleanPlates.Pop());
+		return CookingPtr;
+	}
+	else
+	{
+		return nullptr;
+	}
 }
-
 
 void ASinkTable::PlaceItem(ACooking* ReceivedCooking)
 {
@@ -81,10 +103,23 @@ void ASinkTable::PlaceItem(ACooking* ReceivedCooking)
 		APlate* TempPlate = Cast<APlate>(ReceivedCooking);
 		if (true == TempPlate->IsDirtyPlate())
 		{
-			CookingPtr = ReceivedCooking;
-			CookingPtr->SetCookingTable_Implementation(this);
-			CookingPtr->AttachToComponent(ComponentForCooking, FAttachmentTransformRules::KeepRelativeTransform);
-			CookingPtr->SetActorLocation(ComponentForCooking->GetComponentLocation());
+			int PlateNum = TempPlate->GetAnotherPlatesRef().Num();
+			int CurPlateNum = DirtyPlates.Num();
+			
+			for (int i = 0; i < PlateNum; i++)
+			{
+				DirtyPlates.Add(TempPlate->GetAnotherPlatesRef()[i]);
+				DirtyPlates[i + CurPlateNum]->SetCookingTable_Implementation(this);
+				DirtyPlates[i + CurPlateNum]->AttachToComponent(DirtyPlateComponents[i + CurPlateNum], FAttachmentTransformRules::KeepRelativeTransform);
+				DirtyPlates[i + CurPlateNum]->SetActorLocation(DirtyPlateComponents[i + CurPlateNum]->GetComponentLocation());
+			}
+
+			// i + curPlateNum이 4를 안 넘을지?
+
+			//CookingPtr = ReceivedCooking;
+			//CookingPtr->SetCookingTable_Implementation(this);
+			//CookingPtr->AttachToComponent(ComponentForCooking, FAttachmentTransformRules::KeepRelativeTransform);
+			//CookingPtr->SetActorLocation(ComponentForCooking->GetComponentLocation());
 		}
 	}
 }
@@ -110,20 +145,40 @@ void ASinkTable::WashingIsDone()
 {
 	bTimerActivated = false;
 
-	APlate* PlacedPlate = Cast<APlate>(CookingPtr);
-	PlacedPlate->WashPlate();
+	DirtyPlates.Last()->WashPlate();
+	CleanPlates.Add(DirtyPlates.Pop());
+
+	int PlateNum = CleanPlates.Num();
 	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Turquoise, "Washing Done");
-	CookingPtr = Cast<APlate>(PlacedPlate);
+
+	if (PlateNum - 1 < 0)
+	{
+		return;
+	}
+
+	CleanPlates[PlateNum -1]->AttachToComponent(CleanPlateComponent, FAttachmentTransformRules::KeepRelativeTransform);
+	CleanPlates[PlateNum -1]->SetActorLocation(CleanPlateComponent->GetComponentLocation());
+	CleanPlates[PlateNum - 1]->AddActorLocalOffset(FVector::UnitZ() * 30.0f * (PlateNum -1));
+
+	//APlate* PlacedPlate = Cast<APlate>(CookingPtr);
+	//PlacedPlate->WashPlate();
+	//CookingPtr = Cast<APlate>(PlacedPlate);
 
 	//CookingPtr->DetachAllSceneComponents();
-	CookingPtr->AttachToComponent(CleanPlateComponent, FAttachmentTransformRules::KeepRelativeTransform);
-	CookingPtr->SetActorLocation(CleanPlateComponent->GetComponentLocation());
 	//ProgressBarComponent->SetHiddenInGame(true);
 	HideProgressBar(true);
 
-	ChefPtr->Washing(false);
-	ChefPtr = nullptr;
-	bWashingDone = false;
+	if (DirtyPlates.Num() == 0 || false == ChefPtr->IsWashing())
+	{
+		ChefPtr->Washing(false);
+		ChefPtr = nullptr;
+		bWashingDone = false;
+	}
+	else
+	{
+		DoTheDishes(ChefPtr);
+	}
+	
 }
 
 void ASinkTable::HideProgressBar_Implementation(bool Value)
@@ -154,5 +209,11 @@ void ASinkTable::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifeti
 	DOREPLIFETIME(ASinkTable, bTimerActivated);
 	DOREPLIFETIME(ASinkTable, bWashingDone);
 	DOREPLIFETIME(ASinkTable, Ratio);
-	DOREPLIFETIME(ASinkTable, ProgressBarComponent);
+	DOREPLIFETIME(ASinkTable, ComponentForDishes1);
+	DOREPLIFETIME(ASinkTable, ComponentForDishes2);
+	DOREPLIFETIME(ASinkTable, ComponentForDishes3);
+	DOREPLIFETIME(ASinkTable, ComponentForDishes4);
+	DOREPLIFETIME(ASinkTable, DirtyPlateComponents);
+	DOREPLIFETIME(ASinkTable, DirtyPlates);
+	DOREPLIFETIME(ASinkTable, CleanPlates);
 }
