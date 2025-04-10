@@ -33,6 +33,7 @@ public:
 	void HideProgressBar(bool Value);
 	void HideProgressBar_Implementation(bool Value);
 
+	UFUNCTION(Server, Reliable)
 	void ChoppingIsDone();
 
 	bool IsChoppingDone()
