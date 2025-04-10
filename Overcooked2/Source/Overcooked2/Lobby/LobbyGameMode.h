@@ -40,4 +40,5 @@ private:
 	TArray<APlayerController*> PlayerControllers;
 	TArray<FString> ChefHeadNames;
 	int CurIdx = 0;
+	int CurUserCount = 0;
 };

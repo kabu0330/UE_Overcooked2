@@ -5,6 +5,7 @@
 #include "Global/OC2Global.h"
 #include "Global/OC2GameInstance.h"
 #include "Global/Manager/LobbyManager.h"
+#include "Global/Data/OC2GlobalData.h"
 
 #include "Net/UnrealNetwork.h"
 #include "Kismet/GameplayStatics.h"
@@ -32,6 +33,34 @@ void ALobbyGameState::Tick(float DeltaTime)
 ALobbyManager* ALobbyGameState::GetLobbyManager() const
 {
 	return LobbyManager;
+}
+
+void ALobbyGameState::Multicast_UpdateUserPanelUI_Implementation()
+{
+	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
+	ALobbyHUD* LobbyHUD = Cast<ALobbyHUD>(PlayerController->GetHUD());
+
+	
+	if (LobbyHUD->LobbyWidget != nullptr && LobbyHUD != nullptr)
+	{
+		UTexture2D* ChefTexture = UOC2GlobalData::GetChefTexture(GetWorld());
+		int UserIndex = UOC2Global::GetOC2GameInstance(GetWorld())->GetUserIndex();
+		LobbyHUD->LobbyWidget->SetUserTexture(ChefTexture, UserIndex);
+	}
+}
+
+void ALobbyGameState::UpdateChefTexture()
+{
+	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
+	ALobbyHUD* LobbyHUD = Cast<ALobbyHUD>(PlayerController->GetHUD());
+
+
+	if (LobbyHUD->LobbyWidget != nullptr && LobbyHUD != nullptr)
+	{
+		UTexture2D* ChefTexture = UOC2GlobalData::GetChefTexture(GetWorld());
+		int UserIndex = UOC2Global::GetOC2GameInstance(GetWorld())->GetUserIndex();
+		LobbyHUD->LobbyWidget->SetUserTexture(ChefTexture, UserIndex);
+	}
 }
 
 void ALobbyGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
