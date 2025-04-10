@@ -12,6 +12,8 @@
 #include "LevelContent/Table/CookingTable.h"
 #include "LevelContent/Table/NonTable/PlateSpawner.h"
 #include "EngineUtils.h"
+#include <LevelContent/Table/NonTable/SinkTable.h>
+#include <LevelContent/Table/NonTable/PlateSpawner.h>
 
 // Sets default values
 APlate::APlate()
@@ -182,23 +184,6 @@ void APlate::SetMaterialTexture(UTexture* Texture)
 		StaticMeshComponent->SetMaterial(0, MaterialInstanceDynamic);
 		return;
 	}
-
-	// 4. 기존에 만들어진 머티리얼 인스턴스 다이나믹이 없다면 == SetMaterial이 처음이라면
-	//UMaterialInterface* Material = StaticMeshComponent->GetMaterial(0);
-	//if (nullptr != Material)
-	//{
-	//	// 5. 이제 기존의 머티리얼은 안쓰고 머티리얼 인스턴스 다이나믹을 만들어서 쓸 것이다.
-	//	UMaterialInstanceDynamic* DynamicMaterial = UMaterialInstanceDynamic::Create(Material, this);
-	//	if (nullptr != DynamicMaterial)
-	//	{
-	//		// 6. 바꿀 텍스처를 에디터에서 설정해줬다면 그걸로 바꿔라.
-	//		if (nullptr != Texture)
-	//		{
-	//			DynamicMaterial->SetTextureParameterValue(FName(TEXT("DiffuseAdd")), Texture);
-	//			StaticMeshComponent->SetMaterial(0, DynamicMaterial);
-	//		}
-	//	}
-	//}
 }
 
 void APlate::ForwardAttachToChef()
@@ -331,21 +316,22 @@ void APlate::StackPlate/*_Implementation*/(APlate* Plate)
 	{
 		if (PlateState == Plate->PlateState) // 동일한 상태인 녀석만 쌓을 수 있다.
 		{
-			AnotherPlates.Add(Plate);
-			
-			// 이미 쌓여있는 접시를 합치는 거라면
-			// Debug 필요. Plate->AnotherPlates[i]->AnotherPlates는 항상 0이라고 확신할 수 있을까?
-			if (false == Plate->AnotherPlates.IsEmpty())
+			// 2. 이미 쌓여있는 접시를 합치는 거라면
+			if (nullptr != CookingTable &&
+				nullptr == Cast<ASinkTable>(CookingTable) &&
+				nullptr == Cast<APlateSpawner>(CookingTable) &&
+				PlateState == EPlateState::DIRTY)
 			{
-				for (size_t i = 0; i < Plate->AnotherPlates.Num(); i++)
-				{
-					AnotherPlates.Add(Plate->AnotherPlates[i]);
-				}
-				Plate->AnotherPlates.Empty();
+				StackUpDirtyPlate(Plate); // 내가 직접 NetMultiCast 해야하는 멤버들이라면 여기서 처리한다.
+				return;
 			}
-
-			ChangePlateMesh();
-			HideAnotherPlates();
+			else
+			{
+				// 1. 자기 자신을 쌓고
+				AnotherPlates.Add(Plate);
+				ChangePlateMesh(); // 메시 바꾸고
+				HideAnotherPlates(); // 부착된 애들은 월드에서 제외
+			}
 		}
 	}
 }
@@ -353,7 +339,6 @@ void APlate::StackPlate/*_Implementation*/(APlate* Plate)
 // 싱크대에 들어간 plate는 AnotherPlates가 모두 Clear 된 상태여야 한다.
 // 그리고 ChangePlateMesh 함수를 호출해서 메시를 하나짜리로 되돌려야 한다.
 // TakeCleanPlate()를 호출해서 렌더, 충돌, 틱을 모두 켜야한다.
-
 void APlate::ChangePlateMesh()
 {
 	int Count = AnotherPlates.Num();
@@ -393,6 +378,34 @@ void APlate::StackUpPlate(EPlateStackStatus Status, FName Name)
 	StaticMeshComponent->SetStaticMesh(NewStaticMesh);
 }
 
+void APlate::StackUpDirtyPlate_Implementation(APlate* Plate)
+{
+	// 자기 자신도 쌓고
+	AnotherPlates.Add(Plate);
+
+	// 테이블 위에 올려져 있고, 그게 Spawner나 SinkTable이 아니라면
+	// 내가 가지고 있는 접시도 쌓고
+	if (false == Plate->AnotherPlates.IsEmpty())
+	{
+		for (int32 i = 0; i < Plate->AnotherPlates.Num(); i++)
+		{
+			APlate* NewPlate = Plate->AnotherPlates[i];
+			AnotherPlates.Add(NewPlate);
+		}
+
+		// 자기 자신의 배열은 비운다.
+		Plate->AnotherPlates.Empty();
+	}
+	ChangePlateMesh();
+	HideAnotherPlates();
+	
+}
+
+void APlate::ForwardCookingTable(ACookingTable* Table)
+{
+	CookingTable = Table;
+}
+
 void APlate::ResetForCleaning()
 {
 	AnotherPlates.Empty(); // 내가 가지고 있는 포인터도 지우고
@@ -402,8 +415,6 @@ void APlate::ResetForCleaning()
 
 void APlate::RestorePlateToWorld()
 {
-	// ChangePlateMesh(); // 메시를 하나짜리로 세팅하고
-
 	// 월드로 다시 편입시키고
 	SetActorHiddenInGame(false); // 렌더
 	SetActorEnableCollision(true);
@@ -455,4 +466,5 @@ void APlate::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimePr
 	DOREPLIFETIME(APlate, bIsCombinationSuccessful);
 	//DOREPLIFETIME(APlate, AnotherPlates);
 	DOREPLIFETIME(APlate, PlateStackStatus);
+	DOREPLIFETIME(APlate, CookingTable);
 }
