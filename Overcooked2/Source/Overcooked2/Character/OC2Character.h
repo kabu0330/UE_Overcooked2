@@ -195,6 +195,8 @@ private :
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Grab", meta = (AllowPrivateAccess = "true"))
 	AOC2Actor* SelectedOC2Actor = nullptr;
 
+	ACookingTable* CurrentTable = nullptr;
+
 	// 현재 내가 들고 있는 객체의 정보 
 	UPROPERTY(VisibleAnywhere, Replicated, BlueprintReadOnly, Category = "Grab", meta = (AllowPrivateAccess = "true"))
 	ACooking* GrabbedObject = nullptr;
