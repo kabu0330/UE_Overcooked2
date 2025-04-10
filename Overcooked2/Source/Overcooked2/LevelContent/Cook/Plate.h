@@ -122,6 +122,12 @@ protected:
 
 	void StackUpPlate(EPlateStackStatus Status, FName Name);
 
+	UFUNCTION(NetMulticast, Reliable)
+	void StackUpDirtyPlate(APlate* Plate);
+	void StackUpDirtyPlate_Implementation(APlate* Plate);
+
+	virtual void ForwardCookingTable(class ACookingTable* Table) override;
+
 
 private:
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
@@ -163,5 +169,8 @@ private:
 
 	UPROPERTY()
 	APlateSpawner* PlateSpawner = nullptr;
+
+	UPROPERTY(Replicated)
+	class ACookingTable* CookingTable = nullptr;
 
 };
