@@ -2,10 +2,32 @@
 
 
 #include "Global/State/GameState/LobbyGameState.h"
-
+#include "Global/OC2Global.h"
+#include "Global/OC2GameInstance.h"
 #include "Global/Manager/LobbyManager.h"
 
 #include "Net/UnrealNetwork.h"
+#include "Kismet/GameplayStatics.h"
+
+#include "Lobby/LobbyHUD.h"
+#include "Lobby/LobbyUserWidget.h"
+#include "UI/Lobby/LobbyZoomInWidget.h"
+#include "UI/Loading/LoadingWidget.h"
+
+
+ALobbyGameState::ALobbyGameState()
+{
+}
+
+void ALobbyGameState::BeginPlay()
+{
+	Super::BeginPlay();
+}
+
+void ALobbyGameState::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+}
 
 ALobbyManager* ALobbyGameState::GetLobbyManager() const
 {
@@ -17,4 +39,29 @@ void ALobbyGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ALobbyGameState, LobbyManager);
+}
+
+void ALobbyGameState::Multicast_PlayZoomInAnmationUI_Implementation()
+{
+	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
+	ALobbyHUD* LobbyHUD = Cast<ALobbyHUD>(PlayerController->GetHUD());
+
+
+	if (true == HasAuthority())
+	{
+		if (LobbyHUD->LobbyZoomInWidget != nullptr && LobbyHUD != nullptr)
+		{
+			LobbyHUD->LobbyZoomInWidget->PlayZoomInAnimation([this]()
+				{
+					UOC2Global::TravelServer(GetWorld(), PLAY_LEVEL);
+				});
+		}
+	}
+	else
+	{
+		if (LobbyHUD->LobbyZoomInWidget != nullptr && LobbyHUD != nullptr)
+		{
+			LobbyHUD->LobbyZoomInWidget->PlayZoomInAnimation([]() {});
+		}
+	}
 }
