@@ -19,6 +19,15 @@ void ALobbyPlayerController::BeginPlay()
 	SetShowMouseCursor(true);
 }
 
+void ALobbyPlayerController::Client_SetUserIndex_Implementation(int InUserIndex)
+{
+	UOC2GameInstance* GameInstance = Cast<UOC2GameInstance>(GetWorld()->GetGameInstance());
+	if (GameInstance)
+	{
+		GameInstance->SetUserIndex(InUserIndex);
+	}
+}
+
 // ALobbyPlayerController.cpp
 void ALobbyPlayerController::Client_SetChefHeadName_Implementation(const FString& NewChefHeadName)
 {

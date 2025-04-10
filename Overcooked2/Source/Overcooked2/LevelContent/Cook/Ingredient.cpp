@@ -11,6 +11,7 @@
 #include "LevelContent/Cook/Pot.h"
 #include "LevelContent/Table/CookingTable.h"
 #include "LevelContent/Table/NonTable/SinkTable.h" 
+#include "LevelContent/Table/BurnerTable.h"	 
 #include "Character/OC2Character.h"
 
 // Sets default values
@@ -139,7 +140,7 @@ void AIngredient::Tick(float DeltaTime)
 	}
 
 	//	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Green, "Hit");
-	CheckPlacement();
+	//CheckPlacement();
 
 	//	DrawDebugSphere(GetWorld(), GetActorLocation(), 100.0f, 20, FColor::Red, false);
 
@@ -244,7 +245,7 @@ bool AIngredient::IsCooked()
 
 void AIngredient::CheckPlacement()
 {
-	FVector TraceLocation = GetActorLocation(); // SceneComponent 위치 가져오기
+	FVector TraceLocation = GetActorLocation() + FVector(0, 0, -50); // SceneComponent 위치 가져오기
 
 	// 감지할 오브젝트 유형 설정 (예: WorldDynamic)
 	FCollisionObjectQueryParams ObjectQueryParams;
@@ -280,7 +281,7 @@ void AIngredient::CheckPlacement()
 			return FVector::DistSquared(TraceLocation, A.GetActor()->GetActorLocation()) < FVector::DistSquared(TraceLocation, B.GetActor()->GetActorLocation());
 			});
 
-		
+
 		// maybe Interactable.
 		ACookingTable* ClosestTable = nullptr;
 		for (auto Result : HitResults)
@@ -315,6 +316,7 @@ void AIngredient::CheckPlacement()
 				if (Pot != nullptr)
 				{
 					Pot->Add(this);
+					ClosestTable->PlaceItem(Pot);
 				}
 			}
 			bIsThrowing = false;
@@ -399,4 +401,5 @@ void AIngredient::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifet
 	DOREPLIFETIME(AIngredient, CurIngredientState);
 	DOREPLIFETIME(AIngredient, Thrower);
 	DOREPLIFETIME(AIngredient, bIsThrowing);
+	DOREPLIFETIME(AIngredient, ThrownTime);
 }

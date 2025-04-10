@@ -48,7 +48,7 @@ AOC2Character::AOC2Character()
 	ThrowDir = CreateDefaultSubobject<UStaticMeshComponent>("ThrowPlane");
 	ThrowDir->SetupAttachment(Plane);
 
-	
+
 }
 
 void AOC2Character::MoveCharacter(const FInputActionValue& Value)
@@ -62,7 +62,7 @@ void AOC2Character::MoveCharacter(const FInputActionValue& Value)
 	if (bIsChopping == true)
 	{
 		Chopping(false);
-		if(CurrentTable != nullptr)
+		if (CurrentTable != nullptr)
 		{
 			Cast<AChoppingTable>(CurrentTable)->TimerSwitch(false);
 		}
@@ -298,7 +298,7 @@ void AOC2Character::Interact_Implementation()
 					Pot->Add(Cast<AIngredient>(GrabbedObject));
 					if (Pot->IsRiceInPot() == true)
 					{
-						GrabbedObject = nullptr; 
+						GrabbedObject = nullptr;
 					}
 				}
 
@@ -315,6 +315,7 @@ void AOC2Character::Interact_Implementation()
 		if (Table->IsA<AGarbageCan>() == true)
 		{
 			APlate* Plate = Cast<APlate>(GrabbedObject);
+			APot* Pot = Cast<APot>(GrabbedObject);
 			AIngredient* Ingredient = Cast<AIngredient>(GrabbedObject);
 			if (Plate != nullptr)
 			{
@@ -324,6 +325,10 @@ void AOC2Character::Interact_Implementation()
 			{
 				Table->PlaceItem(Ingredient);
 				GrabbedObject = nullptr;
+			}
+			else if (Pot!= nullptr)
+			{
+				Pot->ResetPot();
 			}
 		}
 		else if (Table->IsA<ASinkTable>() == true)
@@ -414,7 +419,10 @@ void AOC2Character::Interact_Implementation()
 				}
 				else if (GrabPlate != nullptr)
 				{
-
+					if (Plate->IsDirtyPlate() && GrabPlate->IsDirtyPlate())
+					{
+						Plate->StackPlate(GrabPlate);
+					}
 				}
 				else if (GrabPot != nullptr)
 				{
@@ -592,10 +600,6 @@ void AOC2Character::CheckInteract()
 
 		// maybe Interactable.
 		AOC2Actor* ClosestActor = Cast<AOC2Actor>(HitResults[0].GetActor());
-		//if (ClosestActor->IsA<AServingTable>() == true)
-		//{
-		//	if(GrabbedObject == nullptr || GrabbedObject->IsA<>() )
-		//}
 		if (SelectedOC2Actor != nullptr)
 		{
 			if (ClosestActor != SelectedOC2Actor)
@@ -607,6 +611,13 @@ void AOC2Character::CheckInteract()
 			//{
 			//	DynamicMat->SetScalarParameterValue(TEXT("Brightness"), 2.0f);
 			//}
+		}
+		if (ClosestActor->IsA<AServingTable>() == true)
+		{
+			if (GrabbedObject == nullptr || GrabbedObject->IsA<APlate>() == false)
+			{
+				return;
+			}
 		}
 		SelectedOC2Actor = ClosestActor;
 		if (!SelectedOC2Actor->IsHighlighted())

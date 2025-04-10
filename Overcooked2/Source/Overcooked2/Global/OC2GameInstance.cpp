@@ -402,6 +402,24 @@ FOrder UOC2GameInstance::GetOrderByRecipes(ACooking* Cooking)
 	return Order;
 }
 
+UTexture2D* UOC2GameInstance::GetChefTexture()
+{
+	FString ChefRowName = UOC2Const::ChefTextureName + FString::FromInt(UserIndex);
+	FName RowName = FName(*ChefRowName);
+
+	if (nullptr != ResourceTextureDataTable)
+	{
+		FResourceTextureDataRow* ResourceTextureData = ResourceTextureDataTable->FindRow<FResourceTextureDataRow>(RowName, nullptr);
+
+		if (nullptr != ResourceTextureData)
+		{
+			return ResourceTextureData->TextureRes;
+		}
+	}
+
+	return nullptr;
+}
+
 FString UOC2GameInstance::GetChefHeadName() const
 {
 	return ChefHeadName;
@@ -420,4 +438,14 @@ EOC2Stage UOC2GameInstance::GetCurStage() const
 void UOC2GameInstance::SetCurStage(EOC2Stage ChangeStage)
 {
 	CurStage = ChangeStage;
+}
+
+int UOC2GameInstance::GetUserIndex() const
+{
+	return UserIndex;
+}
+
+void UOC2GameInstance::SetUserIndex(int InUserIndex)
+{
+	UserIndex = InUserIndex;
 }

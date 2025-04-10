@@ -254,6 +254,18 @@ UMaterial* UOC2GlobalData::GetResourceMaterial(UWorld* World, const FName& RowNa
 	return nullptr;
 }
 
+UTexture2D* UOC2GlobalData::GetChefTexture(UWorld* World)
+{
+	UOC2GameInstance* GameInstance = UOC2Global::GetOC2GameInstance(World);
+
+	if (nullptr != GameInstance)
+	{
+		return GameInstance->GetChefTexture();
+	}
+
+	return nullptr;
+}
+
 FOrder UOC2GlobalData::GetOrderByIngredients(UWorld* World, ACooking* Cooking)
 {
 	FOrder Result;

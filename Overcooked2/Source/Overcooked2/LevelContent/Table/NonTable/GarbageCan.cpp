@@ -60,6 +60,7 @@ void AGarbageCan::DestroyIngredient()
 void AGarbageCan::GarbageTransform(float DeltaTime)
 {
 	FRotator Rotation = { 0.0, 0.0, 90.0 };
+	if (CookingPtr == nullptr) return;
 	//FTransform Location = { 0.0, 0.0, -10.0 };
 	CookingPtr->AddActorWorldRotation(Rotation * DeltaTime * 2.0);
 	FVector Scale = CookingPtr->GetActorScale3D();
