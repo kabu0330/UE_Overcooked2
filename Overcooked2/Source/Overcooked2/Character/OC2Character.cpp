@@ -419,7 +419,10 @@ void AOC2Character::Interact_Implementation()
 				}
 				else if (GrabPlate != nullptr)
 				{
-
+					if (Plate->IsDirtyPlate() && GrabPlate->IsDirtyPlate())
+					{
+						Plate->StackPlate(GrabPlate);
+					}
 				}
 				else if (GrabPot != nullptr)
 				{
