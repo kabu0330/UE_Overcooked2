@@ -60,9 +60,9 @@ public:
 	void CleanPlate_Implementation();
 
 	// 접시를 쌓기 위해 호출해야 할 함수 (메시 변환 자동)
-	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	UFUNCTION(BlueprintCallable/*, NetMulticast, Reliable*/)
 	void StackPlate(APlate* Plate);
-	void StackPlate_Implementation(APlate* Plate);
+	/*void StackPlate_Implementation(APlate* Plate);*/
 
 	TArray<FRecipe> GetIngredients() const
 	{
@@ -131,7 +131,7 @@ private:
 	EPlateStackStatus PlateStackStatus = EPlateStackStatus::SINGLE;
 
 	// 나 말고 다른 접시가 나한테 쌓였다면 다른 녀석들의 포인터를 가지고 있을 것임
-	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	TArray<APlate*> AnotherPlates;
 
 

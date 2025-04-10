@@ -316,8 +316,17 @@ void APlate::SetIngredinetTextures(FPlateInitData Data)
 
 }
 
-void APlate::StackPlate_Implementation(APlate* Plate)
+void APlate::StackPlate/*_Implementation*/(APlate* Plate)
 {
+	if (nullptr != GetWorld()->GetAuthGameMode())
+	{
+		int a = 0;
+	}
+	if (nullptr == GetWorld()->GetAuthGameMode())
+	{
+		int a = 0;
+	}
+
 	if (PlateState == EPlateState::EMPTY || PlateState == EPlateState::DIRTY)
 	{
 		if (PlateState == Plate->PlateState) // 동일한 상태인 녀석만 쌓을 수 있다.
@@ -428,6 +437,6 @@ void APlate::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimePr
 	DOREPLIFETIME(APlate, IngredientMesh);
 	DOREPLIFETIME(APlate, PlateState);
 	DOREPLIFETIME(APlate, bIsCombinationSuccessful);
-	DOREPLIFETIME(APlate, AnotherPlates);
+	//DOREPLIFETIME(APlate, AnotherPlates);
 	DOREPLIFETIME(APlate, PlateStackStatus);
 }
