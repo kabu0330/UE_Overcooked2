@@ -68,7 +68,11 @@ void UCookingScoreWidget::SetTipCount(int TipCount)
 
     FString TexturePath = TEXT("/Game/Resources/UI/Cooking/Coin/coin_banner_bar.coin_banner_bar");
     FString Tip = TEXT("");
-    if (TipCount == 1)
+    if (TipCount < 1)
+    {
+        TipText->SetVisibility(ESlateVisibility::Hidden);
+    }
+    else if (TipCount == 1)
     {
         TexturePath = TEXT("/Game/Resources/UI/Cooking/Coin/coin_banner_bar.coin_banner_bar");
 
