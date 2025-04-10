@@ -101,12 +101,17 @@ public:
 	FOrder GetOrderByStageAndIndex(EOC2Stage OC2Stage, int Index);
 	FOrder GetOrderByRecipes(ACooking* Cooking);
 
+	UTexture2D* GetChefTexture();
+
 public:
 	FString GetChefHeadName() const;
 	void SetChefHeadName(FString HeadName);
 
 	EOC2Stage GetCurStage() const;
 	void SetCurStage(EOC2Stage ChangeStage);
+
+	int GetUserIndex() const;
+	void SetUserIndex(int InUserIndex);
 
 public:
 	UPROPERTY(EditAnywhere, Category = "Global|Level")
@@ -158,5 +163,7 @@ private:
 	EOC2Stage CurStage = EOC2Stage::EOS_Sushi_1_1;
 
 	TArray<FString> ChefHeadNames;
+
+	int UserIndex = -1;
 
 };

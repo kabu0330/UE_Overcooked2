@@ -20,4 +20,7 @@ protected:
 public:
 	UFUNCTION(Client, Reliable)
 	void Client_SetChefHeadName(const FString& NewChefHeadName);
+
+	UFUNCTION(Client, Reliable)
+	void Client_SetUserIndex(int InUserIndex);
 };

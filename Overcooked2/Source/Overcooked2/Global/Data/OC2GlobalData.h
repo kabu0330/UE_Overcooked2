@@ -139,6 +139,9 @@ public:
 	static UMaterial* GetResourceMaterial(UWorld* World, const FName& RowName);
 
 public:
+	static UTexture2D* GetChefTexture(UWorld* World);
+
+public:
 	static FOrder GetOrderByIngredients(UWorld* World, ACooking* Cooking);
 
 

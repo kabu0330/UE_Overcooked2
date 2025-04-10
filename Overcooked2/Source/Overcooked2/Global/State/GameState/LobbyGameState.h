@@ -30,6 +30,11 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_PlayZoomInAnmationUI();
 
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_UpdateUserPanelUI();
+
+	void UpdateChefTexture();
+
 public:
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	
