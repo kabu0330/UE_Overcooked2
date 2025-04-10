@@ -31,7 +31,7 @@ void APlateSpawner::SetPlate(class APlate* Plate)
 
 	if (nullptr == OwnedPlate) // 
 	{
-		OwnedPlate = Plate;
+ 		OwnedPlate = Plate;
 		OwnedPlate->AttachToComponent(ComponentForCooking, FAttachmentTransformRules::KeepRelativeTransform);
 		OwnedPlate->SetActorLocation(ComponentForCooking->GetComponentLocation());
 		OwnedPlate->AddActorLocalOffset(FVector(0, 0, 0));
@@ -58,20 +58,13 @@ void APlateSpawner::SetPlate(class APlate* Plate)
 
 ACooking* APlateSpawner::Interact(AActor* ChefActor)
 {
-	if (nullptr != OwnedPlate) // 내가 접시를 스폰한게 있으면
+	GetOwnedPlate();
+	if (true == bOwnedPlate)
 	{
-		ACooking* NewCooking = Cast<ACooking>(OwnedPlate);
-		if (nullptr != NewCooking)
-		{
-			// 접시를 캐릭터에게 넘겨주고 나는 가지고 있는 접시가 없다.
-			OwnedPlate = nullptr; 
-			return NewCooking;
-		}
+		return NewCooking;
 	}
 
-	// 내가 가지고 있는 접시가 없다면 널 반환
 	return nullptr;
-
 	//if (PlateNum > 0)
 	//{
 	//	CookingPtr = PlateMap[PlateNum];
@@ -86,4 +79,22 @@ ACooking* APlateSpawner::Interact(AActor* ChefActor)
 void APlateSpawner::PlaceItem(ACooking* ReceivedCooking)
 {
 	ACooking* TempCooking = ReceivedCooking;
+}
+
+void APlateSpawner::GetOwnedPlate_Implementation()
+{
+	if (nullptr != OwnedPlate) // 내가 접시를 스폰한게 있으면
+	{
+		NewCooking = nullptr;
+		NewCooking = Cast<ACooking>(OwnedPlate);
+		if (nullptr != NewCooking)
+		{
+			// 접시를 캐릭터에게 넘겨주고 나는 가지고 있는 접시가 없다.
+			OwnedPlate = nullptr;
+			bOwnedPlate = true;
+			return;
+		}
+	}
+
+	bOwnedPlate = false;
 }

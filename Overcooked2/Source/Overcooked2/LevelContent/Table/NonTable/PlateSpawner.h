@@ -25,12 +25,18 @@ public:
 
 	virtual ACooking* Interact(AActor* ChefActor) override;
 
-public:
 	void PlaceItem(ACooking* ReceivedCooking) override;
+
+	UFUNCTION(Reliable, NetMulticast)
+	void GetOwnedPlate();
+	void GetOwnedPlate_Implementation();
+private:
 
 	//int PlateNum = 0;
 
 	//TMap<int, ACooking*> PlateMap;
 
 	class APlate* OwnedPlate;
+	ACooking* NewCooking = nullptr;
+	bool bOwnedPlate = false;
 };
