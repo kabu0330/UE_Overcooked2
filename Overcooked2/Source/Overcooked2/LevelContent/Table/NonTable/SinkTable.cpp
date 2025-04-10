@@ -153,7 +153,7 @@ void ASinkTable::DoTheDishes(AOC2Character* ChefActor)
 {
 	ChefPtr = Cast<AOC2Character>(ChefActor);
 
-	if (nullptr != ChefActor && nullptr != CookingPtr)
+	if (nullptr != ChefActor && false == DirtyPlates.IsEmpty())
 	{
 		ChefPtr->Washing(true);
 
