@@ -597,10 +597,6 @@ void AOC2Character::CheckInteract()
 
 		// maybe Interactable.
 		AOC2Actor* ClosestActor = Cast<AOC2Actor>(HitResults[0].GetActor());
-		//if (ClosestActor->IsA<AServingTable>() == true)
-		//{
-		//	if(GrabbedObject == nullptr || GrabbedObject->IsA<>() )
-		//}
 		if (SelectedOC2Actor != nullptr)
 		{
 			if (ClosestActor != SelectedOC2Actor)
@@ -612,6 +608,13 @@ void AOC2Character::CheckInteract()
 			//{
 			//	DynamicMat->SetScalarParameterValue(TEXT("Brightness"), 2.0f);
 			//}
+		}
+		if (ClosestActor->IsA<AServingTable>() == true)
+		{
+			if (GrabbedObject == nullptr || GrabbedObject->IsA<APlate>() == false)
+			{
+				return;
+			}
 		}
 		SelectedOC2Actor = ClosestActor;
 		if (!SelectedOC2Actor->IsHighlighted())
