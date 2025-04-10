@@ -112,6 +112,8 @@ void ABurnerTable::RequestSpawnPot_Implementation()
 		Pot = GameMode->SpawnPotActor(EPotState::IDLE);
 	}
 	Pot->AttachToChef(this);
+	FRotator Rotation = FRotator(0, 90, 0);
+	Pot->AddActorLocalRotation(Rotation);
 	Pot->SetActorLocation(ComponentForCooking->GetComponentLocation());
 	CookingPtr = Pot;
 }

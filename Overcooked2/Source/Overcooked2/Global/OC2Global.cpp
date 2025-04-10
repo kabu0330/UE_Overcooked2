@@ -102,35 +102,7 @@ void UOC2Global::SubmitPlate(UWorld* World, ACooking* Cooking)
 		return;
 	}
 
-	UOC2GameInstance* GameInstance = UOC2Global::GetOC2GameInstance(World);
-
-	if (nullptr == GameInstance)
-	{
-		UE_LOG(OVERCOOKED_LOG, Error, TEXT("GameInstance is nullptr"));
-		return;
-	}
-
-	TArray<FRecipe> Recipes;
-
-	for (int i = 0; i < Plate->GetIngredients().Num(); i++)
-	{
-		FRecipe Recipe;
-
-		Recipe.IngredientState = Plate->GetIngredient(i).IngredientState;
-		Recipe.IngredientType = Plate->GetIngredient(i).IngredientType;
-
-		Recipes.Add(Recipe);
-	}
-
-	if (true == GameInstance->CheckRecipe(Recipes))
-	{
-		GameState->Server_SubmitPlate(Plate);
-	}
-	else
-	{
-		// TODO: 틀린 레시피를 제출했을 때 발생하는 기능 구현
-
-	}
+	GameState->Server_SubmitPlate(Plate);
 }
 
 void UOC2Global::CheckPlateToRecipe(UWorld* World, APlate* Plate)
