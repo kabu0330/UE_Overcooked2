@@ -40,7 +40,7 @@ void APlate::PostInitializeComponents()
 	IngredientMesh->SetIsReplicated(true); // 컴포넌트 네트워크 동기화
 }
 
-void APlate::SubmitPlate_Implementation()
+void APlate::Multicast_SubmitPlate_Implementation()
 {
 	SetActorLocation(UOC2Const::PlateSubmitLocation);
 	CleanPlate();

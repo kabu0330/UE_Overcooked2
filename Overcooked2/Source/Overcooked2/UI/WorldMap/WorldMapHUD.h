@@ -31,4 +31,10 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "OC2UI")
 	TSubclassOf<class ULoadingWidget> LoadingWidgetObject;
+
+
+	class UWorldMapStageWidget* WorldMapStageWidget = nullptr;
+
+	UPROPERTY(EditAnywhere, Category = "OC2UI")
+	TSubclassOf<class UWorldMapStageWidget> WorldMapStageWidgetObject;
 };

@@ -138,7 +138,7 @@ void AChoppingTable::HideProgressBar_Implementation(bool Value)
 	ProgressBarComponent->SetHiddenInGame(Value);
 }
 
-void AChoppingTable::ChoppingIsDone()
+void AChoppingTable::ChoppingIsDone_Implementation()
 {
 	bTimerActivated = false;
 
