@@ -5,9 +5,13 @@
 
 #include "Global/OC2GameInstance.h"
 #include "Global/Manager/LobbyManager.h"
+#include "Global/State/GameState/LobbyGameState.h"
+#include "Global/OC2Global.h"
 
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Net/UnrealNetwork.h"
+
 
 void ALobbyPlayerController::BeginPlay()
 {
@@ -17,6 +21,21 @@ void ALobbyPlayerController::BeginPlay()
 	SetInputMode(Mode);
 
 	SetShowMouseCursor(true);
+
+	ALobbyGameState* LobbyGameState = GetWorld()->GetGameState<ALobbyGameState>();
+
+	if (nullptr != LobbyGameState)
+	{
+		for (int i = 0; i <= UOC2Global::GetOC2GameInstance(GetWorld())->GetUserIndex(); i++)
+		{
+			LobbyGameState->Multicast_UpdateUserPanelUI(i);
+		}
+	}
+}
+
+void ALobbyPlayerController::UpdateChefTexture_Implementation(int UserIndex)
+{
+
 }
 
 void ALobbyPlayerController::Client_SetUserIndex_Implementation(int InUserIndex)

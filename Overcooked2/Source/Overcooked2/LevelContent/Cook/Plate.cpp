@@ -14,6 +14,7 @@
 #include "EngineUtils.h"
 #include <LevelContent/Table/NonTable/SinkTable.h>
 #include <LevelContent/Table/NonTable/PlateSpawner.h>
+#include "Global/State/GameState/CookingGameState.h"
 
 // Sets default values
 APlate::APlate()
@@ -48,6 +49,13 @@ void APlate::Multicast_SubmitPlate_Implementation()
 	CleanPlate();
 	SetPlateState(EPlateState::DIRTY);
 
+	ACookingGameState* GameState = Cast<ACookingGameState>(UGameplayStatics::GetGameState(GetWorld()));
+
+	if (nullptr != GameState)
+	{
+		GameState->AddPlate(this);
+	}
+
 	FTimerHandle TimerHandle;
 
 	GetWorld()->GetTimerManager().SetTimer(
@@ -66,6 +74,59 @@ void APlate::SpawnPlate()
 		PlateSpawner->PlaceItem(this);
 		PlateSpawner->SetPlate(this);
 	}
+}
+
+void APlate::Multicast_MovePlate_Implementation()
+{
+	SetActorLocation(UOC2Const::PlateSubmitLocation);
+	CleanPlate();
+	SetPlateState(EPlateState::EMPTY);
+
+	ACookingGameState* GameState = Cast<ACookingGameState>(UGameplayStatics::GetGameState(GetWorld()));
+
+	if (nullptr != GameState)
+	{
+		GameState->AddPlate(this);
+	}
+
+}
+
+void APlate::SpawnWashPlate()
+{
+	if (nullptr != PlateSpawner)
+	{
+		PlateSpawner->PlaceItem(this);
+		PlateSpawner->SetPlate(this);
+	}
+}
+
+void APlate::FindSinkTable()
+{
+	for (TActorIterator<ACookingTable> It(GetWorld()); It; ++It)
+	{
+		ACookingTable* PrepTableActor = *It;
+		if (PrepTableActor->Tags.Contains("SinkTable"))
+		{
+			SinkTable = Cast<ASinkTable>(PrepTableActor);
+		}
+	}
+}
+
+void APlate::Multicast_SpawnWashPlate_Implementation()
+{
+	SetActorLocation(UOC2Const::PlateSubmitLocation);
+	CleanPlate();
+	SetPlateState(EPlateState::EMPTY);
+
+	FTimerHandle TimerHandle;
+
+	GetWorld()->GetTimerManager().SetTimer(
+		TimerHandle,
+		this,
+		&APlate::SpawnWashPlate,
+		1.0f,   // 3초 뒤 실행
+		false   // 반복 여부(false면 1회 실행)
+	);
 }
 
 // Called when the game starts or when spawned

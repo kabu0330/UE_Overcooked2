@@ -108,6 +108,27 @@ void ACookingGameState::EntryWaitingPostMatch()
 {
 }
 
+void ACookingGameState::AddPlate(APlate* Plate)
+{
+	PlateArray.Add(Plate);
+}
+
+APlate* ACookingGameState::GetPlate(int Index)
+{
+	if (PlateArray.Num() > 0)
+	{
+		APlate* LastPlate = PlateArray.Last();
+		PlateArray.Pop();
+
+		return LastPlate;
+	}
+	else
+	{
+		UE_LOG(OVERCOOKED_LOG, Display, TEXT("PlateArray is empty!"));
+		return nullptr;
+	}
+}
+
 void ACookingGameState::WaitingPostMatch(float DeltaTime)
 {
 }
@@ -264,6 +285,7 @@ void ACookingGameState::Server_SubmitPlate_Implementation(ACooking* Cooking)
 				Multicast_SetFeverUI(FeverCount);
 			}
 		}
+
 		Plate->Multicast_SubmitPlate();
 	}
 }
@@ -300,6 +322,35 @@ void ACookingGameState::Multicast_AddScore_Implementation(int InScore)
 		if (nullptr != CookingHUD && nullptr != CookingHUD->CookWidget)
 		{
 			CookingHUD->CookWidget->WrongOrder();
+		}
+	}
+}
+
+void ACookingGameState::Server_MovePlate_Implementation(ACooking* Cooking)
+{
+	if (true == HasAuthority())
+	{
+		APlate* Plate = Cast<APlate>(Cooking);
+
+		if (nullptr == Plate)
+		{
+			UE_LOG(OVERCOOKED_LOG, Error, TEXT("Plate is nullptr"));
+			return;
+		}
+
+		UOC2GameInstance* GameInstance = UOC2Global::GetOC2GameInstance(GetWorld());
+
+		if (nullptr == GameInstance)
+		{
+			UE_LOG(OVERCOOKED_LOG, Error, TEXT("GameInstance is nullptr"));
+			return;
+		}
+
+		ACookingGameMode* GameMode = Cast<ACookingGameMode>(UGameplayStatics::GetGameMode(this));
+
+		if (nullptr != GameMode)
+		{
+			Plate->Multicast_MovePlate();
 		}
 	}
 }
