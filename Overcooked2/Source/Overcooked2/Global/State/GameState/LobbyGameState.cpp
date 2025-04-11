@@ -38,7 +38,7 @@ ALobbyManager* ALobbyGameState::GetLobbyManager() const
 	return LobbyManager;
 }
 
-void ALobbyGameState::Multicast_UpdateUserPanelUI_Implementation(int UserIndex)
+void ALobbyGameState::Multicast_UpdateUserPanelUI_Implementation(int Index)
 {
 	for (TActorIterator<ALobbyChalkBoard> It(GetWorld()); It; ++It)
 	{
@@ -49,9 +49,11 @@ void ALobbyGameState::Multicast_UpdateUserPanelUI_Implementation(int UserIndex)
 			{
 				if (ULobbyUserWidget* LobbyWidget = Cast<ULobbyUserWidget>(Widget))
 				{
-					UTexture2D* ChefTexture = UOC2GlobalData::GetChefTexture(GetWorld());
-					//int UserIndex = UOC2Global::GetOC2GameInstance(GetWorld())->GetUserIndex();
-					LobbyWidget->SetUserTexture(ChefTexture, UserIndex);
+					for (int i = 0; i <= Index; i++)
+					{
+						UTexture2D* ChefTexture = UOC2GlobalData::GetChefTextureByIndex(GetWorld(), i);
+						LobbyWidget->SetUserTexture(ChefTexture, i);
+					}
 				}
 			}
 			break;
@@ -59,17 +61,18 @@ void ALobbyGameState::Multicast_UpdateUserPanelUI_Implementation(int UserIndex)
 	}
 }
 
-void ALobbyGameState::UpdateChefTexture()
+void ALobbyGameState::UpdateChefTexture(int Index)
 {
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
 	ALobbyHUD* LobbyHUD = Cast<ALobbyHUD>(PlayerController->GetHUD());
 
-
 	if (LobbyHUD->LobbyWidget != nullptr && LobbyHUD != nullptr)
 	{
-		UTexture2D* ChefTexture = UOC2GlobalData::GetChefTexture(GetWorld());
-		int UserIndex = UOC2Global::GetOC2GameInstance(GetWorld())->GetUserIndex();
-		LobbyHUD->LobbyWidget->SetUserTexture(ChefTexture, UserIndex);
+		for (int i = 0; i < Index; i++)
+		{
+			UTexture2D* ChefTexture = UOC2GlobalData::GetChefTextureByIndex(GetWorld(), Index);
+			LobbyHUD->LobbyWidget->SetUserTexture(ChefTexture, Index);
+		}
 	}
 }
 

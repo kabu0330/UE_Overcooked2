@@ -266,6 +266,18 @@ UTexture2D* UOC2GlobalData::GetChefTexture(UWorld* World)
 	return nullptr;
 }
 
+UTexture2D* UOC2GlobalData::GetChefTextureByIndex(UWorld* World, int Index)
+{
+	UOC2GameInstance* GameInstance = UOC2Global::GetOC2GameInstance(World);
+
+	if (nullptr != GameInstance)
+	{
+		return GameInstance->GetChefTextureByIndex(Index);
+	}
+
+	return nullptr;
+}
+
 FOrder UOC2GlobalData::GetOrderByIngredients(UWorld* World, ACooking* Cooking)
 {
 	FOrder Result;

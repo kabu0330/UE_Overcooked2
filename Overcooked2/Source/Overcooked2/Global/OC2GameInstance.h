@@ -102,6 +102,7 @@ public:
 	FOrder GetOrderByRecipes(ACooking* Cooking);
 
 	UTexture2D* GetChefTexture();
+	UTexture2D* GetChefTextureByIndex(int Index);
 
 public:
 	FString GetChefHeadName() const;
