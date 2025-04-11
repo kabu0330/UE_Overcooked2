@@ -39,11 +39,12 @@ void APlateSpawner::SetPlate(class APlate* Plate)
 	else
 	{
 		OwnedPlate->StackPlate(Plate);
-		if (1 == OwnedPlate->GetAnotherPlatesRef().Num())
+		int PlateStackCount = OwnedPlate->GetPlateStackCount();
+		if (1 == PlateStackCount)
 		{
-			OwnedPlate->AddActorLocalOffset(FVector(0, 0, 10));
+			OwnedPlate->AddActorLocalOffset(FVector(0, 0, 20));
 		}
-		if (3 == OwnedPlate->GetAnotherPlatesRef().Num())
+		if (3 == PlateStackCount)
 		{
 			OwnedPlate->AddActorLocalOffset(FVector(0, 0, 50));
 		}

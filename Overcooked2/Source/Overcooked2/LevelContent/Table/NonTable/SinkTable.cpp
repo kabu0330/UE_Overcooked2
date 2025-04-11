@@ -8,6 +8,7 @@
 #include <LevelContent/Cook/Widget/GaugeTextureWidget.h>
 #include <Global/Component/TimeEventComponent.h>
 #include <Net/UnrealNetwork.h>
+#include <Global/OC2Global.h>
 
 ASinkTable::ASinkTable()
 {
@@ -51,7 +52,6 @@ void ASinkTable::BeginPlay()
 	SetAllPlateHidden();
 }
 
-
 void ASinkTable::InitProgressBar()
 {
 	// 위젯 클래스 지정
@@ -71,30 +71,59 @@ void ASinkTable::InitProgressBar()
 	ProgressBarComponent->SetTickWhenOffscreen(true);
 }
 
+void ASinkTable::AddDirtyPlateNum_Implementation(int Value)
+{
+	DirtyPlateNum += Value;
+	if (4 < DirtyPlateNum)
+	{
+		DirtyPlateNum = 4;
+	}
+	else if (0 > DirtyPlateNum)
+	{
+		DirtyPlateNum = 0;
+	}
+}
+
+void ASinkTable::AddCleanPlateNum_Implementation(int Value)
+{
+	CleanPlateNum += Value;
+
+	if (4 < CleanPlateNum)
+	{
+		CleanPlateNum = 4;
+	}
+	else if (0 > CleanPlateNum)
+	{
+		CleanPlateNum = 0;
+	}
+}
+
 ACooking* ASinkTable::Interact(AActor* ChefActor)
 {
 	// 설거지된 접시가 하나 이상 있으면 캐릭터에게 하나를 줄 수 있다.
-	if (CleanPlates.Num() > 0)
-	{
-		APlate* NewPlate = CleanPlates.Last();
-		CookingPtr = Cast<ACooking>(NewPlate);
-		if (nullptr != CookingPtr)
-		{
-			CleanPlates.Pop();
-
-			CleanPlateNum = CleanPlates.Num();
-			return CookingPtr;
-		}
-		else
-		{
-			return nullptr;
-		}
-
-	}
-	else
+	if (0 >=  CleanPlateNum)
 	{
 		return nullptr;
 	}
+
+	AddCleanPlateNum(-1);
+
+	if (0 == CleanPlateNum) // 1개는 렌더링 용으로 미리 월드로 가져왔기 때문에 포인터만 반환
+	{
+		APlate* NewPlate = BottomPlate;
+		BottomPlate = nullptr;
+
+		return NewPlate;
+	}
+
+	APlate* NewPlate = UOC2Global::GetPlate(GetWorld());
+	if (nullptr != NewPlate)
+	{
+		NewPlate->RestorePlateToWorld();
+		return NewPlate;
+	}
+
+	return nullptr;
 }
 
 // 접시가 싱크대로 들어오는 로직
@@ -106,6 +135,10 @@ void ASinkTable::PlaceItem(ACooking* ReceivedCooking)
 // 접시가 싱크대로 들어오는 로직
 void ASinkTable::PlacePlates_Implementation(ACooking* ReceivedCooking)
 {
+	if (nullptr == ReceivedCooking)
+	{
+		return;
+	}
 
 	if (ECookingType::ECT_PLATE == ReceivedCooking->GetCookingType())
 	{
@@ -118,38 +151,10 @@ void ASinkTable::PlacePlates_Implementation(ACooking* ReceivedCooking)
 		// 1. 더티 플레이트만 들어올 수 있다.
 		if (true == TempPlate->IsDirtyPlate())
 		{
-			// 2-1. 플레이트가 하나만 들어온다면
-			DirtyPlates.Add(TempPlate);
-
-			// 2-2. 플레이트가 여러 개라면
-			if (true != TempPlate->GetAnotherPlatesRef().IsEmpty())
-			{
-				int PlateNum = TempPlate->GetAnotherPlatesRef().Num();
-
-				for (int i = 0; i < PlateNum; i++)
-				{
-					APlate* NewPlate = TempPlate->GetAnotherPlatesRef()[i];
-					NewPlate->ResetForCleaning();
-
-					DirtyPlates.Add(NewPlate);
-				}
-			}
-
-			// AnotherPlateRef도 정리, 메시 초기화, 보유한 Plates 초기화
-			TempPlate->ResetForCleaning();
-
-			// 3. 렌더링한다.
-			SetPlateVisibility(DirtyPlates.Num());
-
-			// 4. Plates 중 월드에서 제외된 녀석들을 월드로 복귀시킨다.
-			for (int32 i = DirtyPlateNum; i < DirtyPlates.Num(); i++)
-			{
-				APlate* NewPlate = DirtyPlates[i];
-				NewPlate->HiddenPlateToWorld();
-				NewPlate->SetCookingTable_Implementation(this);
-			}
-
-			DirtyPlateNum = DirtyPlates.Num();
+			//										N - 1개 + 1개 = N개
+			AddDirtyPlateNum(TempPlate->GetPlateStackCount() + 1);
+			TempPlate->HiddenPlateToWorld();
+			SetPlateVisibility(DirtyPlateNum); // Render
 		}
 	}
 }
@@ -158,7 +163,8 @@ void ASinkTable::DoTheDishes(AOC2Character* ChefActor)
 {
 	ChefPtr = Cast<AOC2Character>(ChefActor);
 
-	if (nullptr != ChefActor && false == DirtyPlates.IsEmpty())
+	// 셰프가 싱크대를 떠나지 않았고 설거지할 접시가 남아있다면
+	if (nullptr != ChefActor && 0 < DirtyPlateNum)
 	{
 		ChefPtr->Washing(true);
 
@@ -183,8 +189,8 @@ void ASinkTable::Tick(float DeltaTime)
 
 	WashingIsDone();
 
-	// 1. 설거지가 끝났을 때
-	if (true == bWashingDone && false == DirtyPlates.IsEmpty())
+	// 1. 설거지가 끝났을 때 아직 설거지 할 접시가 남아있다면 다시 설거지 로직 호출
+	if (true == bWashingDone && 0 < DirtyPlateNum)
 	{
 		DoTheDishes(ChefPtr); // 셰프가 처음에 한 번 불러준다. 이후에는 내가 불러줌
 		bWashingDone = false;
@@ -210,7 +216,6 @@ void ASinkTable::CheckChefIsWashing()
 			bTimerActivated = false;
 			ChefPtr = nullptr;
 			HideProgressBar(true);
-			//ProgressBarComponent->SetHiddenInGame(true);
 		}
 	}
 }
@@ -243,8 +248,9 @@ void ASinkTable::WashingIsDone_Implementation()
 
 	bTimerActivated = false; // 타이머 끄고
 
-	if (0 == DirtyPlates.Num())
+	if (0 >= DirtyPlateNum)
 	{
+		DirtyPlateNum = 0;
 		return;
 	}
 
@@ -257,49 +263,33 @@ void ASinkTable::WashingIsDone_Implementation()
 		int a = 0;
 	}
 
-	// 인덱스의 마지막 접시를 empty 상태로 바꾸고
-	APlate* NewPlate = DirtyPlates.Last();
-	
-	NewPlate->RestorePlateToWorld(); // 월드 재편입
-	NewPlate->WashPlate(); // 초기 상태로 만든다.
-
-	// CleanPlates에 추가, DirtyPlates의 마지막 접시 삭제
-	CleanPlates.Add(NewPlate);
-	DirtyPlates.Pop();
-
-	// 싱크대의 플레이트 렌더링 상태를 바꿔줘야한다.
-	//for (size_t i = 0; i < DirtyPlates.Num(); i++)
-	//{
-
-	//}
-
-	DirtyPlateNum = DirtyPlates.Num();
-	SetPlateVisibility(DirtyPlateNum);
-
-	CleanPlateNum = CleanPlates.Num();
+	AddDirtyPlateNum(-1);
+	AddCleanPlateNum(1);
 
 	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Turquoise, "Washing Done");
 
-	if (CleanPlateNum == 0)
-	{
-		return;
-	}
+	HideProgressBar(true);
 
 	// 클린 플레이트를 싱크대에 부착시킨다.
-	NewPlate->AttachToComponent(CleanPlateComponent, FAttachmentTransformRules::KeepRelativeTransform);
-	NewPlate->SetActorLocation(CleanPlateComponent->GetComponentLocation());
+	if (nullptr == BottomPlate)
+	{
+		BottomPlate = UOC2Global::GetPlate(GetWorld());
+		if (nullptr != BottomPlate)
+		{
+			BottomPlate->AttachToComponent(CleanPlateComponent, FAttachmentTransformRules::KeepRelativeTransform);
+			BottomPlate->SetActorLocation(CleanPlateComponent->GetComponentLocation());
 
-	// 클린 플레이트의 Num이 증가하면 쌓아준다.
-	NewPlate->AddActorLocalOffset(FVector::UnitZ() * 10.0f * (CleanPlateNum - 1));
+			// 클린 플레이트의 Num이 증가하면 쌓아준다.
+			BottomPlate->AddActorLocalOffset(FVector::UnitZ() * 15.0f * (CleanPlateNum));
+			BottomPlate->RestorePlateToWorld();
+		}
+	}
 
+	// 부착된 플레이트를 기준으로 CleanPlate 렌더링 개수를 설정한다.
+	BottomPlate->SetPlateStackCount(CleanPlateNum - 1);
 
-	//APlate* PlacedPlate = Cast<APlate>(CookingPtr);
-	//PlacedPlate->WashPlate();
-	//CookingPtr = Cast<APlate>(PlacedPlate);
-
-	//CookingPtr->DetachAllSceneComponents();
-	//ProgressBarComponent->SetHiddenInGame(true);
-	HideProgressBar(true);
+	// 싱크대 안에 있는 Plate 개수 렌더링
+	SetPlateVisibility(DirtyPlateNum); 
 }
 
 void ASinkTable::HideProgressBar_Implementation(bool Value)
@@ -307,7 +297,7 @@ void ASinkTable::HideProgressBar_Implementation(bool Value)
 	ProgressBarComponent->SetHiddenInGame(Value);
 }
 
-void ASinkTable::SetPlateVisibility/*_Implementation*/(int Index)
+void ASinkTable::SetPlateVisibility_Implementation(int Index)
 {
 	SetAllPlateHidden();
 	for (size_t i = 0; i < Index; i++)
@@ -316,7 +306,7 @@ void ASinkTable::SetPlateVisibility/*_Implementation*/(int Index)
 	}
 }
 
-void ASinkTable::SetAllPlateHidden/*_Implementation*/()
+void ASinkTable::SetAllPlateHidden_Implementation()
 {
 	for (int32 i = 0; i < DirtyPlateComponents.Num(); i++)
 	{
@@ -343,6 +333,8 @@ void ASinkTable::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifeti
 	DOREPLIFETIME(ASinkTable, ComponentForDishes3);
 	DOREPLIFETIME(ASinkTable, ComponentForDishes4);
 	DOREPLIFETIME(ASinkTable, DirtyPlateComponents);
+	//DOREPLIFETIME(ASinkTable, CleanPlateNum);
+	//DOREPLIFETIME(ASinkTable, DirtyPlateNum);
 	//DOREPLIFETIME(ASinkTable, DirtyPlates);
 	//DOREPLIFETIME(ASinkTable, CleanPlates);
 }
