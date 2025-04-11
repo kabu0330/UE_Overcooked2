@@ -94,8 +94,6 @@ public:
 
 	void HiddenPlateToWorld();
 
-	void SpawnPlate();
-
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_MovePlate();
 

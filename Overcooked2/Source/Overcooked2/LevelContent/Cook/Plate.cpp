@@ -49,6 +49,13 @@ void APlate::Multicast_SubmitPlate_Implementation()
 	CleanPlate();
 	SetPlateState(EPlateState::DIRTY);
 
+	ACookingGameState* GameState = Cast<ACookingGameState>(UGameplayStatics::GetGameState(GetWorld()));
+
+	if (nullptr != GameState)
+	{
+		GameState->AddPlate(this);
+	}
+
 	FTimerHandle TimerHandle;
 
 	GetWorld()->GetTimerManager().SetTimer(
@@ -77,6 +84,7 @@ void APlate::BeginPlay()
 	InitWidgetComponent();
 
 	FindPlateSpawner();
+	FindSinkTable();
 
 	// Debug
 }
@@ -472,10 +480,10 @@ void APlate::Multicast_MovePlate_Implementation()
 
 void APlate::SpawnWashPlate()
 {
-	if (nullptr != PlateSpawner)
+	if (nullptr != SinkTable)
 	{
-		PlateSpawner->PlaceItem(this);
-		PlateSpawner->SetPlate(this);
+		SinkTable->PlaceItem(this);
+		// TODO: SinkTable에 올려주는 함수
 	}
 }
 
@@ -530,6 +538,19 @@ void APlate::HiddenPlateToWorld()
 	SetActorTickEnabled(false);		// Tick 끄고
 }
 
+void APlate::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(APlate, Ingredients);
+	DOREPLIFETIME(APlate, IngredientMesh);
+	DOREPLIFETIME(APlate, PlateState);
+	DOREPLIFETIME(APlate, bIsCombinationSuccessful);
+	DOREPLIFETIME(APlate, AnotherPlates);
+	DOREPLIFETIME(APlate, PlateStackStatus);
+	DOREPLIFETIME(APlate, CookingTable);
+}
+
 void APlate::SubmitPlate_Implementation()
 {
 	SetActorLocation(UOC2Const::PlateSubmitLocation);
@@ -545,17 +566,4 @@ void APlate::SubmitPlate_Implementation()
 		3.0f,   // 3초 뒤 실행
 		false   // 반복 여부(false면 1회 실행)
 	);
-}
-
-void APlate::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	DOREPLIFETIME(APlate, Ingredients);
-	DOREPLIFETIME(APlate, IngredientMesh);
-	DOREPLIFETIME(APlate, PlateState);
-	DOREPLIFETIME(APlate, bIsCombinationSuccessful);
-	DOREPLIFETIME(APlate, AnotherPlates);
-	DOREPLIFETIME(APlate, PlateStackStatus);
-	DOREPLIFETIME(APlate, CookingTable);
 }
