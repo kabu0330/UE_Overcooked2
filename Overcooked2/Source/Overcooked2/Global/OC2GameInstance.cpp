@@ -420,6 +420,24 @@ UTexture2D* UOC2GameInstance::GetChefTexture()
 	return nullptr;
 }
 
+UTexture2D* UOC2GameInstance::GetChefTextureByIndex(int Index)
+{
+	FString ChefRowName = UOC2Const::ChefTextureName + FString::FromInt(Index);
+	FName RowName = FName(*ChefRowName);
+
+	if (nullptr != ResourceTextureDataTable)
+	{
+		FResourceTextureDataRow* ResourceTextureData = ResourceTextureDataTable->FindRow<FResourceTextureDataRow>(RowName, nullptr);
+
+		if (nullptr != ResourceTextureData)
+		{
+			return ResourceTextureData->TextureRes;
+		}
+	}
+
+	return nullptr;
+}
+
 FString UOC2GameInstance::GetChefHeadName() const
 {
 	return ChefHeadName;

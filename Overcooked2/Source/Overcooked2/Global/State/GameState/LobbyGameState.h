@@ -33,7 +33,7 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_UpdateUserPanelUI(int UserIndex);
 
-	void UpdateChefTexture();
+	void UpdateChefTexture(int Index);
 
 public:
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;

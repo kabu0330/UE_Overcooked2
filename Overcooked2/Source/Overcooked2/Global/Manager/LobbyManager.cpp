@@ -28,6 +28,13 @@ void ALobbyManager::BeginPlay()
 	Super::BeginPlay();
 
 	InitCharacter();
+
+	ALobbyGameState* LobbyGameState = GetWorld()->GetGameState<ALobbyGameState>();
+
+	if (nullptr != LobbyGameState)
+	{
+		LobbyGameState->Multicast_UpdateUserPanelUI(UOC2Global::GetOC2GameInstance(GetWorld())->GetUserIndex());
+	}
 }
 
 void ALobbyManager::Tick(float DeltaTime)
