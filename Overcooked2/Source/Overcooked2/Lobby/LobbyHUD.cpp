@@ -26,13 +26,6 @@ void ALobbyHUD::BeginPlay()
 	LobbyZoomInWidget->AddToViewport();
 	LoadingWidget->AddToViewport();
 	LoadingWidget->SetVisibility(ESlateVisibility::Hidden);
-
-	ALobbyGameState* LobbyGameState = GetWorld()->GetGameState<ALobbyGameState>();
-
-	if (nullptr != LobbyGameState)
-	{
-		LobbyGameState->Multicast_UpdateUserPanelUI();
-	}
 }
 
 void ALobbyHUD::ShowLoadingWidget()

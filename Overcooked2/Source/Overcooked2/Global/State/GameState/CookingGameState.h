@@ -12,6 +12,7 @@
 #include "CookingGameState.generated.h"
 
 class ASpawnManager;
+class APlate;
 class ACooking;
 
 /**
@@ -43,6 +44,9 @@ public:
 	void EntryInProgress();
 	void EntryWaitingPostMatch();
 
+	void AddPlate(APlate* Plate);
+	APlate* GetPlate(int Index);
+
 public:
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_CreateNewOrder(FOrder Order);
@@ -68,6 +72,9 @@ public:
 	UFUNCTION(Server, Reliable)
 	void Server_SubmitPlate(ACooking* Plate);
 
+	UFUNCTION(Server, Reliable)
+	void Server_MovePlate(ACooking* Cooking);
+
 	virtual void OnRep_MatchState() override;
 
 private:
@@ -83,6 +90,7 @@ private:
 	int Score = 0;
 	TArray<int> OrderNumberArray;
 	TArray<FOrder> OrderArray;
+	TArray<APlate*> PlateArray;
 	int CurOrderIndex = 0;
 	int FeverCount = 0;
 };

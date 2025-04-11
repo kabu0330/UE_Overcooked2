@@ -6,6 +6,8 @@
 #include "GameFramework/PlayerController.h"
 #include "LobbyPlayerController.generated.h"
 
+class ALobbyGameState;
+
 /**
  * 
  */
@@ -16,6 +18,8 @@ class OVERCOOKED2_API ALobbyPlayerController : public APlayerController
 
 protected:
 	virtual void BeginPlay() override;
+
+public:
 	
 public:
 	UFUNCTION(Client, Reliable)
@@ -23,4 +27,9 @@ public:
 
 	UFUNCTION(Client, Reliable)
 	void Client_SetUserIndex(int InUserIndex);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void UpdateChefTexture(int Index);
+
+private:
 };

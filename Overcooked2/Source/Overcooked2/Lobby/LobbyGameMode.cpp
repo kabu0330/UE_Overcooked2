@@ -60,6 +60,13 @@ void ALobbyGameMode::PostLogin(APlayerController* NewPlayerController)
 
 	PlayerControllers.Push(NewPlayerController);
 
+	ALobbyGameState* LobbyGameState = GetWorld()->GetGameState<ALobbyGameState>();
+
+	if (LobbyGameState != nullptr)
+	{
+		LobbyGameState->Multicast_UpdateUserPanelUI(CurUserCount);
+	}
+
 	ALobbyPlayerController* LobbyPlayerController = Cast<ALobbyPlayerController>(NewPlayerController);
 	if (nullptr != LobbyPlayerController)
 	{

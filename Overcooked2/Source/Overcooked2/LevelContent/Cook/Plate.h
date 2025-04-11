@@ -79,8 +79,16 @@ public:
 	}
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_SubmitPlate();
-
 	void SpawnPlate();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_MovePlate();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_SpawnWashPlate();
+	void SpawnWashPlate();
+	void FindSinkTable();
+
 
 	TArray<APlate*>& GetAnotherPlatesRef()
 	{
@@ -169,6 +177,9 @@ private:
 
 	UPROPERTY()
 	APlateSpawner* PlateSpawner = nullptr;
+
+	UPROPERTY()
+	class ASinkTable* SinkTable = nullptr;
 
 	UPROPERTY(Replicated)
 	class ACookingTable* CookingTable = nullptr;

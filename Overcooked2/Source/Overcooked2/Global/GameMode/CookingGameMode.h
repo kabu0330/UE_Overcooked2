@@ -57,6 +57,10 @@ protected:
 	virtual void PostLogin(APlayerController* NewPlayerController) override;
 
 public:
+	void AddPlate(APlate* Plate);
+	APlate* GetPlate();
+
+public:
 	/** 상태 함수 */
 	void EntryStay();
 	void Stay(float DeltaTime);
@@ -115,5 +119,7 @@ private:
 	float CheckTime = 0.0f;
 
 	TArray<APlayerController*> PlayerControllerArray;
+
+	TArray<APlate*> PlateArray;
 
 };
