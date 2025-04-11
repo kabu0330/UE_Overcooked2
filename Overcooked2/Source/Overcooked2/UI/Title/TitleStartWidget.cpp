@@ -70,6 +70,22 @@ FReply UTitleStartWidget::NativeOnKeyDown(const FGeometry& MyGeometry, const FKe
 		SkipAnimation();
 		return FReply::Handled();
 	}
+	else if (InKeyEvent.GetKey() == EKeys::Escape)
+	{
+		SetVisibleCollapsed();
+		bIsFocusable = true;
+
+		APlayerController* PC = GetWorld()->GetFirstPlayerController();
+		if (PC)
+		{
+			FInputModeGameOnly InputMode;
+			PC->SetInputMode(InputMode);
+			PC->bShowMouseCursor = true;
+		}
+
+
+		return FReply::Handled();
+	}
 	return FReply::Unhandled();
 }
 
