@@ -31,7 +31,7 @@ public:
 	void Multicast_PlayZoomInAnmationUI();
 
 	UFUNCTION(NetMulticast, Reliable)
-	void Multicast_UpdateUserPanelUI();
+	void Multicast_UpdateUserPanelUI(int UserIndex);
 
 	void UpdateChefTexture();
 
