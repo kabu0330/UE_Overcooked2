@@ -140,6 +140,7 @@ public:
 
 public:
 	static UTexture2D* GetChefTexture(UWorld* World);
+	static UTexture2D* GetChefTextureByIndex(UWorld* World, int Index);
 
 public:
 	static FOrder GetOrderByIngredients(UWorld* World, ACooking* Cooking);
