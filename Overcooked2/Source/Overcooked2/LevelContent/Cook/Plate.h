@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -11,15 +11,16 @@
 UENUM(BlueprintType)
 enum class EPlateStackStatus : uint8
 {
-	SINGLE		UMETA(DisplayName = "1°³"),
-	DOUBLE		UMETA(DisplayName = "2°³"),
-	TRIPLE		UMETA(DisplayName = "3°³"),
-	FULL		UMETA(DisplayName = "4°³")
+	SINGLE		UMETA(DisplayName = "1ê°œ"),
+	DOUBLE		UMETA(DisplayName = "2ê°œ"),
+	TRIPLE		UMETA(DisplayName = "3ê°œ"),
+	FULL		UMETA(DisplayName = "4ê°œ")
 };
 
 class APlateSpawner;
+class ASinkTable;
 
-// Á¢½Ã ~ Á¢½Ã¿¡ ¿Ã¶ó°£ Á¶¸®µÈ ¿ä¸® ~ ¿ä¸®µéÀÇ Á¶ÇÕ ~ ¿Ï¼ºµÈ ¿ä¸®
+// ì ‘ì‹œ ~ ì ‘ì‹œì— ì˜¬ë¼ê°„ ì¡°ë¦¬ëœ ìš”ë¦¬ ~ ìš”ë¦¬ë“¤ì˜ ì¡°í•© ~ ì™„ì„±ëœ ìš”ë¦¬
 UCLASS()
 class OVERCOOKED2_API APlate : public ACooking
 {
@@ -29,7 +30,7 @@ public:
 	// Sets default values for this actor's properties
 	APlate();
 
-	// Á¢½Ã À§¿¡ Àç·á¸¦ ½×´Â ¸ğµç °úÁ¤
+	// ì ‘ì‹œ ìœ„ì— ì¬ë£Œë¥¼ ìŒ“ëŠ” ëª¨ë“  ê³¼ì •
 	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
 	void Add(class AIngredient* Ingredient);
 	void Add_Implementation(class AIngredient* Ingredient);
@@ -43,26 +44,26 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool IsDirtyPlate();
 
-	// ¼­¹ö(GameMode)¿¡¼­ È£ÃâÇØ¾ß¸¸ Àû¿ëµÇ´Â ÇÔ¼öµé!!!
-	// ¼³°ÅÁö ¼º°ø ½Ã È£Ãâ
+	// ì„œë²„(GameMode)ì—ì„œ í˜¸ì¶œí•´ì•¼ë§Œ ì ìš©ë˜ëŠ” í•¨ìˆ˜ë“¤!!!
+	// ì„¤ê±°ì§€ ì„±ê³µ ì‹œ í˜¸ì¶œ
 	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
 	void WashPlate();
 	void WashPlate_Implementation();
 
-	// Á¢½ÃÀÇ »óÅÂ¸¦ Dirty·Î ¹Ù²ã¼­ ½ºÆùÇÏ°í ½ÍÀ¸¸é È£Ãâ
+	// ì ‘ì‹œì˜ ìƒíƒœë¥¼ Dirtyë¡œ ë°”ê¿”ì„œ ìŠ¤í°í•˜ê³  ì‹¶ìœ¼ë©´ í˜¸ì¶œ
 	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
 	void SetPlateState(EPlateState State);
 	void SetPlateState_Implementation(EPlateState State);
 
-	// Á¢½Ã À§¿¡ ¿ä¸® Àç·á¸¦ ¹ö¸®°í Á¢½Ã¸¦ ÃÊ±â »óÅÂ·Î µÇµ¹¸²
+	// ì ‘ì‹œ ìœ„ì— ìš”ë¦¬ ì¬ë£Œë¥¼ ë²„ë¦¬ê³  ì ‘ì‹œë¥¼ ì´ˆê¸° ìƒíƒœë¡œ ë˜ëŒë¦¼
 	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
 	void CleanPlate();
 	void CleanPlate_Implementation();
 
-	// Á¢½Ã¸¦ ½×±â À§ÇØ È£ÃâÇØ¾ß ÇÒ ÇÔ¼ö (¸Ş½Ã º¯È¯ ÀÚµ¿)
-	UFUNCTION(BlueprintCallable/*, NetMulticast, Reliable*/)
+	// ì ‘ì‹œë¥¼ ìŒ“ê¸° ìœ„í•´ í˜¸ì¶œí•´ì•¼ í•  í•¨ìˆ˜ (ë©”ì‹œ ë³€í™˜ ìë™)
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
 	void StackPlate(APlate* Plate);
-	/*void StackPlate_Implementation(APlate* Plate);*/
+	void StackPlate_Implementation(APlate* Plate);
 
 	UFUNCTION(BlueprintCallable, Reliable, NetMulticast)
 	void SubmitPlate(); 
@@ -93,6 +94,16 @@ public:
 
 	void HiddenPlateToWorld();
 
+	void SpawnPlate();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_MovePlate();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_SpawnWashPlate();
+	void SpawnWashPlate();
+	void FindSinkTable();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -114,38 +125,45 @@ protected:
 
 	virtual void PostInitializeComponents() override;
 
-	void ChangePlateMesh();
-	void HideAnotherPlates();
+	virtual void ForwardCookingTable(class ACookingTable* Table) override;
 
 	void InitWidgetComponent();
 	void FindPlateSpawner();
 
-	void StackUpPlate(EPlateStackStatus Status, FName Name);
+	//UFUNCTION(Reliable, NetMulticast)
+	void ChangePlateMesh();
+	//void ChangePlateMesh_Implementation();
 
-	UFUNCTION(NetMulticast, Reliable)
-	void StackUpDirtyPlate(APlate* Plate);
-	void StackUpDirtyPlate_Implementation(APlate* Plate);
+	void ChangePlateMesh(EPlateStackStatus Status, FName Name);
 
-	virtual void ForwardCookingTable(class ACookingTable* Table) override;
+	void StackUpPlate(APlate* Plate);
 
+	void AddAnotherPlates(APlate* Plate);
+
+	UFUNCTION(Reliable, NetMulticast)
+	void AddPlate(APlate* Plate);
+	void AddPlate_Implementation(APlate* Plate);
+
+	//UFUNCTION()
+	//void OnRep_AnotherPlates();
 
 private:
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	TArray<FRecipe> Ingredients;
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
-	UStaticMeshComponent* IngredientMesh = nullptr; // Àç·á
+	UStaticMeshComponent* IngredientMesh = nullptr; // ì¬ë£Œ
 
-	// Á¢½Ã »óÅÂ
+	// ì ‘ì‹œ ìƒíƒœ
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	EPlateState PlateState = EPlateState::EMPTY;
 
-	// Á¢½Ã°¡ ½×ÀÎ »óÅÂ
+	// ì ‘ì‹œê°€ ìŒ“ì¸ ìƒíƒœ
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	EPlateStackStatus PlateStackStatus = EPlateStackStatus::SINGLE;
 
-	// ³ª ¸»°í ´Ù¸¥ Á¢½Ã°¡ ³ªÇÑÅ× ½×¿´´Ù¸é ´Ù¸¥ ³à¼®µéÀÇ Æ÷ÀÎÅÍ¸¦ °¡Áö°í ÀÖÀ» °ÍÀÓ
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	// ë‚˜ ë§ê³  ë‹¤ë¥¸ ì ‘ì‹œê°€ ë‚˜í•œí…Œ ìŒ“ì˜€ë‹¤ë©´ ë‹¤ë¥¸ ë…€ì„ë“¤ì˜ í¬ì¸í„°ë¥¼ ê°€ì§€ê³  ìˆì„ ê²ƒì„
+	UPROPERTY(Replicated/*Using = OnRep_AnotherPlates*/, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	TArray<APlate*> AnotherPlates;
 
 
@@ -162,13 +180,16 @@ private:
 	class UWidgetComponent* WidgetComponent = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowprivateAccess = "true"))
-	TSubclassOf<UUserWidget> SubclassWidget = nullptr; // ¿¡µğÅÍ¿¡¼­ °¡Á®¿Ã WBP ÁöÁ¤
+	TSubclassOf<UUserWidget> SubclassWidget = nullptr; // ì—ë””í„°ì—ì„œ ê°€ì ¸ì˜¬ WBP ì§€ì •
 
 	UPROPERTY()
-	class UPlateIconWidget* IconWidget = nullptr; // ¼¼ÆÃÇÑ À§Á¬ °´Ã¼ ÀúÀå ¹× ÇÔ¼ö È£Ãâ¿ë
+	class UPlateIconWidget* IconWidget = nullptr; // ì„¸íŒ…í•œ ìœ„ì ¯ ê°ì²´ ì €ì¥ ë° í•¨ìˆ˜ í˜¸ì¶œìš©
 
 	UPROPERTY()
 	APlateSpawner* PlateSpawner = nullptr;
+
+	UPROPERTY()
+	ASinkTable* SinkTable = nullptr;
 
 	UPROPERTY(Replicated)
 	class ACookingTable* CookingTable = nullptr;

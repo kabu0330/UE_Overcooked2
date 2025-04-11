@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "LevelContent/Cook/Plate.h"
@@ -14,6 +14,7 @@
 #include "EngineUtils.h"
 #include <LevelContent/Table/NonTable/SinkTable.h>
 #include <LevelContent/Table/NonTable/PlateSpawner.h>
+#include <Global/State/GameState/CookingGameState.h>
 
 // Sets default values
 APlate::APlate()
@@ -39,7 +40,7 @@ void APlate::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
-	IngredientMesh->SetIsReplicated(true); // ÄÄÆ÷³ÍÆ® ³×Æ®¿öÅ© µ¿±âÈ­
+	IngredientMesh->SetIsReplicated(true); // ì»´í¬ë„ŒíŠ¸ ë„¤íŠ¸ì›Œí¬ ë™ê¸°í™”
 }
 
 void APlate::Multicast_SubmitPlate_Implementation()
@@ -54,8 +55,8 @@ void APlate::Multicast_SubmitPlate_Implementation()
 		TimerHandle,
 		this,
 		&APlate::SpawnPlate,
-		3.0f,   // 3ÃÊ µÚ ½ÇÇà
-		false   // ¹İº¹ ¿©ºÎ(false¸é 1È¸ ½ÇÇà)
+		3.0f,   // 3ì´ˆ ë’¤ ì‹¤í–‰
+		false   // ë°˜ë³µ ì—¬ë¶€(falseë©´ 1íšŒ ì‹¤í–‰)
 	);
 }
 
@@ -82,20 +83,20 @@ void APlate::BeginPlay()
 
 void APlate::InitWidgetComponent()
 {
-	// À§Á¬ Å¬·¡½º ÁöÁ¤
-	WidgetComponent->SetWidgetClass(SubclassWidget); // WBP À§Á¬À¸·Î ¼³Á¤
+	// ìœ„ì ¯ í´ë˜ìŠ¤ ì§€ì •
+	WidgetComponent->SetWidgetClass(SubclassWidget); // WBP ìœ„ì ¯ìœ¼ë¡œ ì„¤ì •
 	UUserWidget* UserWidget = WidgetComponent->GetUserWidgetObject();
 	if (nullptr != UserWidget)
 	{
 		IconWidget = Cast<UPlateIconWidget>(UserWidget);
 	}
 
-	WidgetComponent->SetDrawAtDesiredSize(true);   // À§Á¬ÀÇ ½ÇÁ¦ Å©±â·Î ·»´õ
-	WidgetComponent->SetPivot(FVector2D(0.5f, 0.5f)); // Áß½É Á¤·Ä
-	WidgetComponent->SetWidgetSpace(EWidgetSpace::Screen); // ¿ùµå °ø°£¿¡¼­ 3DÃ³·³ º¸ÀÌ°Ô
+	WidgetComponent->SetDrawAtDesiredSize(true);   // ìœ„ì ¯ì˜ ì‹¤ì œ í¬ê¸°ë¡œ ë Œë”
+	WidgetComponent->SetPivot(FVector2D(0.5f, 0.5f)); // ì¤‘ì‹¬ ì •ë ¬
+	WidgetComponent->SetWidgetSpace(EWidgetSpace::Screen); // ì›”ë“œ ê³µê°„ì—ì„œ 3Dì²˜ëŸ¼ ë³´ì´ê²Œ
 	WidgetComponent->bHiddenInGame = false;
 
-	// Ä«¸Ş¶ó¸¦ ÇâÇÏµµ·Ï ¼³Á¤
+	// ì¹´ë©”ë¼ë¥¼ í–¥í•˜ë„ë¡ ì„¤ì •
 	WidgetComponent->SetTwoSided(true);
 	WidgetComponent->SetTickWhenOffscreen(true);
 
@@ -104,7 +105,7 @@ void APlate::InitWidgetComponent()
 
 void APlate::FindPlateSpawner()
 {
-	// TActorIterator¸¦ »ç¿ëÇÏ¿© ¿ùµå ³» ¸ğµç APrepTable ¾×ÅÍ¸¦ ¼øÈ¸
+	// TActorIteratorë¥¼ ì‚¬ìš©í•˜ì—¬ ì›”ë“œ ë‚´ ëª¨ë“  APrepTable ì•¡í„°ë¥¼ ìˆœíšŒ
 
 	for (TActorIterator<ACookingTable> It(GetWorld()); It; ++It)
 	{
@@ -173,13 +174,13 @@ void APlate::SetMesh()
 
 void APlate::SetMaterialTexture(UTexture* Texture)
 {
-	// 1. ½ºÅÂÆ½ ¸Ş½ÃÀÇ ¸ÓÆ¼¸®¾óÀ» ¹Ù²Ü°Çµ¥
+	// 1. ìŠ¤íƒœí‹± ë©”ì‹œì˜ ë¨¸í‹°ë¦¬ì–¼ì„ ë°”ê¿€ê±´ë°
 
-	// 2. ÀÌ¹Ì µ¿ÀûÀ¸·Î »ı¼ºÇÑ ¸ÓÆ¼¸®¾ó ÀÎ½ºÅÏ½º ´ÙÀÌ³ª¹ÍÀÌ Á¸ÀçÇÏ¸é 
+	// 2. ì´ë¯¸ ë™ì ìœ¼ë¡œ ìƒì„±í•œ ë¨¸í‹°ë¦¬ì–¼ ì¸ìŠ¤í„´ìŠ¤ ë‹¤ì´ë‚˜ë¯¹ì´ ì¡´ì¬í•˜ë©´ 
 	UMaterialInstanceDynamic* MaterialInstanceDynamic = Cast<UMaterialInstanceDynamic>(StaticMeshComponent->GetMaterial(0));
 	if (nullptr != MaterialInstanceDynamic)
 	{
-		// 3. ±âÁ¸ ¸ÓÆ¼¸®¾ó ÀÎ½ºÅÏ½º ´ÙÀÌ³ª¹ÍÀ» ±×´ë·Î »ç¿ëÇÏ°í
+		// 3. ê¸°ì¡´ ë¨¸í‹°ë¦¬ì–¼ ì¸ìŠ¤í„´ìŠ¤ ë‹¤ì´ë‚˜ë¯¹ì„ ê·¸ëŒ€ë¡œ ì‚¬ìš©í•˜ê³ 
 		MaterialInstanceDynamic->SetTextureParameterValue(FName(TEXT("DiffuseColorMap")), Texture);
 		StaticMeshComponent->SetMaterial(0, MaterialInstanceDynamic);
 		return;
@@ -207,11 +208,11 @@ bool APlate::CanPlaceOnPlate(AIngredient* Ingredient)
 		return false;
 	}
 	if (EPlateState::COMPLETED == PlateState || EPlateState::DIRTY == PlateState)
-	{	// ÀÌ¹Ì ¿Ï¼ºµÈ ¿ä¸®³ª ¼¼Ã´ ÀüÀÇ Á¢½Ã´Â Àç·á¸¦ ¿Ã¸± ¼ö ¾ø´Ù.
+	{	// ì´ë¯¸ ì™„ì„±ëœ ìš”ë¦¬ë‚˜ ì„¸ì²™ ì „ì˜ ì ‘ì‹œëŠ” ì¬ë£Œë¥¼ ì˜¬ë¦´ ìˆ˜ ì—†ë‹¤.
 		return false;
 	}
 	if (EIngredientState::EIS_NONE == Ingredient->GetCurIngredientState())
-	{	// ¼ÕÁúµÇÁö ¾ÊÀº Àç·á´Â Á¢½Ã¿¡ ¿Ã¸± ¼ö ¾ø´Ù.
+	{	// ì†ì§ˆë˜ì§€ ì•Šì€ ì¬ë£ŒëŠ” ì ‘ì‹œì— ì˜¬ë¦´ ìˆ˜ ì—†ë‹¤.
 		return false;
 	}
 	if (nullptr == StaticMeshComponent)
@@ -230,34 +231,34 @@ void APlate::Add_Implementation(AIngredient* Ingredient)
 		return;
 	}
 
-	// 1. ¼ÕÁúµÈ Àç·á¸¦ Ãß°¡ÇÑ´Ù.
+	// 1. ì†ì§ˆëœ ì¬ë£Œë¥¼ ì¶”ê°€í•œë‹¤.
 	FRecipe Recipe;
 	Recipe.IngredientType = Ingredient->GetIngredientType();
 	Recipe.IngredientState = Ingredient->GetCurIngredientState();
 	Ingredients.Add(Recipe);
 
-	// 2. RecipeDataTable°ú ºñ±³ÇÏ¿© µ¥ÀÌÅÍ Å×ÀÌºí¿¡ ÇØ´ç Àç·áÁ¶ÇÕÀÌ Á¸ÀçÇÏ´ÂÁö È®ÀÎ
+	// 2. RecipeDataTableê³¼ ë¹„êµí•˜ì—¬ ë°ì´í„° í…Œì´ë¸”ì— í•´ë‹¹ ì¬ë£Œì¡°í•©ì´ ì¡´ì¬í•˜ëŠ”ì§€ í™•ì¸
 	FPlateInitData InitData = UOC2GlobalData::GetPlateMesh(GetWorld(), Ingredients);
 
-	// 3-1. µ¥ÀÌÅÍ¸¦ È¹µæÇÏ´Âµ¥ ½ÇÆĞÇß´Ù¸é
+	// 3-1. ë°ì´í„°ë¥¼ íšë“í•˜ëŠ”ë° ì‹¤íŒ¨í–ˆë‹¤ë©´
 	if (nullptr == InitData.StaticMesh) 
 	{
-		Ingredients.Pop(); // Àç·á ÀÚ·á±¸Á¶¿¡¼­ Á¦°ÅÇÏ°í ¸®ÅÏ
+		Ingredients.Pop(); // ì¬ë£Œ ìë£Œêµ¬ì¡°ì—ì„œ ì œê±°í•˜ê³  ë¦¬í„´
 		return;
 	}
-	else // 3-2. µ¥ÀÌÅÍ¸¦ È¹µæÇÏ´Âµ¥ ¼º°øÇß´Ù¸é 
+	else // 3-2. ë°ì´í„°ë¥¼ íšë“í•˜ëŠ”ë° ì„±ê³µí–ˆë‹¤ë©´ 
 	{
-		IngredientMesh->SetStaticMesh(InitData.StaticMesh); // ¸Ş½Ã º¯°æ
+		IngredientMesh->SetStaticMesh(InitData.StaticMesh); // ë©”ì‹œ ë³€ê²½
 		PlateState = EPlateState::OCCUPIED;
 		if (nullptr != IngredientMesh)
 		{
-			// 3-3. Á¢½Ã À§¿¡ ¿Ã¶ó°¥ ¿ä¸® ¸Ş½Ã ¼¼ÆÃ
+			// 3-3. ì ‘ì‹œ ìœ„ì— ì˜¬ë¼ê°ˆ ìš”ë¦¬ ë©”ì‹œ ì„¸íŒ…
 			SetIngredinetMesh(InitData);
 
-			// 3-5. ±âÁ¸¿¡ Á¸ÀçÇÏ´Â Àç·á´Â ¿ùµå¿¡¼­ »èÁ¦
+			// 3-5. ê¸°ì¡´ì— ì¡´ì¬í•˜ëŠ” ì¬ë£ŒëŠ” ì›”ë“œì—ì„œ ì‚­ì œ
 			Ingredient->RequestOC2ActorDestroy();
 
-			// 4. Texture Ãß°¡
+			// 4. Texture ì¶”ê°€
 			SetIngredinetTextures(InitData);
 			return;
 		}
@@ -267,10 +268,10 @@ void APlate::Add_Implementation(AIngredient* Ingredient)
 
 void APlate::SetIngredinetMesh(FPlateInitData Data)
 {
-	// 1. ¹°¸® Àá½Ã ²ô°í
-	SetSimulatePhysics(false); // ÄÄÆ÷³ÍÆ®¿Í Ãæµ¹·Î ³¯¾Æ°¡´Â ¿òÁ÷ÀÌ´Â °ÍÀ» ¹æÁöÇÏ±â À§ÇØ ¹°¸®¸¦ Àá½Ã ²ö´Ù.
+	// 1. ë¬¼ë¦¬ ì ì‹œ ë„ê³ 
+	SetSimulatePhysics(false); // ì»´í¬ë„ŒíŠ¸ì™€ ì¶©ëŒë¡œ ë‚ ì•„ê°€ëŠ” ì›€ì§ì´ëŠ” ê²ƒì„ ë°©ì§€í•˜ê¸° ìœ„í•´ ë¬¼ë¦¬ë¥¼ ì ì‹œ ëˆë‹¤.
 
-	// 2. IngredientMeshÀÇ Ãæµ¹Ã¼¿Í ¹°¸®¸¦ ²ö´Ù.
+	// 2. IngredientMeshì˜ ì¶©ëŒì²´ì™€ ë¬¼ë¦¬ë¥¼ ëˆë‹¤.
 	IngredientMesh->AttachToComponent(StaticMeshComponent, FAttachmentTransformRules::KeepRelativeTransform);
 	IngredientMesh->SetCollisionProfileName(TEXT("NoCollision"));
 	IngredientMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -281,7 +282,7 @@ void APlate::SetIngredinetMesh(FPlateInitData Data)
 	IngredientMesh->SetRelativeRotation(Data.OffsetRotation);
 	IngredientMesh->SetRelativeScale3D(Data.OffsetScale);
 
-	// 4. ¹°¸® ´Ù½Ã ÄÑ°í
+	// 4. ë¬¼ë¦¬ ë‹¤ì‹œ ì¼œê³ 
 	SetSimulatePhysics(true);
 	bIsCombinationSuccessful = true;
 }
@@ -301,68 +302,112 @@ void APlate::SetIngredinetTextures(FPlateInitData Data)
 
 }
 
-void APlate::StackPlate/*_Implementation*/(APlate* Plate)
+void APlate::StackPlate_Implementation(APlate* Plate)
+{
+	bIsCombinationSuccessful = false;
+
+	if (PlateState == EPlateState::EMPTY || PlateState == EPlateState::DIRTY)
+	{
+		if (PlateState == Plate->PlateState) // ë™ì¼í•œ ìƒíƒœì¸ ë…€ì„ë§Œ ìŒ“ì„ ìˆ˜ ìˆë‹¤.
+		{
+			bIsCombinationSuccessful = true;
+			StackUpPlate(Plate);
+		}
+	}
+}
+
+void APlate::StackUpPlate(APlate* Plate)
+{
+	AddAnotherPlates(Plate);
+	//ChangePlateMesh();
+}
+
+void APlate::AddAnotherPlates(APlate* Plate)
+{
+	if (nullptr == GetWorld()->GetAuthGameMode())
+	{
+		return;
+	}
+	if (Plate == this)
+	{
+		return;
+	}
+
+	// ë‚´ê°€ ê°€ì§„ AnotherPlatesë¥¼ ëª¨ë‘ ì •ë¦¬í•˜ê³  ë‚˜ ìì‹ ë„ Addí•œë‹¤.
+
+	if (false == Plate->AnotherPlates.IsEmpty())
+	{
+		// 1. ë‚´ê°€ ê°€ì§€ê³  ìˆëŠ” Plateë¥¼ ë¨¼ì € Addí•˜ê³ 
+		for (APlate* SubPlate : Plate->AnotherPlates)
+		{
+			if (SubPlate && SubPlate != this && false == AnotherPlates.Contains(SubPlate))
+			{
+				AddPlate(SubPlate);
+				SubPlate->HiddenPlateToWorld(); // ë Œë”, ì¶©ëŒ, í‹± ë„ê¸°
+			}
+			else if (SubPlate == nullptr)
+			{
+				UE_LOG(LogTemp, Error, TEXT("SubPlateê°€ nullptr"));
+				continue;
+			}
+		}
+
+		// 2. ìê¸° ìì‹ ì˜ ë°°ì—´ì€ ë¹„ìš´ë‹¤. 
+		Plate->AnotherPlates.Empty();
+	}
+
+	// 3. ìì‹ ë„ Add í•œë‹¤.
+	if (false == AnotherPlates.Contains(Plate) && Plate != this)
+	{
+		AddPlate(Plate);
+		Plate->HiddenPlateToWorld(); // ë Œë”, ì¶©ëŒ, í‹± ë„ê¸°
+
+	}
+}
+
+void APlate::AddPlate_Implementation(APlate* Plate)
+{
+	auto Test = GetWorld()->GetAuthGameMode();
+	AnotherPlates.Add(Plate);
+	if (AnotherPlates.Num() >= 3)
+	{
+		int a = 0;
+	}
+	ChangePlateMesh();
+}
+
+void APlate::ChangePlateMesh()
 {
 	if (nullptr != GetWorld()->GetAuthGameMode())
 	{
-		int a = 0;
+ 		int a = 0;
 	}
 	if (nullptr == GetWorld()->GetAuthGameMode())
 	{
 		int a = 0;
 	}
-
-	if (PlateState == EPlateState::EMPTY || PlateState == EPlateState::DIRTY)
-	{
-		if (PlateState == Plate->PlateState) // µ¿ÀÏÇÑ »óÅÂÀÎ ³à¼®¸¸ ½×À» ¼ö ÀÖ´Ù.
-		{
-			// 2. ÀÌ¹Ì ½×¿©ÀÖ´Â Á¢½Ã¸¦ ÇÕÄ¡´Â °Å¶ó¸é
-			if (nullptr != CookingTable &&
-				nullptr == Cast<ASinkTable>(CookingTable) &&
-				nullptr == Cast<APlateSpawner>(CookingTable) &&
-				PlateState == EPlateState::DIRTY)
-			{
-				StackUpDirtyPlate(Plate); // ³»°¡ Á÷Á¢ NetMultiCast ÇØ¾ßÇÏ´Â ¸â¹öµéÀÌ¶ó¸é ¿©±â¼­ Ã³¸®ÇÑ´Ù.
-				return;
-			}
-			else
-			{
-				// 1. ÀÚ±â ÀÚ½ÅÀ» ½×°í
-				AnotherPlates.Add(Plate);
-				ChangePlateMesh(); // ¸Ş½Ã ¹Ù²Ù°í
-				HideAnotherPlates(); // ºÎÂøµÈ ¾ÖµéÀº ¿ùµå¿¡¼­ Á¦¿Ü
-			}
-		}
-	}
-}
-
-// ½ÌÅ©´ë¿¡ µé¾î°£ plate´Â AnotherPlates°¡ ¸ğµÎ Clear µÈ »óÅÂ¿©¾ß ÇÑ´Ù.
-// ±×¸®°í ChangePlateMesh ÇÔ¼ö¸¦ È£ÃâÇØ¼­ ¸Ş½Ã¸¦ ÇÏ³ªÂ¥¸®·Î µÇµ¹·Á¾ß ÇÑ´Ù.
-// TakeCleanPlate()¸¦ È£ÃâÇØ¼­ ·»´õ, Ãæµ¹, Æ½À» ¸ğµÎ ÄÑ¾ßÇÑ´Ù.
-void APlate::ChangePlateMesh()
-{
 	int Count = AnotherPlates.Num();
 
 	switch (Count)
 	{
 	case 0:
 	{
-		StackUpPlate(EPlateStackStatus::SINGLE, TEXT("SinglePlate"));
+		ChangePlateMesh(EPlateStackStatus::SINGLE, TEXT("SinglePlate"));
 		break;
 	}
 	case 1:
 	{
-		StackUpPlate(EPlateStackStatus::DOUBLE, TEXT("DoublePlate"));
+		ChangePlateMesh(EPlateStackStatus::DOUBLE, TEXT("DoublePlate"));
 		break;
 	}
 	case 2:
 	{
-		StackUpPlate(EPlateStackStatus::TRIPLE, TEXT("TriplePlate"));
+		ChangePlateMesh(EPlateStackStatus::TRIPLE, TEXT("TriplePlate"));
 		break;
 	}
 	case 3:
 	{
-		StackUpPlate(EPlateStackStatus::FULL, TEXT("FullPlate"));
+		ChangePlateMesh(EPlateStackStatus::FULL, TEXT("FullPlate"));
 		break;
 	}
 	default:
@@ -370,7 +415,7 @@ void APlate::ChangePlateMesh()
 	}
 }
 
-void APlate::StackUpPlate(EPlateStackStatus Status, FName Name)
+void APlate::ChangePlateMesh(EPlateStackStatus Status, FName Name)
 {
 	PlateStackStatus = Status;
 
@@ -378,28 +423,17 @@ void APlate::StackUpPlate(EPlateStackStatus Status, FName Name)
 	StaticMeshComponent->SetStaticMesh(NewStaticMesh);
 }
 
-void APlate::StackUpDirtyPlate_Implementation(APlate* Plate)
-{
-	// ÀÚ±â ÀÚ½Åµµ ½×°í
-	AnotherPlates.Add(Plate);
-
-	// Å×ÀÌºí À§¿¡ ¿Ã·ÁÁ® ÀÖ°í, ±×°Ô Spawner³ª SinkTableÀÌ ¾Æ´Ï¶ó¸é
-	// ³»°¡ °¡Áö°í ÀÖ´Â Á¢½Ãµµ ½×°í
-	if (false == Plate->AnotherPlates.IsEmpty())
-	{
-		for (int32 i = 0; i < Plate->AnotherPlates.Num(); i++)
-		{
-			APlate* NewPlate = Plate->AnotherPlates[i];
-			AnotherPlates.Add(NewPlate);
-		}
-
-		// ÀÚ±â ÀÚ½ÅÀÇ ¹è¿­Àº ºñ¿î´Ù.
-		Plate->AnotherPlates.Empty();
-	}
-	ChangePlateMesh();
-	HideAnotherPlates();
-	
-}
+//void APlate::OnRep_AnotherPlates()
+//{
+//	for (APlate* Plate : AnotherPlates)
+//	{
+//		if (nullptr == Plate)
+//		{
+//			return;
+//		}
+//	}
+//	ChangePlateMesh();
+//}
 
 void APlate::ForwardCookingTable(ACookingTable* Table)
 {
@@ -408,35 +442,92 @@ void APlate::ForwardCookingTable(ACookingTable* Table)
 
 void APlate::ResetForCleaning()
 {
-	AnotherPlates.Empty(); // ³»°¡ °¡Áö°í ÀÖ´Â Æ÷ÀÎÅÍµµ Áö¿ì°í
-	PlateStackStatus = EPlateStackStatus::SINGLE; // »óÅÂµµ ÇÏ³ª·Î ¹Ù²Ù°í
-	ChangePlateMesh(); // ¸Ş½Ãµµ Áö¿ì°í
+	if (nullptr == GetWorld()->GetAuthGameMode())
+	{
+		return;
+	}
+
+	if (false == AnotherPlates.IsEmpty())
+	{
+		AnotherPlates.Empty(); // ë‚´ê°€ ê°€ì§€ê³  ìˆëŠ” í¬ì¸í„°ë„ ì§€ìš°ê³ 
+	}
+	PlateStackStatus = EPlateStackStatus::SINGLE; // ìƒíƒœë„ í•˜ë‚˜ë¡œ ë°”ê¾¸ê³ 
+	ChangePlateMesh(); // ë©”ì‹œë„ ì§€ìš°ê³ 
+}
+
+void APlate::Multicast_MovePlate_Implementation()
+{
+	SetActorLocation(UOC2Const::PlateSubmitLocation);
+	CleanPlate();
+	SetPlateState(EPlateState::EMPTY);
+
+	ACookingGameState* GameState = Cast<ACookingGameState>(UGameplayStatics::GetGameState(GetWorld()));
+
+	if (nullptr != GameState)
+	{
+		GameState->AddPlate(this);
+	}
+
+}
+
+void APlate::SpawnWashPlate()
+{
+	if (nullptr != PlateSpawner)
+	{
+		PlateSpawner->PlaceItem(this);
+		PlateSpawner->SetPlate(this);
+	}
+}
+
+void APlate::FindSinkTable()
+{
+	for (TActorIterator<ACookingTable> It(GetWorld()); It; ++It)
+	{
+		ACookingTable* PrepTableActor = *It;
+		if (PrepTableActor->Tags.Contains("SinkTable"))
+		{
+			SinkTable = Cast<ASinkTable>(PrepTableActor);
+		}
+	}
+}
+
+void APlate::Multicast_SpawnWashPlate_Implementation()
+{
+	SetActorLocation(UOC2Const::PlateSubmitLocation);
+	CleanPlate();
+	SetPlateState(EPlateState::EMPTY);
+
+	ACookingGameState* GameState = Cast<ACookingGameState>(UGameplayStatics::GetGameState(GetWorld()));
+
+	if (nullptr != GameState)
+	{
+		GameState->AddPlate(this);
+	}
+
+	FTimerHandle TimerHandle;
+
+	GetWorld()->GetTimerManager().SetTimer(
+		TimerHandle,
+		this,
+		&APlate::SpawnWashPlate,
+		1.0f,   // 3ì´ˆ ë’¤ ì‹¤í–‰
+		false   // ë°˜ë³µ ì—¬ë¶€(falseë©´ 1íšŒ ì‹¤í–‰)
+	);
 }
 
 void APlate::RestorePlateToWorld()
 {
-	// ¿ùµå·Î ´Ù½Ã ÆíÀÔ½ÃÅ°°í
-	SetActorHiddenInGame(false); // ·»´õ
+	// ì›”ë“œë¡œ ë‹¤ì‹œ í¸ì…ì‹œí‚¤ê³ 
+	SetActorHiddenInGame(false); // ë Œë”
 	SetActorEnableCollision(true);
 	SetActorTickEnabled(true);
 }
 
 void APlate::HiddenPlateToWorld()
 {
-	SetActorHiddenInGame(true);		// ·»´õ ²ô°í
-	SetActorEnableCollision(false);	// Ãæµ¹ ²ô°í
-	SetActorTickEnabled(false);		// Tick ²ô°í
-}
-
-void APlate::HideAnotherPlates()
-{
-	// Á¢½Ã ´Ù ¼û±ä´Ù.
-	for (int i = 0; i < AnotherPlates.Num(); i++)
-	{
-		AnotherPlates[i]->SetActorHiddenInGame(true);		// ·»´õ ²ô°í
-		AnotherPlates[i]->SetActorEnableCollision(false);	// Ãæµ¹ ²ô°í
-		AnotherPlates[i]->SetActorTickEnabled(false);		// Tick ²ô°í
-	}
+	SetActorHiddenInGame(true);		// ë Œë” ë„ê³ 
+	SetActorEnableCollision(false);	// ì¶©ëŒ ë„ê³ 
+	SetActorTickEnabled(false);		// Tick ë„ê³ 
 }
 
 void APlate::SubmitPlate_Implementation()
@@ -451,8 +542,8 @@ void APlate::SubmitPlate_Implementation()
 		TimerHandle,
 		this,
 		&APlate::SpawnPlate,
-		3.0f,   // 3ÃÊ µÚ ½ÇÇà
-		false   // ¹İº¹ ¿©ºÎ(false¸é 1È¸ ½ÇÇà)
+		3.0f,   // 3ì´ˆ ë’¤ ì‹¤í–‰
+		false   // ë°˜ë³µ ì—¬ë¶€(falseë©´ 1íšŒ ì‹¤í–‰)
 	);
 }
 
@@ -464,7 +555,7 @@ void APlate::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimePr
 	DOREPLIFETIME(APlate, IngredientMesh);
 	DOREPLIFETIME(APlate, PlateState);
 	DOREPLIFETIME(APlate, bIsCombinationSuccessful);
-	//DOREPLIFETIME(APlate, AnotherPlates);
+	DOREPLIFETIME(APlate, AnotherPlates);
 	DOREPLIFETIME(APlate, PlateStackStatus);
 	DOREPLIFETIME(APlate, CookingTable);
 }
