@@ -82,6 +82,27 @@ void ACookingGameMode::PostLogin(APlayerController* NewPlayerController)
 	}
 }
 
+void ACookingGameMode::AddPlate(APlate* Plate)
+{
+	PlateArray.Add(Plate);
+}
+
+APlate* ACookingGameMode::GetPlate()
+{
+	if (PlateArray.Num() > 0)
+	{
+		APlate* LastPlate = PlateArray.Last();
+		PlateArray.Pop();
+
+		return LastPlate;
+	}
+	else
+	{
+		UE_LOG(OVERCOOKED_LOG, Display, TEXT("PlateArray is empty!"));
+		return nullptr;
+	}
+}
+
 void ACookingGameMode::InitChef()
 {
 	UWorld* World = GetWorld();

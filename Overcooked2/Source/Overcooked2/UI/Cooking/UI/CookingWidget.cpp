@@ -446,7 +446,7 @@ void UCookingWidget::MoveNewOrder()
         }
         if (CurAngle < 0.0f)
         {
-            Orders[NewOrderNum]->SetRenderTransformAngle(CurAngle + 0.7f);
+            Orders[NewOrderNum]->SetRenderTransformAngle(CurAngle + 1.f);
         }
     }
 
@@ -523,7 +523,7 @@ void UCookingWidget::SettingIngredientImages(FOrder& Order)
 
     if (Order.RequireIngredients.Num() < 3)
     {
-        for (int i = Order.RequireIngredients.Num() - 1; i < 3; i++)
+        for (int i = Order.RequireIngredients.Num(); i < 3; i++)
         {
             UImage* Img = FindChildImage("IngredientImg" + FString::FromInt(i), ImgPanel);
             UImage* BImg = FindChildImage("BIngredient" + FString::FromInt(i), IBackPanel);

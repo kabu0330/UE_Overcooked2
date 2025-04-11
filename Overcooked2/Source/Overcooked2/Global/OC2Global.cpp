@@ -105,6 +105,41 @@ void UOC2Global::SubmitPlate(UWorld* World, ACooking* Cooking)
 	GameState->Server_SubmitPlate(Plate);
 }
 
+void UOC2Global::MovePlate(UWorld* World, ACooking* Cooking)
+{
+	APlate* Plate = Cast<APlate>(Cooking);
+
+	if (nullptr == Plate)
+	{
+		UE_LOG(OVERCOOKED_LOG, Error, TEXT("Plate is nullptr"));
+		return;
+	}
+
+	ACookingGameState* GameState = Cast<ACookingGameState>(UGameplayStatics::GetGameState(World));
+
+	if (nullptr == GameState)
+	{
+		UE_LOG(OVERCOOKED_LOG, Error, TEXT("GameState is nullptr"));
+		return;
+	}
+
+	GameState->Server_SubmitPlate(Plate);
+}
+
+APlate* UOC2Global::GetPlate(UWorld* World)
+{
+	ACookingGameState* GameState = Cast<ACookingGameState>(UGameplayStatics::GetGameState(World));
+
+	if (nullptr == GameState)
+	{
+		UE_LOG(OVERCOOKED_LOG, Error, TEXT("GameState is nullptr"));
+		return nullptr;
+	}
+
+	return GameState->GetPlate(0);
+}
+
+
 void UOC2Global::CheckPlateToRecipe(UWorld* World, APlate* Plate)
 {
 	TArray<FRecipe> Recipes;

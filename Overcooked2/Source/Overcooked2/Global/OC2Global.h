@@ -53,5 +53,11 @@ public:
 	static void SubmitPlate(UWorld* World, ACooking* Cooking);
 
 	UFUNCTION(BlueprintCallable)
+	static void MovePlate(UWorld* World, ACooking* Cooking);
+
+	UFUNCTION(BlueprintCallable)
+	static APlate* GetPlate(UWorld* World);
+
+	UFUNCTION(BlueprintCallable)
 	static void CheckPlateToRecipe(UWorld* World, APlate* Plate);
 };
