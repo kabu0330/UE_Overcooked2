@@ -106,6 +106,9 @@ public:
 	UTexture2D* GetChefTexture();
 	UTexture2D* GetChefTextureByIndex(int Index);
 
+	bool CompareOrderWithRecipe(TArray<FRecipe>& Recipes, EOC2Stage OC2Stage);
+	bool CompareOrder(const FOrderDataRow* OrderData, TArray<FRecipe>& Recipes);
+
 public:
 	FString GetChefHeadName() const;
 	void SetChefHeadName(FString HeadName);

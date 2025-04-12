@@ -61,6 +61,7 @@ void ALobbyGameMode::PostLogin(APlayerController* NewPlayerController)
 	PlayerControllers.Push(NewPlayerController);
 
 	ALobbyPlayerController* LobbyPlayerController = Cast<ALobbyPlayerController>(NewPlayerController);
+
 	if (nullptr != LobbyPlayerController)
 	{
 		LobbyPlayerController->Client_SetChefHeadName(ChefHeadNames[CurIdx]);

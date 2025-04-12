@@ -272,7 +272,7 @@ void ACookingGameState::Server_SubmitPlate_Implementation(ACooking* Cooking)
 			Recipes.Add(Recipe);
 		}
 
-		if (true == GameInstance->CheckRecipe(Recipes))
+		if (true == GameInstance->CompareOrderWithRecipe(Recipes, EOC2Stage::EOS_Sushi_1_3))
 		{
 			ACookingGameMode* GameMode = Cast<ACookingGameMode>(UGameplayStatics::GetGameMode(this));
 
@@ -317,8 +317,9 @@ void ACookingGameState::Server_SubmitPlate_Implementation(ACooking* Cooking)
 		else
 		{
 			FailScore += 20;
-
 			TotalScore -= 20;
+
+			Multicast_BlinkOrderUI();
 		}
 
 		Plate->Multicast_SubmitPlate();

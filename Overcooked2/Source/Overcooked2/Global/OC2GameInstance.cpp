@@ -455,6 +455,60 @@ UTexture2D* UOC2GameInstance::GetChefTextureByIndex(int Index)
 	return nullptr;
 }
 
+bool UOC2GameInstance::CompareOrderWithRecipe(TArray<FRecipe>& Recipes, EOC2Stage OC2Stage)
+{
+	UDataTable* CheckOrderTable = OrderDataTableMap[OC2Stage];
+
+	TArray<FName> RowNames = CheckOrderTable->GetRowNames();
+
+	for (const FName& RowName : RowNames)
+	{
+		// 현재 행을 가져오기
+		FOrderDataRow* OrderData = CheckOrderTable->FindRow<FOrderDataRow>(RowName, nullptr);
+
+		if (OrderData->RequireIngredients.Num() == Recipes.Num()
+			&& true == CompareOrder(OrderData, Recipes))
+		{
+
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool UOC2GameInstance::CompareOrder(const FOrderDataRow* OrderData, TArray<FRecipe>& Recipes)
+{
+	if (nullptr == OrderData || 0 == OrderData->RequireIngredients.Num() || 0 == Recipes.Num())
+	{
+		return false;
+	}
+
+	for (int i = 0; i < OrderData->RequireIngredients.Num(); i++)
+	{
+		EIngredientType IngredientType = OrderData->RequireIngredients[i].IngredientType;
+		EIngredientState IngredientState = OrderData->RequireIngredients[i].IngredientState;
+
+		bool bFound = false;
+
+		for (int j = 0; j < Recipes.Num(); j++)
+		{
+			if (Recipes[j].IngredientType == IngredientType && Recipes[j].IngredientState == IngredientState)
+			{
+				bFound = true;
+				break;
+			}
+		}
+
+		if (false == bFound)
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
 FString UOC2GameInstance::GetChefHeadName() const
 {
 	return ChefHeadName;
