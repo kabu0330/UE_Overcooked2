@@ -246,6 +246,23 @@ const FResourceMaterialDataRow& UOC2GameInstance::GetResourceMaterialDataRow(con
 	return EmptyData;
 }
 
+const FResourceSoundWaveDataRow& UOC2GameInstance::GetResourceSoundWaveDataRow(const FName& RowName)
+{
+	static FResourceSoundWaveDataRow EmptyData;
+
+	if (nullptr != ResourceSoundWaveDataTable)
+	{
+		FResourceSoundWaveDataRow* ResourceSoundWaveDataRow = ResourceSoundWaveDataTable->FindRow< FResourceSoundWaveDataRow>(RowName, nullptr);
+
+		if (nullptr != ResourceSoundWaveDataRow)
+		{
+			return *ResourceSoundWaveDataRow;
+		}
+	}
+
+	return EmptyData;
+}
+
 FPlateInitData UOC2GameInstance::GetPlateMesh(TArray<FRecipe>& Recipes)
 {
 	static FPlateInitData EmptyArray;
