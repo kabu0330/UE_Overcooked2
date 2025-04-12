@@ -64,6 +64,9 @@ void ACookingGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ACookingGameState, CurStatgeState);
+	DOREPLIFETIME(ACookingGameState, OrderScore);
+	DOREPLIFETIME(ACookingGameState, FeverScore);
+	DOREPLIFETIME(ACookingGameState, FailScore);
 }
 
 void ACookingGameState::ChangeState(ECookingStageState ChangeState)
@@ -127,6 +130,26 @@ APlate* ACookingGameState::GetPlate(int Index)
 		UE_LOG(OVERCOOKED_LOG, Display, TEXT("PlateArray is empty!"));
 		return nullptr;
 	}
+}
+
+int ACookingGameState::GetOrderScore()
+{
+	return OrderScore;
+}
+
+int ACookingGameState::GetFeverScore()
+{
+	return FeverScore;
+}
+
+int ACookingGameState::GetFailScore()
+{
+	return FailScore;
+}
+
+int ACookingGameState::GetTotalScore()
+{
+	return TotalScore;
 }
 
 void ACookingGameState::WaitingPostMatch(float DeltaTime)
@@ -261,15 +284,21 @@ void ACookingGameState::Server_SubmitPlate_Implementation(ACooking* Cooking)
 
 				int InScore = Order.RequireIngredients.Num() * UOC2Const::ScoreValue;
 
+				OrderScore += InScore;
+
 				if (FeverCount == 0)
 				{
 					InScore += UOC2Const::TipValue;
+					FeverScore += UOC2Const::TipValue;
 
 				}
 				else
 				{
 					InScore += UOC2Const::TipValue * FeverCount;
+					FeverScore += UOC2Const::TipValue * FeverCount;
 				}
+
+				TotalScore += InScore;
 
 				int OrderIndex = GameMode->StageManager->CompleteOrder(Order, InScore);
 
@@ -284,6 +313,12 @@ void ACookingGameState::Server_SubmitPlate_Implementation(ACooking* Cooking)
 
 				Multicast_SetFeverUI(FeverCount);
 			}
+		}
+		else
+		{
+			FailScore += 20;
+
+			TotalScore -= 20;
 		}
 
 		Plate->Multicast_SubmitPlate();

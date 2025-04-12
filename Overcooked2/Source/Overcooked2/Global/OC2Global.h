@@ -60,4 +60,16 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	static void CheckPlateToRecipe(UWorld* World, APlate* Plate);
+
+	UFUNCTION(BlueprintCallable)
+	static int GetOrderScore(UWorld* World);
+
+	UFUNCTION(BlueprintCallable)
+	static int GetFeverScore(UWorld* World);
+
+	UFUNCTION(BlueprintCallable)
+	static int GetFailScore(UWorld* World);
+
+	UFUNCTION(BlueprintCallable)
+	static int GetTotalScore(UWorld* World);
 };
