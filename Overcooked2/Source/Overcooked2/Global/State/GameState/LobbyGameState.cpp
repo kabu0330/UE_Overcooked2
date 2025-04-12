@@ -14,6 +14,9 @@
 
 #include "Lobby/LobbyHUD.h"
 #include "Lobby/LobbyUserWidget.h"
+
+#include "Character/OC2Character.h"
+
 #include "UI/Lobby/LobbyZoomInWidget.h"
 #include "UI/Loading/LoadingWidget.h"
 #include "UI/Lobby/LobbyChalkBoard.h"
@@ -26,6 +29,8 @@ ALobbyGameState::ALobbyGameState()
 void ALobbyGameState::BeginPlay()
 {
 	Super::BeginPlay();
+
+	//InitCharacter();
 }
 
 void ALobbyGameState::Tick(float DeltaTime)
@@ -58,6 +63,35 @@ void ALobbyGameState::Multicast_UpdateUserPanelUI_Implementation(int Index)
 			}
 			break;
 		}
+	}
+}
+
+void ALobbyGameState::Server_SpawnClientCharacter_Implementation(FVector SpawnLocation, const FString& ChefHeadName)
+{
+	if (true == HasAuthority())
+	{
+		if (nullptr != OC2CharacterClass)
+		{
+			AOC2Character* OC2Character = GetWorld()->SpawnActor<AOC2Character>(OC2CharacterClass, FVector::ZeroVector, FRotator::ZeroRotator);
+			OC2Character->SetActorLocation(SpawnLocation);
+			OC2Character->SetActorRotation(UOC2Const::TitleCharacterSpawnRotation);
+			OC2Character->SetCharacterName(ChefHeadName);
+			OC2Character->Chopping(true);
+		}
+	}
+}
+
+void ALobbyGameState::InitCharacter()
+{
+	if (nullptr != OC2CharacterClass)
+	{
+		AOC2Character* OC2Character = GetWorld()->SpawnActor<AOC2Character>(OC2CharacterClass, FVector::ZeroVector, FRotator::ZeroRotator);
+		OC2Character->SetActorLocation(UOC2Const::TitleCharacterSpawnLocation);
+		int UserIndex = UOC2Global::GetOC2GameInstance(GetWorld())->GetUserIndex();
+		OC2Character->AddActorWorldOffset(FVector(0.0f, UserIndex * UOC2Const::OC2CharacterSizeY, 0.0f));
+		OC2Character->SetActorRotation(UOC2Const::TitleCharacterSpawnRotation);
+		OC2Character->SetCharacterName(UOC2Global::GetOC2GameInstance(GetWorld())->GetChefHeadName());
+		OC2Character->Chopping(true);
 	}
 }
 

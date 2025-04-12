@@ -17,6 +17,7 @@ class OVERCOOKED2_API UOC2Const : public UObject
 public:
 	static float OrderSpawnDelay;
 	static float MaxOrderCount;
+	static float OC2CharacterSizeY;
 
 	static int ScoreValue;
 	static int TipValue;
