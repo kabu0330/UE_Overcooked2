@@ -498,19 +498,6 @@ void APlate::HiddenPlateToWorld()
 	SetActorTickEnabled(false);		// Tick 끄고
 }
 
-void APlate::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	DOREPLIFETIME(APlate, Ingredients);
-	DOREPLIFETIME(APlate, IngredientMesh);
-	DOREPLIFETIME(APlate, PlateState);
-	DOREPLIFETIME(APlate, bIsCombinationSuccessful);
-	DOREPLIFETIME(APlate, AnotherPlates);
-	DOREPLIFETIME(APlate, PlateStackStatus);
-	DOREPLIFETIME(APlate, CookingTable);
-}
-
 void APlate::SubmitPlate_Implementation()
 {
 	SetActorLocation(UOC2Const::PlateSubmitLocation);

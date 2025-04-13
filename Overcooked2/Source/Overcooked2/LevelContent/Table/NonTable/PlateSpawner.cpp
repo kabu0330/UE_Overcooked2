@@ -51,23 +51,6 @@ void APlateSpawner::SetPlate(class APlate* Plate)
 	
 	CookingPtr = nullptr;
 
-	//for (int i = 0; i < PlateMeshComponent->GetNumMaterials(); i++)
-	//{
-	//	// 최초 하이라이트
-	//	UMaterialInterface* Material = PlateMeshComponent->GetMaterials()[i];
-	//	if (nullptr != Material)
-	//	{
-	//		UMaterialInstanceDynamic* DynamicMaterial = UMaterialInstanceDynamic::Create(Material, this);
-	//		if (nullptr != DynamicMaterial)
-	//		{
-	//			float Temp;
-	//			PlateMeshComponent->GetMaterials()[i]->GetScalarParameterValue(FName("DiffuseAdd"), Temp);
-	//			DiffuseColorMapWeights.Add(Temp);
-	//			PlateMeshComponent->SetMaterial(i, DynamicMaterial);
-	//		}
-	//	}
-	//}
-
 	for (int i = 0; i < PlateMeshComponent->GetNumMaterials(); i++)
 	{
 		UMaterialInstanceDynamic* MaterialInstanceDynamic = Cast<UMaterialInstanceDynamic>(PlateMeshComponent->GetMaterial(i));
@@ -134,8 +117,6 @@ void APlateSpawner::GetOwnedPlate_Implementation()
 
 void APlateSpawner::MoveToServer_Implementation(APlate* Plate)
 {
-
-
 	UOC2Global::MovePlate(GetWorld(), Plate);
 }
 
