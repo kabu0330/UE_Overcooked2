@@ -322,7 +322,8 @@ void ACookingGameState::Server_SubmitPlate_Implementation(ACooking* Cooking)
 			Multicast_BlinkOrderUI();
 		}
 
-		Plate->Multicast_SubmitPlate();
+		//Plate->Multicast_SubmitPlate();
+		Plate->Destroy();
 	}
 }
 

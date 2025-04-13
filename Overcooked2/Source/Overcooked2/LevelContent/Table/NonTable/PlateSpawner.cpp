@@ -45,7 +45,7 @@ void APlateSpawner::SetPlate(class APlate* Plate)
 	int PlateCount = Plate->GetPlateStackCount() + 1;
 	AddPlate(PlateCount);
 
-	MoveToServer(Plate);
+	//MoveToServer(Plate);
 
 	SetPlateMesh();
 	
