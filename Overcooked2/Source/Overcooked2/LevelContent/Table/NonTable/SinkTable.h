@@ -49,14 +49,7 @@ public:
 	void SetPlateVisibility(int Index);
 	void SetPlateVisibility_Implementation(int Index);
 
-	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
 	void SetAllPlateHidden();
-	void SetAllPlateHidden_Implementation();
-	
-	// Æ¯Á¤ ÀÎµ¦½º¸¸, ÄÑ°í ²ö´Ù
-	//UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
-	void SetPlateVisibilityWithIndex(int Index, bool Value);
-	//void SetPlateVisibilityWithIndex_Implementation(int Index, bool Value);
 
 	void InitProgressBar();
 	
@@ -67,6 +60,13 @@ public:
 	UFUNCTION(Reliable, NetMulticast)
 	void AddCleanPlateNum(int Value);
 	void AddCleanPlateNum_Implementation(int Value);
+
+	UFUNCTION(Reliable, NetMulticast)
+	void SetCleanPlateMesh();
+	void SetCleanPlateMesh_Implementation();
+
+	void InitDirtyPlateMesh();
+	void InitCleanPlateMesh();
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking")
@@ -117,6 +117,9 @@ protected:
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Table", meta = (AllowPrivateAccess = "true"))
 	TArray<UStaticMeshComponent*> DirtyPlateComponents;
+
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Table", meta = (AllowPrivateAccess = "true"))
+	UStaticMeshComponent* CleanPlateMeshComponent = nullptr;
 																	   
 	//UPROPERTY(/*Replicated, */EditAnywhere, BlueprintReadOnly, Category = "Table", meta = (AllowPrivateAccess = "true"))
 	//TArray<class APlate*> DirtyPlates;
@@ -131,6 +134,12 @@ protected:
 
 	class UTimeEventComponent* TimeEventComponent = nullptr;
 
-	UPROPERTY(Replicated)
-	class APlate* BottomPlate = nullptr;
+	//UPROPERTY(Replicated)
+	//class APlate* BottomPlate = nullptr;
+
+	//UPROPERTY(Replicated)
+	//bool bIsFirstPlateWashed = false;
+
+	//UPROPERTY(Replicated)
+	//bool bCallGetMoveFunction = false;
 };

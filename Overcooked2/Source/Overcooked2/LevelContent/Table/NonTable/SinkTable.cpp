@@ -9,6 +9,7 @@
 #include <Global/Component/TimeEventComponent.h>
 #include <Net/UnrealNetwork.h>
 #include <Global/OC2Global.h>
+#include <Global/Data/OC2GlobalData.h>
 
 ASinkTable::ASinkTable()
 {
@@ -39,6 +40,9 @@ ASinkTable::ASinkTable()
 		DirtyPlateComponents.Add(ComponentForDishes4);
 	}
 
+	CleanPlateMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CleanPlateNeshComponent"));
+	CleanPlateMeshComponent->SetupAttachment(RootComponent);
+
 	TimeEventComponent = CreateDefaultSubobject<UTimeEventComponent>(TEXT("TimeEventComponent"));
 
 }
@@ -49,7 +53,9 @@ void ASinkTable::BeginPlay()
 
 	InitProgressBar();
 
-	SetAllPlateHidden();
+	InitDirtyPlateMesh();
+	InitCleanPlateMesh();
+
 }
 
 void ASinkTable::InitProgressBar()
@@ -71,55 +77,43 @@ void ASinkTable::InitProgressBar()
 	ProgressBarComponent->SetTickWhenOffscreen(true);
 }
 
-void ASinkTable::AddDirtyPlateNum_Implementation(int Value)
+void ASinkTable::InitDirtyPlateMesh()
 {
-	DirtyPlateNum += Value;
-	if (4 < DirtyPlateNum)
+	for (int32 i = 0; i < DirtyPlateComponents.Num(); i++)
 	{
-		DirtyPlateNum = 4;
+		DirtyPlateComponents[i]->SetIsReplicated(true);
 	}
-	else if (0 > DirtyPlateNum)
-	{
-		DirtyPlateNum = 0;
-	}
+
+	SetAllPlateHidden();
 }
 
-void ASinkTable::AddCleanPlateNum_Implementation(int Value)
+void ASinkTable::InitCleanPlateMesh()
 {
-	CleanPlateNum += Value;
-
-	if (4 < CleanPlateNum)
-	{
-		CleanPlateNum = 4;
-	}
-	else if (0 > CleanPlateNum)
-	{
-		CleanPlateNum = 0;
-	}
+	CleanPlateMeshComponent->AttachToComponent(CleanPlateComponent, FAttachmentTransformRules::KeepRelativeTransform);
+	CleanPlateMeshComponent->SetRelativeLocation(FVector(0, 10, 60));
+	CleanPlateMeshComponent->SetRelativeScale3D(FVector(2, 2, 2));
+	SetCleanPlateMesh();
 }
 
 ACooking* ASinkTable::Interact(AActor* ChefActor)
 {
 	// 설거지된 접시가 하나 이상 있으면 캐릭터에게 하나를 줄 수 있다.
-	if (0 >=  CleanPlateNum)
+	if (0 >= CleanPlateNum)
 	{
 		return nullptr;
 	}
 
-	AddCleanPlateNum(-1);
-
-	if (0 == CleanPlateNum) // 1개는 렌더링 용으로 미리 월드로 가져왔기 때문에 포인터만 반환
+	if (true == HasAuthority())
 	{
-		APlate* NewPlate = BottomPlate;
-		BottomPlate = nullptr;
-
-		return NewPlate;
+		AddCleanPlateNum(-1);
 	}
 
 	APlate* NewPlate = UOC2Global::GetPlate(GetWorld());
 	if (nullptr != NewPlate)
 	{
 		NewPlate->RestorePlateToWorld();
+		NewPlate->CleanPlate();
+		SetCleanPlateMesh();
 		return NewPlate;
 	}
 
@@ -151,10 +145,17 @@ void ASinkTable::PlacePlates_Implementation(ACooking* ReceivedCooking)
 		// 1. 더티 플레이트만 들어올 수 있다.
 		if (true == TempPlate->IsDirtyPlate())
 		{
+			// 싱크대는 접시의 포인터를 가지지 않는다. 접시가 들어오고 캐릭터가 가져간 개수만 기억한다.
 			//										N - 1개 + 1개 = N개
 			AddDirtyPlateNum(TempPlate->GetPlateStackCount() + 1);
 			TempPlate->HiddenPlateToWorld();
-			SetPlateVisibility(DirtyPlateNum); // Render
+			UOC2Global::MovePlate(GetWorld(), TempPlate); // Root Plate도 GameState로 보낸다.
+			// 싱크대는 접시의 포인터가 없다. 메시 컴포넌트를 통해서 눈속임만 한다.
+
+			if (true == HasAuthority())
+			{
+				SetPlateVisibility(DirtyPlateNum); // Render
+			}
 		}
 	}
 }
@@ -254,42 +255,22 @@ void ASinkTable::WashingIsDone_Implementation()
 		return;
 	}
 
-	if (nullptr != GetWorld()->GetAuthGameMode())
-	{
-		int a = 0;
-	}
-	if (nullptr == GetWorld()->GetAuthGameMode())
-	{
-		int a = 0;
-	}
-
-	AddDirtyPlateNum(-1);
-	AddCleanPlateNum(1);
-
 	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Turquoise, "Washing Done");
 
 	HideProgressBar(true);
-
-	// 클린 플레이트를 싱크대에 부착시킨다.
-	if (nullptr == BottomPlate)
+	
+	if (true == HasAuthority())
 	{
-		BottomPlate = UOC2Global::GetPlate(GetWorld());
-		if (nullptr != BottomPlate)
-		{
-			BottomPlate->AttachToComponent(CleanPlateComponent, FAttachmentTransformRules::KeepRelativeTransform);
-			BottomPlate->SetActorLocation(CleanPlateComponent->GetComponentLocation());
-
-			// 클린 플레이트의 Num이 증가하면 쌓아준다.
-			BottomPlate->AddActorLocalOffset(FVector::UnitZ() * 15.0f * (CleanPlateNum));
-			BottomPlate->RestorePlateToWorld();
-		}
+		// Dirty -1 , Clean + 1
+		AddDirtyPlateNum(-1);
+		AddCleanPlateNum(1);
 	}
 
-	// 부착된 플레이트를 기준으로 CleanPlate 렌더링 개수를 설정한다.
-	BottomPlate->SetPlateStackCount(CleanPlateNum - 1);
-
-	// 싱크대 안에 있는 Plate 개수 렌더링
+	// 싱크대 안에 있는 Dirty Plate 개수 렌더링
 	SetPlateVisibility(DirtyPlateNum); 
+
+	// 싱크대 위에 있는 Clean Plate 개수 렌더링
+	SetCleanPlateMesh();
 }
 
 void ASinkTable::HideProgressBar_Implementation(bool Value)
@@ -302,21 +283,91 @@ void ASinkTable::SetPlateVisibility_Implementation(int Index)
 	SetAllPlateHidden();
 	for (size_t i = 0; i < Index; i++)
 	{
+		DirtyPlateComponents[i]->SetHiddenInGame(false);
 		DirtyPlateComponents[i]->SetVisibility(true);
 	}
 }
 
-void ASinkTable::SetAllPlateHidden_Implementation()
+void ASinkTable::SetAllPlateHidden()
 {
 	for (int32 i = 0; i < DirtyPlateComponents.Num(); i++)
 	{
 		DirtyPlateComponents[i]->SetVisibility(false);
+		DirtyPlateComponents[i]->SetHiddenInGame(true);
 	}
 }
 
-void ASinkTable::SetPlateVisibilityWithIndex/*_Implementation*/(int Index, bool Value)
+void ASinkTable::AddDirtyPlateNum_Implementation(int Value)
 {
-	DirtyPlateComponents[Index]->SetVisibility(Value);
+	DirtyPlateNum += Value;
+	if (4 < DirtyPlateNum)
+	{
+		DirtyPlateNum = 4;
+	}
+	else if (0 > DirtyPlateNum)
+	{
+		DirtyPlateNum = 0;
+	}
+}
+
+void ASinkTable::AddCleanPlateNum_Implementation(int Value)
+{
+	CleanPlateNum += Value;
+
+	if (4 < CleanPlateNum)
+	{
+		CleanPlateNum = 4;
+	}
+	else if (0 > CleanPlateNum)
+	{
+		CleanPlateNum = 0;
+	}
+}
+
+void ASinkTable::SetCleanPlateMesh_Implementation()
+{
+	switch (CleanPlateNum)
+	{
+	case 0:
+	{
+		CleanPlateMeshComponent->SetStaticMesh(nullptr);
+		break;
+	}
+	case 1:
+	{
+		UStaticMesh* NewMesh = UOC2GlobalData::GetResourceStaticMesh(GetWorld(), TEXT("SinglePlate"));
+		CleanPlateMeshComponent->SetStaticMesh(NewMesh);
+
+		CleanPlateMeshComponent->SetRelativeLocation(FVector(0, 10, 0));
+		break;
+	}
+	case 2:
+	{
+		UStaticMesh* NewMesh = UOC2GlobalData::GetResourceStaticMesh(GetWorld(), TEXT("DoublePlate"));
+		CleanPlateMeshComponent->SetStaticMesh(NewMesh);
+
+		CleanPlateMeshComponent->SetRelativeLocation(FVector(0, 10, 20));
+		break;
+	}
+	case 3:
+	{
+		UStaticMesh* NewMesh = UOC2GlobalData::GetResourceStaticMesh(GetWorld(), TEXT("TriplePlate"));
+		CleanPlateMeshComponent->SetStaticMesh(NewMesh);
+
+		CleanPlateMeshComponent->SetRelativeLocation(FVector(0, 10, 0));
+		break;
+	}
+	case 4:
+	{
+		UStaticMesh* NewMesh = UOC2GlobalData::GetResourceStaticMesh(GetWorld(), TEXT("FullPlate"));
+		CleanPlateMeshComponent->SetStaticMesh(NewMesh);
+
+		CleanPlateMeshComponent->SetRelativeLocation(FVector(0, 10, 60));
+		break;
+	}
+	default:
+		break;
+	}
 }
 
 void ASinkTable::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -333,8 +384,8 @@ void ASinkTable::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifeti
 	DOREPLIFETIME(ASinkTable, ComponentForDishes3);
 	DOREPLIFETIME(ASinkTable, ComponentForDishes4);
 	DOREPLIFETIME(ASinkTable, DirtyPlateComponents);
-	//DOREPLIFETIME(ASinkTable, CleanPlateNum);
-	//DOREPLIFETIME(ASinkTable, DirtyPlateNum);
-	//DOREPLIFETIME(ASinkTable, DirtyPlates);
-	//DOREPLIFETIME(ASinkTable, CleanPlates);
+	DOREPLIFETIME(ASinkTable, CleanPlateMeshComponent);
+	//DOREPLIFETIME(ASinkTable, bIsFirstPlateWashed);
+	//DOREPLIFETIME(ASinkTable, bCallGetMoveFunction);
+
 }

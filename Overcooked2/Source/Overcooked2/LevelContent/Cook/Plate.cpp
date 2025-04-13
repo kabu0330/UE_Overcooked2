@@ -48,6 +48,8 @@ void APlate::Multicast_SubmitPlate_Implementation()
 	SetActorLocation(UOC2Const::PlateSubmitLocation);
 	CleanPlate();
 	SetPlateState(EPlateState::DIRTY);
+	PlateStackStatus = EPlateStackStatus::SINGLE;
+	ChangePlateMesh();
 
 	FTimerHandle TimerHandle;
 
@@ -89,6 +91,7 @@ void APlate::InitWidgetComponent()
 	if (nullptr != UserWidget)
 	{
 		IconWidget = Cast<UPlateIconWidget>(UserWidget);
+		IconWidget->Init();
 	}
 
 	WidgetComponent->SetDrawAtDesiredSize(true);   // 위젯의 실제 크기로 렌더
@@ -99,8 +102,6 @@ void APlate::InitWidgetComponent()
 	// 카메라를 향하도록 설정
 	WidgetComponent->SetTwoSided(true);
 	WidgetComponent->SetTickWhenOffscreen(true);
-
-	IconWidget->Init();
 }
 
 void APlate::FindPlateSpawner()
@@ -133,7 +134,6 @@ void APlate::FindSinkTable()
 void APlate::Tick(float DeltaTime)
 {
 	ACooking::Tick(DeltaTime);
-
 }
 
 bool APlate::IsDirtyPlate()
@@ -151,14 +151,14 @@ void APlate::WashPlate_Implementation()
 	if (true == IsDirtyPlate())
 	{
 		PlateState = EPlateState::EMPTY;
-		SetMesh();
+		SetMaterialTexture();
 	}
 }
 
 void APlate::SetPlateState_Implementation(EPlateState State)
 {
 	PlateState = State;
-	SetMesh();
+	SetMaterialTexture();
 }
 
 void APlate::CleanPlate_Implementation()
@@ -166,11 +166,23 @@ void APlate::CleanPlate_Implementation()
 	PlateState = EPlateState::EMPTY;
 	IngredientMesh->SetStaticMesh(nullptr);
 	Ingredients.Empty();
-	IconWidget->Reset();
+	if (nullptr == IconWidget)
+	{
+		IconWidget = GetOrRebuildIconWidget();
+	}
+	else
+	{
+		IconWidget->Reset();
+	}
+
 	bIsCombinationSuccessful = false;
+
+	PlateStackStatus = EPlateStackStatus::SINGLE;
+	SetMaterialTexture();
+	ChangePlateMesh();
 }
 
-void APlate::SetMesh()
+void APlate::SetMaterialTexture()
 {
 	UTexture* Texture = nullptr;
 	if (EPlateState::DIRTY == PlateState)
@@ -332,18 +344,19 @@ void APlate::StackPlate(APlate* Plate)
 			ChangePlateMesh();
 		}
 	}
+
+	if (true == HasAuthority())
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("Server : %S(%u)> %d"), __FUNCTION__, __LINE__, GetPlateStackCount() + 1));
+	}
+	if (false == HasAuthority())
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("Client : %S(%u)> %d"), __FUNCTION__, __LINE__, GetPlateStackCount() + 1));
+	}
 }
 
 void APlate::ChangePlateMesh()
 {
-	if (nullptr != GetWorld()->GetAuthGameMode())
-	{
- 		int a = 0;
-	}
-	if (nullptr == GetWorld()->GetAuthGameMode())
-	{
-		int a = 0;
-	}
 	int Count = GetPlateStackCount();
 
 	switch (Count)
@@ -381,6 +394,33 @@ void APlate::ChangePlateMeshAndStatus_Implementation(EPlateStackStatus Status, F
 	StaticMeshComponent->SetStaticMesh(NewStaticMesh);
 }
 
+UPlateIconWidget* APlate::GetOrRebuildIconWidget()
+{
+	UUserWidget* WidgetObj = WidgetComponent ? WidgetComponent->GetUserWidgetObject() : nullptr;
+
+
+	if (nullptr == WidgetObj)
+	{
+		// 아직 생성이 안 됐거나, 제거된 상태
+		IconWidget = nullptr;
+		return nullptr;
+	}
+
+	// 이미 세팅돼있고 유효하면 재사용
+	if (IconWidget && IconWidget == WidgetObj)
+	{
+		return IconWidget;
+	}
+
+	// 새로 할당
+	IconWidget = Cast<UPlateIconWidget>(WidgetObj);
+	if (IconWidget)
+	{
+		IconWidget->Init(); // 필요하면 Init
+	}
+	return IconWidget;
+}
+
 void APlate::ForwardCookingTable(ACookingTable* Table)
 {
 	CookingTable = Table;
@@ -414,8 +454,9 @@ void APlate::Multicast_SpawnWashPlate_Implementation()
 	SetActorLocation(UOC2Const::PlateSubmitLocation);
 	CleanPlate();
 	SetPlateState(EPlateState::EMPTY);
-	PlateStackStatus = EPlateStackStatus::SINGLE; // 상태도 하나로 바꾸고
-	ChangePlateMesh(); // 메시도 지우고
+	PlateStackStatus = EPlateStackStatus::SINGLE;
+	SetMaterialTexture();
+	ChangePlateMesh();
 
 	ACookingGameState* GameState = Cast<ACookingGameState>(UGameplayStatics::GetGameState(GetWorld()));
 

@@ -136,7 +136,7 @@ protected:
 	void SetIngredinetMesh(FPlateInitData Data);
 	void SetIngredinetTextures(FPlateInitData Data);
 
-	void SetMesh();
+	void SetMaterialTexture();
 	void SetMaterialTexture(UTexture* Texture);
 
 	virtual void ForwardAttachToChef() override;
@@ -157,15 +157,8 @@ protected:
 	void ChangePlateMeshAndStatus(EPlateStackStatus Status, FName Name);
 	void ChangePlateMeshAndStatus_Implementation(EPlateStackStatus Status, FName Name);
 
-	//UFUNCTION(Reliable, NetMulticast)
-	//void AddAnotherPlates(APlate* Plate);
-	//void AddAnotherPlates_Implementation(APlate* Plate);
-
-	////UFUNCTION(Reliable, NetMulticast)
-	//void AddPlate(APlate* Plate);
-	//void AddPlate_Implementation(APlate* Plate);
-
-
+	
+	class UPlateIconWidget* GetOrRebuildIconWidget();
 
 private:
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
@@ -206,10 +199,6 @@ private:
 	// 접시가 쌓인 상태
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	EPlateStackStatus PlateStackStatus = EPlateStackStatus::SINGLE;
-
-	//// 나 말고 다른 접시가 나한테 쌓였다면 다른 녀석들의 포인터를 가지고 있을 것임
-	//UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
-	//TArray<APlate*> AnotherPlates;
 
 	UPROPERTY()
 	ASinkTable* SinkTable = nullptr;
