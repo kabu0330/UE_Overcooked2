@@ -47,21 +47,9 @@ void APlateSpawner::SetPlate(class APlate* Plate)
 
 	MoveToServer(Plate);
 
-	SetPlateMesh();
+	//SetPlateMesh();
 	
 	CookingPtr = nullptr;
-
-	for (int i = 0; i < PlateMeshComponent->GetNumMaterials(); i++)
-	{
-		UMaterialInstanceDynamic* MaterialInstanceDynamic = Cast<UMaterialInstanceDynamic>(PlateMeshComponent->GetMaterial(i));
-		if (nullptr != MaterialInstanceDynamic)
-		{
-			MaterialInstanceDynamic->SetTextureParameterValue(FName(TEXT("DiffuseColorMap")), DirtyTexture);
-			MaterialInstanceDynamic->SetScalarParameterValue(FName("DiffuseAdd"), 1.0f);
-			PlateMeshComponent->SetMaterial(i, MaterialInstanceDynamic);
-			return;
-		}
-	}
 }
 
 ACooking* APlateSpawner::Interact(AActor* ChefActor)
@@ -80,7 +68,7 @@ ACooking* APlateSpawner::Interact(AActor* ChefActor)
 			NewPlate->SetPlateStackCount(PlateNum - 1); // 메시 바꾸고
 
 			InitPlateNum(); // Plate 0개 초기화
-			SetPlateMesh(); // 스포너 위에 메시 지우고
+			//SetPlateMesh(); // 스포너 위에 메시 지우고
 			return NewPlate;
 		}
 	}
@@ -120,8 +108,17 @@ void APlateSpawner::MoveToServer_Implementation(APlate* Plate)
 	UOC2Global::MovePlate(GetWorld(), Plate);
 }
 
-void APlateSpawner::SetPlateMesh_Implementation()
+void APlateSpawner::SetPlateMesh/*_Implementation*/()
 {
+	if (true == HasAuthority())
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::Printf(TEXT("Server - Plate Spawner Spawn : %d"), PlateNum));
+	}
+	if (false == HasAuthority())
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::Printf(TEXT("Client - Plate Spawner Spawn : %d"), PlateNum));
+	}
+
 	FVector InitPos = GetActorLocation() + FVector(0, 0, 50);
 	switch (PlateNum)
 	{
@@ -187,11 +184,36 @@ void APlateSpawner::AddPlate_Implementation(int Number)
 		{
 			PlateNum = 4;
 		}
+		SetPlateMesh();
+		SetMaterialTextrue();
 	}
 }
 
 void APlateSpawner::InitPlateNum_Implementation()
 {
 	PlateNum = 0;
+	SetPlateMesh();
+	SetMaterialTextrue();
+}
+
+void APlateSpawner::OnRep_SetPlateMesh()
+{
+	SetPlateMesh();
+	SetMaterialTextrue();
+}
+
+void APlateSpawner::SetMaterialTextrue()
+{
+	for (int i = 0; i < PlateMeshComponent->GetNumMaterials(); i++)
+	{
+		UMaterialInstanceDynamic* MaterialInstanceDynamic = Cast<UMaterialInstanceDynamic>(PlateMeshComponent->GetMaterial(i));
+		if (nullptr != MaterialInstanceDynamic)
+		{
+			MaterialInstanceDynamic->SetTextureParameterValue(FName(TEXT("DiffuseColorMap")), DirtyTexture);
+			MaterialInstanceDynamic->SetScalarParameterValue(FName("DiffuseAdd"), 1.0f);
+			PlateMeshComponent->SetMaterial(i, MaterialInstanceDynamic);
+			return;
+		}
+	}
 }
 

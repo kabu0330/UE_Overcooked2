@@ -35,19 +35,24 @@ public:
 	void MoveToServer(APlate* Plate);
 	void MoveToServer_Implementation(APlate* Plate);
 
-	UFUNCTION(Reliable, NetMulticast)
+	//UFUNCTION(Reliable, NetMulticast)
 	void SetPlateMesh();
-	void SetPlateMesh_Implementation();
+	//void SetPlateMesh_Implementation();
 
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
 
-	UFUNCTION(Reliable, NetMulticast)
+	UFUNCTION(Reliable, Server)
 	void AddPlate(int Number);
 	void AddPlate_Implementation(int Number);
 
-	UFUNCTION(Reliable, NetMulticast)
+	UFUNCTION(Reliable, Server)
 	void InitPlateNum();
 	void InitPlateNum_Implementation();
+
+	UFUNCTION()
+	void OnRep_SetPlateMesh();
+
+	void SetMaterialTextrue();
 
 private:
 
@@ -62,7 +67,7 @@ private:
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* PlateMeshComponent = nullptr;
 
-	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(ReplicatedUsing = OnRep_SetPlateMesh, EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	int PlateNum = 0;
 
 	USceneComponent* SceneComponent = nullptr;
