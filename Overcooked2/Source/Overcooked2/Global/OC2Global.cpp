@@ -185,3 +185,51 @@ void UOC2Global::CheckPlateToRecipe(UWorld* World, APlate* Plate)
 	//return EmptyArray;
 
 }
+
+int UOC2Global::GetOrderScore(UWorld* World)
+{
+	ACookingGameState* CookingGameState = World->GetGameState<ACookingGameState>();
+
+	if (nullptr != CookingGameState)
+	{
+		return CookingGameState->GetOrderScore();
+	}
+
+	return 0;
+}
+
+int UOC2Global::GetFeverScore(UWorld* World)
+{
+	ACookingGameState* CookingGameState = World->GetGameState<ACookingGameState>();
+
+	if (nullptr != CookingGameState)
+	{
+		return CookingGameState->GetFeverScore();
+	}
+
+	return 0;
+}
+
+int UOC2Global::GetFailScore(UWorld* World)
+{
+	ACookingGameState* CookingGameState = World->GetGameState<ACookingGameState>();
+
+	if (nullptr != CookingGameState)
+	{
+		return CookingGameState->GetFailScore();
+	}
+
+	return 0;
+}
+
+int UOC2Global::GetTotalScore(UWorld* World)
+{
+	ACookingGameState* CookingGameState = World->GetGameState<ACookingGameState>();
+
+	if (nullptr != CookingGameState)
+	{
+		return CookingGameState->GetTotalScore();
+	}
+
+	return 0;
+}

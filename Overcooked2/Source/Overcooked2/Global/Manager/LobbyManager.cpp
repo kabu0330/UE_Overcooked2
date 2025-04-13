@@ -27,22 +27,15 @@ void ALobbyManager::BeginPlay()
 {
 	Super::BeginPlay();
 
-	InitCharacter();
+	ALobbyGameState* LobbyGameState = GetWorld()->GetGameState<ALobbyGameState>();
+
+	if (nullptr != LobbyGameState)
+	{
+		LobbyGameState->Multicast_UpdateUserPanelUI(UOC2Global::GetOC2GameInstance(GetWorld())->GetUserIndex());
+	}
 }
 
 void ALobbyManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-}
-
-void ALobbyManager::InitCharacter()
-{
-	if (nullptr != OC2CharacterClass)
-	{
-		AOC2Character* OC2Character = GetWorld()->SpawnActor<AOC2Character>(OC2CharacterClass, FVector::ZeroVector, FRotator::ZeroRotator);
-		OC2Character->SetActorLocation(UOC2Const::TitleCharacterSpawnLocation);
-		OC2Character->SetActorRotation(UOC2Const::TitleCharacterSpawnRotation);
-		OC2Character->SetCharacterName(UOC2Global::GetOC2GameInstance(GetWorld())->GetChefHeadName());
-		OC2Character->Chopping(true);
-	}
 }

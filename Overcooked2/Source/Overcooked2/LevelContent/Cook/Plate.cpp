@@ -51,6 +51,13 @@ void APlate::Multicast_SubmitPlate_Implementation()
 	PlateStackStatus = EPlateStackStatus::SINGLE;
 	ChangePlateMesh();
 
+	ACookingGameState* GameState = Cast<ACookingGameState>(UGameplayStatics::GetGameState(GetWorld()));
+
+	if (nullptr != GameState)
+	{
+		GameState->AddPlate(this);
+	}
+
 	FTimerHandle TimerHandle;
 
 	// ?
@@ -442,10 +449,10 @@ void APlate::Multicast_MovePlate_Implementation()
 
 void APlate::SpawnWashPlate()
 {
-	if (nullptr != PlateSpawner)
+	if (nullptr != SinkTable)
 	{
-		PlateSpawner->PlaceItem(this);
-		PlateSpawner->SetPlate(this);
+		SinkTable->PlaceItem(this);
+		// TODO: SinkTable에 올려주는 함수
 	}
 }
 
@@ -489,6 +496,19 @@ void APlate::HiddenPlateToWorld()
 	SetActorHiddenInGame(true);		// 렌더 끄고
 	SetActorEnableCollision(false);	// 충돌 끄고
 	SetActorTickEnabled(false);		// Tick 끄고
+}
+
+void APlate::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(APlate, Ingredients);
+	DOREPLIFETIME(APlate, IngredientMesh);
+	DOREPLIFETIME(APlate, PlateState);
+	DOREPLIFETIME(APlate, bIsCombinationSuccessful);
+	DOREPLIFETIME(APlate, AnotherPlates);
+	DOREPLIFETIME(APlate, PlateStackStatus);
+	DOREPLIFETIME(APlate, CookingTable);
 }
 
 void APlate::SubmitPlate_Implementation()

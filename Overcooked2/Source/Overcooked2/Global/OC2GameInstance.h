@@ -12,6 +12,7 @@
 #include "Global/Data/ResourceNiagaraTable.h"
 #include "Global/Data/ResourceStaticMeshTable.h"
 #include "Global/Data/ResourceMaterialTable.h"
+#include "Global/Data/ResourceSoundWaveTable.h"
 
 #include "Global/OC2Struct.h"
 #include "Global/OC2Enum.h"
@@ -93,6 +94,7 @@ public:
 	const FResourceNiagaraDataRow& GetResourceNiagaraDataRow(const FName& RowName);
 	const FResourceStaticMeshDataRow& GetResourceStaticMeshDataRow(const FName& RowName);
 	const FResourceMaterialDataRow& GetResourceMaterialDataRow(const FName& RowName);
+	const FResourceSoundWaveDataRow& GetResourceSoundWaveDataRow(const FName& RowName);
 
 	FPlateInitData GetPlateMesh(TArray<FRecipe>& Recipes);
 	bool FindRecipe(const FRecipeDataRow* RecipeDataRow, TArray<FRecipe>& Recipes);
@@ -102,6 +104,10 @@ public:
 	FOrder GetOrderByRecipes(ACooking* Cooking);
 
 	UTexture2D* GetChefTexture();
+	UTexture2D* GetChefTextureByIndex(int Index);
+
+	bool CompareOrderWithRecipe(TArray<FRecipe>& Recipes, EOC2Stage OC2Stage);
+	bool CompareOrder(const FOrderDataRow* OrderData, TArray<FRecipe>& Recipes);
 
 public:
 	FString GetChefHeadName() const;
@@ -150,6 +156,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
 	UDataTable* ResourceMaterialDataTable = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
+	UDataTable* ResourceSoundWaveDataTable = nullptr;
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Global|Data")

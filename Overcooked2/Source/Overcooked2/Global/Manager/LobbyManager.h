@@ -30,10 +30,6 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 public:
-	UFUNCTION(BlueprintCallable, Category = "Global|TitleActor")
-	void InitCharacter();
-
-public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|TitleActor")
 	TSubclassOf<AOC2Character> OC2CharacterClass;
 	

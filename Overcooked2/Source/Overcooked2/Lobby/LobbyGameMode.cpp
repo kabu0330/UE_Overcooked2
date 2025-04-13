@@ -60,20 +60,32 @@ void ALobbyGameMode::PostLogin(APlayerController* NewPlayerController)
 
 	PlayerControllers.Push(NewPlayerController);
 
-	ALobbyGameState* LobbyGameState = GetWorld()->GetGameState<ALobbyGameState>();
-
-	if (LobbyGameState != nullptr)
+	if (PlayerControllers.Num() == 1)
 	{
-		LobbyGameState->Multicast_UpdateUserPanelUI(CurUserCount);
+		UOC2Global::GetOC2GameInstance(GetWorld())->SetUserIndex(0);
 	}
 
 	ALobbyPlayerController* LobbyPlayerController = Cast<ALobbyPlayerController>(NewPlayerController);
+
 	if (nullptr != LobbyPlayerController)
 	{
 		LobbyPlayerController->Client_SetChefHeadName(ChefHeadNames[CurIdx]);
 		LobbyPlayerController->Client_SetUserIndex(CurUserCount);
 		CurUserCount++;
 		CurIdx++;
+	}
+
+	ALobbyGameState* LobbyGameState = GetGameState<ALobbyGameState>();
+
+	if (nullptr != LobbyGameState)
+	{
+		LobbyGameState->Multicast_UpdateUserPanelUI(CurUserCount - 1);
+
+		int UserIndex = CurUserCount - 1;
+
+		LobbyGameState->Server_SpawnClientCharacter(
+			UOC2Const::TitleCharacterSpawnLocation + FVector(0.0f, UserIndex * UOC2Const::OC2CharacterSizeY, 0.0f),
+			ChefHeadNames[UserIndex]);
 	}
 }
 

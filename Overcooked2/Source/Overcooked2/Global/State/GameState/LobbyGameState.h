@@ -7,6 +7,7 @@
 #include "LobbyGameState.generated.h"
 
 class ALobbyManager;
+class AOC2Character;
 
 /**
  * 
@@ -33,7 +34,12 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_UpdateUserPanelUI(int UserIndex);
 
-	void UpdateChefTexture();
+	UFUNCTION(Server, Reliable)
+	void Server_SpawnClientCharacter(FVector SpawnLocation, const FString& ChefHeadName);
+
+public:
+	void InitCharacter();
+	void UpdateChefTexture(int Index);
 
 public:
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
@@ -44,6 +50,9 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<ALobbyManager> LobbyManagerClass = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|TitleActor")
+	TSubclassOf<AOC2Character> OC2CharacterClass;
 
 	const FString LOBBY_LEVEL = "LobbyDevLevel";
 	const FString PLAY_LEVEL = "Sushi1-3StageLevel";

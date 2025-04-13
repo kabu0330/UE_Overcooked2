@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/TimelineComponent.h"
 #include "CookingTimeWidget.generated.h"
 
 /**
@@ -20,6 +21,9 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
 	class UProgressBar* TimeProgressBar = nullptr;
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
+	class UImage* TimeImg = nullptr;
 
 
 
@@ -38,9 +42,14 @@ public:
 
 
 protected:
-	//virtual void NativeTick(const FGeometry& MyGeometry, float DeltaTime) override;
+	virtual void NativeTick(const FGeometry& MyGeometry, float DeltaTime) override;
 	virtual void NativeConstruct() override;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OC2UI")
+	class UCurveFloat* TimerCurve = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OC2UI")
+	class UCurveFloat* TimerTextCurve = nullptr;
 
 private:
 	float StartTimer(float Deltatime);
@@ -49,6 +58,19 @@ private:
 	bool bIsTimesUP = false;
 	float TotalTime = 180.0f;
 	float CurTime = 0.0f;
+	int OriginalFontSize = 0;
 
+	UFUNCTION()
+	void PlayTimerAnimation(float Value);
+
+	UFUNCTION()
+	void PlayTimerTextAnimation(float Value);
+
+	void UpdateTimerScale(FLinearColor Color, float FontSize, FVector2D Position);
+
+	void UpdateTimerAngle(float Angle);
+
+	FTimeline TimerImgTimeline;
+	FTimeline TimerTextTimeline;
 
 };

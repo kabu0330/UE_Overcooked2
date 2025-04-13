@@ -131,15 +131,11 @@ public:
 	static FVector GetResourceNiagaraLocation(UWorld* World, const FName& RowName);
 	static FRotator GetResourceNiagaraRotator(UWorld* World, const FName& RowName);
 	static FVector GetResourceNiagaraScale(UWorld* World, const FName& RowName);
-
-public:
 	static UStaticMesh* GetResourceStaticMesh(UWorld* World, const FName& RowName);
-
-public:
 	static UMaterial* GetResourceMaterial(UWorld* World, const FName& RowName);
-
-public:
 	static UTexture2D* GetChefTexture(UWorld* World);
+	static UTexture2D* GetChefTextureByIndex(UWorld* World, int Index);
+	static USoundBase* GetBaseSound(UWorld* World, const FName& RowName);
 
 public:
 	static FOrder GetOrderByIngredients(UWorld* World, ACooking* Cooking);

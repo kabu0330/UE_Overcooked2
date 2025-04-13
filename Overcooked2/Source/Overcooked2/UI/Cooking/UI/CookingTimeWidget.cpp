@@ -4,12 +4,25 @@
 #include "UI/Cooking/UI/CookingTimeWidget.h"
 #include "Components/TextBlock.h"
 #include "Components/ProgressBar.h"
+#include "Components/Image.h"
 
 void UCookingTimeWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
 	CurTime = TotalTime;
+
+	OriginalFontSize = Time->GetFont().Size;
+
+}
+
+void UCookingTimeWidget::NativeTick(const FGeometry& MyGeometry, float DeltaTime)
+{
+	Super::NativeTick(MyGeometry, DeltaTime);
+
+	TimerImgTimeline.TickTimeline(DeltaTime);
+	TimerTextTimeline.TickTimeline(DeltaTime);
+
 }
 
 float UCookingTimeWidget::StartTimerTick(float DeltaTime)
@@ -23,9 +36,75 @@ float UCookingTimeWidget::StartTimerTick(float DeltaTime)
 	else if (true == bIsStart && CurTime <= 0.0f)
 	{
 		bIsTimesUP = true;
+		TimerTextTimeline.SetLooping(false);
+	}
+
+	if (CurTime <= 10.f  && TimerImgTimeline.IsPlaying() == false)
+	{
+		FOnTimelineFloat ProgressFunction;
+		ProgressFunction.BindUFunction(this, FName("PlayTimerAnimation"));
+		TimerImgTimeline.AddInterpFloat(TimerCurve, ProgressFunction);
+
+		TimerImgTimeline.SetLooping(true);
+		TimerImgTimeline.SetPlayRate(8.0f);
+		TimerImgTimeline.Stop();
+		TimerImgTimeline.PlayFromStart();
+
+
+		FOnTimelineFloat ProgressFunction1;
+		ProgressFunction1.BindUFunction(this, FName("PlayTimerTextAnimation"));
+		TimerTextTimeline.AddInterpFloat(TimerTextCurve, ProgressFunction1);
+
+		TimerTextTimeline.SetLooping(true);
+		TimerTextTimeline.SetPlayRate(1.0f);
+		TimerTextTimeline.Stop();
+		TimerTextTimeline.PlayFromStart();
+
 	}
 
 	return curtime;
+
+}
+
+void UCookingTimeWidget::PlayTimerTextAnimation(float Value)
+{
+
+	FLinearColor TargetColor(45.f / 255.f, 25.f / 255.f, 15.f / 255.f);
+	FLinearColor CurColor = FMath::Lerp(FLinearColor::White, TargetColor, Value);
+
+	FVector2D CurTranslation = FMath::Lerp(FVector2D(0.0f, 0.0f), FVector2D(0.0f, -5.0f), Value);
+	float CurSize = FMath::Lerp(OriginalFontSize, OriginalFontSize + 5, Value);
+
+	UpdateTimerScale(CurColor, CurSize, CurTranslation);
+
+}
+
+void UCookingTimeWidget::UpdateTimerScale(FLinearColor Color, float FontSize, FVector2D Position)
+{
+	if (Time != nullptr)
+	{
+		Time->SetColorAndOpacity(Color);	
+
+		FSlateFontInfo FontInfo = Time->GetFont();
+		FontInfo.Size = FontSize;
+
+		Time->SetFont(FontInfo);
+		Time->SetRenderTranslation(Position);
+	}
+}
+
+
+void UCookingTimeWidget::PlayTimerAnimation(float Value)
+{
+	float CurAngle = FMath::Lerp(-2.0f, 2.0f, Value);
+
+	UpdateTimerAngle(CurAngle);
+
+}
+
+void UCookingTimeWidget::UpdateTimerAngle(float Angle)
+{
+	TimeImg->SetRenderTransformAngle(Angle);
 
 }
 

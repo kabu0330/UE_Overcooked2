@@ -47,6 +47,11 @@ public:
 	void AddPlate(APlate* Plate);
 	APlate* GetPlate(int Index);
 
+	int GetOrderScore();
+	int GetFeverScore();
+	int GetFailScore();
+	int GetTotalScore();
+
 public:
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_CreateNewOrder(FOrder Order);
@@ -93,4 +98,16 @@ private:
 	TArray<APlate*> PlateArray;
 	int CurOrderIndex = 0;
 	int FeverCount = 0;
+
+	UPROPERTY(Replicated)
+	int OrderScore = 0;
+
+	UPROPERTY(Replicated)
+	int FeverScore = 0;
+
+	UPROPERTY(Replicated)
+	int FailScore = 0;
+
+	UPROPERTY(Replicated)
+	int TotalScore = 0;
 };
