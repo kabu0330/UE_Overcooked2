@@ -34,6 +34,11 @@ void AGarbageCan::Tick(float DeltaTime)
 
 void AGarbageCan::PlaceItem(ACooking* Item)
 {
+	if (nullptr == Item)
+	{
+		return;
+	}
+
 	// Ingredient만 없애기. Plate의 경우 AOC2Character가 담당
 	if (true == Item->IsCookingType(ECookingType::ECT_INGREDIENT))
 	{

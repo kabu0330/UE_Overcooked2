@@ -13,8 +13,8 @@
 #include "LevelContent/Table/NonTable/PlateSpawner.h"
 #include "EngineUtils.h"
 #include <LevelContent/Table/NonTable/SinkTable.h>
-#include <LevelContent/Table/NonTable/PlateSpawner.h>
 #include <Global/State/GameState/CookingGameState.h>
+#include <Global/OC2Global.h>
 
 // Sets default values
 APlate::APlate()
@@ -48,6 +48,8 @@ void APlate::Multicast_SubmitPlate_Implementation()
 	SetActorLocation(UOC2Const::PlateSubmitLocation);
 	CleanPlate();
 	SetPlateState(EPlateState::DIRTY);
+	PlateStackStatus = EPlateStackStatus::SINGLE;
+	ChangePlateMesh();
 
 	ACookingGameState* GameState = Cast<ACookingGameState>(UGameplayStatics::GetGameState(GetWorld()));
 
@@ -58,6 +60,7 @@ void APlate::Multicast_SubmitPlate_Implementation()
 
 	FTimerHandle TimerHandle;
 
+	// ?
 	GetWorld()->GetTimerManager().SetTimer(
 		TimerHandle,
 		this,
@@ -85,8 +88,6 @@ void APlate::BeginPlay()
 
 	FindPlateSpawner();
 	FindSinkTable();
-
-	// Debug
 }
 
 void APlate::InitWidgetComponent()
@@ -97,6 +98,7 @@ void APlate::InitWidgetComponent()
 	if (nullptr != UserWidget)
 	{
 		IconWidget = Cast<UPlateIconWidget>(UserWidget);
+		IconWidget->Init();
 	}
 
 	WidgetComponent->SetDrawAtDesiredSize(true);   // 위젯의 실제 크기로 렌더
@@ -107,8 +109,6 @@ void APlate::InitWidgetComponent()
 	// 카메라를 향하도록 설정
 	WidgetComponent->SetTwoSided(true);
 	WidgetComponent->SetTickWhenOffscreen(true);
-
-	IconWidget->Init();
 }
 
 void APlate::FindPlateSpawner()
@@ -125,11 +125,22 @@ void APlate::FindPlateSpawner()
 	}
 }
 
+void APlate::FindSinkTable()
+{
+	for (TActorIterator<ACookingTable> It(GetWorld()); It; ++It)
+	{
+		ACookingTable* PrepTableActor = *It;
+		if (PrepTableActor->Tags.Contains("SinkTable"))
+		{
+			SinkTable = Cast<ASinkTable>(PrepTableActor);
+		}
+	}
+}
+
 // Called every frame
 void APlate::Tick(float DeltaTime)
 {
 	ACooking::Tick(DeltaTime);
-
 }
 
 bool APlate::IsDirtyPlate()
@@ -147,14 +158,14 @@ void APlate::WashPlate_Implementation()
 	if (true == IsDirtyPlate())
 	{
 		PlateState = EPlateState::EMPTY;
-		SetMesh();
+		SetMaterialTexture();
 	}
 }
 
 void APlate::SetPlateState_Implementation(EPlateState State)
 {
 	PlateState = State;
-	SetMesh();
+	SetMaterialTexture();
 }
 
 void APlate::CleanPlate_Implementation()
@@ -162,11 +173,23 @@ void APlate::CleanPlate_Implementation()
 	PlateState = EPlateState::EMPTY;
 	IngredientMesh->SetStaticMesh(nullptr);
 	Ingredients.Empty();
-	IconWidget->Reset();
+	if (nullptr == IconWidget)
+	{
+		IconWidget = GetOrRebuildIconWidget();
+	}
+	else
+	{
+		IconWidget->Reset();
+	}
+
 	bIsCombinationSuccessful = false;
+
+	PlateStackStatus = EPlateStackStatus::SINGLE;
+	SetMaterialTexture();
+	ChangePlateMesh();
 }
 
-void APlate::SetMesh()
+void APlate::SetMaterialTexture()
 {
 	UTexture* Texture = nullptr;
 	if (EPlateState::DIRTY == PlateState)
@@ -310,7 +333,7 @@ void APlate::SetIngredinetTextures(FPlateInitData Data)
 
 }
 
-void APlate::StackPlate_Implementation(APlate* Plate)
+void APlate::StackPlate(APlate* Plate)
 {
 	bIsCombinationSuccessful = false;
 
@@ -319,103 +342,50 @@ void APlate::StackPlate_Implementation(APlate* Plate)
 		if (PlateState == Plate->PlateState) // 동일한 상태인 녀석만 쌓을 수 있다.
 		{
 			bIsCombinationSuccessful = true;
-			StackUpPlate(Plate);
+			// 1. 쌓인 접시와 나 자신(1)을 더한다.
+			int PlateCount = Plate->GetPlateStackCount();
+			AddPlateStackCount(PlateCount + 1);
+
+			// 2. 스테이지에서 Plate를 제외시킨다.
+			UOC2Global::MovePlate(GetWorld(), Plate);
+			ChangePlateMesh();
 		}
 	}
-}
 
-void APlate::StackUpPlate(APlate* Plate)
-{
-	AddAnotherPlates(Plate);
-	//ChangePlateMesh();
-}
-
-void APlate::AddAnotherPlates(APlate* Plate)
-{
-	if (nullptr == GetWorld()->GetAuthGameMode())
+	if (true == HasAuthority())
 	{
-		return;
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("Server : %S(%u)> %d"), __FUNCTION__, __LINE__, GetPlateStackCount() + 1));
 	}
-	if (Plate == this)
+	if (false == HasAuthority())
 	{
-		return;
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("Client : %S(%u)> %d"), __FUNCTION__, __LINE__, GetPlateStackCount() + 1));
 	}
-
-	// 내가 가진 AnotherPlates를 모두 정리하고 나 자신도 Add한다.
-
-	if (false == Plate->AnotherPlates.IsEmpty())
-	{
-		// 1. 내가 가지고 있는 Plate를 먼저 Add하고
-		for (APlate* SubPlate : Plate->AnotherPlates)
-		{
-			if (SubPlate && SubPlate != this && false == AnotherPlates.Contains(SubPlate))
-			{
-				AddPlate(SubPlate);
-				SubPlate->HiddenPlateToWorld(); // 렌더, 충돌, 틱 끄기
-			}
-			else if (SubPlate == nullptr)
-			{
-				UE_LOG(LogTemp, Error, TEXT("SubPlate가 nullptr"));
-				continue;
-			}
-		}
-
-		// 2. 자기 자신의 배열은 비운다. 
-		Plate->AnotherPlates.Empty();
-	}
-
-	// 3. 자신도 Add 한다.
-	if (false == AnotherPlates.Contains(Plate) && Plate != this)
-	{
-		AddPlate(Plate);
-		Plate->HiddenPlateToWorld(); // 렌더, 충돌, 틱 끄기
-
-	}
-}
-
-void APlate::AddPlate_Implementation(APlate* Plate)
-{
-	auto Test = GetWorld()->GetAuthGameMode();
-	AnotherPlates.Add(Plate);
-	if (AnotherPlates.Num() >= 3)
-	{
-		int a = 0;
-	}
-	ChangePlateMesh();
 }
 
 void APlate::ChangePlateMesh()
 {
-	if (nullptr != GetWorld()->GetAuthGameMode())
-	{
- 		int a = 0;
-	}
-	if (nullptr == GetWorld()->GetAuthGameMode())
-	{
-		int a = 0;
-	}
-	int Count = AnotherPlates.Num();
+	int Count = GetPlateStackCount();
 
 	switch (Count)
 	{
 	case 0:
 	{
-		ChangePlateMesh(EPlateStackStatus::SINGLE, TEXT("SinglePlate"));
+		ChangePlateMeshAndStatus(EPlateStackStatus::SINGLE, TEXT("SinglePlate"));
 		break;
 	}
 	case 1:
 	{
-		ChangePlateMesh(EPlateStackStatus::DOUBLE, TEXT("DoublePlate"));
+		ChangePlateMeshAndStatus(EPlateStackStatus::DOUBLE, TEXT("DoublePlate"));
 		break;
 	}
 	case 2:
 	{
-		ChangePlateMesh(EPlateStackStatus::TRIPLE, TEXT("TriplePlate"));
+		ChangePlateMeshAndStatus(EPlateStackStatus::TRIPLE, TEXT("TriplePlate"));
 		break;
 	}
 	case 3:
 	{
-		ChangePlateMesh(EPlateStackStatus::FULL, TEXT("FullPlate"));
+		ChangePlateMeshAndStatus(EPlateStackStatus::FULL, TEXT("FullPlate"));
 		break;
 	}
 	default:
@@ -423,44 +393,44 @@ void APlate::ChangePlateMesh()
 	}
 }
 
-void APlate::ChangePlateMesh(EPlateStackStatus Status, FName Name)
+void APlate::ChangePlateMeshAndStatus_Implementation(EPlateStackStatus Status, FName Name)
 {
 	PlateStackStatus = Status;
-
+	
 	UStaticMesh* NewStaticMesh = UOC2GlobalData::GetResourceStaticMesh(GetWorld(), Name);
 	StaticMeshComponent->SetStaticMesh(NewStaticMesh);
 }
 
-//void APlate::OnRep_AnotherPlates()
-//{
-//	for (APlate* Plate : AnotherPlates)
-//	{
-//		if (nullptr == Plate)
-//		{
-//			return;
-//		}
-//	}
-//	ChangePlateMesh();
-//}
+UPlateIconWidget* APlate::GetOrRebuildIconWidget()
+{
+	UUserWidget* WidgetObj = WidgetComponent ? WidgetComponent->GetUserWidgetObject() : nullptr;
+
+
+	if (nullptr == WidgetObj)
+	{
+		// 아직 생성이 안 됐거나, 제거된 상태
+		IconWidget = nullptr;
+		return nullptr;
+	}
+
+	// 이미 세팅돼있고 유효하면 재사용
+	if (IconWidget && IconWidget == WidgetObj)
+	{
+		return IconWidget;
+	}
+
+	// 새로 할당
+	IconWidget = Cast<UPlateIconWidget>(WidgetObj);
+	if (IconWidget)
+	{
+		IconWidget->Init(); // 필요하면 Init
+	}
+	return IconWidget;
+}
 
 void APlate::ForwardCookingTable(ACookingTable* Table)
 {
 	CookingTable = Table;
-}
-
-void APlate::ResetForCleaning()
-{
-	if (nullptr == GetWorld()->GetAuthGameMode())
-	{
-		return;
-	}
-
-	if (false == AnotherPlates.IsEmpty())
-	{
-		AnotherPlates.Empty(); // 내가 가지고 있는 포인터도 지우고
-	}
-	PlateStackStatus = EPlateStackStatus::SINGLE; // 상태도 하나로 바꾸고
-	ChangePlateMesh(); // 메시도 지우고
 }
 
 void APlate::Multicast_MovePlate_Implementation()
@@ -475,7 +445,6 @@ void APlate::Multicast_MovePlate_Implementation()
 	{
 		GameState->AddPlate(this);
 	}
-
 }
 
 void APlate::SpawnWashPlate()
@@ -487,23 +456,14 @@ void APlate::SpawnWashPlate()
 	}
 }
 
-void APlate::FindSinkTable()
-{
-	for (TActorIterator<ACookingTable> It(GetWorld()); It; ++It)
-	{
-		ACookingTable* PrepTableActor = *It;
-		if (PrepTableActor->Tags.Contains("SinkTable"))
-		{
-			SinkTable = Cast<ASinkTable>(PrepTableActor);
-		}
-	}
-}
-
 void APlate::Multicast_SpawnWashPlate_Implementation()
 {
 	SetActorLocation(UOC2Const::PlateSubmitLocation);
 	CleanPlate();
 	SetPlateState(EPlateState::EMPTY);
+	PlateStackStatus = EPlateStackStatus::SINGLE;
+	SetMaterialTexture();
+	ChangePlateMesh();
 
 	ACookingGameState* GameState = Cast<ACookingGameState>(UGameplayStatics::GetGameState(GetWorld()));
 
@@ -538,19 +498,6 @@ void APlate::HiddenPlateToWorld()
 	SetActorTickEnabled(false);		// Tick 끄고
 }
 
-void APlate::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	DOREPLIFETIME(APlate, Ingredients);
-	DOREPLIFETIME(APlate, IngredientMesh);
-	DOREPLIFETIME(APlate, PlateState);
-	DOREPLIFETIME(APlate, bIsCombinationSuccessful);
-	DOREPLIFETIME(APlate, AnotherPlates);
-	DOREPLIFETIME(APlate, PlateStackStatus);
-	DOREPLIFETIME(APlate, CookingTable);
-}
-
 void APlate::SubmitPlate_Implementation()
 {
 	SetActorLocation(UOC2Const::PlateSubmitLocation);
@@ -566,4 +513,17 @@ void APlate::SubmitPlate_Implementation()
 		3.0f,   // 3초 뒤 실행
 		false   // 반복 여부(false면 1회 실행)
 	);
+}
+
+void APlate::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(APlate, Ingredients);
+	DOREPLIFETIME(APlate, IngredientMesh);
+	DOREPLIFETIME(APlate, PlateState);
+	DOREPLIFETIME(APlate, bIsCombinationSuccessful);
+	//DOREPLIFETIME(APlate, AnotherPlates);
+	DOREPLIFETIME(APlate, PlateStackStatus);
+	DOREPLIFETIME(APlate, CookingTable);
 }

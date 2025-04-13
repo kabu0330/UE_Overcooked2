@@ -68,6 +68,10 @@ ACooking* ABurnerTable::Interact(AActor* ChefActor)
 
 void ABurnerTable::PlaceItem(ACooking* Item)
 {
+	if (nullptr == Item)
+	{
+		return;
+	}
 	ACooking* TempCooking = Item;
 	AIngredient* Ingredient = Cast<AIngredient>(Item);
 

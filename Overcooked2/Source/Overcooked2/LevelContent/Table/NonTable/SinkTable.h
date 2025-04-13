@@ -45,20 +45,29 @@ public:
 	void HideProgressBar(bool Value);
 	void HideProgressBar_Implementation(bool Value);
 
-	//UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
 	void SetPlateVisibility(int Index);
-	//void SetPlateVisibility_Implementation(int Index);
+	void SetPlateVisibility_Implementation(int Index);
 
-	//UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
 	void SetAllPlateHidden();
-	//void SetAllPlateHidden_Implementation();
-	
-	// Æ¯Á¤ ÀÎµ¦½º¸¸, ÄÑ°í ²ö´Ù
-	//UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
-	void SetPlateVisibilityWithIndex(int Index, bool Value);
-	//void SetPlateVisibilityWithIndex_Implementation(int Index, bool Value);
 
 	void InitProgressBar();
+	
+	UFUNCTION(Reliable, NetMulticast)
+	void AddDirtyPlateNum(int Value);
+	void AddDirtyPlateNum_Implementation(int Value);
+
+	UFUNCTION(Reliable, NetMulticast)
+	void AddCleanPlateNum(int Value);
+	void AddCleanPlateNum_Implementation(int Value);
+
+	UFUNCTION(Reliable, NetMulticast)
+	void SetCleanPlateMesh();
+	void SetCleanPlateMesh_Implementation();
+
+	void InitDirtyPlateMesh();
+	void InitCleanPlateMesh();
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking")
 	USceneComponent* ComponentForProgressBar = nullptr;
@@ -82,8 +91,10 @@ protected:
 	UPROPERTY(Replicated)
 	float Ratio = 0.0f;
 
+	UPROPERTY()
 	int DirtyPlateNum = 0;
 
+	UPROPERTY()
 	int CleanPlateNum = 0;
 
 	//UPROPERTY(Replicated)
@@ -106,18 +117,29 @@ protected:
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Table", meta = (AllowPrivateAccess = "true"))
 	TArray<UStaticMeshComponent*> DirtyPlateComponents;
-																	   
-	UPROPERTY(/*Replicated, */EditAnywhere, BlueprintReadOnly, Category = "Table", meta = (AllowPrivateAccess = "true"))
-	TArray<class APlate*> DirtyPlates;
 
-	UPROPERTY(/*Replicated,*/ EditAnywhere, BlueprintReadOnly, Category = "Table", meta = (AllowPrivateAccess = "true"))
-	TArray<class APlate*> CleanPlates;
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Table", meta = (AllowPrivateAccess = "true"))
+	UStaticMeshComponent* CleanPlateMeshComponent = nullptr;
+																	   
+	//UPROPERTY(/*Replicated, */EditAnywhere, BlueprintReadOnly, Category = "Table", meta = (AllowPrivateAccess = "true"))
+	//TArray<class APlate*> DirtyPlates;
+
+	//UPROPERTY(/*Replicated,*/ EditAnywhere, BlueprintReadOnly, Category = "Table", meta = (AllowPrivateAccess = "true"))
+	//TArray<class APlate*> CleanPlates;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Table", meta = (AllowprivateAccess = "true"))
 	TSubclassOf<UUserWidget> TSubClassWidget = nullptr;
 
 	class UGaugeTextureWidget* WidgetPtr = nullptr;
 
-
 	class UTimeEventComponent* TimeEventComponent = nullptr;
+
+	//UPROPERTY(Replicated)
+	//class APlate* BottomPlate = nullptr;
+
+	//UPROPERTY(Replicated)
+	//bool bIsFirstPlateWashed = false;
+
+	//UPROPERTY(Replicated)
+	//bool bCallGetMoveFunction = false;
 };

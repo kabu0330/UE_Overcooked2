@@ -23,6 +23,11 @@ void AServingTable::Tick(float DeltaTime)
 
 void AServingTable::PlaceItem(ACooking* ReceivedCooking)
 {
+	if (nullptr == ReceivedCooking)
+	{
+		return;
+	}
+
 	if (ECookingType::ECT_PLATE == ReceivedCooking->GetCookingType())
 	{
 	}

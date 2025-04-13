@@ -123,7 +123,7 @@ void UOC2Global::MovePlate(UWorld* World, ACooking* Cooking)
 		return;
 	}
 
-	GameState->Server_SubmitPlate(Plate);
+	GameState->Server_MovePlate(Plate);
 }
 
 APlate* UOC2Global::GetPlate(UWorld* World)

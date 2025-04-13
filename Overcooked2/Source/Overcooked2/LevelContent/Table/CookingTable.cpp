@@ -39,6 +39,11 @@ void ACookingTable::Tick(float DeltaTime)
 
 void ACookingTable::PlaceItem(ACooking* ReceivedCooking)
 {
+	if (nullptr == ReceivedCooking)
+	{
+		return;
+	}
+
 	CookingPtr = ReceivedCooking;
 	CookingPtr->SetCookingTable_Implementation(this);
 	CookingPtr->AttachToComponent(ComponentForCooking, FAttachmentTransformRules::KeepRelativeTransform);
@@ -62,11 +67,12 @@ void ACookingTable::PlaceItem(ACooking* ReceivedCooking)
 	{
 		if (true == TempPlate->IsDirtyPlate())
 		{
-			if (1 == TempPlate->GetAnotherPlatesRef().Num())
+			int PlateStackCount = TempPlate->GetPlateStackCount();
+			if (1 == PlateStackCount)
 			{
-				TempPlate->AddActorLocalOffset(FVector(0, 0, 10));
+				TempPlate->AddActorLocalOffset(FVector(0, 0, 20));
 			}
-			if (3 == TempPlate->GetAnotherPlatesRef().Num())
+			if (3 == PlateStackCount)
 			{
 				TempPlate->AddActorLocalOffset(FVector(0, 0, 50));
 			}
