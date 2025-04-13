@@ -46,8 +46,6 @@ void APlateSpawner::SetPlate(class APlate* Plate)
 	AddPlate(PlateCount);
 
 	MoveToServer(Plate);
-
-	//SetPlateMesh();
 	
 	CookingPtr = nullptr;
 }
@@ -68,7 +66,6 @@ ACooking* APlateSpawner::Interact(AActor* ChefActor)
 			NewPlate->SetPlateStackCount(PlateNum - 1); // 메시 바꾸고
 
 			InitPlateNum(); // Plate 0개 초기화
-			//SetPlateMesh(); // 스포너 위에 메시 지우고
 			return NewPlate;
 		}
 	}
@@ -85,30 +82,12 @@ void APlateSpawner::PlaceItem(ACooking* ReceivedCooking)
 	ACooking* TempCooking = ReceivedCooking;
 }
 
-void APlateSpawner::GetOwnedPlate_Implementation()
-{
-	if (nullptr != OwnedPlate) // 내가 접시를 스폰한게 있으면
-	{
-		NewCooking = nullptr;
-		NewCooking = Cast<ACooking>(OwnedPlate);
-		if (nullptr != NewCooking)
-		{
-			// 접시를 캐릭터에게 넘겨주고 나는 가지고 있는 접시가 없다.
-			OwnedPlate = nullptr;
-			bOwnedPlate = true;
-			return;
-		}
-	}
-
-	bOwnedPlate = false;
-}
-
 void APlateSpawner::MoveToServer_Implementation(APlate* Plate)
 {
 	UOC2Global::MovePlate(GetWorld(), Plate);
 }
 
-void APlateSpawner::SetPlateMesh/*_Implementation*/()
+void APlateSpawner::SetPlateMesh()
 {
 	if (true == HasAuthority())
 	{
@@ -164,13 +143,6 @@ void APlateSpawner::SetPlateMesh/*_Implementation*/()
 	}
 }
 
-void APlateSpawner::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(APlateSpawner, PlateMeshComponent);
-	DOREPLIFETIME(APlateSpawner, PlateNum);
-}
-
 void APlateSpawner::AddPlate_Implementation(int Number)
 {
 	if (true == HasAuthority())
@@ -215,5 +187,12 @@ void APlateSpawner::SetMaterialTextrue()
 			return;
 		}
 	}
+}
+
+void APlateSpawner::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(APlateSpawner, PlateMeshComponent);
+	DOREPLIFETIME(APlateSpawner, PlateNum);
 }
 

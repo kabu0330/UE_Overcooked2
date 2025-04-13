@@ -106,16 +106,17 @@ ACooking* ASinkTable::Interact(AActor* ChefActor)
 	if (true == HasAuthority())
 	{
 		AddCleanPlateNum(-1);
+		APlate* NewPlate = UOC2Global::GetPlate(GetWorld());
+		if (nullptr != NewPlate)
+		{
+			NewPlate->RestorePlateToWorld();
+			NewPlate->CleanPlate();
+			SetCleanPlateMesh();
+			return NewPlate;
+		}
 	}
 
-	APlate* NewPlate = UOC2Global::GetPlate(GetWorld());
-	if (nullptr != NewPlate)
-	{
-		NewPlate->RestorePlateToWorld();
-		NewPlate->CleanPlate();
-		SetCleanPlateMesh();
-		return NewPlate;
-	}
+
 
 	return nullptr;
 }

@@ -97,9 +97,6 @@ protected:
 	UPROPERTY()
 	int CleanPlateNum = 0;
 
-	//UPROPERTY(Replicated)
-	//bool KeepWashing = false;
-
 	UPROPERTY(Replicated)
 	class UWidgetComponent* ProgressBarComponent = nullptr;
 
@@ -120,12 +117,7 @@ protected:
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Table", meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* CleanPlateMeshComponent = nullptr;
-																	   
-	//UPROPERTY(/*Replicated, */EditAnywhere, BlueprintReadOnly, Category = "Table", meta = (AllowPrivateAccess = "true"))
-	//TArray<class APlate*> DirtyPlates;
-
-	//UPROPERTY(/*Replicated,*/ EditAnywhere, BlueprintReadOnly, Category = "Table", meta = (AllowPrivateAccess = "true"))
-	//TArray<class APlate*> CleanPlates;
+																	  
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Table", meta = (AllowprivateAccess = "true"))
 	TSubclassOf<UUserWidget> TSubClassWidget = nullptr;
@@ -134,12 +126,4 @@ protected:
 
 	class UTimeEventComponent* TimeEventComponent = nullptr;
 
-	//UPROPERTY(Replicated)
-	//class APlate* BottomPlate = nullptr;
-
-	//UPROPERTY(Replicated)
-	//bool bIsFirstPlateWashed = false;
-
-	//UPROPERTY(Replicated)
-	//bool bCallGetMoveFunction = false;
 };

@@ -17,27 +17,22 @@ class OVERCOOKED2_API APlateSpawner : public ACookingTable
 public:
 	APlateSpawner();
 
-	virtual void BeginPlay() override;
-
-	virtual void Tick(float DeltaTime) override;
-
 	void SetPlate(class APlate* Plate);
 
 	virtual ACooking* Interact(AActor* ChefActor) override;
 
 	void PlaceItem(ACooking* ReceivedCooking) override;
 
-	UFUNCTION(Reliable, NetMulticast)
-	void GetOwnedPlate();
-	void GetOwnedPlate_Implementation();
+private:
+	virtual void BeginPlay() override;
+
+	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION(Reliable, NetMulticast)
 	void MoveToServer(APlate* Plate);
 	void MoveToServer_Implementation(APlate* Plate);
 
-	//UFUNCTION(Reliable, NetMulticast)
 	void SetPlateMesh();
-	//void SetPlateMesh_Implementation();
 
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
 
@@ -53,16 +48,6 @@ public:
 	void OnRep_SetPlateMesh();
 
 	void SetMaterialTextrue();
-
-private:
-
-	//int PlateNum = 0;
-
-	//TMap<int, ACooking*> PlateMap;
-
-	class APlate* OwnedPlate;
-	ACooking* NewCooking = nullptr;
-	bool bOwnedPlate = false;
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* PlateMeshComponent = nullptr;
