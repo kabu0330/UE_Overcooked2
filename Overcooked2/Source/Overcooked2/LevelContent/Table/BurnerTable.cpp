@@ -7,7 +7,7 @@
 #include <Global/GameMode/OC2GameMode.h>
 #include <Global/OC2Enum.h>
 
-ABurnerTable::ABurnerTable()
+ABurnerTable::ABurnerTable()¤·¤©¸Á·¯¤¿;
 {
 	FlameMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>("Flame");
 	FlameMeshComponent->SetupAttachment(RootComponent);
@@ -21,7 +21,7 @@ void ABurnerTable::BeginPlay()
 	FlameMeshComponent->SetStaticMesh(Mesh);
 	FlameMeshComponent->SetHiddenInGame(true);
 
-	if (bSpawnWhenGameStarted)
+	if (bSpawnWhenGameStarted && HasAuthority())
 	{
 		RequestSpawnPot();
 	}
