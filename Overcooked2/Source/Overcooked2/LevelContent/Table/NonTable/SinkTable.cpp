@@ -23,19 +23,19 @@ ASinkTable::ASinkTable()
 	CleanPlateComponent->SetupAttachment(RootComponent);
 
 	{
-		ComponentForDishes1 = CreateDefaultSubobject<UStaticMeshComponent>("DirtyPlate1");
+		ComponentForDishes1 = CreateDefaultSubobject<USceneComponent>("DirtyPlate1");
 		ComponentForDishes1->SetupAttachment(ComponentForCooking);
 		DirtyPlateComponents.Add(ComponentForDishes1);
 
-		ComponentForDishes2 = CreateDefaultSubobject<UStaticMeshComponent>("DirtyPlate2");
+		ComponentForDishes2 = CreateDefaultSubobject<USceneComponent>("DirtyPlate2");
 		ComponentForDishes2->SetupAttachment(ComponentForCooking);
 		DirtyPlateComponents.Add(ComponentForDishes2);
 
-		ComponentForDishes3 = CreateDefaultSubobject<UStaticMeshComponent>("DirtyPlate3");
+		ComponentForDishes3 = CreateDefaultSubobject<USceneComponent>("DirtyPlate3");
 		ComponentForDishes3->SetupAttachment(ComponentForCooking);
 		DirtyPlateComponents.Add(ComponentForDishes3);
 
-		ComponentForDishes4 = CreateDefaultSubobject<UStaticMeshComponent>("DirtyPlate4");
+		ComponentForDishes4 = CreateDefaultSubobject<USceneComponent>("DirtyPlate4");
 		ComponentForDishes4->SetupAttachment(ComponentForCooking);
 		DirtyPlateComponents.Add(ComponentForDishes4);
 	}
@@ -54,7 +54,7 @@ void ASinkTable::BeginPlay()
 	InitProgressBar();
 
 	InitDirtyPlateMesh();
-	InitCleanPlateMesh();
+	//InitCleanPlateMesh();
 
 }
 
@@ -86,14 +86,14 @@ void ASinkTable::InitDirtyPlateMesh()
 		DirtyPlateComponents[i]->SetIsReplicated(true);
 	}
 
-	SetAllPlateHidden();
+	SetAllPlateVisibility();
 }
 
 void ASinkTable::InitCleanPlateMesh()
 {
 	CleanPlateMeshComponent->AttachToComponent(CleanPlateComponent, FAttachmentTransformRules::KeepRelativeTransform);
 	CleanPlateMeshComponent->SetRelativeLocation(FVector(0, 10, 60));
-	CleanPlateMeshComponent->SetRelativeScale3D(FVector(2, 2, 2));
+	//CleanPlateMeshComponent->SetRelativeScale3D(FVector(2, 2, 2));
 	SetCleanPlateMesh();
 }
 
@@ -129,9 +129,13 @@ void ASinkTable::PlaceItem(ACooking* ReceivedCooking)
 	PlacePlates(ReceivedCooking);
 }
 
-// 접시가 싱크대로 들어오는 로직
+// 접시가 싱크대로 들어오는 로직 (서버만 배열을 관리한다.)
 void ASinkTable::PlacePlates_Implementation(ACooking* ReceivedCooking)
 {
+	if (false == HasAuthority())
+	{
+		return;
+	}
 	if (nullptr == ReceivedCooking)
 	{
 		return;
@@ -148,19 +152,32 @@ void ASinkTable::PlacePlates_Implementation(ACooking* ReceivedCooking)
 		// 1. 더티 플레이트만 들어올 수 있다.
 		if (true == TempPlate->IsDirtyPlate())
 		{
-			// 싱크대는 접시의 포인터를 가지지 않는다. 접시가 들어오고 캐릭터가 가져간 개수만 기억한다.
-			//										N - 1개 + 1개 = N개
-			AddDirtyPlateNum(TempPlate->GetPlateStackCount() + 1);
-			TempPlate->HiddenPlateToWorld();
-			UOC2Global::MovePlate(GetWorld(), TempPlate); // Root Plate도 GameState로 보낸다.
-			// 싱크대는 접시의 포인터가 없다. 메시 컴포넌트를 통해서 눈속임만 한다.
+			// TempPlate->AttachToComponent(DirtyPlateComponents)
+
+			for (int32 i = 0; i < TempPlate->Plates.Num(); i++)
+			{
+				TempPlate->Plates[i]->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+				DirtyPlates.Add(TempPlate->Plates[i]);
+			}
+
+			TempPlate->Plates.Empty();
+
+			//DirtyPlateNum = DirtyPlates.Num();
+			//SetPlateVisibility(DirtyPlateNum);
 
 			//if (true == HasAuthority())
 			//{
-			//	SetPlateVisibility(DirtyPlateNum); // Render
+			//	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, FString::Printf(TEXT("Sever Add Sink Table : %d"), DirtyPlateNum));
+			//}
+			//if (false == HasAuthority())
+			//{
+			//	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::Printf(TEXT("Client Add Sink Table : %d"), DirtyPlateNum));
 			//}
 		}
 	}
+
+	// SetAttachToDirtyPlate();
+
 }
 
 void ASinkTable::DoTheDishes(AOC2Character* ChefActor)
@@ -252,11 +269,13 @@ void ASinkTable::WashingIsDone_Implementation()
 
 	bTimerActivated = false; // 타이머 끄고
 
-	if (0 >= DirtyPlateNum)
+	CleanPlates.Add(DirtyPlates.Pop());
+	/*if (0 >= DirtyPlateNum)
 	{
 		DirtyPlateNum = 0;
 		return;
-	}
+	}*/
+
 
 	//GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Turquoise, "Washing Done");
 
@@ -283,20 +302,20 @@ void ASinkTable::HideProgressBar_Implementation(bool Value)
 
 void ASinkTable::SetPlateVisibility/*_Implementation*/(int Index)
 {
-	SetAllPlateHidden();
-	for (size_t i = 0; i < Index; i++)
-	{
-		DirtyPlateComponents[i]->SetHiddenInGame(false);
-		DirtyPlateComponents[i]->SetVisibility(true);
-	}
+	//SetAllPlateHidden();
+	//for (size_t i = 0; i < Index; i++)
+	//{
+	//	DirtyPlateComponents[i]->SetHiddenInGame(false);
+	//	DirtyPlateComponents[i]->SetVisibility(true);
+	//}
 }
 
-void ASinkTable::SetAllPlateHidden()
+void ASinkTable::SetAllPlateVisibility()
 {
 	for (int32 i = 0; i < DirtyPlateComponents.Num(); i++)
 	{
-		DirtyPlateComponents[i]->SetVisibility(false);
-		DirtyPlateComponents[i]->SetHiddenInGame(true);
+		DirtyPlateComponents[i]->SetVisibility(true);
+		DirtyPlateComponents[i]->SetHiddenInGame(false);
 	}
 }
 
@@ -388,7 +407,24 @@ void ASinkTable::OnRep_SetCleanPlateMesh()
 
 void ASinkTable::OnRep_SetDirtyPlateMesh()
 {
+	if (true == HasAuthority())
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, FString::Printf(TEXT("Sever SetPlate : %d"), DirtyPlateNum));
+	}
+	if (false == HasAuthority())
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, FString::Printf(TEXT("Client SetPlate : %d"), DirtyPlateNum));
+	}
 	SetPlateVisibility(DirtyPlateNum);
+	SetAttachToDirtyPlate();
+}
+
+void ASinkTable::SetAttachToDirtyPlate()
+{
+	for (size_t i = 0; i < DirtyPlates.Num(); i++)
+	{
+		DirtyPlates[i]->AttachToComponent(DirtyPlateComponents[i], FAttachmentTransformRules::KeepRelativeTransform);
+	}
 }
 
 void ASinkTable::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

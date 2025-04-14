@@ -57,4 +57,6 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	UTexture* DirtyTexture = nullptr;
+
+	APlate* CookingPtrPlate = nullptr;
 };

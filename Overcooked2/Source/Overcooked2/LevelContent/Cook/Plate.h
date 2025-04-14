@@ -122,6 +122,13 @@ public:
 		PlateStackStatus = static_cast<EPlateStackStatus>((static_cast<int>(PlateStackStatus) + Value));
 	}
 
+	//int GetPlatesNum() const
+	//{
+	//	return Plates.Num();
+	//}
+
+	UPROPERTY()
+	TArray<APlate*> Plates;
 
 protected:
 	// Called when the game starts or when spawned
@@ -165,6 +172,7 @@ protected:
 	
 	UFUNCTION()
 	void OnRep_SetPlateMaterialTexture();
+
 
 private:
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
