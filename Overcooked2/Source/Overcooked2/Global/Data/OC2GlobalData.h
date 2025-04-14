@@ -138,9 +138,16 @@ public:
 	static USoundBase* GetBaseSound(UWorld* World, const FName& RowName);
 	
 public:
+	UFUNCTION(BlueprintCallable)
 	static USoundBase* GetCookingBaseSound(UWorld* World, const FName& RowName);
+
+	UFUNCTION(BlueprintCallable)
 	static USoundBase* GetTableBaseSound(UWorld* World, const FName& RowName);
+
+	UFUNCTION(BlueprintCallable)
 	static USoundBase* GetCharacterBaseSound(UWorld* World, const FName& RowName);
+
+	UFUNCTION(BlueprintCallable)
 	static USoundBase* GetUIBaseSound(UWorld* World, const FName& RowName);
 
 public:
