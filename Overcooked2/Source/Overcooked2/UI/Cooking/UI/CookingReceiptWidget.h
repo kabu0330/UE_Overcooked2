@@ -19,6 +19,12 @@ public:
 	void CheckStar();
 
 	UFUNCTION(BlueprintCallable, Category = "OC2UI")
+	int GetTotalStart()
+	{
+		return TotalStar;
+	}
+
+	UFUNCTION(BlueprintCallable, Category = "OC2UI")
 	void ShowScoreText();
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
@@ -53,6 +59,12 @@ private:
 	int CurTime = 0;
 	FTimerHandle ScoreTextTimerHandle;
 
+	int TotalStartScore = 0;
+	int TotalStar = 0;
+
+	int FistStartScore = 40;
+	int SecondStartScore = 120;
+	int ThirdStartScore = 160;
 
 	template <typename T>
 	T* FindChildWidget(const FString& name, UCanvasPanel* canvas);

@@ -47,6 +47,12 @@ private:
 	UFUNCTION()
 	void OnRep_SetPlateMesh();
 
+private:
+
+	//int PlateNum = 0;
+
+	//TMap<int, ACooking*> PlateMap;
+
 	void SetMaterialTextrue();
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))

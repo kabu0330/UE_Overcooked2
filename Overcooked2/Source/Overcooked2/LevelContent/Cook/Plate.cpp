@@ -51,11 +51,14 @@ void APlate::Multicast_SubmitPlate_Implementation()
 	PlateStackStatus = EPlateStackStatus::SINGLE;
 	ChangePlateMesh();
 
-	ACookingGameState* GameState = Cast<ACookingGameState>(UGameplayStatics::GetGameState(GetWorld()));
-
-	if (nullptr != GameState)
+	if (true == HasAuthority())
 	{
-		GameState->AddPlate(this);
+		ACookingGameState* GameState = Cast<ACookingGameState>(UGameplayStatics::GetGameState(GetWorld()));
+
+		if (nullptr != GameState)
+		{
+			GameState->AddPlate(this);
+		}
 	}
 
 	FTimerHandle TimerHandle;

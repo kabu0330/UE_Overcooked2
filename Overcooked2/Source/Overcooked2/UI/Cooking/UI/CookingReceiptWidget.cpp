@@ -5,6 +5,7 @@
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 #include "Components/CanvasPanel.h"
+#include "Global/OC2Global.h"
 
 void UCookingReceiptWidget::NativeConstruct()
 {
@@ -30,6 +31,26 @@ void UCookingReceiptWidget::NativeTick(const FGeometry& MyGeometry, float DeltaT
 void UCookingReceiptWidget::CheckStar()
 {
 
+    TotalStartScore = UOC2Global::GetTotalScore(GetWorld());
+
+    if (TotalStartScore < FistStartScore)
+    {
+        return;
+    }
+    else if (TotalStartScore >= FistStartScore && TotalStartScore < SecondStartScore)
+    {
+        TotalStar = 1;
+    }
+    else if (TotalStartScore >= SecondStartScore && TotalStartScore < ThirdStartScore)
+    {
+        TotalStar = 2;
+    }
+    else if (TotalStartScore >= ThirdStartScore)
+    {
+        TotalStar = 3;
+    }
+
+
     StarTimeline.SetLooping(false);
     StarTimeline.SetPlayRate(1.0f / 0.5f);
     StarTimeline.Stop();
@@ -40,9 +61,7 @@ void UCookingReceiptWidget::CheckStar()
 void UCookingReceiptWidget::ShowScoreText()
 {
     GetWorld()->GetTimerManager().ClearTimer(ScoreTextTimerHandle);
-
     GetWorld()->GetTimerManager().SetTimer(ScoreTextTimerHandle, this, &UCookingReceiptWidget::PlayScoreTextAnimation, 0.3f, true);
-
 }
 
 void UCookingReceiptWidget::PlayScoreTextAnimation()
@@ -58,6 +77,10 @@ void UCookingReceiptWidget::PlayScoreTextAnimation()
     else if (CurTime == 1)
     {
         UTextBlock* DeliveredScore = FindChildWidget<UTextBlock>("DeliveredScore", TxtCanvas);
+
+        FString Score = FString::FromInt(UOC2Global::GetOrderScore(GetWorld()));
+        
+        DeliveredScore->SetText(FText::FromString(Score));
         DeliveredScore->SetVisibility(ESlateVisibility::Visible);
     }
     else if (CurTime == 2)
@@ -68,6 +91,9 @@ void UCookingReceiptWidget::PlayScoreTextAnimation()
     else if (CurTime == 3)
     {
         UTextBlock* TipScore = FindChildWidget<UTextBlock>("TipScore", TxtCanvas);
+        FString Score = FString::FromInt(UOC2Global::GetFeverScore(GetWorld()));
+
+        TipScore->SetText(FText::FromString(Score));
         TipScore->SetVisibility(ESlateVisibility::Visible);
     }
     else if (CurTime == 4)
@@ -81,6 +107,9 @@ void UCookingReceiptWidget::PlayScoreTextAnimation()
     else if (CurTime == 5)
     {
         UTextBlock* FailedScore = FindChildWidget<UTextBlock>("FailedScore", TxtCanvas);
+        FString Score = FString::FromInt(UOC2Global::GetFailScore(GetWorld()));
+
+        FailedScore->SetText(FText::FromString(Score));
         FailedScore->SetVisibility(ESlateVisibility::Visible);
     }
     else if (CurTime == 6)
@@ -89,6 +118,9 @@ void UCookingReceiptWidget::PlayScoreTextAnimation()
         TotalTxt->SetVisibility(ESlateVisibility::Visible);
 
         UTextBlock* TotalScore = FindChildWidget<UTextBlock>("TotalScore", TxtCanvas);
+        FString Score = FString::FromInt(UOC2Global::GetTotalScore(GetWorld()));
+
+        TotalScore->SetText(FText::FromString(Score));
         TotalScore->SetVisibility(ESlateVisibility::Visible);
     }
     else
@@ -123,17 +155,16 @@ void UCookingReceiptWidget::ResetSize()
     CurImg->SetRenderScale(FVector2D(1.0f, 1.0f));
     CurIndex += 1;
 
-    int TestNum = 2;
-
-    if(CurIndex < TestNum)
+    if(CurIndex < TotalStar)
     {
         StarTimeline.Stop();
         StarTimeline.PlayFromStart();
     }
-    else if (CurIndex == TestNum)
+    else if (CurIndex == TotalStar)
     {
         CurIndex = 0;
     }
+
 }
 
 template <typename T>

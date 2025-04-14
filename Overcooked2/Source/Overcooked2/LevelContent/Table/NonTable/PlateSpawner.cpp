@@ -45,7 +45,9 @@ void APlateSpawner::SetPlate(class APlate* Plate)
 	int PlateCount = Plate->GetPlateStackCount() + 1;
 	AddPlate(PlateCount);
 
-	MoveToServer(Plate);
+	//MoveToServer(Plate);
+
+	//SetPlateMesh();
 	
 	CookingPtr = nullptr;
 }
@@ -157,7 +159,18 @@ void APlateSpawner::AddPlate_Implementation(int Number)
 			PlateNum = 4;
 		}
 		SetPlateMesh();
-		SetMaterialTextrue();
+
+		for (int i = 0; i < PlateMeshComponent->GetNumMaterials(); i++)
+		{
+			UMaterialInstanceDynamic* MaterialInstanceDynamic = Cast<UMaterialInstanceDynamic>(PlateMeshComponent->GetMaterial(i));
+			if (nullptr != MaterialInstanceDynamic)
+			{
+				MaterialInstanceDynamic->SetTextureParameterValue(FName(TEXT("DiffuseColorMap")), DirtyTexture);
+				MaterialInstanceDynamic->SetScalarParameterValue(FName("DiffuseAdd"), 1.0f);
+				PlateMeshComponent->SetMaterial(i, MaterialInstanceDynamic);
+				return;
+			}
+		}
 	}
 }
 
@@ -194,5 +207,22 @@ void APlateSpawner::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(APlateSpawner, PlateMeshComponent);
 	DOREPLIFETIME(APlateSpawner, PlateNum);
+}
+
+void APlateSpawner::OnRep_SetPlateMesh()
+{
+	SetPlateMesh();
+
+	for (int i = 0; i < PlateMeshComponent->GetNumMaterials(); i++)
+	{
+		UMaterialInstanceDynamic* MaterialInstanceDynamic = Cast<UMaterialInstanceDynamic>(PlateMeshComponent->GetMaterial(i));
+		if (nullptr != MaterialInstanceDynamic)
+		{
+			MaterialInstanceDynamic->SetTextureParameterValue(FName(TEXT("DiffuseColorMap")), DirtyTexture);
+			MaterialInstanceDynamic->SetScalarParameterValue(FName("DiffuseAdd"), 1.0f);
+			PlateMeshComponent->SetMaterial(i, MaterialInstanceDynamic);
+			return;
+		}
+	}
 }
 

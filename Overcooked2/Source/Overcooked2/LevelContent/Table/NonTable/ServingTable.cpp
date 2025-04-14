@@ -56,7 +56,7 @@ void AServingTable::PlaceItem(ACooking* ReceivedCooking)
 
 	UOC2Global::SubmitPlate(GetWorld(), ReceivedCooking);
 
-	Server_SpawnPlateInPlateSpawner_Implementation();
+	Server_SpawnPlateInPlateSpawner();
 
 	CookingPtr = nullptr;
 }
@@ -73,4 +73,5 @@ void AServingTable::Server_SpawnPlateInPlateSpawner_Implementation()
 	//PlateSpawner->PlaceItem(Plate);
 	//PlateSpawner->SetPlate(Plate);
 	Plate->Multicast_SubmitPlate();
+	//PlateSpawner->AddPlate(int Num1);
 }
