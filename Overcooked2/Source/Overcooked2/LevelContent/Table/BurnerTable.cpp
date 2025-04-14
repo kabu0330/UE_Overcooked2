@@ -102,11 +102,6 @@ void ABurnerTable::PlaceItem(ACooking* Item)
 	}
 }
 
-void ABurnerTable::BoilThePot()
-{
-
-}
-
 void ABurnerTable::RequestSpawnPot_Implementation()
 {
 	auto GameMode = Cast<AOC2GameMode>(GetWorld()->GetAuthGameMode());
