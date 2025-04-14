@@ -51,6 +51,7 @@ public:
 	int GetFeverScore();
 	int GetFailScore();
 	int GetTotalScore();
+	int GetPlateArrayNum();
 
 public:
 	UFUNCTION(NetMulticast, Reliable)
