@@ -49,8 +49,7 @@ void APlate::Multicast_SubmitPlate_Implementation()
 	CleanPlate();
 	SetPlateState(EPlateState::DIRTY);
 	PlateStackStatus = EPlateStackStatus::SINGLE;
-	ChangePlateMesh();
-
+	
 	if (true == HasAuthority())
 	{
 		ACookingGameState* GameState = Cast<ACookingGameState>(UGameplayStatics::GetGameState(GetWorld()));
@@ -59,6 +58,8 @@ void APlate::Multicast_SubmitPlate_Implementation()
 		{
 			GameState->AddPlate(this);
 		}
+		ChangePlateMesh();
+		SetMaterialTexture();
 	}
 
 	FTimerHandle TimerHandle;
@@ -355,14 +356,6 @@ void APlate::StackPlate(APlate* Plate)
 		}
 	}
 
-	if (true == HasAuthority())
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("Server : %S(%u)> %d"), __FUNCTION__, __LINE__, GetPlateStackCount() + 1));
-	}
-	if (false == HasAuthority())
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("Client : %S(%u)> %d"), __FUNCTION__, __LINE__, GetPlateStackCount() + 1));
-	}
 }
 
 void APlate::ChangePlateMesh()
@@ -396,7 +389,7 @@ void APlate::ChangePlateMesh()
 	}
 }
 
-void APlate::ChangePlateMeshAndStatus_Implementation(EPlateStackStatus Status, FName Name)
+void APlate::ChangePlateMeshAndStatus/*_Implementation*/(EPlateStackStatus Status, FName Name)
 {
 	PlateStackStatus = Status;
 	
@@ -431,6 +424,16 @@ UPlateIconWidget* APlate::GetOrRebuildIconWidget()
 	return IconWidget;
 }
 
+void APlate::OnRep_SetPlateMesh()
+{
+	ChangePlateMesh();
+}
+
+void APlate::OnRep_SetPlateMaterialTexture()
+{
+	SetMaterialTexture();
+}
+
 void APlate::ForwardCookingTable(ACookingTable* Table)
 {
 	CookingTable = Table;
@@ -442,11 +445,16 @@ void APlate::Multicast_MovePlate_Implementation()
 	CleanPlate();
 	SetPlateState(EPlateState::EMPTY);
 
-	ACookingGameState* GameState = Cast<ACookingGameState>(UGameplayStatics::GetGameState(GetWorld()));
-
-	if (nullptr != GameState)
+	if (true == HasAuthority())
 	{
-		GameState->AddPlate(this);
+		ACookingGameState* GameState = Cast<ACookingGameState>(UGameplayStatics::GetGameState(GetWorld()));
+
+		if (nullptr != GameState)
+		{
+			GameState->AddPlate(this);
+		}
+
+		SetMaterialTexture();
 	}
 }
 
@@ -465,14 +473,17 @@ void APlate::Multicast_SpawnWashPlate_Implementation()
 	CleanPlate();
 	SetPlateState(EPlateState::EMPTY);
 	PlateStackStatus = EPlateStackStatus::SINGLE;
-	SetMaterialTexture();
-	ChangePlateMesh();
 
-	ACookingGameState* GameState = Cast<ACookingGameState>(UGameplayStatics::GetGameState(GetWorld()));
-
-	if (nullptr != GameState)
+	if (true == HasAuthority())
 	{
-		GameState->AddPlate(this);
+		ACookingGameState* GameState = Cast<ACookingGameState>(UGameplayStatics::GetGameState(GetWorld()));
+
+		if (nullptr != GameState)
+		{
+			GameState->AddPlate(this);
+		}
+		SetMaterialTexture();
+		ChangePlateMesh();
 	}
 
 	FTimerHandle TimerHandle;
