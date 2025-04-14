@@ -28,10 +28,6 @@ private:
 
 	virtual void Tick(float DeltaTime) override;
 
-	UFUNCTION(Reliable, NetMulticast)
-	void MoveToServer(APlate* Plate);
-	void MoveToServer_Implementation(APlate* Plate);
-
 	void SetPlateMesh();
 
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
@@ -48,10 +44,6 @@ private:
 	void OnRep_SetPlateMesh();
 
 private:
-
-	//int PlateNum = 0;
-
-	//TMap<int, ACooking*> PlateMap;
 
 	void SetMaterialTextrue();
 

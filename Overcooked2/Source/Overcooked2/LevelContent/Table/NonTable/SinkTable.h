@@ -45,9 +45,9 @@ public:
 	void HideProgressBar(bool Value);
 	void HideProgressBar_Implementation(bool Value);
 
-	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	//UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
 	void SetPlateVisibility(int Index);
-	void SetPlateVisibility_Implementation(int Index);
+	//void SetPlateVisibility_Implementation(int Index);
 
 	void SetAllPlateHidden();
 
@@ -61,9 +61,9 @@ public:
 	void AddCleanPlateNum(int Value);
 	void AddCleanPlateNum_Implementation(int Value);
 
-	UFUNCTION(Reliable, NetMulticast)
+	//UFUNCTION(Reliable, NetMulticast)
 	void SetCleanPlateMesh();
-	void SetCleanPlateMesh_Implementation();
+	//void SetCleanPlateMesh_Implementation();
 
 	void InitDirtyPlateMesh();
 	void InitCleanPlateMesh();
@@ -79,6 +79,13 @@ public:
 	class AOC2Character* ChefPtr = nullptr;
 
 protected:
+	UFUNCTION()
+	void OnRep_SetCleanPlateMesh();
+	
+	UFUNCTION()
+	void OnRep_SetDirtyPlateMesh();
+
+
 	UPROPERTY(Replicated)
 	float Timer = 0.0f;
 
@@ -91,10 +98,10 @@ protected:
 	UPROPERTY(Replicated)
 	float Ratio = 0.0f;
 
-	UPROPERTY()
+	UPROPERTY(ReplicatedUsing = OnRep_SetDirtyPlateMesh)
 	int DirtyPlateNum = 0;
 
-	UPROPERTY()
+	UPROPERTY(ReplicatedUsing = OnRep_SetCleanPlateMesh)
 	int CleanPlateNum = 0;
 
 	UPROPERTY(Replicated)

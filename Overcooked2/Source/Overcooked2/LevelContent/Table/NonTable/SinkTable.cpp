@@ -113,7 +113,7 @@ ACooking* ASinkTable::Interact(AActor* ChefActor)
 		{
 			NewPlate->RestorePlateToWorld();
 			NewPlate->CleanPlate();
-			SetCleanPlateMesh();
+			//SetCleanPlateMesh();
 			return NewPlate;
 		}
 	}
@@ -155,10 +155,10 @@ void ASinkTable::PlacePlates_Implementation(ACooking* ReceivedCooking)
 			UOC2Global::MovePlate(GetWorld(), TempPlate); // Root Plate도 GameState로 보낸다.
 			// 싱크대는 접시의 포인터가 없다. 메시 컴포넌트를 통해서 눈속임만 한다.
 
-			if (true == HasAuthority())
-			{
-				SetPlateVisibility(DirtyPlateNum); // Render
-			}
+			//if (true == HasAuthority())
+			//{
+			//	SetPlateVisibility(DirtyPlateNum); // Render
+			//}
 		}
 	}
 }
@@ -174,7 +174,7 @@ void ASinkTable::DoTheDishes(AOC2Character* ChefActor)
 
 		Timer = 0.0f;
 		bTimerActivated = true;
-		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Magenta, "Washing...");
+		//GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Magenta, "Washing...");
 
 		HideProgressBar(false);
 		//KeepWashing = true;
@@ -258,7 +258,7 @@ void ASinkTable::WashingIsDone_Implementation()
 		return;
 	}
 
-	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Turquoise, "Washing Done");
+	//GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Turquoise, "Washing Done");
 
 	HideProgressBar(true);
 	
@@ -270,10 +270,10 @@ void ASinkTable::WashingIsDone_Implementation()
 	}
 
 	// 싱크대 안에 있는 Dirty Plate 개수 렌더링
-	SetPlateVisibility(DirtyPlateNum); 
+	//SetPlateVisibility(DirtyPlateNum); 
 
 	// 싱크대 위에 있는 Clean Plate 개수 렌더링
-	SetCleanPlateMesh();
+	//SetCleanPlateMesh();
 }
 
 void ASinkTable::HideProgressBar_Implementation(bool Value)
@@ -281,7 +281,7 @@ void ASinkTable::HideProgressBar_Implementation(bool Value)
 	ProgressBarComponent->SetHiddenInGame(Value);
 }
 
-void ASinkTable::SetPlateVisibility_Implementation(int Index)
+void ASinkTable::SetPlateVisibility/*_Implementation*/(int Index)
 {
 	SetAllPlateHidden();
 	for (size_t i = 0; i < Index; i++)
@@ -302,32 +302,40 @@ void ASinkTable::SetAllPlateHidden()
 
 void ASinkTable::AddDirtyPlateNum_Implementation(int Value)
 {
-	DirtyPlateNum += Value;
-	if (4 < DirtyPlateNum)
+	if (true == HasAuthority())
 	{
-		DirtyPlateNum = 4;
-	}
-	else if (0 > DirtyPlateNum)
-	{
-		DirtyPlateNum = 0;
+		DirtyPlateNum += Value;
+		if (4 < DirtyPlateNum)
+		{
+			DirtyPlateNum = 4;
+		}
+		else if (0 > DirtyPlateNum)
+		{
+			DirtyPlateNum = 0;
+		}
+		SetPlateVisibility(DirtyPlateNum);
 	}
 }
 
 void ASinkTable::AddCleanPlateNum_Implementation(int Value)
 {
-	CleanPlateNum += Value;
+	if (true == HasAuthority())
+	{
+		CleanPlateNum += Value;
 
-	if (4 < CleanPlateNum)
-	{
-		CleanPlateNum = 4;
-	}
-	else if (0 > CleanPlateNum)
-	{
-		CleanPlateNum = 0;
+		if (4 < CleanPlateNum)
+		{
+			CleanPlateNum = 4;
+		}
+		else if (0 > CleanPlateNum)
+		{
+			CleanPlateNum = 0;
+		}
+		SetCleanPlateMesh();
 	}
 }
 
-void ASinkTable::SetCleanPlateMesh_Implementation()
+void ASinkTable::SetCleanPlateMesh/*_Implementation*/()
 {
 	switch (CleanPlateNum)
 	{
@@ -373,6 +381,16 @@ void ASinkTable::SetCleanPlateMesh_Implementation()
 	}
 }
 
+void ASinkTable::OnRep_SetCleanPlateMesh()
+{
+	SetCleanPlateMesh();
+}
+
+void ASinkTable::OnRep_SetDirtyPlateMesh()
+{
+	SetPlateVisibility(DirtyPlateNum);
+}
+
 void ASinkTable::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
@@ -388,6 +406,8 @@ void ASinkTable::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifeti
 	DOREPLIFETIME(ASinkTable, ComponentForDishes4);
 	DOREPLIFETIME(ASinkTable, DirtyPlateComponents);
 	DOREPLIFETIME(ASinkTable, CleanPlateMeshComponent);
+	DOREPLIFETIME(ASinkTable, DirtyPlateNum);
+	DOREPLIFETIME(ASinkTable, CleanPlateNum);
 	//DOREPLIFETIME(ASinkTable, bIsFirstPlateWashed);
 	//DOREPLIFETIME(ASinkTable, bCallGetMoveFunction);
 

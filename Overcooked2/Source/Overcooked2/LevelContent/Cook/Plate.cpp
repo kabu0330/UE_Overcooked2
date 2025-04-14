@@ -355,14 +355,6 @@ void APlate::StackPlate(APlate* Plate)
 		}
 	}
 
-	if (true == HasAuthority())
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("Server : %S(%u)> %d"), __FUNCTION__, __LINE__, GetPlateStackCount() + 1));
-	}
-	if (false == HasAuthority())
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("Client : %S(%u)> %d"), __FUNCTION__, __LINE__, GetPlateStackCount() + 1));
-	}
 }
 
 void APlate::ChangePlateMesh()
@@ -468,11 +460,14 @@ void APlate::Multicast_SpawnWashPlate_Implementation()
 	SetMaterialTexture();
 	ChangePlateMesh();
 
-	ACookingGameState* GameState = Cast<ACookingGameState>(UGameplayStatics::GetGameState(GetWorld()));
-
-	if (nullptr != GameState)
+	if (true == HasAuthority())
 	{
-		GameState->AddPlate(this);
+		ACookingGameState* GameState = Cast<ACookingGameState>(UGameplayStatics::GetGameState(GetWorld()));
+
+		if (nullptr != GameState)
+		{
+			GameState->AddPlate(this);
+		}
 	}
 
 	FTimerHandle TimerHandle;
