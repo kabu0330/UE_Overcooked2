@@ -184,6 +184,16 @@ int ACookingGameState::GetTotalScore()
 	return TotalScore;
 }
 
+int ACookingGameState::GetPlateArrayNum()
+{
+	if (true == HasAuthority())
+	{
+		return PlateArray.Num();
+	}
+
+	return -1;
+}
+
 void ACookingGameState::WaitingPostMatch(float DeltaTime)
 {
 }
