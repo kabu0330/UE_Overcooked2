@@ -136,6 +136,12 @@ public:
 	static UTexture2D* GetChefTexture(UWorld* World);
 	static UTexture2D* GetChefTextureByIndex(UWorld* World, int Index);
 	static USoundBase* GetBaseSound(UWorld* World, const FName& RowName);
+	
+public:
+	static USoundBase* GetCookingBaseSound(UWorld* World, const FName& RowName);
+	static USoundBase* GetTableBaseSound(UWorld* World, const FName& RowName);
+	static USoundBase* GetCharacterBaseSound(UWorld* World, const FName& RowName);
+	static USoundBase* GetUIBaseSound(UWorld* World, const FName& RowName);
 
 public:
 	static FOrder GetOrderByIngredients(UWorld* World, ACooking* Cooking);
