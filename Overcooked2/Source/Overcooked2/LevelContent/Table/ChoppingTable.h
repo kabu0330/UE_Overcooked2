@@ -67,8 +67,8 @@ public:
 
 	void CheckChefIsChopping();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking")
-	USceneComponent* ComponentForProgressBar = nullptr;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking")
+	//USceneComponent* ComponentForProgressBar = nullptr;
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Cooking")
 	class UStaticMeshComponent* KnifeMeshComponent = nullptr;
