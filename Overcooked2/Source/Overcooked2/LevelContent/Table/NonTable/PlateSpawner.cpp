@@ -22,7 +22,7 @@ void APlateSpawner::BeginPlay()
 {
 	Super::BeginPlay();
 
-	PlateMeshComponent->SetRelativeScale3D(FVector(2, 2, 2));
+	//PlateMeshComponent->SetRelativeScale3D(FVector(2, 2, 2));
 }
 
 void APlateSpawner::Tick(float DeltaTime)
@@ -32,43 +32,56 @@ void APlateSpawner::Tick(float DeltaTime)
 
 void APlateSpawner::SetPlate(class APlate* Plate)
 {
-	CookingPtr = Cast<APlate>(Plate);
-	CookingPtr->SetCookingTable_Implementation(this);
-
-	if (nullptr == Plate)
+	if (nullptr != CookingPtrPlate)
 	{
-		return;
+		CookingPtrPlate->StackPlate(Plate);
 	}
+	else
+	{
+		CookingPtrPlate = Plate;
+		CookingPtrPlate->AttachToComponent(ComponentForCooking, FAttachmentTransformRules::KeepRelativeTransform);
+		Plate->SetActorRelativeLocation(FVector::ZeroVector);
+	}
+	//CookingPtr = Cast<APlate>(Plate);
+	//CookingPtr->SetCookingTable_Implementation(this);
 
-	// 스포너는 Plate를 렌더링만 할 뿐, 가지고 있지 않는다. 
-	// Stack 개수만 파악하고 서버로 보낸다.
-	int PlateCount = Plate->GetPlateStackCount() + 1;
-	AddPlate(PlateCount); // 서버에서만 Add하고 클라는 메시만 바꾼다.
-	
-	CookingPtr = nullptr;
+	//if (nullptr == Plate)
+	//{
+	//	return;
+	//}
+
+	//// 스포너는 Plate를 렌더링만 할 뿐, 가지고 있지 않는다. 
+	//// Stack 개수만 파악하고 서버로 보낸다.
+	//int PlateCount = Plate->GetPlateStackCount() + 1;
+	//AddPlate(PlateCount); // 서버에서만 Add하고 클라는 메시만 바꾼다.
+	//
+	//CookingPtr = nullptr;
 }
 
 ACooking* APlateSpawner::Interact(AActor* ChefActor)
 {
-	if (0 >= PlateNum)
-	{
-		return nullptr;
-	}
-	else
-	{
-		APlate* NewPlate = UOC2Global::GetPlate(GetWorld());
-		if (nullptr != NewPlate)
-		{
-			NewPlate->RestorePlateToWorld(); // 월드에 렌더, 충돌 켜고
-			NewPlate->SetPlateState(EPlateState::DIRTY); // 머티리얼 텍스처 바꾸고
-			NewPlate->SetPlateStackCount(PlateNum - 1); // 메시 바꾸고
+	CookingPtr = Cast<ACooking>(CookingPtrPlate);
+	CookingPtrPlate = nullptr;
+	return CookingPtr;
+	//if (0 >= PlateNum)
+	//{
+	//	return nullptr;
+	//}
+	//else
+	//{
+	//	APlate* NewPlate = UOC2Global::GetPlate(GetWorld());
+	//	if (nullptr != NewPlate)
+	//	{
+	//		NewPlate->RestorePlateToWorld(); // 월드에 렌더, 충돌 켜고
+	//		NewPlate->SetPlateState(EPlateState::DIRTY); // 머티리얼 텍스처 바꾸고
+	//		NewPlate->SetPlateStackCount(PlateNum - 1); // 메시 바꾸고
 
-			InitPlateNum(); // Plate 0개 초기화
-			return NewPlate;
-		}
-	}
+	//		InitPlateNum(); // Plate 0개 초기화
+	//		return NewPlate;
+	//	}
+	//}
 
-	return nullptr;
+	//return nullptr;
 }
 
 void APlateSpawner::PlaceItem(ACooking* ReceivedCooking)
