@@ -6,6 +6,8 @@
 #include "LevelContent/Table/CookingTable.h"
 #include "ServingTable.generated.h"
 
+class APlateSpawner;
+
 /**
  * 
  */
@@ -22,6 +24,9 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void PlaceItem(ACooking* ReceivedCooking) override;
+
+	UFUNCTION(Server, Reliable)
+	void Server_SpawnPlateInPlateSpawner();
 
 	ACooking* GetCookingPtr()
 	{
@@ -44,4 +49,7 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CookingCheck", meta = (AllowPrivateAccess = "true"))
 	bool bCookingWrong = false;
+
+	UPROPERTY()
+	APlateSpawner* PlateSpawner = nullptr;
 };
