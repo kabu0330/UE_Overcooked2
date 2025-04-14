@@ -153,12 +153,18 @@ protected:
 	void ChangePlateMesh();
 	//void ChangePlateMesh_Implementation();
 
-	UFUNCTION(Reliable, NetMulticast)
+	//UFUNCTION(Reliable, NetMulticast)
 	void ChangePlateMeshAndStatus(EPlateStackStatus Status, FName Name);
-	void ChangePlateMeshAndStatus_Implementation(EPlateStackStatus Status, FName Name);
+	//void ChangePlateMeshAndStatus_Implementation(EPlateStackStatus Status, FName Name);
 
 	
 	class UPlateIconWidget* GetOrRebuildIconWidget();
+
+	UFUNCTION()
+	void OnRep_SetPlateMesh();
+	
+	UFUNCTION()
+	void OnRep_SetPlateMaterialTexture();
 
 private:
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
@@ -168,7 +174,7 @@ private:
 	UStaticMeshComponent* IngredientMesh = nullptr; // 재료
 
 	// 접시 상태
-	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(ReplicatedUsing = OnRep_SetPlateMaterialTexture, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	EPlateState PlateState = EPlateState::EMPTY;
 
 
@@ -197,7 +203,7 @@ private:
 	class ACookingTable* CookingTable = nullptr;
 
 	// 접시가 쌓인 상태
-	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(ReplicatedUsing = OnRep_SetPlateMesh, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	EPlateStackStatus PlateStackStatus = EPlateStackStatus::SINGLE;
 
 	UPROPERTY()
