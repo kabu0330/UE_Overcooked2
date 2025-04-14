@@ -27,7 +27,9 @@ public:
 
 	virtual void PlaceItem(ACooking* ReceivedCooking) override;
 
+	//UFUNCTION(Reliable, Server)
 	void UpdateProgressBar(float DeltaTime);
+	//void UpdateProgressBar_Implementation(float DeltaTime);
 
 	UFUNCTION(BlueprintCallable, Server, Reliable)
 	void PlacePlates(ACooking* ReceivedCooking);
@@ -35,15 +37,25 @@ public:
 
 	void DoTheDishes(class AOC2Character* ChefActor);
 
-	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	UFUNCTION(Server, Reliable)
 	void WashingIsDone();
 	void WashingIsDone_Implementation();
 	
+	UFUNCTION(Server, Reliable)
 	void CheckChefIsWashing();
+	void CheckChefIsWashing_Implementation();
+
+	UFUNCTION(Server, Reliable)
+	void FinishWashing();
+	void FinishWashing_Implementation();
 
 	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
 	void HideProgressBar(bool Value);
 	void HideProgressBar_Implementation(bool Value);
+
+	UFUNCTION(Server, Reliable)
+	void RepeatWashing();
+	void RepeatWashing_Implementation();
 
 	//UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
 	void SetPlateVisibility(int Index);
@@ -53,11 +65,11 @@ public:
 
 	void InitProgressBar();
 	
-	UFUNCTION(Reliable, NetMulticast)
+	UFUNCTION(Reliable, Server)
 	void AddDirtyPlateNum(int Value);
 	void AddDirtyPlateNum_Implementation(int Value);
 
-	UFUNCTION(Reliable, NetMulticast)
+	UFUNCTION(Reliable, Server)
 	void AddCleanPlateNum(int Value);
 	void AddCleanPlateNum_Implementation(int Value);
 
