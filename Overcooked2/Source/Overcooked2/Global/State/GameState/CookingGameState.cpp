@@ -67,6 +67,7 @@ void ACookingGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 	DOREPLIFETIME(ACookingGameState, OrderScore);
 	DOREPLIFETIME(ACookingGameState, FeverScore);
 	DOREPLIFETIME(ACookingGameState, FailScore);
+	DOREPLIFETIME(ACookingGameState, TotalScore);
 }
 
 void ACookingGameState::ChangeState(ECookingStageState ChangeState)
@@ -364,8 +365,8 @@ void ACookingGameState::Server_SubmitPlate_Implementation(ACooking* Cooking)
 			Multicast_BlinkOrderUI();
 		}
 
-		//Plate->Multicast_SubmitPlate();
-		Plate->Destroy();
+		Plate->Multicast_SubmitPlate();
+		//Plate->Destroy();
 	}
 }
 

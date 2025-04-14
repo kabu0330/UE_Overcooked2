@@ -29,7 +29,7 @@ public:
 
 	void UpdateProgressBar(float DeltaTime);
 
-	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+	UFUNCTION(BlueprintCallable, Server, Reliable)
 	void PlacePlates(ACooking* ReceivedCooking);
 	void PlacePlates_Implementation(ACooking* ReceivedCooking);
 
@@ -49,7 +49,7 @@ public:
 	void SetPlateVisibility(int Index);
 	//void SetPlateVisibility_Implementation(int Index);
 
-	void SetAllPlateHidden();
+	void SetAllPlateVisibility();
 
 	void InitProgressBar();
 	
@@ -85,6 +85,8 @@ protected:
 	UFUNCTION()
 	void OnRep_SetDirtyPlateMesh();
 
+	void SetAttachToDirtyPlate();
+
 
 	UPROPERTY(Replicated)
 	float Timer = 0.0f;
@@ -108,23 +110,26 @@ protected:
 	class UWidgetComponent* ProgressBarComponent = nullptr;
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Table", meta = (AllowprivateAccess = "true"))
-	UStaticMeshComponent* ComponentForDishes1 = nullptr;
+	USceneComponent* ComponentForDishes1 = nullptr;
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Table", meta = (AllowprivateAccess = "true"))
-	UStaticMeshComponent* ComponentForDishes2 = nullptr;
+	USceneComponent* ComponentForDishes2 = nullptr;
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Table", meta = (AllowprivateAccess = "true"))
-	UStaticMeshComponent* ComponentForDishes3 = nullptr;
+	USceneComponent* ComponentForDishes3 = nullptr;
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Table", meta = (AllowprivateAccess = "true"))
-	UStaticMeshComponent* ComponentForDishes4 = nullptr;
+	USceneComponent* ComponentForDishes4 = nullptr;
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Table", meta = (AllowPrivateAccess = "true"))
-	TArray<UStaticMeshComponent*> DirtyPlateComponents;
+	TArray<USceneComponent*> DirtyPlateComponents;
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Table", meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* CleanPlateMeshComponent = nullptr;
 																	  
+	TArray<APlate*> DirtyPlates;
+	TArray<APlate*> CleanPlates;
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Table", meta = (AllowprivateAccess = "true"))
 	TSubclassOf<UUserWidget> TSubClassWidget = nullptr;

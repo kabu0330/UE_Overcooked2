@@ -141,6 +141,11 @@ void AChoppingTable::HideProgressBar_Implementation(bool Value)
 
 void AChoppingTable::ChoppingIsDone_Implementation()
 {
+	if (false == bChoppingDone)
+	{
+		return;
+	}
+
 	bTimerActivated = false;
 
 	AIngredient* PlacedIngredient = Cast<AIngredient>(CookingPtr);

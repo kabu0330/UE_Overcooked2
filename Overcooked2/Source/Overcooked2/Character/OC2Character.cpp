@@ -11,6 +11,7 @@
 #include "LevelContent/Table/NonTable/GarbageCan.h"
 #include "LevelContent/Table/NonTable/SinkTable.h"
 #include "LevelContent/Table/NonTable/ServingTable.h"
+#include "LevelContent/Table/NonTable/PlateSpawner.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "UI/Cooking/CaptureComponent2D.h"
 #include "Net/UnrealNetwork.h"
@@ -350,7 +351,6 @@ void AOC2Character::Interact_Implementation()
 					Grab(Cook);
 				}
 			}
-
 		}
 		else
 		{
@@ -365,6 +365,7 @@ void AOC2Character::Interact_Implementation()
 			// 잡은 물건이 있는데 테이블이 비어있으면
 			else if (GrabbedObject != nullptr && Cook == nullptr)
 			{
+				if (Table->IsA<APlateSpawner>() == true) return;
 				if (Table->IsA<ABurnerTable>() == true)
 				{
 					if (GrabbedObject->IsA<APot>() == true)
@@ -608,7 +609,7 @@ void AOC2Character::CheckInteract()
 		{
 			if (ClosestActor != SelectedOC2Actor)
 			{
-				SelectedOC2Actor->SetHighlight(false);
+				SelectedOC2Actor->RestoreMaterial();
 			}
 			//UMaterialInstanceDynamic* DynamicMat = Mesh->CreateDynamicMaterialInstance(0);
 			//if (DynamicMat)
@@ -626,7 +627,7 @@ void AOC2Character::CheckInteract()
 		SelectedOC2Actor = ClosestActor;
 		if (!SelectedOC2Actor->IsHighlighted())
 		{
-			SelectedOC2Actor->SetHighlight(true);
+			SelectedOC2Actor->ApplyMaterialHighlight();
 		}
 		//SelectedOC2Actor->Highlight();
 	}
@@ -635,7 +636,7 @@ void AOC2Character::CheckInteract()
 		if (SelectedOC2Actor != nullptr)
 		{
 			//Cast<AOC2CharacterTestTable>(SelectedOC2Actor)->OffHighlight();
-			SelectedOC2Actor->SetHighlight(false);
+			SelectedOC2Actor->RestoreMaterial();
 		}
 		SelectedOC2Actor = nullptr;
 	}

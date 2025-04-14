@@ -45,7 +45,7 @@ void APlate::PostInitializeComponents()
 
 void APlate::Multicast_SubmitPlate_Implementation()
 {
-	SetActorLocation(UOC2Const::PlateSubmitLocation);
+	//SetActorLocation(UOC2Const::PlateSubmitLocation);
 	CleanPlate();
 	SetPlateState(EPlateState::DIRTY);
 	PlateStackStatus = EPlateStackStatus::SINGLE;
@@ -92,6 +92,12 @@ void APlate::BeginPlay()
 
 	FindPlateSpawner();
 	FindSinkTable();
+
+	if (true == HasAuthority())
+	{
+		Plates.Add(this);
+	}
+
 }
 
 void APlate::InitWidgetComponent()
@@ -340,6 +346,11 @@ void APlate::SetIngredinetTextures(FPlateInitData Data)
 void APlate::StackPlate(APlate* Plate)
 {
 	bIsCombinationSuccessful = false;
+	
+	if (false == HasAuthority())
+	{
+		return;
+	}
 
 	if (PlateState == EPlateState::EMPTY || PlateState == EPlateState::DIRTY)
 	{
@@ -347,12 +358,11 @@ void APlate::StackPlate(APlate* Plate)
 		{
 			bIsCombinationSuccessful = true;
 			// 1. 쌓인 접시와 나 자신(1)을 더한다.
-			int PlateCount = Plate->GetPlateStackCount();
-			AddPlateStackCount(PlateCount + 1);
+			Plates.Add(Plate);
 
-			// 2. 스테이지에서 Plate를 제외시킨다.
-			UOC2Global::MovePlate(GetWorld(), Plate);
-			ChangePlateMesh();
+			Plate->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
+			FVector Pos = Plates.Num() * FVector(0, 0, 10);
+			Plate->SetActorRelativeLocation(Pos);
 		}
 	}
 
@@ -540,4 +550,6 @@ void APlate::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimePr
 	//DOREPLIFETIME(APlate, AnotherPlates);
 	DOREPLIFETIME(APlate, PlateStackStatus);
 	DOREPLIFETIME(APlate, CookingTable);
+	//DOREPLIFETIME(APlate, PlatesNum);
+	//DOREPLIFETIME(APlate, StackPlate);
 }

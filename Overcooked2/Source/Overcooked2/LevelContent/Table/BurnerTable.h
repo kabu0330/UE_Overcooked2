@@ -27,9 +27,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual void PlaceItem(ACooking* Item) override;
 
-	UFUNCTION(BlueprintCallable)
-	void BoilThePot();
-
 	UFUNCTION(Server, Reliable)
 	void RequestSpawnPot();
 	void RequestSpawnPot_Implementation();
