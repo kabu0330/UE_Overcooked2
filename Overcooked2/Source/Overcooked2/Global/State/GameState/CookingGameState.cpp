@@ -113,15 +113,47 @@ void ACookingGameState::EntryWaitingPostMatch()
 
 void ACookingGameState::AddPlate(APlate* Plate)
 {
+	if (false == HasAuthority())
+	{
+		return;
+	}
+	if (true == PlateArray.Contains(Plate))
+	{
+		return;
+	}
 	PlateArray.Add(Plate);
+
+	if (true == HasAuthority())
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, FString::Printf(TEXT("Server AddPlate : %d"), PlateArray.Num()));
+	}
+	if (false == HasAuthority())
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::Printf(TEXT("Client AddPlate : %d"), PlateArray.Num()));
+	}
+
 }
 
 APlate* ACookingGameState::GetPlate(int Index)
 {
+	if (false == HasAuthority())
+	{
+		return nullptr;
+	}
+
 	if (PlateArray.Num() > 0)
 	{
 		APlate* LastPlate = PlateArray.Last();
 		PlateArray.Pop();
+
+		if (true == HasAuthority())
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, FString::Printf(TEXT("Server GetPlate : %d"), PlateArray.Num()));
+		}
+		if (false == HasAuthority())
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::Printf(TEXT("Client GetPlate : %d"), PlateArray.Num()));
+		}
 
 		return LastPlate;
 	}

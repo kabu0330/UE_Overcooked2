@@ -49,6 +49,9 @@ public:
 	void InitPlateNum();
 	void InitPlateNum_Implementation();
 
+	UFUNCTION()
+	void OnRep_SetPlateMesh();
+
 private:
 
 	//int PlateNum = 0;
@@ -62,7 +65,7 @@ private:
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* PlateMeshComponent = nullptr;
 
-	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(ReplicatedUsing = OnRep_SetPlateMesh, EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
 	int PlateNum = 0;
 
 	USceneComponent* SceneComponent = nullptr;
