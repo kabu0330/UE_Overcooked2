@@ -43,11 +43,7 @@ void APlateSpawner::SetPlate(class APlate* Plate)
 	// 스포너는 Plate를 렌더링만 할 뿐, 가지고 있지 않는다. 
 	// Stack 개수만 파악하고 서버로 보낸다.
 	int PlateCount = Plate->GetPlateStackCount() + 1;
-	AddPlate(PlateCount);
-
-	//MoveToServer(Plate);
-
-	//SetPlateMesh();
+	AddPlate(PlateCount); // 서버에서만 Add하고 클라는 메시만 바꾼다.
 	
 	CookingPtr = nullptr;
 }
@@ -68,7 +64,6 @@ ACooking* APlateSpawner::Interact(AActor* ChefActor)
 			NewPlate->SetPlateStackCount(PlateNum - 1); // 메시 바꾸고
 
 			InitPlateNum(); // Plate 0개 초기화
-			SetPlateMesh(); // 스포너 위에 메시 지우고
 			return NewPlate;
 		}
 	}
@@ -85,30 +80,7 @@ void APlateSpawner::PlaceItem(ACooking* ReceivedCooking)
 	ACooking* TempCooking = ReceivedCooking;
 }
 
-void APlateSpawner::GetOwnedPlate_Implementation()
-{
-	if (nullptr != OwnedPlate) // 내가 접시를 스폰한게 있으면
-	{
-		NewCooking = nullptr;
-		NewCooking = Cast<ACooking>(OwnedPlate);
-		if (nullptr != NewCooking)
-		{
-			// 접시를 캐릭터에게 넘겨주고 나는 가지고 있는 접시가 없다.
-			OwnedPlate = nullptr;
-			bOwnedPlate = true;
-			return;
-		}
-	}
-
-	bOwnedPlate = false;
-}
-
-void APlateSpawner::MoveToServer_Implementation(APlate* Plate)
-{
-	UOC2Global::MovePlate(GetWorld(), Plate);
-}
-
-void APlateSpawner::SetPlateMesh_Implementation()
+void APlateSpawner::SetPlateMesh()
 {
 	FVector InitPos = GetActorLocation() + FVector(0, 0, 50);
 	switch (PlateNum)
@@ -155,13 +127,6 @@ void APlateSpawner::SetPlateMesh_Implementation()
 	}
 }
 
-void APlateSpawner::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(APlateSpawner, PlateMeshComponent);
-	DOREPLIFETIME(APlateSpawner, PlateNum);
-}
-
 void APlateSpawner::AddPlate_Implementation(int Number)
 {
 	if (true == HasAuthority())
@@ -176,30 +141,25 @@ void APlateSpawner::AddPlate_Implementation(int Number)
 			PlateNum = 4;
 		}
 		SetPlateMesh();
-
-		for (int i = 0; i < PlateMeshComponent->GetNumMaterials(); i++)
-		{
-			UMaterialInstanceDynamic* MaterialInstanceDynamic = Cast<UMaterialInstanceDynamic>(PlateMeshComponent->GetMaterial(i));
-			if (nullptr != MaterialInstanceDynamic)
-			{
-				MaterialInstanceDynamic->SetTextureParameterValue(FName(TEXT("DiffuseColorMap")), DirtyTexture);
-				MaterialInstanceDynamic->SetScalarParameterValue(FName("DiffuseAdd"), 1.0f);
-				PlateMeshComponent->SetMaterial(i, MaterialInstanceDynamic);
-				return;
-			}
-		}
+		SetMaterialTextrue();
 	}
 }
 
 void APlateSpawner::InitPlateNum_Implementation()
 {
 	PlateNum = 0;
+	SetPlateMesh();
+	SetMaterialTextrue();
 }
 
 void APlateSpawner::OnRep_SetPlateMesh()
 {
 	SetPlateMesh();
+	SetMaterialTextrue();
+}
 
+void APlateSpawner::SetMaterialTextrue()
+{
 	for (int i = 0; i < PlateMeshComponent->GetNumMaterials(); i++)
 	{
 		UMaterialInstanceDynamic* MaterialInstanceDynamic = Cast<UMaterialInstanceDynamic>(PlateMeshComponent->GetMaterial(i));
@@ -211,5 +171,12 @@ void APlateSpawner::OnRep_SetPlateMesh()
 			return;
 		}
 	}
+}
+
+void APlateSpawner::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(APlateSpawner, PlateMeshComponent);
+	DOREPLIFETIME(APlateSpawner, PlateNum);
 }
 

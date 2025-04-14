@@ -263,6 +263,74 @@ const FResourceSoundWaveDataRow& UOC2GameInstance::GetResourceSoundWaveDataRow(c
 	return EmptyData;
 }
 
+const FResourceCookingSoundWaveDataRow& UOC2GameInstance::GetResourceCookingSoundWaveDataRow(const FName& RowName)
+{
+	static FResourceCookingSoundWaveDataRow EmptyData;
+
+	if (nullptr != ResourceCookingSoundWaveDataTable)
+	{
+		FResourceCookingSoundWaveDataRow* ResourceSoundWaveDataRow = ResourceCookingSoundWaveDataTable->FindRow<FResourceCookingSoundWaveDataRow>(RowName, nullptr);
+
+		if (nullptr != ResourceSoundWaveDataRow)
+		{
+			return *ResourceSoundWaveDataRow;
+		}
+	}
+
+	return EmptyData;
+}
+
+const FResourceCharacterSoundWaveDataRow& UOC2GameInstance::GetResourceCharacterSoundWaveDataRow(const FName& RowName)
+{
+	static FResourceCharacterSoundWaveDataRow EmptyData;
+
+	if (nullptr != ResourceCharacterSoundWaveDataTable)
+	{
+		FResourceCharacterSoundWaveDataRow* ResourceSoundWaveDataRow = ResourceCharacterSoundWaveDataTable->FindRow<FResourceCharacterSoundWaveDataRow>(RowName, nullptr);
+
+		if (nullptr != ResourceSoundWaveDataRow)
+		{
+			return *ResourceSoundWaveDataRow;
+		}
+	}
+
+	return EmptyData;
+}
+
+const FResourceTableSoundWaveDataRow& UOC2GameInstance::GetResourceTableSoundWaveDataRow(const FName& RowName)
+{
+	static FResourceTableSoundWaveDataRow EmptyData;
+
+	if (nullptr != ResourceTableSoundWaveDataTable)
+	{
+		FResourceTableSoundWaveDataRow* ResourceSoundWaveDataRow = ResourceTableSoundWaveDataTable->FindRow<FResourceTableSoundWaveDataRow>(RowName, nullptr);
+
+		if (nullptr != ResourceSoundWaveDataRow)
+		{
+			return *ResourceSoundWaveDataRow;
+		}
+	}
+
+	return EmptyData;
+}
+
+const FResourceUISoundWaveDataRow& UOC2GameInstance::GetResourceUISoundWaveDataRow(const FName& RowName)
+{
+	static FResourceUISoundWaveDataRow EmptyData;
+
+	if (nullptr != ResourceUISoundWaveDataTable)
+	{
+		FResourceUISoundWaveDataRow* ResourceSoundWaveDataRow = ResourceUISoundWaveDataTable->FindRow<FResourceUISoundWaveDataRow>(RowName, nullptr);
+
+		if (nullptr != ResourceSoundWaveDataRow)
+		{
+			return *ResourceSoundWaveDataRow;
+		}
+	}
+
+	return EmptyData;
+}
+
 FPlateInitData UOC2GameInstance::GetPlateMesh(TArray<FRecipe>& Recipes)
 {
 	static FPlateInitData EmptyArray;

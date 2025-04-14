@@ -13,6 +13,10 @@
 #include "Global/Data/ResourceStaticMeshTable.h"
 #include "Global/Data/ResourceMaterialTable.h"
 #include "Global/Data/ResourceSoundWaveTable.h"
+#include "Global/Data/ResourceCookingSoundWaveTable.h"
+#include "Global/Data/ResourceCharacterSoundWaveTable.h"
+#include "Global/Data/ResourceTableSoundWaveTable.h"
+#include "Global/Data/ResourceUISoundWaveTable.h"
 
 #include "Global/OC2Struct.h"
 #include "Global/OC2Enum.h"
@@ -96,6 +100,12 @@ public:
 	const FResourceMaterialDataRow& GetResourceMaterialDataRow(const FName& RowName);
 	const FResourceSoundWaveDataRow& GetResourceSoundWaveDataRow(const FName& RowName);
 
+	const FResourceCookingSoundWaveDataRow& GetResourceCookingSoundWaveDataRow(const FName& RowName);
+	const FResourceCharacterSoundWaveDataRow& GetResourceCharacterSoundWaveDataRow(const FName& RowName);
+	const FResourceTableSoundWaveDataRow& GetResourceTableSoundWaveDataRow(const FName& RowName);
+	const FResourceUISoundWaveDataRow& GetResourceUISoundWaveDataRow(const FName& RowName);
+
+
 	FPlateInitData GetPlateMesh(TArray<FRecipe>& Recipes);
 	bool FindRecipe(const FRecipeDataRow* RecipeDataRow, TArray<FRecipe>& Recipes);
 	bool CheckRecipe(TArray<FRecipe>& Recipes);
@@ -159,6 +169,19 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
 	UDataTable* ResourceSoundWaveDataTable = nullptr;
+
+public: // Sound Wave Data Table
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
+	UDataTable* ResourceCookingSoundWaveDataTable = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
+	UDataTable* ResourceTableSoundWaveDataTable = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
+	UDataTable* ResourceCharacterSoundWaveDataTable = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
+	UDataTable* ResourceUISoundWaveDataTable = nullptr;
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Global|Data")

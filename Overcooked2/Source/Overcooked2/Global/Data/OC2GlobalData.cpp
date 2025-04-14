@@ -290,6 +290,54 @@ USoundBase* UOC2GlobalData::GetBaseSound(UWorld* World, const FName& RowName)
 	return nullptr;
 }
 
+USoundBase* UOC2GlobalData::GetCookingBaseSound(UWorld* World, const FName& RowName)
+{
+	UOC2GameInstance* GameInstance = UOC2Global::GetOC2GameInstance(World);
+
+	if (nullptr != GameInstance)
+	{
+		return GameInstance->GetResourceCookingSoundWaveDataRow(RowName).SoundBase;
+	}
+
+	return nullptr;
+}
+
+USoundBase* UOC2GlobalData::GetTableBaseSound(UWorld* World, const FName& RowName)
+{
+	UOC2GameInstance* GameInstance = UOC2Global::GetOC2GameInstance(World);
+
+	if (nullptr != GameInstance)
+	{
+		return GameInstance->GetResourceTableSoundWaveDataRow(RowName).SoundBase;
+	}
+
+	return nullptr;
+}
+
+USoundBase* UOC2GlobalData::GetCharacterBaseSound(UWorld* World, const FName& RowName)
+{
+	UOC2GameInstance* GameInstance = UOC2Global::GetOC2GameInstance(World);
+
+	if (nullptr != GameInstance)
+	{
+		return GameInstance->GetResourceCharacterSoundWaveDataRow(RowName).SoundBase;
+	}
+
+	return nullptr;
+}
+
+USoundBase* UOC2GlobalData::GetUIBaseSound(UWorld* World, const FName& RowName)
+{
+	UOC2GameInstance* GameInstance = UOC2Global::GetOC2GameInstance(World);
+
+	if (nullptr != GameInstance)
+	{
+		return GameInstance->GetResourceUISoundWaveDataRow(RowName).SoundBase;
+	}
+
+	return nullptr;
+}
+
 FOrder UOC2GlobalData::GetOrderByIngredients(UWorld* World, ACooking* Cooking)
 {
 	FOrder Result;
