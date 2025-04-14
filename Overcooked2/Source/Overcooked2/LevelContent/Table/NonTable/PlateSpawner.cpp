@@ -47,21 +47,9 @@ void APlateSpawner::SetPlate(class APlate* Plate)
 
 	//MoveToServer(Plate);
 
-	SetPlateMesh();
+	//SetPlateMesh();
 	
 	CookingPtr = nullptr;
-
-	for (int i = 0; i < PlateMeshComponent->GetNumMaterials(); i++)
-	{
-		UMaterialInstanceDynamic* MaterialInstanceDynamic = Cast<UMaterialInstanceDynamic>(PlateMeshComponent->GetMaterial(i));
-		if (nullptr != MaterialInstanceDynamic)
-		{
-			MaterialInstanceDynamic->SetTextureParameterValue(FName(TEXT("DiffuseColorMap")), DirtyTexture);
-			MaterialInstanceDynamic->SetScalarParameterValue(FName("DiffuseAdd"), 1.0f);
-			PlateMeshComponent->SetMaterial(i, MaterialInstanceDynamic);
-			return;
-		}
-	}
 }
 
 ACooking* APlateSpawner::Interact(AActor* ChefActor)
@@ -187,11 +175,41 @@ void APlateSpawner::AddPlate_Implementation(int Number)
 		{
 			PlateNum = 4;
 		}
+		SetPlateMesh();
+
+		for (int i = 0; i < PlateMeshComponent->GetNumMaterials(); i++)
+		{
+			UMaterialInstanceDynamic* MaterialInstanceDynamic = Cast<UMaterialInstanceDynamic>(PlateMeshComponent->GetMaterial(i));
+			if (nullptr != MaterialInstanceDynamic)
+			{
+				MaterialInstanceDynamic->SetTextureParameterValue(FName(TEXT("DiffuseColorMap")), DirtyTexture);
+				MaterialInstanceDynamic->SetScalarParameterValue(FName("DiffuseAdd"), 1.0f);
+				PlateMeshComponent->SetMaterial(i, MaterialInstanceDynamic);
+				return;
+			}
+		}
 	}
 }
 
 void APlateSpawner::InitPlateNum_Implementation()
 {
 	PlateNum = 0;
+}
+
+void APlateSpawner::OnRep_SetPlateMesh()
+{
+	SetPlateMesh();
+
+	for (int i = 0; i < PlateMeshComponent->GetNumMaterials(); i++)
+	{
+		UMaterialInstanceDynamic* MaterialInstanceDynamic = Cast<UMaterialInstanceDynamic>(PlateMeshComponent->GetMaterial(i));
+		if (nullptr != MaterialInstanceDynamic)
+		{
+			MaterialInstanceDynamic->SetTextureParameterValue(FName(TEXT("DiffuseColorMap")), DirtyTexture);
+			MaterialInstanceDynamic->SetScalarParameterValue(FName("DiffuseAdd"), 1.0f);
+			PlateMeshComponent->SetMaterial(i, MaterialInstanceDynamic);
+			return;
+		}
+	}
 }
 

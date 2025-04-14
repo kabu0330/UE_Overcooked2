@@ -66,6 +66,7 @@ void ASinkTable::InitProgressBar()
 	if (nullptr != UserWidget)
 	{
 		WidgetPtr = Cast<UGaugeTextureWidget>(UserWidget);
+		WidgetPtr->SetPosition(FVector2D{ 5.0f, 10.0f });
 	}
 	ProgressBarComponent->SetDrawAtDesiredSize(true);   // 위젯의 실제 크기로 렌더
 	ProgressBarComponent->SetPivot(FVector2D(0.5f, 0.5f)); // 중심 정렬
@@ -75,6 +76,7 @@ void ASinkTable::InitProgressBar()
 	// 카메라를 향하도록 설정
 	ProgressBarComponent->SetTwoSided(true);
 	ProgressBarComponent->SetTickWhenOffscreen(true);
+	ProgressBarComponent->SetWorldLocation(this->GetActorLocation());
 }
 
 void ASinkTable::InitDirtyPlateMesh()
