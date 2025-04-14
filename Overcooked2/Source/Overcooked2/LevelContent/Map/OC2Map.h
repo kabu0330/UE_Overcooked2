@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Global/GameFramework/OC2Actor.h"
+#include "Components/AudioComponent.h"
+
 #include "OC2Map.generated.h"
 
 /**
@@ -17,6 +19,12 @@ class OVERCOOKED2_API AOC2Map : public AActor
 public:
 	AOC2Map();
 
+	UFUNCTION(BlueprintCallable)
+	void PlaySound();
+
+	UFUNCTION(BlueprintCallable)
+	void StopSound();
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
@@ -24,4 +32,16 @@ protected:
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* StaticMeshComponent = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	UAudioComponent* AudioComponent = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	UAudioComponent* AmbienceAudioComponent = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	float BackgroundSoundVolume = 0.5f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	float AmbienceSoundVolume = 0.3f;
 };
