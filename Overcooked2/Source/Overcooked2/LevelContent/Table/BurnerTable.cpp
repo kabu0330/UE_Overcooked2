@@ -7,7 +7,7 @@
 #include <Global/GameMode/OC2GameMode.h>
 #include <Global/OC2Enum.h>
 
-ABurnerTable::ABurnerTable()¤·¤©¸Á·¯¤¿;
+ABurnerTable::ABurnerTable();
 {
 	FlameMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>("Flame");
 	FlameMeshComponent->SetupAttachment(RootComponent);
