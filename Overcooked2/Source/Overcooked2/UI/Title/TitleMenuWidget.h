@@ -20,6 +20,9 @@ public:
 	class UCanvasPanel* StoryPanel = nullptr;
 
 
+	UFUNCTION(BlueprintCallable, Category = "OC2UI")
+	void SettingTitleMenu();
+
 protected:
 	virtual void NativeOnInitialized() override;
 
@@ -44,15 +47,28 @@ private:
 	UFUNCTION(BlueprintCallable, Category = "OC2UI")
 	void HoverButton();
 
-	class UCanvasPanel* CurPanel = nullptr;
 
+	UFUNCTION()
+	void HoverSubButton();
 
 	void UpdateMenuPosition();
+
+	class UCanvasPanel* CurPanel = nullptr;
+	class UButton* CurButton = nullptr;
+	class UButton* CurMainButton = nullptr;
+
+	UAudioComponent* TitleSubMenuAudioComp = nullptr;
+	UAudioComponent* MenuButtonAudioComp = nullptr;
+
 	FTimerHandle MenuMoveTimerHandle;
+	FSlateBrush CurButtonNomalBrush;
 	float MenuMoveOffset = 10.0f;
 
+	bool bIsCurPanel = false;
+	bool bIsCurButton = false;
+
 	template <typename T>
-	T* FindChildWidget(const FString& name, class UCanvasPanel* canvas);
+	TArray<T*> FindAllChildWidgets(UCanvasPanel* Panel);
 
 	template <typename T>
 	T* FindSiblingWidget(class UWidget* Widget);
