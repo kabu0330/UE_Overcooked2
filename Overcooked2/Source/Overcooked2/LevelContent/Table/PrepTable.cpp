@@ -14,7 +14,7 @@ void APrepTable::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (bSpawnWhenGameStarted == true)
+	if (bSpawnWhenGameStarted == true && HasAuthority())
 	{
 		RequestSpawnPlate();
 	}

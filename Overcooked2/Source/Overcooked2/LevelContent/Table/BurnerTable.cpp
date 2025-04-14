@@ -21,7 +21,7 @@ void ABurnerTable::BeginPlay()
 	FlameMeshComponent->SetStaticMesh(Mesh);
 	FlameMeshComponent->SetHiddenInGame(true);
 
-	if (bSpawnWhenGameStarted)
+	if (bSpawnWhenGameStarted && HasAuthority())
 	{
 		RequestSpawnPot();
 	}
