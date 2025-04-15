@@ -164,6 +164,32 @@ bool APlate::IsDirtyPlate()
 	return PlateState == EPlateState::DIRTY;
 }
 
+bool APlate::CanMergeRice()
+{
+	FRecipe Recipe;
+	Recipe.IngredientType = EIngredientType::EIT_RICE;
+	Recipe.IngredientState = EIngredientState::EIS_BOILED;
+	Ingredients.Add(Recipe);
+
+	// 2. RecipeDataTable과 비교하여 데이터 테이블에 해당 재료조합이 존재하는지 확인
+	FPlateInitData InitData = UOC2GlobalData::GetPlateMesh(GetWorld(), Ingredients);
+
+	// 3-1. 데이터를 획득하는데 실패했다면
+	if (nullptr == InitData.StaticMesh)
+	{
+		Ingredients.Pop(); // 재료 자료구조에서 제거하고 리턴
+
+		return false;
+	}
+	else
+	{
+		Ingredients.Pop(); // 재료 자료구조에서 제거하고 리턴
+
+		return true;
+	}
+}
+
+
 void APlate::WashPlate_Implementation()
 {
 	if (true == IsDirtyPlate())
