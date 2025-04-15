@@ -122,6 +122,10 @@ public:
 		PlateStackStatus = static_cast<EPlateStackStatus>((static_cast<int>(PlateStackStatus) + Value));
 	}
 
+	UFUNCTION(Reliable, Server)
+	void BaseFromSelf();
+	void BaseFromSelf_Implementation();
+
 	//int GetPlatesNum() const
 	//{
 	//	return Plates.Num();
@@ -129,6 +133,7 @@ public:
 
 	UPROPERTY()
 	TArray<APlate*> Plates;
+
 
 protected:
 	// Called when the game starts or when spawned

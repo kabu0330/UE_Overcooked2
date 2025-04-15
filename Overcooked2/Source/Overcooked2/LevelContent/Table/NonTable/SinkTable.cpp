@@ -107,8 +107,9 @@ ACooking* ASinkTable::Interact(AActor* ChefActor)
 		{
 			return nullptr;
 		}
-
+		CleanPlates.Last()->BaseFromSelf();
 		CookingPtr = CleanPlates.Pop();
+	
 		return CookingPtr;
 	}
 
@@ -180,18 +181,22 @@ void ASinkTable::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	// 셰프가 나와의 상호작용을 중단하고 떠났는지
-	CheckChefIsWashing();
+	if (HasAuthority())
+	{
+		// 셰프가 나와의 상호작용을 중단하고 떠났는지
+		CheckChefIsWashing();
 
-	UpdateProgressBar(DeltaTime);
+		UpdateProgressBar(DeltaTime);
 
-	WashingIsDone();
+		WashingIsDone();
 
-	RepeatWashing();
+		RepeatWashing();
+	}
 }
 
 void ASinkTable::CheckChefIsWashing_Implementation()
 {
+
 	// 셰프가 나와 상호작용을 하던 중에
 	if (nullptr != ChefPtr)
 	{
@@ -429,6 +434,11 @@ void ASinkTable::SetAttachToDirtyPlate()
 
 }
 
+void ASinkTable::OnRep_ChangeProgress()
+{
+	WidgetPtr->SetProgressTimeRatio(Ratio);
+}
+
 void ASinkTable::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
@@ -446,6 +456,7 @@ void ASinkTable::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifeti
 	DOREPLIFETIME(ASinkTable, CleanPlateMeshComponent);
 	DOREPLIFETIME(ASinkTable, DirtyPlateNum);
 	DOREPLIFETIME(ASinkTable, CleanPlateNum);
+	DOREPLIFETIME(ASinkTable, ProgressBarComponent);
 	//DOREPLIFETIME(ASinkTable, bIsFirstPlateWashed);
 	//DOREPLIFETIME(ASinkTable, bCallGetMoveFunction);
 
