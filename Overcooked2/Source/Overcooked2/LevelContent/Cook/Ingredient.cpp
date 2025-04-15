@@ -113,17 +113,6 @@ AIngredient* AIngredient::Init(EIngredientType Type)
 	// 4). 텍스처 설정, 회전값만 Tick에서 무시하도록 적용
 	SetTexture();
 
-
-	// Network Debug
-	if (true == HasAuthority())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("서버에서 스폰 성공"));
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("클라이언트에서 복제 성공"));
-	}
-
 	return this;
 }
 
