@@ -126,7 +126,6 @@ void AChoppingTable::ChopIngredient(AActor* ChefActor)
 
 				Timer = 0.0f;
 				bTimerActivated = true;
-				//GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Magenta, "Chopping...");
 
 				HideProgressBar(false);
 			}
@@ -150,9 +149,9 @@ void AChoppingTable::ChoppingIsDone_Implementation()
 
 	AIngredient* PlacedIngredient = Cast<AIngredient>(CookingPtr);
 	PlacedIngredient->ChangeState(EIngredientState::EIS_CHOPPED);
-	//GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Turquoise, "Chopping Done");
+
 	CookingPtr = Cast<ACooking>(PlacedIngredient);
-	//ProgressBarComponent->SetHiddenInGame(true);
+
 	HideProgressBar(true);
 
 	ChefPtr->Chopping(false);
@@ -174,7 +173,7 @@ void AChoppingTable::CheckChefIsChopping()
 		{
 			bTimerActivated = false;
 			ChefPtr = nullptr;
-			//ProgressBarComponent->SetHiddenInGame(true);
+
 			HideProgressBar(true);
 		}
 	}
