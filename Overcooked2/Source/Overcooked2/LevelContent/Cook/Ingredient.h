@@ -22,8 +22,6 @@ public:
 	void SetType(EIngredientType Type);
 	void SetType_Implementation(EIngredientType Type);
 
-
-
 	// »óÀÚ¿¡¼­ ²¨³ÂÀ» ¶§
 	UFUNCTION(BlueprintCallable)
 	AIngredient* Init(EIngredientType Type);
@@ -100,12 +98,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void OnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
-
-
-	//class UBillboardComponent* GetTextureBillboard()
-	//{
-	//	return TextureBillboard;
-	//}
 
 protected:
 	// Called when the game starts or when spawned

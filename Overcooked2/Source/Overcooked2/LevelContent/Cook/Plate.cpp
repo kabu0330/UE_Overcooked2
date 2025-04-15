@@ -48,7 +48,6 @@ void APlate::Multicast_SubmitPlate_Implementation()
 	//SetActorLocation(UOC2Const::PlateSubmitLocation);
 	CleanPlate();
 	SetPlateState(EPlateState::DIRTY);
-	PlateStackStatus = EPlateStackStatus::SINGLE;
 	
 	if (true == HasAuthority())
 	{
@@ -58,7 +57,6 @@ void APlate::Multicast_SubmitPlate_Implementation()
 		{
 			GameState->AddPlate(this);
 		}
-		ChangePlateMesh();
 		SetMaterialTexture();
 	}
 
@@ -197,9 +195,7 @@ void APlate::CleanPlate_Implementation()
 
 	bIsCombinationSuccessful = false;
 
-	PlateStackStatus = EPlateStackStatus::SINGLE;
 	SetMaterialTexture();
-	ChangePlateMesh();
 }
 
 void APlate::SetMaterialTexture()
@@ -301,15 +297,9 @@ void APlate::Add_Implementation(AIngredient* Ingredient)
 
 			if (true == HasAuthority())
 			{
-				GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, FString::Printf(TEXT("Add Plate Is Called Request Destroy")));
+				// 3-5. 기존에 존재하는 재료는 월드에서 삭제
+				Ingredient->RequestOC2ActorDestroy();
 			}
-			if (false == HasAuthority())
-			{
-				GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, FString::Printf(TEXT("Add Plate Is Called Request Destroy")));
-			}
-			// 3-5. 기존에 존재하는 재료는 월드에서 삭제
-			Ingredient->RequestOC2ActorDestroy();
-
 
 			// 4. Texture 추가
 			SetIngredinetTextures(InitData);
@@ -391,55 +381,13 @@ void APlate::StackPlate(APlate* Plate)
 				FVector Pos = i * FVector::UnitZ() * 10.0f;
 				Plate->SetActorRelativeLocation(Pos);
 			}
-
 		}
 	}
-
-}
-
-void APlate::ChangePlateMesh()
-{
-	int Count = GetPlateStackCount();
-
-	switch (Count)
-	{
-	case 0:
-	{
-		ChangePlateMeshAndStatus(EPlateStackStatus::SINGLE, TEXT("SinglePlate"));
-		break;
-	}
-	case 1:
-	{
-		ChangePlateMeshAndStatus(EPlateStackStatus::DOUBLE, TEXT("DoublePlate"));
-		break;
-	}
-	case 2:
-	{
-		ChangePlateMeshAndStatus(EPlateStackStatus::TRIPLE, TEXT("TriplePlate"));
-		break;
-	}
-	case 3:
-	{
-		ChangePlateMeshAndStatus(EPlateStackStatus::FULL, TEXT("FullPlate"));
-		break;
-	}
-	default:
-		break;
-	}
-}
-
-void APlate::ChangePlateMeshAndStatus/*_Implementation*/(EPlateStackStatus Status, FName Name)
-{
-	PlateStackStatus = Status;
-	
-	UStaticMesh* NewStaticMesh = UOC2GlobalData::GetResourceStaticMesh(GetWorld(), Name);
-	StaticMeshComponent->SetStaticMesh(NewStaticMesh);
 }
 
 UPlateIconWidget* APlate::GetOrRebuildIconWidget()
 {
 	UUserWidget* WidgetObj = WidgetComponent ? WidgetComponent->GetUserWidgetObject() : nullptr;
-
 
 	if (nullptr == WidgetObj)
 	{
@@ -461,11 +409,6 @@ UPlateIconWidget* APlate::GetOrRebuildIconWidget()
 		IconWidget->Init(); // 필요하면 Init
 	}
 	return IconWidget;
-}
-
-void APlate::OnRep_SetPlateMesh()
-{
-	ChangePlateMesh();
 }
 
 void APlate::OnRep_SetPlateMaterialTexture()
@@ -511,7 +454,6 @@ void APlate::Multicast_SpawnWashPlate_Implementation()
 	SetActorLocation(UOC2Const::PlateSubmitLocation);
 	CleanPlate();
 	SetPlateState(EPlateState::EMPTY);
-	PlateStackStatus = EPlateStackStatus::SINGLE;
 
 	if (true == HasAuthority())
 	{
@@ -522,7 +464,6 @@ void APlate::Multicast_SpawnWashPlate_Implementation()
 			GameState->AddPlate(this);
 		}
 		SetMaterialTexture();
-		ChangePlateMesh();
 	}
 
 	FTimerHandle TimerHandle;
@@ -576,7 +517,6 @@ void APlate::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimePr
 	DOREPLIFETIME(APlate, IngredientMesh);
 	DOREPLIFETIME(APlate, PlateState);
 	DOREPLIFETIME(APlate, bIsCombinationSuccessful);
-	DOREPLIFETIME(APlate, PlateStackStatus);
 	DOREPLIFETIME(APlate, CookingTable);
 
 }

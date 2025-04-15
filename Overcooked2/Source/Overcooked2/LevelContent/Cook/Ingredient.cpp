@@ -26,8 +26,6 @@ AIngredient::AIngredient()
 
 	WidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
 	WidgetComponent->SetupAttachment(RootComponent);
-
-
 }
 
 void AIngredient::SetType_Implementation(EIngredientType Type)
@@ -39,15 +37,6 @@ void AIngredient::SetType_Implementation(EIngredientType Type)
 
 void AIngredient::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit)
 {
-	TArray<FName> OtherComponentTags = OtherComponent->ComponentTags;
-	if (nullptr != OtherActor && true == OtherComponent->ComponentHasTag(TEXT("Floor")))
-	{
-		//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, TEXT("재료와 바닥 충돌"));
-		//StaticMeshComponent->BodyInstance.bLockXRotation = true;
-		//StaticMeshComponent->BodyInstance.bLockYRotation = true;
-		//StaticMeshComponent->BodyInstance.bLockZRotation = true;
-	}
-
 	StaticMeshComponent->SetPhysicsLinearVelocity(FVector::ZeroVector);
 	CheckPlacement();
 	bIsThrowing = false;
@@ -121,18 +110,10 @@ void AIngredient::Tick(float DeltaTime)
 {
 	ACooking::Tick(DeltaTime);
 
-	//GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Green, FString::Printf(TEXT("%f"), StaticMeshComponent->GetPhysicsLinearVelocity().Length()));
-	//GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Green, FString::Printf(TEXT("%f"), ThrownTime));
 	if (bIsThrowing)
 	{
 		ThrownTime += DeltaTime;
 	}
-
-	//	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Green, "Hit");
-	//CheckPlacement();
-
-	//	DrawDebugSphere(GetWorld(), GetActorLocation(), 100.0f, 20, FColor::Red, false);
-
 }
 
 void AIngredient::SetIngredientData(UOC2GameInstance* Inst, FName Name)
@@ -261,8 +242,6 @@ void AIngredient::CheckPlacement()
 			QueryParams
 		);
 	}
-
-	//UE_LOG(LogTemp, Log, TEXT("%d"), HitResults.Num());
 
 	if (bHit)
 	{
