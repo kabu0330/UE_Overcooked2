@@ -60,10 +60,7 @@ public:
 	void CleanPlate();
 	void CleanPlate_Implementation();
 
-	// 접시를 쌓기 위해 호출해야 할 함수 (메시 변환 자동)
-	//UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
 	void StackPlate(APlate* Plate);
-	//void StackPlate_Implementation(APlate* Plate);
 
 	UFUNCTION(BlueprintCallable, Reliable, NetMulticast)
 	void SubmitPlate(); 
@@ -80,6 +77,7 @@ public:
 	}
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_SubmitPlate();
+	void Multicast_SubmitPlate_Implementation();
 
 	void SpawnPlate();
 
@@ -89,51 +87,21 @@ public:
 
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_MovePlate();
+	void Multicast_MovePlate_Implementation();
 
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_SpawnWashPlate();
+	void Multicast_SpawnWashPlate_Implementation();
+
 	void SpawnWashPlate();
 	void FindSinkTable();
-
-	// 0 ~ 3까지. n-1개
-	int GetPlateStackCount() const
-	{
-		return static_cast<int>(PlateStackStatus);
-	}
-
-	void SetPlateStackCount(int Value)
-	{
-		PlateStackStatus = static_cast<EPlateStackStatus>(Value);
-		ChangePlateMesh();
-	}
-	
-	void SetPlateStackCount(EPlateStackStatus Status)
-	{
-		PlateStackStatus = Status;
-		ChangePlateMesh();
-	}
-
-	void AddPlateStackCount(int Value)
-	{
-		if (false == HasAuthority())
-		{
-			return;
-		}
-		PlateStackStatus = static_cast<EPlateStackStatus>((static_cast<int>(PlateStackStatus) + Value));
-	}
 
 	UFUNCTION(Reliable, Server)
 	void BaseFromSelf();
 	void BaseFromSelf_Implementation();
 
-	//int GetPlatesNum() const
-	//{
-	//	return Plates.Num();
-	//}
-
 	UPROPERTY()
 	TArray<APlate*> Plates;
-
 
 protected:
 	// Called when the game starts or when spawned
@@ -161,23 +129,11 @@ protected:
 	void InitWidgetComponent();
 	void FindPlateSpawner();
 
-	//UFUNCTION(Reliable, NetMulticast)
-	void ChangePlateMesh();
-	//void ChangePlateMesh_Implementation();
-
-	//UFUNCTION(Reliable, NetMulticast)
-	void ChangePlateMeshAndStatus(EPlateStackStatus Status, FName Name);
-	//void ChangePlateMeshAndStatus_Implementation(EPlateStackStatus Status, FName Name);
-
 	
 	class UPlateIconWidget* GetOrRebuildIconWidget();
-
-	UFUNCTION()
-	void OnRep_SetPlateMesh();
 	
 	UFUNCTION()
 	void OnRep_SetPlateMaterialTexture();
-
 
 private:
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
@@ -214,10 +170,6 @@ private:
 
 	UPROPERTY(Replicated)
 	class ACookingTable* CookingTable = nullptr;
-
-	// 접시가 쌓인 상태
-	UPROPERTY(ReplicatedUsing = OnRep_SetPlateMesh, EditAnywhere, BlueprintReadOnly, Category = "Cooking", meta = (AllowPrivateAccess = "true"))
-	EPlateStackStatus PlateStackStatus = EPlateStackStatus::SINGLE;
 
 	UPROPERTY()
 	ASinkTable* SinkTable = nullptr;

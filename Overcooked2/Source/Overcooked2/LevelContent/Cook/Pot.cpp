@@ -232,7 +232,10 @@ void APot::Add_Implementation(AIngredient* Ingredient)
 		return;
 	}
 
-	RawRice->RequestOC2ActorDestroy(); // 들어온 재료는 삭제
+	if (true == HasAuthority())
+	{
+		RawRice->RequestOC2ActorDestroy(); // 들어온 재료는 삭제
+	}
 
 	bIsRiceInPot = true; // bool 값으로 재료가 들어왔는지 체크할 것임
 	bIsCombinationSuccessful = true;
