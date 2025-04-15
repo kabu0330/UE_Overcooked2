@@ -55,29 +55,25 @@ void ACookingTable::PlaceItem(ACooking* ReceivedCooking)
 		SetIngredientOffset(TempIngredient);
 		CookingPtr->GetStaticMeshComponent()->SetRelativeRotation(IngreRotation);
 		CookingPtr->GetStaticMeshComponent()->SetRelativeScale3D(IngreScale);
-		/*if (EIngredientType::EIT_PRAWN == TempIngredient->GetIngredientType())
-		{
-			IngreLocation += FVector::UnitZ() * 40.0f;
-		}*/
 		CookingPtr->SetActorRelativeLocation(IngreLocation);
 	}
 
-	APlate* TempPlate = Cast<APlate>(CookingPtr);
-	if (nullptr != TempPlate)
-	{
-		if (true == TempPlate->IsDirtyPlate())
-		{
-			int PlateStackCount = TempPlate->GetPlateStackCount();
-			if (1 == PlateStackCount)
-			{
-				TempPlate->AddActorLocalOffset(FVector(0, 0, 20));
-			}
-			if (3 == PlateStackCount)
-			{
-				TempPlate->AddActorLocalOffset(FVector(0, 0, 50));
-			}
-		}
-	}
+	//APlate* TempPlate = Cast<APlate>(CookingPtr);
+	//if (nullptr != TempPlate)
+	//{
+	//	if (true == TempPlate->IsDirtyPlate())
+	//	{
+	//		int PlateStackCount = TempPlate->GetPlateStackCount();
+	//		if (1 == PlateStackCount)
+	//		{
+	//			TempPlate->AddActorLocalOffset(FVector(0, 0, 20));
+	//		}
+	//		if (3 == PlateStackCount)
+	//		{
+	//			TempPlate->AddActorLocalOffset(FVector(0, 0, 50));
+	//		}
+	//	}
+	//}
 	//bIsOccupied = true;
 }
 

@@ -40,8 +40,8 @@ ASinkTable::ASinkTable()
 		DirtyPlateComponents.Add(ComponentForDishes4);
 	}
 
-	CleanPlateMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CleanPlateNeshComponent"));
-	CleanPlateMeshComponent->SetupAttachment(RootComponent);
+	//CleanPlateMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CleanPlateNeshComponent"));
+	//CleanPlateMeshComponent->SetupAttachment(RootComponent);
 
 	TimeEventComponent = CreateDefaultSubobject<UTimeEventComponent>(TEXT("TimeEventComponent"));
 
@@ -53,7 +53,7 @@ void ASinkTable::BeginPlay()
 
 	InitProgressBar();
 
-	InitDirtyPlateMesh();
+	//InitDirtyPlateMesh();
 	//InitCleanPlateMesh();
 
 }
@@ -79,23 +79,23 @@ void ASinkTable::InitProgressBar()
 	ProgressBarComponent->SetWorldLocation(this->GetActorLocation());
 }
 
-void ASinkTable::InitDirtyPlateMesh()
-{
-	for (int32 i = 0; i < DirtyPlateComponents.Num(); i++)
-	{
-		DirtyPlateComponents[i]->SetIsReplicated(true);
-	}
+//void ASinkTable::InitDirtyPlateMesh()
+//{
+//	for (int32 i = 0; i < DirtyPlateComponents.Num(); i++)
+//	{
+//		DirtyPlateComponents[i]->SetIsReplicated(true);
+//	}
+//
+//	SetAllPlateVisibility();
+//}
 
-	SetAllPlateVisibility();
-}
-
-void ASinkTable::InitCleanPlateMesh()
-{
-	CleanPlateMeshComponent->AttachToComponent(CleanPlateComponent, FAttachmentTransformRules::KeepRelativeTransform);
-	CleanPlateMeshComponent->SetRelativeLocation(FVector(0, 10, 60));
-	//CleanPlateMeshComponent->SetRelativeScale3D(FVector(2, 2, 2));
-	SetCleanPlateMesh();
-}
+//void ASinkTable::InitCleanPlateMesh()
+//{
+//	CleanPlateMeshComponent->AttachToComponent(CleanPlateComponent, FAttachmentTransformRules::KeepRelativeTransform);
+//	CleanPlateMeshComponent->SetRelativeLocation(FVector(0, 10, 60));
+//	//CleanPlateMeshComponent->SetRelativeScale3D(FVector(2, 2, 2));
+//	SetCleanPlateMesh();
+//}
 
 ACooking* ASinkTable::Interact(AActor* ChefActor)
 {
@@ -154,8 +154,13 @@ void ASinkTable::PlacePlates_Implementation(ACooking* ReceivedCooking)
 			}
 
 			TempPlate->Plates.Empty();
+		}
 
-
+		for (int32 i = 0; i < DirtyPlates.Num(); i++)
+		{
+			DirtyPlates[i]->AttachToComponent(DirtyPlateComponents[i], FAttachmentTransformRules::KeepRelativeTransform);
+			DirtyPlates[i]->SetActorLocation(DirtyPlateComponents[i]->GetComponentLocation());
+			DirtyPlates[i]->SetActorRotation(DirtyPlateComponents[i]->GetComponentRotation());
 		}
 	}
 
@@ -258,7 +263,6 @@ void ASinkTable::WashingIsDone_Implementation()
 
 	if (false == DirtyPlates.IsEmpty())
 	{
-		
 		CleanPlates.Add(DirtyPlates.Pop());
 		APlate* NewCleanPlate = CleanPlates.Last();
 		NewCleanPlate->SetPlateState(EPlateState::EMPTY);
@@ -269,6 +273,7 @@ void ASinkTable::WashingIsDone_Implementation()
 	HideProgressBar(true);
 
 	CleanPlates.Last()->AttachToComponent(CleanPlateComponent, FAttachmentTransformRules::KeepRelativeTransform);
+	CleanPlates.Last()->SetActorLocation(CleanPlateComponent->GetComponentLocation());
 	CleanPlates.Last()->AddActorWorldOffset(FVector::UnitZ()* 10.0f * (CleanPlates.Num() - 1));
 
 }
@@ -296,124 +301,124 @@ void ASinkTable::RepeatWashing_Implementation()
 	}
 }
 
-void ASinkTable::SetPlateVisibility/*_Implementation*/(int Index)
-{
-	//SetAllPlateHidden();
-	//for (size_t i = 0; i < Index; i++)
-	//{
-	//	DirtyPlateComponents[i]->SetHiddenInGame(false);
-	//	DirtyPlateComponents[i]->SetVisibility(true);
-	//}
-}
+//void ASinkTable::SetPlateVisibility/*_Implementation*/(int Index)
+//{
+//	//SetAllPlateHidden();
+//	//for (size_t i = 0; i < Index; i++)
+//	//{
+//	//	DirtyPlateComponents[i]->SetHiddenInGame(false);
+//	//	DirtyPlateComponents[i]->SetVisibility(true);
+//	//}
+//}
 
-void ASinkTable::SetAllPlateVisibility()
-{
-	for (int32 i = 0; i < DirtyPlateComponents.Num(); i++)
-	{
-		DirtyPlateComponents[i]->SetVisibility(true);
-		DirtyPlateComponents[i]->SetHiddenInGame(false);
-	}
-}
+//void ASinkTable::SetAllPlateVisibility()
+//{
+//	for (int32 i = 0; i < DirtyPlateComponents.Num(); i++)
+//	{
+//		DirtyPlateComponents[i]->SetVisibility(true);
+//		DirtyPlateComponents[i]->SetHiddenInGame(false);
+//	}
+//}
 
-void ASinkTable::AddDirtyPlateNum_Implementation(int Value)
-{
-	if (true == HasAuthority())
-	{
-		DirtyPlateNum += Value;
-		if (4 < DirtyPlateNum)
-		{
-			DirtyPlateNum = 4;
-		}
-		else if (0 > DirtyPlateNum)
-		{
-			DirtyPlateNum = 0;
-		}
-		SetPlateVisibility(DirtyPlateNum);
-	}
-}
+//void ASinkTable::AddDirtyPlateNum_Implementation(int Value)
+//{
+//	if (true == HasAuthority())
+//	{
+//		DirtyPlateNum += Value;
+//		if (4 < DirtyPlateNum)
+//		{
+//			DirtyPlateNum = 4;
+//		}
+//		else if (0 > DirtyPlateNum)
+//		{
+//			DirtyPlateNum = 0;
+//		}
+//		SetPlateVisibility(DirtyPlateNum);
+//	}
+//}
 
-void ASinkTable::AddCleanPlateNum_Implementation(int Value)
-{
-	if (true == HasAuthority())
-	{
-		CleanPlateNum += Value;
+//void ASinkTable::AddCleanPlateNum_Implementation(int Value)
+//{
+//	if (true == HasAuthority())
+//	{
+//		CleanPlateNum += Value;
+//
+//		if (4 < CleanPlateNum)
+//		{
+//			CleanPlateNum = 4;
+//		}
+//		else if (0 > CleanPlateNum)
+//		{
+//			CleanPlateNum = 0;
+//		}
+//		SetCleanPlateMesh();
+//	}
+//}
 
-		if (4 < CleanPlateNum)
-		{
-			CleanPlateNum = 4;
-		}
-		else if (0 > CleanPlateNum)
-		{
-			CleanPlateNum = 0;
-		}
-		SetCleanPlateMesh();
-	}
-}
+//void ASinkTable::SetCleanPlateMesh/*_Implementation*/()
+//{
+//	switch (CleanPlateNum)
+//	{
+//	case 0:
+//	{
+//		CleanPlateMeshComponent->SetStaticMesh(nullptr);
+//		break;
+//	}
+//	case 1:
+//	{
+//		UStaticMesh* NewMesh = UOC2GlobalData::GetResourceStaticMesh(GetWorld(), TEXT("SinglePlate"));
+//		CleanPlateMeshComponent->SetStaticMesh(NewMesh);
+//
+//		CleanPlateMeshComponent->SetRelativeLocation(FVector(0, 10, 0));
+//		break;
+//	}
+//	case 2:
+//	{
+//		UStaticMesh* NewMesh = UOC2GlobalData::GetResourceStaticMesh(GetWorld(), TEXT("DoublePlate"));
+//		CleanPlateMeshComponent->SetStaticMesh(NewMesh);
+//
+//		CleanPlateMeshComponent->SetRelativeLocation(FVector(0, 10, 20));
+//		break;
+//	}
+//	case 3:
+//	{
+//		UStaticMesh* NewMesh = UOC2GlobalData::GetResourceStaticMesh(GetWorld(), TEXT("TriplePlate"));
+//		CleanPlateMeshComponent->SetStaticMesh(NewMesh);
+//
+//		CleanPlateMeshComponent->SetRelativeLocation(FVector(0, 10, 0));
+//		break;
+//	}
+//	case 4:
+//	{
+//		UStaticMesh* NewMesh = UOC2GlobalData::GetResourceStaticMesh(GetWorld(), TEXT("FullPlate"));
+//		CleanPlateMeshComponent->SetStaticMesh(NewMesh);
+//
+//		CleanPlateMeshComponent->SetRelativeLocation(FVector(0, 10, 60));
+//		break;
+//	}
+//	default:
+//		break;
+//	}
+//}
 
-void ASinkTable::SetCleanPlateMesh/*_Implementation*/()
-{
-	switch (CleanPlateNum)
-	{
-	case 0:
-	{
-		CleanPlateMeshComponent->SetStaticMesh(nullptr);
-		break;
-	}
-	case 1:
-	{
-		UStaticMesh* NewMesh = UOC2GlobalData::GetResourceStaticMesh(GetWorld(), TEXT("SinglePlate"));
-		CleanPlateMeshComponent->SetStaticMesh(NewMesh);
+//void ASinkTable::OnRep_SetCleanPlateMesh()
+//{
+//	SetCleanPlateMesh();
+//}
 
-		CleanPlateMeshComponent->SetRelativeLocation(FVector(0, 10, 0));
-		break;
-	}
-	case 2:
-	{
-		UStaticMesh* NewMesh = UOC2GlobalData::GetResourceStaticMesh(GetWorld(), TEXT("DoublePlate"));
-		CleanPlateMeshComponent->SetStaticMesh(NewMesh);
-
-		CleanPlateMeshComponent->SetRelativeLocation(FVector(0, 10, 20));
-		break;
-	}
-	case 3:
-	{
-		UStaticMesh* NewMesh = UOC2GlobalData::GetResourceStaticMesh(GetWorld(), TEXT("TriplePlate"));
-		CleanPlateMeshComponent->SetStaticMesh(NewMesh);
-
-		CleanPlateMeshComponent->SetRelativeLocation(FVector(0, 10, 0));
-		break;
-	}
-	case 4:
-	{
-		UStaticMesh* NewMesh = UOC2GlobalData::GetResourceStaticMesh(GetWorld(), TEXT("FullPlate"));
-		CleanPlateMeshComponent->SetStaticMesh(NewMesh);
-
-		CleanPlateMeshComponent->SetRelativeLocation(FVector(0, 10, 60));
-		break;
-	}
-	default:
-		break;
-	}
-}
-
-void ASinkTable::OnRep_SetCleanPlateMesh()
-{
-	SetCleanPlateMesh();
-}
-
-void ASinkTable::OnRep_SetDirtyPlateMesh()
-{
-	if (true == HasAuthority())
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, FString::Printf(TEXT("Sever SetPlate : %d"), DirtyPlateNum));
-	}
-	if (false == HasAuthority())
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, FString::Printf(TEXT("Client SetPlate : %d"), DirtyPlateNum));
-	}
-	SetPlateVisibility(DirtyPlateNum);
-	SetAttachToDirtyPlate();
-}
+//void ASinkTable::OnRep_SetDirtyPlateMesh()
+//{
+//	if (true == HasAuthority())
+//	{
+//		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, FString::Printf(TEXT("Sever SetPlate : %d"), DirtyPlateNum));
+//	}
+//	if (false == HasAuthority())
+//	{
+//		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, FString::Printf(TEXT("Client SetPlate : %d"), DirtyPlateNum));
+//	}
+//	SetPlateVisibility(DirtyPlateNum);
+//	SetAttachToDirtyPlate();
+//}
 
 void ASinkTable::SetAttachToDirtyPlate()
 {
@@ -453,9 +458,9 @@ void ASinkTable::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifeti
 	DOREPLIFETIME(ASinkTable, ComponentForDishes3);
 	DOREPLIFETIME(ASinkTable, ComponentForDishes4);
 	DOREPLIFETIME(ASinkTable, DirtyPlateComponents);
-	DOREPLIFETIME(ASinkTable, CleanPlateMeshComponent);
-	DOREPLIFETIME(ASinkTable, DirtyPlateNum);
-	DOREPLIFETIME(ASinkTable, CleanPlateNum);
+	//DOREPLIFETIME(ASinkTable, CleanPlateMeshComponent);
+	//DOREPLIFETIME(ASinkTable, DirtyPlateNum);
+	//DOREPLIFETIME(ASinkTable, CleanPlateNum);
 	DOREPLIFETIME(ASinkTable, ProgressBarComponent);
 	//DOREPLIFETIME(ASinkTable, bIsFirstPlateWashed);
 	//DOREPLIFETIME(ASinkTable, bCallGetMoveFunction);
