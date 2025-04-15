@@ -52,11 +52,14 @@ void AChoppingTable::Tick(float DeltaTime)
 
 	if (true == bTimerActivated)
 	{
-		TimerUpdate(DeltaTime);
-
-		if (Timer > 2.0f)
+		if(true == bChopping)
 		{
-			bChoppingDone = true;
+			TimerUpdate(DeltaTime);
+
+			if (Timer > 2.0f)
+			{
+				bChoppingDone = true;
+			}
 		}
 	}
 
@@ -76,17 +79,23 @@ ACooking* AChoppingTable::Interact(AActor* ChefActor)
 	ChefPtr = Cast<AOC2Character>(ChefActor);
 	ACooking* TempCooking = nullptr;
 
-	if (CookingPtr != nullptr && false == ChefPtr->IsHolding()) // À½½Ä ÀÖÀ½, ¼ÎÇÁ ºó ¼Õ
+	if (false == bChopping)
 	{
-		TempCooking = CookingPtr;
-		CookingPtr = nullptr;
-		return TempCooking;
+		if (CookingPtr != nullptr && false == ChefPtr->IsHolding()) // À½½Ä ÀÖÀ½, ¼ÎÇÁ ºó ¼Õ
+		{
+			TempCooking = CookingPtr;
+			CookingPtr = nullptr;
+			return TempCooking;
+		}
+		else
+		{
+			return CookingPtr;
+		}
 	}
 	else
 	{
-		return CookingPtr;
+		return nullptr;
 	}
-
 }
 
 void AChoppingTable::HideKnife_Implementation()
@@ -124,8 +133,14 @@ void AChoppingTable::ChopIngredient(AActor* ChefActor)
 			{
 				ChefPtr->Chopping(true);
 
-				Timer = 0.0f;
 				bTimerActivated = true;
+
+				if (false == bChopping)
+				{
+					Timer = 0.0f;
+				}
+
+				bChopping = true;
 
 				HideProgressBar(false);
 			}
@@ -140,12 +155,13 @@ void AChoppingTable::HideProgressBar_Implementation(bool Value)
 
 void AChoppingTable::ChoppingIsDone_Implementation()
 {
-	if (false == bChoppingDone)
+	if (false == bChoppingDone || true == bChopping)
 	{
 		return;
 	}
 
 	bTimerActivated = false;
+	bChopping = false;
 
 	AIngredient* PlacedIngredient = Cast<AIngredient>(CookingPtr);
 	PlacedIngredient->ChangeState(EIngredientState::EIS_CHOPPED);
@@ -171,10 +187,10 @@ void AChoppingTable::CheckChefIsChopping()
 	{
 		if (false == ChefPtr->IsCooking())
 		{
-			bTimerActivated = false;
+			bChopping = false;
 			ChefPtr = nullptr;
 
-			HideProgressBar(true);
+			//HideProgressBar(true);
 		}
 	}
 }
@@ -190,5 +206,6 @@ void AChoppingTable::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 	DOREPLIFETIME(AChoppingTable, Timer);
 	DOREPLIFETIME(AChoppingTable, bTimerActivated);
 	DOREPLIFETIME(AChoppingTable, bChoppingDone);
+	DOREPLIFETIME(AChoppingTable, bChopping);
 	DOREPLIFETIME(AChoppingTable, ChefPtr);
 }
