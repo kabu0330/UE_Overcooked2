@@ -100,25 +100,17 @@ void ASinkTable::InitCleanPlateMesh()
 ACooking* ASinkTable::Interact(AActor* ChefActor)
 {
 	// 설거지된 접시가 하나 이상 있으면 캐릭터에게 하나를 줄 수 있다.
-	if (0 >= CleanPlateNum)
-	{
-		return nullptr;
-	}
 
 	if (true == HasAuthority())
 	{
-		AddCleanPlateNum(-1);
-		APlate* NewPlate = UOC2Global::GetPlate(GetWorld());
-		if (nullptr != NewPlate)
+		if (true == CleanPlates.IsEmpty())
 		{
-			NewPlate->RestorePlateToWorld();
-			NewPlate->CleanPlate();
-			//SetCleanPlateMesh();
-			return NewPlate;
+			return nullptr;
 		}
+
+		CookingPtr = CleanPlates.Pop();
+		return CookingPtr;
 	}
-
-
 
 	return nullptr;
 }
@@ -162,21 +154,9 @@ void ASinkTable::PlacePlates_Implementation(ACooking* ReceivedCooking)
 
 			TempPlate->Plates.Empty();
 
-			//DirtyPlateNum = DirtyPlates.Num();
-			//SetPlateVisibility(DirtyPlateNum);
 
-			//if (true == HasAuthority())
-			//{
-			//	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, FString::Printf(TEXT("Sever Add Sink Table : %d"), DirtyPlateNum));
-			//}
-			//if (false == HasAuthority())
-			//{
-			//	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::Printf(TEXT("Client Add Sink Table : %d"), DirtyPlateNum));
-			//}
 		}
 	}
-
-	// SetAttachToDirtyPlate();
 
 }
 
@@ -185,17 +165,14 @@ void ASinkTable::DoTheDishes(AOC2Character* ChefActor)
 	ChefPtr = Cast<AOC2Character>(ChefActor);
 
 	// 셰프가 싱크대를 떠나지 않았고 설거지할 접시가 남아있다면
-	if (nullptr != ChefActor && 0 < DirtyPlateNum)
+	if (nullptr != ChefActor && 0 < DirtyPlates.Num())
 	{
 		ChefPtr->Washing(true);
 
 		Timer = 0.0f;
 		bTimerActivated = true;
-		//GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Magenta, "Washing...");
 
 		HideProgressBar(false);
-		//KeepWashing = true;
-		//ProgressBarComponent->SetHiddenInGame(false);
 	}
 }
 
@@ -210,23 +187,10 @@ void ASinkTable::Tick(float DeltaTime)
 
 	WashingIsDone();
 
-	// 1. 설거지가 끝났을 때 아직 설거지 할 접시가 남아있다면 다시 설거지 로직 호출
-	if (true == bWashingDone && 0 < DirtyPlateNum)
-	{
-		DoTheDishes(ChefPtr); // 셰프가 처음에 한 번 불러준다. 이후에는 내가 불러줌
-		bWashingDone = false;
-		return;
-	}
-	else if (true == bWashingDone)
-	{
-		// 설거지 모션 중단
-		ChefPtr->Washing(false);
-		bWashingDone = false;
-		return;
-	}
+	RepeatWashing();
 }
 
-void ASinkTable::CheckChefIsWashing()
+void ASinkTable::CheckChefIsWashing_Implementation()
 {
 	// 셰프가 나와 상호작용을 하던 중에
 	if (nullptr != ChefPtr)
@@ -241,7 +205,12 @@ void ASinkTable::CheckChefIsWashing()
 	}
 }
 
-void ASinkTable::UpdateProgressBar(float DeltaTime)
+void ASinkTable::FinishWashing_Implementation()
+{
+	bWashingDone = true;
+}
+
+void ASinkTable::UpdateProgressBar/*_Implementation*/(float DeltaTime)
 {
 	if (true == bTimerActivated /*&& true == KeepWashing*/)
 	{
@@ -249,8 +218,16 @@ void ASinkTable::UpdateProgressBar(float DeltaTime)
 
 		if (Timer > 2.0f)
 		{
+			if (true == HasAuthority())
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, FString::Printf(TEXT("Server Update Progress Bar Is Done")));
+			}
+			if (false == HasAuthority())
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, FString::Printf(TEXT("Client Update Progress Bar Is Done")));
+			}
 			// 트리거 변수
-			bWashingDone = true;
+			FinishWashing();
 		}
 	}
 
@@ -261,6 +238,11 @@ void ASinkTable::UpdateProgressBar(float DeltaTime)
 // 설거지 완료했을 때 한 번 호출, 싱크대로 접시를 하나 이동시킨다.
 void ASinkTable::WashingIsDone_Implementation()
 {
+	if (false == HasAuthority())
+	{
+		return;
+	}
+
 	// 설거지 중이라면 리턴
 	if (false == bWashingDone)
 	{
@@ -269,35 +251,44 @@ void ASinkTable::WashingIsDone_Implementation()
 
 	bTimerActivated = false; // 타이머 끄고
 
-	CleanPlates.Add(DirtyPlates.Pop());
-	/*if (0 >= DirtyPlateNum)
+	if (false == DirtyPlates.IsEmpty())
 	{
-		DirtyPlateNum = 0;
-		return;
-	}*/
-
-
-	//GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Turquoise, "Washing Done");
-
-	HideProgressBar(true);
-	
-	if (true == HasAuthority())
-	{
-		// Dirty -1 , Clean + 1
-		AddDirtyPlateNum(-1);
-		AddCleanPlateNum(1);
+		
+		CleanPlates.Add(DirtyPlates.Pop());
+		APlate* NewCleanPlate = CleanPlates.Last();
+		NewCleanPlate->SetPlateState(EPlateState::EMPTY);
 	}
 
-	// 싱크대 안에 있는 Dirty Plate 개수 렌더링
-	//SetPlateVisibility(DirtyPlateNum); 
+	int Result = CleanPlates.Num();
 
-	// 싱크대 위에 있는 Clean Plate 개수 렌더링
-	//SetCleanPlateMesh();
+	HideProgressBar(true);
+
+	CleanPlates.Last()->AttachToComponent(CleanPlateComponent, FAttachmentTransformRules::KeepRelativeTransform);
+	CleanPlates.Last()->AddActorWorldOffset(FVector::UnitZ()* 10.0f * (CleanPlates.Num() - 1));
+
 }
 
 void ASinkTable::HideProgressBar_Implementation(bool Value)
 {
 	ProgressBarComponent->SetHiddenInGame(Value);
+}
+
+void ASinkTable::RepeatWashing_Implementation()
+{
+	// 1. 설거지가 끝났을 때 아직 설거지 할 접시가 남아있다면 다시 설거지 로직 호출
+	if (true == bWashingDone && 0 < DirtyPlates.Num())
+	{
+		DoTheDishes(ChefPtr); // 셰프가 처음에 한 번 불러준다. 이후에는 내가 불러줌
+		bWashingDone = false;
+		return;
+	}
+	else if (true == bWashingDone)
+	{
+		// 설거지 모션 중단
+		ChefPtr->Washing(false);
+		bWashingDone = false;
+		return;
+	}
 }
 
 void ASinkTable::SetPlateVisibility/*_Implementation*/(int Index)
@@ -423,8 +414,19 @@ void ASinkTable::SetAttachToDirtyPlate()
 {
 	for (size_t i = 0; i < DirtyPlates.Num(); i++)
 	{
+		FVector Result = DirtyPlateComponents[i]->GetComponentLocation();
+		//DirtyPlates[i]->SetActorRotation(DirtyPlateComponents[i]->GetComponentRotation());
 		DirtyPlates[i]->AttachToComponent(DirtyPlateComponents[i], FAttachmentTransformRules::KeepRelativeTransform);
+		DirtyPlates[i]->SetActorLocation(DirtyPlateComponents[i]->GetComponentLocation());
 	}
+	//for (int i = 0; i < PlateNum; i++)
+	//{
+	//	DirtyPlates.Add(TempPlate->GetAnotherPlatesRef()[i]);
+	//	DirtyPlates[i + CurPlateNum]->SetCookingTable_Implementation(this);
+	//	DirtyPlates[i + CurPlateNum]->AttachToComponent(DirtyPlateComponents[i + CurPlateNum], FAttachmentTransformRules::KeepRelativeTransform);
+	//	DirtyPlates[i + CurPlateNum]->SetActorLocation(DirtyPlateComponents[i + CurPlateNum]->GetComponentLocation());
+	//}
+
 }
 
 void ASinkTable::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

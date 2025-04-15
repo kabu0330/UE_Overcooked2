@@ -22,12 +22,21 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Global|Network")
 	void Connect();
 
+	UFUNCTION(BlueprintCallable, Category = "UI|Sound")
+	void PlayOpenSound();
 
+	UFUNCTION(BlueprintCallable, Category = "UI|Sound")
+	void PlaySelectSound();
 
+	UFUNCTION(BlueprintCallable, Category = "UI|Sound")
+	void PlaySubMenuSound();
 
 protected:
 
 	virtual void NativeOnInitialized() override;
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
+	bool bIsOpen = false;
 
 private:
 
@@ -39,6 +48,5 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Network", meta = (AllowPrivateAccess = "true"))
 	FString LevelName = TEXT("LobbyLevel");
-
 
 };

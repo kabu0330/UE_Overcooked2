@@ -357,12 +357,29 @@ void APlate::StackPlate(APlate* Plate)
 		if (PlateState == Plate->PlateState) // 동일한 상태인 녀석만 쌓을 수 있다.
 		{
 			bIsCombinationSuccessful = true;
-			// 1. 쌓인 접시와 나 자신(1)을 더한다.
-			Plates.Add(Plate);
 
-			Plate->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
-			FVector Pos = Plates.Num() * FVector(0, 0, 10);
-			Plate->SetActorRelativeLocation(Pos);
+			// 1. 나 자신(0)과 내가 가진 접시를 넣는다.
+			if (false == Plate->Plates.IsEmpty())
+			{
+				for (int32 i = 0; i < Plate->Plates.Num(); i++)
+				{
+					Plates.Add(Plate->Plates[i]);
+				}
+				Plate->Plates.Empty();
+			}
+			else // 나만 넣는다.
+			{
+				Plates.Add(Plate);
+			}
+			
+			int32 PlateNum = Plates.Num();
+			for (int32 i = 0; i < PlateNum; i++)
+			{
+				Plate->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
+				FVector Pos = i * FVector::UnitZ() * 10.0f;
+				Plate->SetActorRelativeLocation(Pos);
+			}
+
 		}
 	}
 
