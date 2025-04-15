@@ -4,11 +4,16 @@
 #include "UI/Title/TitleWidget.h"
 #include "Kismet/GameplayStatics.h"
 #include "Global/OC2Global.h"
+#include "Global/Data/OC2GlobalData.h"
 #include "Components/CanvasPanelSlot.h"
 #include "Components/CanvasPanel.h"
 #include "Components/Button.h"
 #include "UI/Title/TitleSubmenuWidget.h"
 
+#include "Sound/SoundBase.h" 
+#include "Kismet/GameplayStatics.h" 
+#include "Global/Data/OC2GlobalData.h"
+#include "Components/AudioComponent.h"
 
 
 void UTitleWidget::NativeOnInitialized()
@@ -17,6 +22,20 @@ void UTitleWidget::NativeOnInitialized()
 
 
 
+}
+
+void UTitleWidget::PlaySelectSound()
+{
+
+	USoundBase* SelectButtonSound = UOC2GlobalData::GetUIBaseSound(GetWorld(), "SelectSound");
+	UAudioComponent* SelectAudioComp = UGameplayStatics::SpawnSound2D(this, SelectButtonSound,0.5f);
+	
+}
+
+void UTitleWidget::PlaySubMenuSound()
+{
+	USoundBase* SubmenuSound = UOC2GlobalData::GetUIBaseSound(GetWorld(), "SubmenuSound");
+	UAudioComponent* SubmenuSoundAudioComp = UGameplayStatics::SpawnSound2D(this, SubmenuSound, 0.5f);
 }
 
 void UTitleWidget::StartServer()
@@ -30,3 +49,11 @@ void UTitleWidget::Connect()
 	UOC2Global::ConnectServer(GetWorld(), Controller, IP, Port, LevelName);
 }
 
+void UTitleWidget::PlayOpenSound()
+{
+	USoundBase* ShutterSound = UOC2GlobalData::GetUIBaseSound(GetWorld(), "TitleShutterSound");
+	UAudioComponent* AudioComp = UGameplayStatics::SpawnSound2D(this, ShutterSound);
+
+	USoundBase* StartSound = UOC2GlobalData::GetUIBaseSound(GetWorld(), "TitleStartSound");
+	UAudioComponent* AudioComp2 = UGameplayStatics::SpawnSound2D(this, StartSound);
+}

@@ -30,6 +30,9 @@ public:
 
     bool GetIsReady();
 
+    bool IsTimesUp();
+    bool IsShowScoreWidget();
+
     // UI 바인딩 (총 5개의 주문 슬롯)
     UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
     class UCanvasPanel* Order_0 = nullptr;
@@ -108,6 +111,8 @@ private:
     float TimesUpTimeElapsed = 0.0f;
     float ReadyOffset = 0.0f;
     float TimesUpOffset = 0.0f;
+
+    bool bShowScoreWidget = false;
 
     FVector2D TargetOffset = FVector2D(50.0f, 0.0f);
     FVector2D IngredientTargetOffset = FVector2D(0.0f, 10.0f);
