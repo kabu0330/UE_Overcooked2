@@ -76,6 +76,8 @@ public:
 	/** 디버그 메시지를 출력하는 함수 (테스트 및 로그 확인 용도) */
 	void PrintDebugMessage();
 
+	void PlayBackgroundSound();
+
 public:
 	/** 현재 게임에 접속한 플레이어 컨트롤러 목록 */
 	TArray<APlayerController*> PlayerControllers;

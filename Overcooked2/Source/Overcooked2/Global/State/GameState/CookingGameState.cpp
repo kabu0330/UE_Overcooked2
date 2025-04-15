@@ -12,6 +12,7 @@
 
 #include "LevelContent/Cook/Plate.h"
 #include "LevelContent/Cook/Cooking.h"
+#include "LevelContent/Map/OC2Map.h"
 
 #include "UI/Cooking/CookingHUD.h"
 #include "UI/Cooking/UI/CookingWidget.h"
@@ -44,6 +45,11 @@ void ACookingGameState::BeginPlay()
 	for (TActorIterator<ADirectionalLight> It(GetWorld()); It; ++It)
 	{
 		DirectionalLight = *It;
+	}
+
+	for (TActorIterator<AOC2Map> It(GetWorld()); It; ++It)
+	{
+		OC2Map = *It;
 	}
 }
 
@@ -451,6 +457,11 @@ void ACookingGameState::Server_MovePlate_Implementation(ACooking* Cooking)
 			Plate->Multicast_MovePlate();
 		}
 	}
+}
+
+void ACookingGameState::Multicast_PlayGameMapSound_Implementation()
+{
+	OC2Map->PlaySound();
 }
 
 void ACookingGameState::OnRep_MatchState()

@@ -19,6 +19,11 @@ public:
 	static float MaxOrderCount;
 	static float OC2CharacterSizeY;
 
+	static float BGSoundVolume;
+	static float AmbienceVolume;
+	static float EffectVolume;
+	static float UIVolume;
+
 	static int ScoreValue;
 	static int TipValue;
 
