@@ -6,6 +6,9 @@
 
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
+#include "EngineUtils.h"
+#include "Engine/DirectionalLight.h"
+#include "Components/DirectionalLightComponent.h"
 
 #include "LevelContent/Cook/Plate.h"
 #include "LevelContent/Cook/Cooking.h"
@@ -38,6 +41,10 @@ void ACookingGameState::BeginPlay()
 
 	ChangeState(ECookingStageState::ESS_WAITING_TO_START);
 
+	for (TActorIterator<ADirectionalLight> It(GetWorld()); It; ++It)
+	{
+		DirectionalLight = *It;
+	}
 }
 
 void ACookingGameState::Tick(float DeltaTime)
@@ -279,6 +286,17 @@ void ACookingGameState::Multicast_SettingTimer_Implementation(float DeltaTime)
 		if (nullptr != CookingHUD && nullptr != CookingHUD->CookWidget)
 		{
 			CookingHUD->CookWidget->StartTimerTick(DeltaTime);
+
+			if (true == CookingHUD->CookWidget->IsShowScoreWidget())
+			{
+				ULightComponent* BaseLightComp = DirectionalLight->GetLightComponent();
+
+				// DirectionalLightComponent로 캐스팅
+				if (UDirectionalLightComponent* DirLightComp = Cast<UDirectionalLightComponent>(BaseLightComp))
+				{
+					DirLightComp->SetIntensity(5.0f); // 강도 줄이기
+				}
+			}
 		}
 	}
 }

@@ -102,6 +102,16 @@ bool UCookingWidget::GetIsReady()
     return CookingReadyWidget->bIsReady;
 }
 
+bool UCookingWidget::IsTimesUp()
+{
+    return CookingTimerWidget->GetIsTimesUP();
+}
+
+bool UCookingWidget::IsShowScoreWidget()
+{
+    return bShowScoreWidget;
+}
+
 void UCookingWidget::StartGame()
 {
     CookingScoreWidget->SetVisibility(ESlateVisibility::Visible);
@@ -169,6 +179,7 @@ void UCookingWidget::PlayTimesUPAnim()
         TimesUpCanvas->SetVisibility(ESlateVisibility::Collapsed);
         GetWorld()->GetTimerManager().ClearTimer(TimesUPTimerHandle);
         PlayTimeoutWidget();
+        bShowScoreWidget = true;
         return;
     }
 
