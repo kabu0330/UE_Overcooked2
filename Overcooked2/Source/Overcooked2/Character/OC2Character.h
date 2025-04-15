@@ -122,6 +122,14 @@ public:
 	UFUNCTION()
 	void OnRep_ShowDir();
 
+	UFUNCTION()
+	void OnDashInput();
+
+	//UFUNCTION()
+	//void OnGrabInput();
+
+	//UFUNCTION()
+	//void OnDropInput();
 
 	UFUNCTION(Reliable, Server)
 	void Dash();

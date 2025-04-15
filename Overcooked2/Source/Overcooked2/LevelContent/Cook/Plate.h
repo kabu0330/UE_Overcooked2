@@ -40,6 +40,7 @@ public:
 		return bIsCombinationSuccessful;
 	}
 
+	bool CanMergeRice();
 
 	UFUNCTION(BlueprintCallable)
 	bool IsDirtyPlate();

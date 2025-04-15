@@ -14,7 +14,9 @@
 #include "LevelContent/Table/NonTable/PlateSpawner.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "UI/Cooking/CaptureComponent2D.h"
+#include "Global/Data/OC2GlobalData.h"
 #include "Net/UnrealNetwork.h"
+#include "Kismet/GameplayStatics.h"
 
 
 // Sets default values
@@ -165,7 +167,7 @@ void AOC2Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 	EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Started, this, &AOC2Character::Interact);
 	EnhancedInputComponent->BindAction(CharacterAction, ETriggerEvent::Started, this, &AOC2Character::DoActionPress);
 	EnhancedInputComponent->BindAction(CharacterAction, ETriggerEvent::Completed, this, &AOC2Character::DoActionRelease);
-	EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Started, this, &AOC2Character::Dash);
+	EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Started, this, &AOC2Character::OnDashInput);
 
 }
 
@@ -252,7 +254,9 @@ void AOC2Character::Interact_Implementation()
 		// 잡고 있는게 있으면
 		else
 		{
-			if (AIngredient* Ingredient = Cast<AIngredient>(Cooking))
+			APlate* Plate = Cast<APlate>(Cooking);
+			AIngredient* Ingredient = Cast<AIngredient>(Cooking);
+			if (Ingredient != nullptr)
 			{
 				UE_LOG(LogTemp, Log, TEXT("This is an ingredient!"));
 				if (GrabbedObject != nullptr)
@@ -261,7 +265,7 @@ void AOC2Character::Interact_Implementation()
 				}
 			}
 			// 상호작용을 접시랑 할때
-			else if (APlate* Plate = Cast<APlate>(Cooking))
+			else if (Plate != nullptr)
 			{
 				AIngredient* GrabbedIng = Cast<AIngredient>(GrabbedObject);
 				APot* GrabbedPot = Cast<APot>(GrabbedObject);
@@ -327,7 +331,7 @@ void AOC2Character::Interact_Implementation()
 				Table->PlaceItem(Ingredient);
 				GrabbedObject = nullptr;
 			}
-			else if (Pot!= nullptr)
+			else if (Pot != nullptr)
 			{
 				Pot->ResetPot();
 			}
@@ -354,6 +358,8 @@ void AOC2Character::Interact_Implementation()
 		}
 		else
 		{
+			AChoppingTable* Chop = Cast<AChoppingTable>(Table);
+			if (Chop != nullptr && Chop->IsTimerActivated()) return;
 			// 테이블과 상호작용을 시도한다.
 			ACooking* Cook = Table->Interact(this);
 			// 잡고있는 물건이 없고, 테이블에 올려진 물체가 있는 경우
@@ -420,12 +426,19 @@ void AOC2Character::Interact_Implementation()
 				}
 				else if (GrabPlate != nullptr)
 				{
-					if (Plate->IsDirtyPlate() && GrabPlate->IsDirtyPlate())
+					if (Plate != nullptr)
 					{
-						Plate->StackPlate(GrabPlate);
-						if (true == Plate->IsCombinationSuccessful())
+						if (Plate->IsDirtyPlate() && GrabPlate->IsDirtyPlate())
 						{
+							Plate->StackPlate(GrabPlate);
 							GrabbedObject = nullptr;
+						}
+					}
+					else if (Pot != nullptr)
+					{
+						if (GrabPlate->CanMergeRice() == true)
+						{
+							GrabPlate->Add(Pot->GetRice());
 						}
 					}
 				}
@@ -644,12 +657,11 @@ void AOC2Character::CheckInteract()
 
 void AOC2Character::Dash_Implementation()
 {
-	if (bIsMoveEnabled == false) return;
-	if (bIsDashing == false)
-	{
-		bIsDashing = true;
-		DashTimer = 0.0f;
-	}
+
+
+	bIsDashing = true;
+	DashTimer = 0.0f;
+
 	//FVector DashDirection = GetActorForwardVector(); // 바라보는 방향
 	//LaunchCharacter(DashDirection * DashPower, true, false); // 대시 실행
 
@@ -688,6 +700,16 @@ void AOC2Character::OnRep_PlateSet()
 void AOC2Character::OnRep_ShowDir()
 {
 	ThrowDir->SetVisibility(bCanThrowing && IsLocallyControlled());
+}
+
+void AOC2Character::OnDashInput()
+{
+	if (bIsMoveEnabled == false) return;
+	if (bIsDashing == false)
+	{
+		if (IsLocallyControlled()) UGameplayStatics::PlaySound2D(GetWorld(), UOC2GlobalData::GetCharacterBaseSound(GetWorld(), "Dash"));
+		Dash();
+	}
 }
 
 
