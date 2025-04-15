@@ -28,7 +28,7 @@ void UTitleWidget::PlaySelectSound()
 {
 
 	USoundBase* SelectButtonSound = UOC2GlobalData::GetUIBaseSound(GetWorld(), "SelectSound");
-	UAudioComponent* SelectAudioComp = UGameplayStatics::SpawnSound2D(this, SelectButtonSound,0.5f);
+	UAudioComponent* SelectAudioComp = UGameplayStatics::SpawnSound2D(this, SelectButtonSound, 0.5f);
 	
 }
 
