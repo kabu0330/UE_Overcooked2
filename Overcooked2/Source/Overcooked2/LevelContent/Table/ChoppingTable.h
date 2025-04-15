@@ -89,6 +89,7 @@ public:
 	void HideKnife();
 	void HideKnife_Implementation();
 
+
 protected:
 
 private:
@@ -96,6 +97,7 @@ private:
 	float Timer = 0.0f;
 
 	float CurTime = 0.0f;
+
 	UPROPERTY(Replicated)
 	bool bTimerActivated = false;
 

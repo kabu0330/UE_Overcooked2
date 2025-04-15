@@ -133,13 +133,12 @@ void AChoppingTable::ChopIngredient(AActor* ChefActor)
 			{
 				ChefPtr->Chopping(true);
 
-				bTimerActivated = true;
-
-				if (false == bChopping)
+				if (false == bTimerActivated)
 				{
 					Timer = 0.0f;
 				}
 
+				bTimerActivated = true;
 				bChopping = true;
 
 				HideProgressBar(false);
@@ -155,7 +154,7 @@ void AChoppingTable::HideProgressBar_Implementation(bool Value)
 
 void AChoppingTable::ChoppingIsDone_Implementation()
 {
-	if (false == bChoppingDone || true == bChopping)
+	if (false == bChoppingDone || false == bChopping)
 	{
 		return;
 	}
