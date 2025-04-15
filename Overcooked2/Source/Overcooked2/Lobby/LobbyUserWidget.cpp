@@ -3,7 +3,11 @@
 
 #include "Lobby/LobbyUserWidget.h"
 #include "Global/OC2Global.h"
+#include "Global/Data/OC2GlobalData.h"
+#include "Global/State/GameState/LobbyGameState.h"
+
 #include "Character/OC2Character.h"
+
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
 #include "Components/Widget.h"
@@ -13,9 +17,9 @@
 #include "Lobby/LobbyHUD.h"
 #include "UI/Lobby/LobbyZoomInWidget.h"
 #include "UI/Loading/LoadingWidget.h"
+#include "Sound/SoundBase.h" 
 #include "Kismet/GameplayStatics.h"
 
-#include "Global/State/GameState/LobbyGameState.h"
 
 
 void ULobbyUserWidget::NativeConstruct()
@@ -50,6 +54,19 @@ void ULobbyUserWidget::NativeConstruct()
     }
 }
 
+void ULobbyUserWidget::PlaySelectSound()
+{
+
+    USoundBase* SelectButtonSound = UOC2GlobalData::GetUIBaseSound(GetWorld(), "SelectSound");
+    UAudioComponent* SelectAudioComp = UGameplayStatics::SpawnSound2D(this, SelectButtonSound, 0.5f);
+
+}
+void ULobbyUserWidget::PlayHoverSound()
+{
+    USoundBase* TitleSubMenuButtonSound = UOC2GlobalData::GetUIBaseSound(GetWorld(), "TitleSubMenuButtonSound");
+    UAudioComponent* AudioComp = UGameplayStatics::SpawnSound2D(this, TitleSubMenuButtonSound);
+}
+
 void ULobbyUserWidget::MoveToPlayLevel()
 {
     ALobbyGameState* LobbyGameState = nullptr;
@@ -65,6 +82,8 @@ void ULobbyUserWidget::MoveToPlayLevel()
             if (nullptr != LobbyGameState)
             {
                 // 여기서 사용 가능!
+
+
                 LobbyGameState->Multicast_PlayZoomInAnmationUI();
             }
         }

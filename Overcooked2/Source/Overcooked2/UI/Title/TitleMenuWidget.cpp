@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "UI/Title/TitleMenuWidget.h"
 
 #include "Components/CanvasPanel.h"
@@ -9,10 +8,9 @@
 #include "Engine/Texture2D.h"
 #include "Slate/SlateBrushAsset.h"
 
-#include "Sound/SoundBase.h" 
-#include "Kismet/GameplayStatics.h" 
+#include "Sound/SoundBase.h"
+#include "Kismet/GameplayStatics.h"
 #include "Global/Data/OC2GlobalData.h"
-
 
 void UTitleMenuWidget::NativeOnInitialized()
 {
@@ -27,65 +25,67 @@ void UTitleMenuWidget::NativeOnInitialized()
     NewStyle.Normal = NewStyle.Hovered;
     StoryButton->SetStyle(NewStyle);
     CurMainButton = StoryButton;
-
 }
 
-
+void UTitleMenuWidget::NativeDestruct()
+{
+    if (GetWorld())
+    {
+        GetWorld()->GetTimerManager().ClearTimer(MenuMoveTimerHandle);
+    }
+    Super::NativeDestruct();
+}
 
 void UTitleMenuWidget::SettingTitleMenu()
 {
-    for (int i = 0; i < Buttons.Num(); i++)
+    for (UButton* Button : Buttons)
     {
-        Buttons[i]->OnHovered.AddDynamic(this, &UTitleMenuWidget::HoverButton);
+        if (!Button) continue;
 
-        UCanvasPanel* Panel = FindSiblingWidget<UCanvasPanel>(Buttons[i]);
-        if (Panel)
+        Button->OnHovered.AddDynamic(this, &UTitleMenuWidget::HoverButton);
+
+        if (UCanvasPanel* Panel = FindSiblingWidget<UCanvasPanel>(Button))
         {
-            TArray<UButton*> AllButtons = FindAllChildWidgets<UButton>(Panel);
-
-            for (UButton* SubButton : AllButtons)
+            TArray<UButton*> SubButtons = FindAllChildWidgets<UButton>(Panel);
+            for (UButton* SubButton : SubButtons)
             {
-                SubButton->OnHovered.AddDynamic(this, &UTitleMenuWidget::HoverSubButton);
-                //SubButton->OnUnhovered
+                if (SubButton)
+                {
+                    SubButton->OnHovered.AddDynamic(this, &UTitleMenuWidget::HoverSubButton);
+                }
             }
         }
     }
-
-    //USoundBase* TitleSubMenuButtonSound = UOC2GlobalData::GetUIBaseSound(GetWorld(), "TitleSubMenuButtonSound");
-    //TitleSubMenuAudioComp = NewObject<UAudioComponent>(this);
-    //TitleSubMenuAudioComp->SetSound(TitleSubMenuButtonSound);
-    //TitleSubMenuAudioComp->RegisterComponentWithWorld(GetWorld());
-
-    //USoundBase* TitleMenuButtonSound = UOC2GlobalData::GetUIBaseSound(GetWorld(), "TitleMenuButtonSound");
-    //MenuButtonAudioComp = NewObject<UAudioComponent>(this);
-    //MenuButtonAudioComp->SetSound(TitleMenuButtonSound);
-    //MenuButtonAudioComp->RegisterComponentWithWorld(GetWorld());
 }
 
 void UTitleMenuWidget::HoverSubButton()
 {
-    if (nullptr == CurPanel) return;
+    if (!CurPanel) return;
 
-    TArray<UButton*> AllButtons = FindAllChildWidgets<UButton>(CurPanel);
+    TArray<UButton*> SubButtons = FindAllChildWidgets<UButton>(CurPanel);
 
-    for (UButton* SubButton : AllButtons)
+    for (UButton* SubButton : SubButtons)
     {
-        //bIsCurPanel = false;
-        if (CurButton != SubButton && SubButton->IsHovered())
+        if (!SubButton || !SubButton->IsHovered()) continue;
+
+        if (CurButton != SubButton)
         {
             CurButton = SubButton;
 
-            USoundBase* SubMenuButtonSound = UOC2GlobalData::GetUIBaseSound(GetWorld(), "TitleSubMenuButtonSound");
-            UAudioComponent* AudioComp = UGameplayStatics::SpawnSound2D(this, SubMenuButtonSound);
+            if (USoundBase* Sound = UOC2GlobalData::GetUIBaseSound(GetWorld(), "TitleSubMenuButtonSound"))
+            {
+                UGameplayStatics::SpawnSound2D(this, Sound);
+            }
         }
-        else if (CurButton == SubButton && SubButton->IsHovered() && false == bIsCurButton)
+        else if (!bIsCurButton)
         {
-            USoundBase* SubMenuButtonSound = UOC2GlobalData::GetUIBaseSound(GetWorld(), "TitleSubMenuButtonSound");
-            UAudioComponent* AudioComp = UGameplayStatics::SpawnSound2D(this, SubMenuButtonSound);
-            bIsCurButton = true;
-            
-        }
+            if (USoundBase* Sound = UOC2GlobalData::GetUIBaseSound(GetWorld(), "TitleSubMenuButtonSound"))
+            {
+                UGameplayStatics::SpawnSound2D(this, Sound);
+            }
 
+            bIsCurButton = true;
+        }
     }
 }
 
@@ -93,17 +93,19 @@ void UTitleMenuWidget::HoverButton()
 {
     for (UButton* Button : Buttons)
     {
-        UCanvasPanel* Panel = FindSiblingWidget<UCanvasPanel>(Button);
-        if (nullptr != Button && true == Button->IsHovered()) 
+        if (!Button) continue;
+
+        if (Button->IsHovered())
         {
-            if (nullptr != Panel)
+            if (UCanvasPanel* Panel = FindSiblingWidget<UCanvasPanel>(Button))
             {
                 Panel->SetVisibility(ESlateVisibility::Visible);
                 bIsCurButton = false;
-                
+
                 if (CurPanel != Panel)
                 {
                     CurPanel = Panel;
+
                     if (CurMainButton)
                     {
                         FButtonStyle OldStyle = CurMainButton->GetStyle();
@@ -118,77 +120,77 @@ void UTitleMenuWidget::HoverButton()
                     NewStyle.Normal = NewStyle.Hovered;
                     Button->SetStyle(NewStyle);
 
-                    USoundBase* MenuButtonSound = UOC2GlobalData::GetUIBaseSound(GetWorld(), "TitleMenuButtonSound");;
-                    UAudioComponent* AudioComp = UGameplayStatics::SpawnSound2D(this, MenuButtonSound);
+                    if (USoundBase* Sound = UOC2GlobalData::GetUIBaseSound(GetWorld(), "TitleMenuButtonSound"))
+                    {
+                        UGameplayStatics::SpawnSound2D(this, Sound);
+                    }
 
                     GetWorld()->GetTimerManager().ClearTimer(MenuMoveTimerHandle);
                     GetWorld()->GetTimerManager().SetTimer(MenuMoveTimerHandle, this, &UTitleMenuWidget::UpdateMenuPosition, 0.01f, true);
                 }
-
             }
         }
         else
         {
-            if (nullptr != Panel)
+            if (UCanvasPanel* Panel = FindSiblingWidget<UCanvasPanel>(Button))
             {
                 Panel->SetVisibility(ESlateVisibility::Hidden);
                 Panel->SetRenderTranslation({ 0.0f, -82.0f });
             }
-
         }
     }
 }
 
 void UTitleMenuWidget::UpdateMenuPosition()
 {
-    if (CurPanel->GetRenderTransform().Translation.Y >= 0)
+    if (!CurPanel) return;
+
+    float CurY = CurPanel->GetRenderTransform().Translation.Y;
+
+    if (CurY >= 0.0f)
     {
         CurPanel->SetRenderTranslation({ 0.0f, 0.0f });
-
         GetWorld()->GetTimerManager().ClearTimer(MenuMoveTimerHandle);
     }
     else
     {
-        float CurPos = CurPanel->GetRenderTransform().Translation.Y;
-        CurPanel->SetRenderTranslation({ 0.0f, CurPos + MenuMoveOffset });
+        CurPanel->SetRenderTranslation({ 0.0f, CurY + MenuMoveOffset });
     }
 }
-
 
 template <typename T>
 T* UTitleMenuWidget::FindSiblingWidget(UWidget* Widget)
 {
     if (!Widget) return nullptr;
 
-    UPanelWidget* Parent = Cast<UPanelWidget>(Widget->GetParent());
-    if (!Parent) return nullptr;
-
-    for (UWidget* Child : Parent->GetAllChildren())
+    if (UPanelWidget* Parent = Cast<UPanelWidget>(Widget->GetParent()))
     {
-        if (T* TargetWidget = Cast<T>(Child))
+        for (UWidget* Child : Parent->GetAllChildren())
         {
-            return TargetWidget;
+            if (T* TargetWidget = Cast<T>(Child))
+            {
+                return TargetWidget;
+            }
         }
     }
 
     return nullptr;
 }
 
-
 template <typename T>
 TArray<T*> UTitleMenuWidget::FindAllChildWidgets(UCanvasPanel* Panel)
 {
-    TArray<T*> FoundWidgets;
+    TArray<T*> Result;
 
-    if (!Panel) return FoundWidgets;
+    if (!Panel) return Result;
 
     for (UWidget* Child : Panel->GetAllChildren())
     {
         if (T* Widget = Cast<T>(Child))
         {
-            FoundWidgets.Add(Widget);
+            Result.Add(Widget);
         }
     }
 
-    return FoundWidgets;
+    return Result;
 }
