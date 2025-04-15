@@ -36,8 +36,8 @@ void UTitleStartWidget::NativeConstruct()
 	Background->SetVisibility(ESlateVisibility::Hidden);
 	UEImage->SetVisibility(ESlateVisibility::Hidden);
 
-	USoundBase* TitleSound = UOC2GlobalData::GetUIBaseSound(GetWorld(), "TitleSound");
-	UAudioComponent* AudioComp = UGameplayStatics::SpawnSound2D(this, TitleSound);
+	//USoundBase* TitleSound = UOC2GlobalData::GetUIBaseSound(GetWorld(), "TitleSound");
+	//UAudioComponent* AudioComp = UGameplayStatics::SpawnSound2D(this, TitleSound);
 	
 }
 

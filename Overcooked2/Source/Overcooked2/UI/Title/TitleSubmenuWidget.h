@@ -21,6 +21,15 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "OC2UI")
 	void MoveBanner();
+
+	UFUNCTION(BlueprintCallable, Category = "OC2UI")
+	void PlayHoverSound();
+
+
+	UFUNCTION(BlueprintCallable, Category = "OC2UI")
+	void PlayPressSound();
+
+
 protected:
 	virtual void NativeOnInitialized() override;
 
