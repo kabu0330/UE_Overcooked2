@@ -7,6 +7,11 @@ float UOC2Const::OrderSpawnDelay = 3.0f;
 float UOC2Const::MaxOrderCount = 5;
 float UOC2Const::OC2CharacterSizeY = 120.0f;
 
+float UOC2Const::BGSoundVolume = 0.5f;
+float UOC2Const::AmbienceVolume = 0.3f;
+float UOC2Const::EffectVolume = 1.0f;
+float UOC2Const::UIVolume = 1.0f;
+
 int UOC2Const::ScoreValue = 20;
 int UOC2Const::TipValue = 8;
 
