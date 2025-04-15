@@ -99,6 +99,9 @@ protected:
 
 	void SetAttachToDirtyPlate();
 
+	UFUNCTION()
+	void OnRep_ChangeProgress();
+
 
 	UPROPERTY(Replicated)
 	float Timer = 0.0f;
@@ -109,7 +112,7 @@ protected:
 	UPROPERTY(Replicated)
 	bool bWashingDone = false;
 
-	UPROPERTY(Replicated)
+	UPROPERTY(ReplicatedUsing = OnRep_ChangeProgress)
 	float Ratio = 0.0f;
 
 	UPROPERTY(ReplicatedUsing = OnRep_SetDirtyPlateMesh)

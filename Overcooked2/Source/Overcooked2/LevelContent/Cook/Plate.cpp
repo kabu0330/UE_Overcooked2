@@ -83,6 +83,11 @@ void APlate::SpawnPlate()
 	}
 }
 
+void APlate::BaseFromSelf_Implementation()
+{
+	Plates.Add(this);
+}
+
 // Called when the game starts or when spawned
 void APlate::BeginPlay()
 {
@@ -92,12 +97,10 @@ void APlate::BeginPlay()
 
 	FindPlateSpawner();
 	FindSinkTable();
-
 	if (true == HasAuthority())
 	{
-		Plates.Add(this);
+		BaseFromSelf();
 	}
-
 }
 
 void APlate::InitWidgetComponent()
@@ -296,8 +299,17 @@ void APlate::Add_Implementation(AIngredient* Ingredient)
 			// 3-3. 접시 위에 올라갈 요리 메시 세팅
 			SetIngredinetMesh(InitData);
 
+			if (true == HasAuthority())
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, FString::Printf(TEXT("Add Plate Is Called Request Destroy")));
+			}
+			if (false == HasAuthority())
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, FString::Printf(TEXT("Add Plate Is Called Request Destroy")));
+			}
 			// 3-5. 기존에 존재하는 재료는 월드에서 삭제
 			Ingredient->RequestOC2ActorDestroy();
+
 
 			// 4. Texture 추가
 			SetIngredinetTextures(InitData);
@@ -564,9 +576,7 @@ void APlate::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimePr
 	DOREPLIFETIME(APlate, IngredientMesh);
 	DOREPLIFETIME(APlate, PlateState);
 	DOREPLIFETIME(APlate, bIsCombinationSuccessful);
-	//DOREPLIFETIME(APlate, AnotherPlates);
 	DOREPLIFETIME(APlate, PlateStackStatus);
 	DOREPLIFETIME(APlate, CookingTable);
-	//DOREPLIFETIME(APlate, PlatesNum);
-	//DOREPLIFETIME(APlate, StackPlate);
+
 }
