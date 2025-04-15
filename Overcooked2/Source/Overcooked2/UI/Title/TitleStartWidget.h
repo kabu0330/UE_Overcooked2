@@ -51,7 +51,8 @@ public:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
 	class UCanvasPanel* StartWidget = nullptr;
 
-	
+
+
 protected:
 	virtual void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float DeltaTime) override;
@@ -62,6 +63,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OC2UI")
 	class UCurveFloat* FadeOutCurve = nullptr;
+
 
 private:
 
@@ -94,5 +96,7 @@ private:
 	bool bIsGhost = false;
 	bool bIsT17 = false;
 	float StartAnimTime = 0.0f;
+
+
 
 };
