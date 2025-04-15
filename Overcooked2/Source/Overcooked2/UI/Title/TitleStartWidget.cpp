@@ -4,16 +4,22 @@
 #include "UI/Title/TitleStartWidget.h"
 #include "Components/Image.h"
 #include "Components/CanvasPanel.h"
+#include "Components/AudioComponent.h"
 #include "GameFramework/PlayerController.h"
 
 #include "Input/Reply.h"                   // FReply
 #include "Input/Events.h"                  // FKeyEvent
 
+#include "Sound/SoundBase.h" 
+#include "Kismet/GameplayStatics.h" 
+#include "Global/Data/OC2GlobalData.h"
+
+
 void UTitleStartWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	bIsFocusable = true;
+	SetIsFocusable(true);
 	this->SetKeyboardFocus();
 
 	APlayerController* PC = GetWorld()->GetFirstPlayerController();
@@ -21,7 +27,7 @@ void UTitleStartWidget::NativeConstruct()
 	{
 		FInputModeUIOnly InputMode;
 		InputMode.SetWidgetToFocus(TakeWidget());
-		InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+		InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::LockInFullscreen);
 		PC->SetInputMode(InputMode);
 		PC->bShowMouseCursor = false;
 	}
@@ -30,6 +36,9 @@ void UTitleStartWidget::NativeConstruct()
 	Background->SetVisibility(ESlateVisibility::Hidden);
 	UEImage->SetVisibility(ESlateVisibility::Hidden);
 
+	USoundBase* TitleSound = UOC2GlobalData::GetUIBaseSound(GetWorld(), "TitleSound");
+	UAudioComponent* AudioComp = UGameplayStatics::SpawnSound2D(this, TitleSound);
+	
 }
 
 
@@ -73,7 +82,7 @@ FReply UTitleStartWidget::NativeOnKeyDown(const FGeometry& MyGeometry, const FKe
 	else if (InKeyEvent.GetKey() == EKeys::Escape)
 	{
 		SetVisibleCollapsed();
-		bIsFocusable = true;
+		SetIsFocusable(true);
 
 		APlayerController* PC = GetWorld()->GetFirstPlayerController();
 		if (PC)

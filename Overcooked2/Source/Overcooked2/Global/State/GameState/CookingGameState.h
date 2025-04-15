@@ -14,6 +14,7 @@
 class ASpawnManager;
 class APlate;
 class ACooking;
+class ADirectionalLight;
 
 /**
  * 
@@ -99,6 +100,7 @@ private:
 	TArray<APlate*> PlateArray;
 	int CurOrderIndex = 0;
 	int FeverCount = 0;
+	ADirectionalLight* DirectionalLight = nullptr;
 
 	UPROPERTY(Replicated)
 	int OrderScore = 0;
