@@ -34,7 +34,7 @@ void UTitleMenuWidget::NativeOnInitialized()
 
 void UTitleMenuWidget::SettingTitleMenu()
 {
-      for (int i = 0; i < Buttons.Num(); i++)
+    for (int i = 0; i < Buttons.Num(); i++)
     {
         Buttons[i]->OnHovered.AddDynamic(this, &UTitleMenuWidget::HoverButton);
 
@@ -51,18 +51,15 @@ void UTitleMenuWidget::SettingTitleMenu()
         }
     }
 
-    USoundBase* TitleSubMenuButtonSound = UOC2GlobalData::GetUIBaseSound(GetWorld(), "TitleSubMenuButtonSound");
-    TitleSubMenuAudioComp = NewObject<UAudioComponent>(this);
-    TitleSubMenuAudioComp->SetSound(TitleSubMenuButtonSound);
-    TitleSubMenuAudioComp->RegisterComponentWithWorld(GetWorld());
+    //USoundBase* TitleSubMenuButtonSound = UOC2GlobalData::GetUIBaseSound(GetWorld(), "TitleSubMenuButtonSound");
+    //TitleSubMenuAudioComp = NewObject<UAudioComponent>(this);
+    //TitleSubMenuAudioComp->SetSound(TitleSubMenuButtonSound);
+    //TitleSubMenuAudioComp->RegisterComponentWithWorld(GetWorld());
 
-
-    USoundBase* TitleMenuButtonSound = UOC2GlobalData::GetUIBaseSound(GetWorld(), "TitleMenuButtonSound");
-    MenuButtonAudioComp = NewObject<UAudioComponent>(this);
-    MenuButtonAudioComp->SetSound(TitleMenuButtonSound);
-    MenuButtonAudioComp->RegisterComponentWithWorld(GetWorld());
-
-
+    //USoundBase* TitleMenuButtonSound = UOC2GlobalData::GetUIBaseSound(GetWorld(), "TitleMenuButtonSound");
+    //MenuButtonAudioComp = NewObject<UAudioComponent>(this);
+    //MenuButtonAudioComp->SetSound(TitleMenuButtonSound);
+    //MenuButtonAudioComp->RegisterComponentWithWorld(GetWorld());
 }
 
 void UTitleMenuWidget::HoverSubButton()
@@ -78,18 +75,13 @@ void UTitleMenuWidget::HoverSubButton()
         {
             CurButton = SubButton;
 
-            if (nullptr != TitleSubMenuAudioComp)
-            {
-                TitleSubMenuAudioComp->Play();
-            }
-
+            USoundBase* SubMenuButtonSound = UOC2GlobalData::GetUIBaseSound(GetWorld(), "TitleSubMenuButtonSound");
+            UAudioComponent* AudioComp = UGameplayStatics::SpawnSound2D(this, SubMenuButtonSound);
         }
         else if (CurButton == SubButton && SubButton->IsHovered() && false == bIsCurButton)
         {
-            if (nullptr != TitleSubMenuAudioComp)
-            {
-                TitleSubMenuAudioComp->Play();
-            }
+            USoundBase* SubMenuButtonSound = UOC2GlobalData::GetUIBaseSound(GetWorld(), "TitleSubMenuButtonSound");
+            UAudioComponent* AudioComp = UGameplayStatics::SpawnSound2D(this, SubMenuButtonSound);
             bIsCurButton = true;
             
         }
@@ -126,13 +118,9 @@ void UTitleMenuWidget::HoverButton()
                     NewStyle.Normal = NewStyle.Hovered;
                     Button->SetStyle(NewStyle);
 
-                    if (nullptr != MenuButtonAudioComp)
-                    {
-                        MenuButtonAudioComp->Play();
-                    }
+                    USoundBase* MenuButtonSound = UOC2GlobalData::GetUIBaseSound(GetWorld(), "TitleMenuButtonSound");;
+                    UAudioComponent* AudioComp = UGameplayStatics::SpawnSound2D(this, MenuButtonSound);
 
-
-                    
                     GetWorld()->GetTimerManager().ClearTimer(MenuMoveTimerHandle);
                     GetWorld()->GetTimerManager().SetTimer(MenuMoveTimerHandle, this, &UTitleMenuWidget::UpdateMenuPosition, 0.01f, true);
                 }
