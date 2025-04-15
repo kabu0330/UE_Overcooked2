@@ -15,6 +15,7 @@ class ASpawnManager;
 class APlate;
 class ACooking;
 class ADirectionalLight;
+class AOC2Map;
 
 /**
  * 
@@ -76,6 +77,9 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_SetFeverUI(int InFeverCount);
 
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_PlayGameMapSound();
+
 	UFUNCTION(Server, Reliable)
 	void Server_SubmitPlate(ACooking* Plate);
 
@@ -101,6 +105,7 @@ private:
 	int CurOrderIndex = 0;
 	int FeverCount = 0;
 	ADirectionalLight* DirectionalLight = nullptr;
+	AOC2Map* OC2Map = nullptr;
 
 	UPROPERTY(Replicated)
 	int OrderScore = 0;

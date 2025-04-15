@@ -213,12 +213,9 @@ private:
 	bool bCanColorChange = false; // 색상이 변할 수 있는 상태인지, 캐릭터가 들고 내릴 때 판단
 	// 
 
-
 	// 이펙트
 	UPROPERTY(Replicated)
 	class UNiagaraComponent* NiagaraComponent = nullptr;
-
-
 
 	UPROPERTY()
 	class UTimeEventComponent* TimeEventComponent = nullptr;

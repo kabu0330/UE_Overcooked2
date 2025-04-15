@@ -196,6 +196,16 @@ void ACookingGameMode::EntryStage()
 	InitChef();
 	StageManager->bProgress = true;
 
+	FTimerHandle TimerHandle;
+
+	GetWorld()->GetTimerManager().SetTimer(
+		TimerHandle,
+		this,
+		&ACookingGameMode::PlayBackgroundSound,
+		3.0f,   // 3초 뒤 실행
+		false   // 반복 여부(false면 1회 실행)
+	);
+
 	UWorld* World = GetWorld();
 
 	if (nullptr == World)
@@ -278,4 +288,9 @@ void ACookingGameMode::PrintDebugMessage()
 	default:
 		break;
 	}
+}
+
+void ACookingGameMode::PlayBackgroundSound()
+{
+	CookingGameState->Multicast_PlayGameMapSound();
 }

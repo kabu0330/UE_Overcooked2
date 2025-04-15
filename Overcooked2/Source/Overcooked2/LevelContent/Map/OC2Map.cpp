@@ -3,6 +3,7 @@
 
 #include "LevelContent/Map/OC2Map.h"
 #include <Global/Data/OC2GlobalData.h>
+#include <Global/OC2Const.h>
 #include "Kismet/GameplayStatics.h"
 
 AOC2Map::AOC2Map()
@@ -61,7 +62,7 @@ void AOC2Map::BeginPlay()
 		{
 			AudioComponent->SetSound(TheNeonCitySound); // 사운드 지정
 			AudioComponent->bIsUISound = true; // 위치 무시하고 2D처럼 재생
-			AudioComponent->SetVolumeMultiplier(BackgroundSoundVolume);
+			AudioComponent->SetVolumeMultiplier(UOC2Const::BGSoundVolume);
 		}
 	}
 	{
@@ -71,10 +72,10 @@ void AOC2Map::BeginPlay()
 		{
 			AmbienceAudioComponent->SetSound(SoundBase); // 사운드 지정
 			AmbienceAudioComponent->bIsUISound = true; // 위치 무시하고 2D처럼 재생
-			AmbienceAudioComponent->SetVolumeMultiplier(AmbienceSoundVolume);
+			AmbienceAudioComponent->SetVolumeMultiplier(UOC2Const::AmbienceVolume);
 		}
 	}
-	PlaySound();
+	//PlaySound();
 	//UGameplayStatics::PlaySound2D(GetWorld(), TheNeonCitySound);
 	
 }
