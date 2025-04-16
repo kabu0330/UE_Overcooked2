@@ -7,8 +7,6 @@
 #include "Global/OC2Const.h"
 #include "Global/OC2Struct.h"
 #include "Global/OC2Enum.h"
-
-
 #include "Pot.generated.h"
 
 /**

@@ -8,14 +8,8 @@
 #include <Global/OC2Const.h>
 #include "Plate.generated.h"
 
-UENUM(BlueprintType)
-enum class EPlateStackStatus : uint8
-{
-	SINGLE		UMETA(DisplayName = "1개" ),
-	DOUBLE		UMETA(DisplayName = "2개" ),
-	TRIPLE		UMETA(DisplayName = "3개" ),
-	FULL		UMETA(DisplayName = "4개" )
-};
+
+
 
 class APlateSpawner;
 class ASinkTable;
@@ -81,10 +75,6 @@ public:
 	void Multicast_SubmitPlate_Implementation();
 
 	void SpawnPlate();
-
-	void RestorePlateToWorld();
-
-	void HiddenPlateToWorld();
 
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_MovePlate();

@@ -268,6 +268,7 @@ void APot::Cook(float DeltaTime)
 		return;
 	}
 
+#if WITH_EDITOR
 	// Debug
 	float TimeToBoil = 1.0f;
 	float TimeToCook = 4.0f;
@@ -275,22 +276,24 @@ void APot::Cook(float DeltaTime)
 	float TimeToDanger = 10.0f;
 	float TimeToScorch = 13.0f;
 	float TimeToOvercook = 16.0f;
+#else
+	// Real Timme
+	float TimeToBoil = 4.0f;
+	float TimeToCook = 12.0f;
+	float TimeToWarning = 16.0f;
+	float TimeToDanger = 19.0f;
+	float TimeToScorch = 22.0f;
+	float TimeToOvercook = 25.0f;
+#endif
 
-	// Real Time
-	//float TimeToOvercook = 25.0f;
-
-	if (TimeToOvercook < TimeElapsed) // 불필요한 계산 차단
+	if (TimeToOvercook < TimeElapsed) // 불필요한 연산 차단
 	{
 		return;
 	}
 
 	TimeElapsed += DeltaTime;
 	
-	//float TimeToBoil = 4.0f;
-	//float TimeToCook = 12.0f;
-	//float TimeToWarning = 16.0f;
-	//float TimeToDanger = 19.0f;
-	//float TimeToScorch = 22.0f;
+
 
 	CookingTimeRatio = TimeElapsed / TimeToCook;
 
@@ -300,7 +303,6 @@ void APot::Cook(float DeltaTime)
 	ChangeState(EPotState::COOKED_WARNING, EPotState::COOKED_DANGER, TimeToDanger);
 	ChangeState(EPotState::COOKED_DANGER, EPotState::SCORCHING, TimeToScorch);
 	ChangeState(EPotState::SCORCHING, EPotState::OVERCOOKED, TimeToOvercook);
-
 }
 
 void APot::ChangeState(EPotState CurState, EPotState NextState, float TransitionTime)
@@ -484,12 +486,10 @@ void APot::BlinkTexture(float DeltaTime)
 	{
 		StatusWidgetComponent->bHiddenInGame = true; // 다시 텍스처 끄고
 		BlinkTimeElapsed = 0.0f;
-		//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("텍스처 끔"));
 
 		TimeEventComponent->AddEndEvent(BlinkTime, [this]() 
 			{
 				StatusWidgetComponent->bHiddenInGame = false; // 일정 시간 뒤에 다시 켠다.
-				//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("텍스처 켬"));
 			});
 	}
 }
