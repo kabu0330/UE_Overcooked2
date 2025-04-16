@@ -27,36 +27,25 @@ void AChoppingTable::BeginPlay()
 	Super::BeginPlay();
 
 	// 위젯 클래스 지정
-	ProgressBarComponent->SetWidgetClass(TSubClassWidget); // WBP 위젯으로 설정
-	UUserWidget* UserWidget = ProgressBarComponent->GetUserWidgetObject();
-	if (nullptr != UserWidget)
-	{
-		WidgetPtr = Cast<UGaugeTextureWidget>(UserWidget);
-		WidgetPtr->SetPosition(FVector2D{ 5.0f, 10.0f });
-	}
-	ProgressBarComponent->SetDrawAtDesiredSize(true);   // 위젯의 실제 크기로 렌더
-	ProgressBarComponent->SetPivot(FVector2D(0.5f, 0.5f)); // 중심 정렬
-	ProgressBarComponent->SetWidgetSpace(EWidgetSpace::Screen); // 월드 공간에서 3D처럼 보이게
-	ProgressBarComponent->bHiddenInGame = true;
-
-	// 카메라를 향하도록 설정
-	ProgressBarComponent->SetTwoSided(true); 
-	ProgressBarComponent->SetTickWhenOffscreen(true);
-	ProgressBarComponent->SetWorldLocation(this->GetActorLocation());
+	InitProgressBar();
 }
 
 void AChoppingTable::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
 	CheckChefIsChopping();
 
 	if (true == bTimerActivated)
 	{
-		TimerUpdate(DeltaTime);
-
-		if (Timer > 2.0f)
+		if (true == bChopping)
 		{
-			bChoppingDone = true;
+			TimerUpdate(DeltaTime);
+
+			if (Timer > 2.0f)
+			{
+				bChoppingDone = true;
+			}
 		}
 	}
 
@@ -76,17 +65,23 @@ ACooking* AChoppingTable::Interact(AActor* ChefActor)
 	ChefPtr = Cast<AOC2Character>(ChefActor);
 	ACooking* TempCooking = nullptr;
 
-	if (CookingPtr != nullptr && false == ChefPtr->IsHolding()) // 음식 있음, 셰프 빈 손
+	if (false == bChopping)
 	{
-		TempCooking = CookingPtr;
-		CookingPtr = nullptr;
-		return TempCooking;
+		if (CookingPtr != nullptr && false == ChefPtr->IsHolding()) // 음식 있음, 셰프 빈 손
+		{
+			TempCooking = CookingPtr;
+			CookingPtr = nullptr;
+			return TempCooking;
+		}
+		else
+		{
+			return CookingPtr;
+		}
 	}
 	else
 	{
-		return CookingPtr;
+		return nullptr;
 	}
-
 }
 
 void AChoppingTable::HideKnife_Implementation()
@@ -124,9 +119,13 @@ void AChoppingTable::ChopIngredient(AActor* ChefActor)
 			{
 				ChefPtr->Chopping(true);
 
-				Timer = 0.0f;
+				if (false == bTimerActivated)
+				{
+					Timer = 0.0f;
+				}
+
 				bTimerActivated = true;
-				//GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Magenta, "Chopping...");
+				bChopping = true;
 
 				HideProgressBar(false);
 			}
@@ -141,18 +140,19 @@ void AChoppingTable::HideProgressBar_Implementation(bool Value)
 
 void AChoppingTable::ChoppingIsDone_Implementation()
 {
-	if (false == bChoppingDone)
+	if (false == bChoppingDone || false == bChopping)
 	{
 		return;
 	}
 
 	bTimerActivated = false;
+	bChopping = false;
 
 	AIngredient* PlacedIngredient = Cast<AIngredient>(CookingPtr);
 	PlacedIngredient->ChangeState(EIngredientState::EIS_CHOPPED);
-	//GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Turquoise, "Chopping Done");
+
 	CookingPtr = Cast<ACooking>(PlacedIngredient);
-	//ProgressBarComponent->SetHiddenInGame(true);
+
 	HideProgressBar(true);
 
 	ChefPtr->Chopping(false);
@@ -172,12 +172,30 @@ void AChoppingTable::CheckChefIsChopping()
 	{
 		if (false == ChefPtr->IsCooking())
 		{
-			bTimerActivated = false;
+			bChopping = false;
 			ChefPtr = nullptr;
-			//ProgressBarComponent->SetHiddenInGame(true);
-			HideProgressBar(true);
 		}
 	}
+}
+
+void AChoppingTable::InitProgressBar()
+{
+	ProgressBarComponent->SetWidgetClass(TSubClassWidget); // WBP 위젯으로 설정
+	UUserWidget* UserWidget = ProgressBarComponent->GetUserWidgetObject();
+	if (nullptr != UserWidget)
+	{
+		WidgetPtr = Cast<UGaugeTextureWidget>(UserWidget);
+		WidgetPtr->SetPosition(FVector2D{ 5.0f, 10.0f });
+	}
+	ProgressBarComponent->SetDrawAtDesiredSize(true);   // 위젯의 실제 크기로 렌더
+	ProgressBarComponent->SetPivot(FVector2D(0.5f, 0.5f)); // 중심 정렬
+	ProgressBarComponent->SetWidgetSpace(EWidgetSpace::Screen); // 월드 공간에서 3D처럼 보이게
+	ProgressBarComponent->bHiddenInGame = true;
+
+	// 카메라를 향하도록 설정
+	ProgressBarComponent->SetTwoSided(true);
+	ProgressBarComponent->SetTickWhenOffscreen(true);
+	ProgressBarComponent->SetWorldLocation(this->GetActorLocation());
 }
 
 void AChoppingTable::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -190,6 +208,8 @@ void AChoppingTable::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 	DOREPLIFETIME(AChoppingTable, Ratio);
 	DOREPLIFETIME(AChoppingTable, Timer);
 	DOREPLIFETIME(AChoppingTable, bTimerActivated);
+	DOREPLIFETIME(AChoppingTable, bChopping);
 	DOREPLIFETIME(AChoppingTable, bChoppingDone);
+	DOREPLIFETIME(AChoppingTable, bChopping);
 	DOREPLIFETIME(AChoppingTable, ChefPtr);
 }
