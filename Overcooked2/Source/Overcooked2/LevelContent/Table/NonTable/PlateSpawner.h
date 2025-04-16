@@ -59,4 +59,6 @@ private:
 	UTexture* DirtyTexture = nullptr;
 
 	APlate* CookingPtrPlate = nullptr;
+
+	USoundBase* SoundEffect = nullptr;
 };

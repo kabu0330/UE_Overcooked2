@@ -30,6 +30,8 @@ void AServingTable::BeginPlay()
 			PlateSpawner = Cast<APlateSpawner>(PrepTableActor);
 		}
 	}
+
+	SoundEffect = UOC2GlobalData::GetTableBaseSound(GetWorld(), "ServiceBell");
 }
 
 void AServingTable::Tick(float DeltaTime)
@@ -59,7 +61,6 @@ void AServingTable::PlaceItem(ACooking* ReceivedCooking)
 	UOC2Global::SubmitPlate(GetWorld(), ReceivedCooking);
 
 	//È¿°úÀ½
-	SoundEffect = UOC2GlobalData::GetTableBaseSound(GetWorld(), "ServiceBell");
 	if (nullptr != SoundEffect)
 	{
 		UGameplayStatics::PlaySound2D(GetWorld(), SoundEffect);
