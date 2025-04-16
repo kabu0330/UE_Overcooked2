@@ -67,7 +67,7 @@ void AOC2Character::MoveCharacter(const FInputActionValue& Value)
 		Chopping(false);
 		if (CurrentTable != nullptr)
 		{
-			Cast<AChoppingTable>(CurrentTable)->TimerSwitch(false);
+			//Cast<AChoppingTable>(CurrentTable)->TimerSwitch(false);
 		}
 
 	}
@@ -572,7 +572,7 @@ void AOC2Character::Chopping_Implementation(bool State)
 	OnRep_KnifeSet();
 	if (State == false)
 	{
-		Cast<AChoppingTable>(SelectedOC2Actor)->TimerSwitch(false);
+		//Cast<AChoppingTable>(SelectedOC2Actor)->TimerSwitch(false);
 	}
 }
 
