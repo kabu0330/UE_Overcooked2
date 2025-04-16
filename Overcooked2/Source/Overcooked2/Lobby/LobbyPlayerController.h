@@ -18,6 +18,7 @@ class OVERCOOKED2_API ALobbyPlayerController : public APlayerController
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
 
 public:
 	
@@ -31,5 +32,9 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void UpdateChefTexture(int Index);
 
+	UFUNCTION(Server, Reliable)
+	void Server_NotifyLoadingComplete();
+
 private:
+	bool bReported = false;
 };

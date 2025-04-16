@@ -31,12 +31,10 @@ void ULobbyZoomInWidget::NativeConstruct()
 }
 
 
-void ULobbyZoomInWidget::PlayZoomInAnimation(TFunction<void()> Func)
+void ULobbyZoomInWidget::PlayZoomInAnimation()
 {
     if (!TransitionMaterial) return;
     TransitionImg->SetVisibility(ESlateVisibility::Visible);
-
-    AnimFinishFuction = Func;
 
     float AnimationDuration = 20.0f;
     float TimeStep = 0.01f;

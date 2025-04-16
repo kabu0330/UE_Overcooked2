@@ -29,12 +29,12 @@ void UWorldMapUserWidget::NativeConstruct()
 }
 
 
-void UWorldMapUserWidget::PlayZoomInAnimation(TFunction<void()> Func)
+void UWorldMapUserWidget::PlayZoomInAnimation()
 {
     if (!TransitionMaterial) return;
     TransitionImg->SetVisibility(ESlateVisibility::Visible);
 
-    AnimFinishFuction = Func;
+    //AnimFinishFuction = Func;
 
     float AnimationDuration = 20.0f;
     float TimeStep = 0.01f;

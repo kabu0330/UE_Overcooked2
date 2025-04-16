@@ -14,6 +14,7 @@
 
 #include "Lobby/LobbyHUD.h"
 #include "Lobby/LobbyUserWidget.h"
+#include "Lobby/LobbyGameMode.h"
 
 #include "Character/OC2Character.h"
 
@@ -24,6 +25,8 @@
 
 ALobbyGameState::ALobbyGameState()
 {
+	PrimaryActorTick.bCanEverTick = true;     // 틱 가능하게
+	PrimaryActorTick.bStartWithTickEnabled = true; // 시작 시부터 틱 켜기
 }
 
 void ALobbyGameState::BeginPlay()
@@ -36,6 +39,18 @@ void ALobbyGameState::BeginPlay()
 void ALobbyGameState::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	//APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
+	//ALobbyHUD* LobbyHUD = Cast<ALobbyHUD>(PlayerController->GetHUD());
+
+	//if (LobbyHUD->LobbyZoomInWidget != nullptr && LobbyHUD != nullptr)
+	//{
+	//	if (true == LobbyHUD->LoadingWidget->GetIsConnecting())
+	//	{
+	//		bChecked = true;
+	//		Server_NotifyLoadingComplete();
+	//	}
+	//}
 }
 
 ALobbyManager* ALobbyGameState::GetLobbyManager() const
@@ -81,6 +96,24 @@ void ALobbyGameState::Server_SpawnClientCharacter_Implementation(FVector SpawnLo
 	}
 }
 
+void ALobbyGameState::Server_NotifyLoadingComplete_Implementation()
+{
+	if (true == HasAuthority())
+	{
+		ALobbyGameMode* GameMode = Cast<ALobbyGameMode>(UGameplayStatics::GetGameMode(this));
+
+		if (nullptr != GameMode)
+		{
+			CompleteArray.Add(0);
+
+			if (CompleteArray.Num() == GameMode->GetUserCount())
+			{
+				UOC2Global::TravelServer(GetWorld(), PLAY_LEVEL);
+			}
+		}
+	}
+}
+
 void ALobbyGameState::InitCharacter()
 {
 	if (nullptr != OC2CharacterClass)
@@ -110,6 +143,24 @@ void ALobbyGameState::UpdateChefTexture(int Index)
 	}
 }
 
+void ALobbyGameState::CheckClinetLoadingComplete()
+{
+	if (true == HasAuthority())
+	{
+		ALobbyGameMode* GameMode = Cast<ALobbyGameMode>(UGameplayStatics::GetGameMode(this));
+
+		if (nullptr != GameMode)
+		{
+			CompleteArray.Add(0);
+
+			if (CompleteArray.Num() == GameMode->GetUserCount())
+			{
+				UOC2Global::TravelServer(GetWorld(), PLAY_LEVEL);
+			}
+		}
+	}
+}
+
 void ALobbyGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
@@ -122,22 +173,8 @@ void ALobbyGameState::Multicast_PlayZoomInAnmationUI_Implementation()
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
 	ALobbyHUD* LobbyHUD = Cast<ALobbyHUD>(PlayerController->GetHUD());
 
-
-	if (true == HasAuthority())
+	if (LobbyHUD->LobbyZoomInWidget != nullptr && LobbyHUD != nullptr)
 	{
-		if (LobbyHUD->LobbyZoomInWidget != nullptr && LobbyHUD != nullptr)
-		{
-			LobbyHUD->LobbyZoomInWidget->PlayZoomInAnimation([this]()
-				{
-					UOC2Global::TravelServer(GetWorld(), PLAY_LEVEL);
-				});
-		}
-	}
-	else
-	{
-		if (LobbyHUD->LobbyZoomInWidget != nullptr && LobbyHUD != nullptr)
-		{
-			LobbyHUD->LobbyZoomInWidget->PlayZoomInAnimation([]() {});
-		}
+		LobbyHUD->LobbyZoomInWidget->PlayZoomInAnimation();
 	}
 }

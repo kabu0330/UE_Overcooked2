@@ -17,7 +17,7 @@ public:
 	//UFUNCTION(BlueprintCallable, Category = "OC2UI")
 	//void PlayZoomInAnimation();
 
-	void PlayZoomInAnimation(TFunction<void()> Func);
+	void PlayZoomInAnimation();
 	void PlayZoomOutAnimation();
 
 
@@ -34,5 +34,7 @@ private:
 	FTimerHandle AnimationTimer;
 
 	TFunction<void()> AnimFinishFuction;
+
+
 
 };

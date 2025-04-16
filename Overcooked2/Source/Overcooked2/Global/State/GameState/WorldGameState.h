@@ -24,5 +24,13 @@ protected:
 public:
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_PlayZoomInAnmationUI();
+
+public:
+	UFUNCTION()
+	void CheckClinetLoadingComplete();
+
+private:
+	UPROPERTY()
+	TArray<int> CompleteArray;
 	
 };
