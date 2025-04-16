@@ -4,6 +4,7 @@
 #include "LevelContent/Table/NonTable/GarbageCan.h"
 #include "Kismet/GameplayStatics.h"
 #include "Global/GameMode/OC2GameMode.h"
+#include <Global/Data/OC2GlobalData.h>
 
 AGarbageCan::AGarbageCan()
 {
@@ -13,6 +14,8 @@ AGarbageCan::AGarbageCan()
 void AGarbageCan::BeginPlay()
 {
 	Super::BeginPlay();
+
+	SoundEffect = UOC2GlobalData::GetTableBaseSound(GetWorld(), "TrashCan");
 }
 
 void AGarbageCan::Tick(float DeltaTime)
@@ -48,6 +51,11 @@ void AGarbageCan::PlaceItem(ACooking* Item)
 
 		bDestroyGarbage = true;
 		Timer = 1.5f;
+
+		if (nullptr != SoundEffect)
+		{
+			UGameplayStatics::PlaySound2D(GetWorld(), SoundEffect);
+		}
 	}
 }
 

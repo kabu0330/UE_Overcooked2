@@ -38,5 +38,6 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TimeSetting", meta = (AllowPrivateAccess = "true"))
 	float Timer = 0.0f;
 	bool bDestroyGarbage = false;
-	
+
+	USoundBase* SoundEffect = nullptr;
 };
