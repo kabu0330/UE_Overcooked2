@@ -91,8 +91,12 @@ private:
 	float Timer = 0.0f;
 
 	float CurTime = 0.0f;
+
 	UPROPERTY(Replicated)
 	bool bTimerActivated = false;
+
+	UPROPERTY(Replicated)
+	bool bChopping = false;
 
 	UPROPERTY(Replicated)
 	bool bChoppingDone = false;
