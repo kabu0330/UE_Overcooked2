@@ -304,6 +304,7 @@ void ASinkTable::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifeti
 	DOREPLIFETIME(ASinkTable, ComponentForDishes2);
 	DOREPLIFETIME(ASinkTable, ComponentForDishes3);
 	DOREPLIFETIME(ASinkTable, ComponentForDishes4);
+	DOREPLIFETIME(ASinkTable, CleanPlateComponent);
 	DOREPLIFETIME(ASinkTable, DirtyPlateComponents);
 	DOREPLIFETIME(ASinkTable, ProgressBarComponent);
 }
