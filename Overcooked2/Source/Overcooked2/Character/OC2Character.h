@@ -10,6 +10,8 @@
 #include "LevelContent/Table/CookingTable.h"
 #include "Global/Component/TimeEventComponent.h"
 #include "Components/SphereComponent.h"
+#include "NiagaraSystem.h"
+#include "NiagaraFunctionLibrary.h"
 #include "OC2Character.generated.h"
 
 class UCaptureComponent2D;
@@ -242,5 +244,8 @@ private :
 	float DashTimer = 0.0f;
 
 	bool bIsMoveEnabled = true;
+
+	UPROPERTY(EditAnywhere, Category = "Dash")
+	UNiagaraSystem* DashEffect;
 
 };

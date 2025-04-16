@@ -144,6 +144,17 @@ void AOC2Character::CheckDash(float DeltaTime)
 {
 	if (bIsDashing == true)
 	{
+		if (DashEffect)
+		{
+			UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+				GetWorld(),
+				DashEffect,
+				GetActorLocation() - GetActorForwardVector()*50.0f,                   // 캐릭터 위치
+				GetActorRotation(),                   // 회전도 전달 가능 (속도선 같은 경우)
+				FVector(1.0f),                        // 스케일
+				true                                  // bAutoDestroy
+			);
+		}
 		DashTimer += DeltaTime;
 		if (DashTimer > DashDuration)
 		{
