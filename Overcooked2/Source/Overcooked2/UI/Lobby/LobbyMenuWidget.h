@@ -21,6 +21,7 @@ public:
 
 protected:
 	virtual void NativeOnInitialized() override;
+	virtual void NativeDestruct() override;
 
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
@@ -44,12 +45,24 @@ private:
 	UFUNCTION(BlueprintCallable, Category = "OC2UI")
 	void HoverButton();
 
-	class UCanvasPanel* CurPanel = nullptr;
+	UFUNCTION()
+	void HoverSubButton();
 
+	class UCanvasPanel* CurPanel = nullptr;
+	class UButton* CurButton = nullptr;
+	class UButton* CurMainButton = nullptr;
 
 	void UpdateMenuPosition();
 	FTimerHandle MenuMoveTimerHandle;
+	FSlateBrush CurButtonNomalBrush;
+
 	float MenuMoveOffset = 10.0f;
+
+	bool bIsCurPanel = false;
+	bool bIsCurButton = false;
+
+	template <typename T>
+	TArray<T*> FindAllChildWidgets(UCanvasPanel* Panel);
 
 
 	template <typename T>

@@ -28,6 +28,14 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "OC2UI")
 	void SetUserTexture(class UTexture2D* Texture, int Index);
 
+	UFUNCTION(BlueprintCallable, Category = "OC2UI")
+	void PlaySelectSound();
+
+
+	UFUNCTION(BlueprintCallable, Category = "OC2UI")
+	void PlayHoverSound();
+
+
 protected:
 	virtual void NativeConstruct() override;
 

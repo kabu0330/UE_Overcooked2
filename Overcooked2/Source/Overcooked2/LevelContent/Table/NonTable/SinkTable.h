@@ -153,4 +153,6 @@ protected:
 
 	class UTimeEventComponent* TimeEventComponent = nullptr;
 
+	FVector PlateSize = { 2.0f, 2.0f, 2.0f};
+
 };
