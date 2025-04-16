@@ -52,4 +52,6 @@ private:
 
 	UPROPERTY()
 	APlateSpawner* PlateSpawner = nullptr;
+
+	USoundBase* SoundEffect = nullptr;
 };

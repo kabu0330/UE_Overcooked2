@@ -6,7 +6,9 @@
 #include "LevelContent/Table/NonTable/PlateSpawner.h"
 
 #include "Global/OC2Global.h"
+#include "Global/Data/OC2GlobalData.h"
 #include "Global/GameMode/OC2GameMode.h"
+#include "Kismet/GameplayStatics.h"
 
 #include "Net/UnrealNetwork.h"
 #include "EngineUtils.h"
@@ -55,6 +57,13 @@ void AServingTable::PlaceItem(ACooking* ReceivedCooking)
 	CookingPtr->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 
 	UOC2Global::SubmitPlate(GetWorld(), ReceivedCooking);
+
+	//È¿°úÀ½
+	SoundEffect = UOC2GlobalData::GetTableBaseSound(GetWorld(), "ServiceBell");
+	if (nullptr != SoundEffect)
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), SoundEffect);
+	}
 
 	//Server_SpawnPlateInPlateSpawner();
 
