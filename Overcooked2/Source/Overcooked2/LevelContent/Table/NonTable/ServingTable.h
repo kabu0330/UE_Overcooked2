@@ -19,6 +19,7 @@ class OVERCOOKED2_API AServingTable : public ACookingTable
 public:
 	AServingTable();
 
+
 	virtual void BeginPlay() override;
 
 	virtual void Tick(float DeltaTime) override;
@@ -43,6 +44,10 @@ public:
 		bCookingWrong = true;
 	}
 
+	UFUNCTION(NetMulticast, Reliable)
+	void PlaySoundEffect();
+	void PlaySoundEffect_Implementation();
+
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CookingCheck", meta = (AllowPrivateAccess = "true"))
 	bool bCookingRight = false;
@@ -52,4 +57,6 @@ private:
 
 	UPROPERTY()
 	APlateSpawner* PlateSpawner = nullptr;
+
+	USoundBase* SoundEffect = nullptr;
 };

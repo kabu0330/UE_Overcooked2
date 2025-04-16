@@ -6,7 +6,9 @@
 #include "LevelContent/Table/NonTable/PlateSpawner.h"
 
 #include "Global/OC2Global.h"
+#include "Global/Data/OC2GlobalData.h"
 #include "Global/GameMode/OC2GameMode.h"
+#include "Kismet/GameplayStatics.h"
 
 #include "Net/UnrealNetwork.h"
 #include "EngineUtils.h"
@@ -28,6 +30,8 @@ void AServingTable::BeginPlay()
 			PlateSpawner = Cast<APlateSpawner>(PrepTableActor);
 		}
 	}
+
+	SoundEffect = UOC2GlobalData::GetTableBaseSound(GetWorld(), "ServiceBell");
 }
 
 void AServingTable::Tick(float DeltaTime)
@@ -56,6 +60,9 @@ void AServingTable::PlaceItem(ACooking* ReceivedCooking)
 
 	UOC2Global::SubmitPlate(GetWorld(), ReceivedCooking);
 
+	//È¿°úÀ½
+	PlaySoundEffect();
+
 	//Server_SpawnPlateInPlateSpawner();
 
 	CookingPtr = nullptr;
@@ -74,4 +81,12 @@ void AServingTable::Server_SpawnPlateInPlateSpawner_Implementation()
 	//PlateSpawner->SetPlate(Plate);
 	Plate->Multicast_SubmitPlate();
 	//PlateSpawner->AddPlate(int Num1);
+}
+
+void AServingTable::PlaySoundEffect_Implementation()
+{
+	if (nullptr != SoundEffect)
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), SoundEffect);
+	}
 }

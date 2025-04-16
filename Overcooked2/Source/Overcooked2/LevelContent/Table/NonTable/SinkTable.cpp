@@ -10,6 +10,7 @@
 #include <Net/UnrealNetwork.h>
 #include <Global/OC2Global.h>
 #include <Global/Data/OC2GlobalData.h>
+#include "Kismet/GameplayStatics.h"
 
 ASinkTable::ASinkTable()
 {
@@ -48,6 +49,8 @@ void ASinkTable::BeginPlay()
 	Super::BeginPlay();
 
 	InitProgressBar();
+
+	SoundEffect = UOC2GlobalData::GetTableBaseSound(GetWorld(), "Washing");
 }
 
 void ASinkTable::InitProgressBar()
@@ -153,6 +156,11 @@ void ASinkTable::DoTheDishes(AOC2Character* ChefActor)
 
 		HideProgressBar(false);
 	}
+
+	/*if (nullptr != SoundEffect)
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), SoundEffect);
+	}*/
 }
 
 void ASinkTable::Tick(float DeltaTime)
@@ -201,14 +209,6 @@ void ASinkTable::UpdateProgressBar/*_Implementation*/(float DeltaTime)
 
 		if (Timer > 2.0f)
 		{
-			/*if (true == HasAuthority())
-			{
-				GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, FString::Printf(TEXT("Server Update Progress Bar Is Done")));
-			}
-			if (false == HasAuthority())
-			{
-				GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, FString::Printf(TEXT("Client Update Progress Bar Is Done")));
-			}*/
 			// 트리거 변수
 			FinishWashing();
 		}
@@ -304,6 +304,7 @@ void ASinkTable::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifeti
 	DOREPLIFETIME(ASinkTable, ComponentForDishes2);
 	DOREPLIFETIME(ASinkTable, ComponentForDishes3);
 	DOREPLIFETIME(ASinkTable, ComponentForDishes4);
+	DOREPLIFETIME(ASinkTable, CleanPlateComponent);
 	DOREPLIFETIME(ASinkTable, DirtyPlateComponents);
 	DOREPLIFETIME(ASinkTable, ProgressBarComponent);
 }

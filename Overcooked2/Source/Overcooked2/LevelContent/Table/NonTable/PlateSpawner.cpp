@@ -6,6 +6,7 @@
 #include <Net/UnrealNetwork.h>
 #include <Global/OC2Global.h>
 #include <Global/Data/OC2GlobalData.h>
+#include "Kismet/GameplayStatics.h"
 
 APlateSpawner::APlateSpawner()
 {
@@ -21,6 +22,8 @@ APlateSpawner::APlateSpawner()
 void APlateSpawner::BeginPlay()
 {
 	Super::BeginPlay();
+
+	SoundEffect = UOC2GlobalData::GetTableBaseSound(GetWorld(), "PlatePlaced");
 }
 
 void APlateSpawner::Tick(float DeltaTime)
@@ -40,6 +43,8 @@ void APlateSpawner::SetPlate(class APlate* Plate)
 		CookingPtrPlate->AttachToComponent(ComponentForCooking, FAttachmentTransformRules::KeepRelativeTransform);
 		Plate->SetActorRelativeLocation(FVector::ZeroVector);
 	}
+
+	PlaySoundEffect();
 }
 
 ACooking* APlateSpawner::Interact(AActor* ChefActor)
@@ -148,6 +153,14 @@ void APlateSpawner::SetMaterialTextrue()
 			PlateMeshComponent->SetMaterial(i, MaterialInstanceDynamic);
 			return;
 		}
+	}
+}
+
+void APlateSpawner::PlaySoundEffect_Implementation()
+{
+	if (nullptr != SoundEffect)
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), SoundEffect);
 	}
 }
 
