@@ -68,6 +68,11 @@ public:
 		return CurTime;
 	}
 
+	//bool CheckChoppingIngredeint()
+	//{
+	//	return bChopping;
+	//}
+
 	void CheckChefIsChopping();
 
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking")
@@ -83,6 +88,7 @@ public:
 	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
 	void HideKnife();
 	void HideKnife_Implementation();
+
 
 protected:
 
@@ -100,6 +106,9 @@ private:
 
 	UPROPERTY(Replicated)
 	bool bChoppingDone = false;
+
+	UPROPERTY(Replicated)
+	bool bChopping = false;
 
 	UPROPERTY(Replicated)
 	float Ratio = 0.0f;
