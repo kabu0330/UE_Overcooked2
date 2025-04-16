@@ -6,6 +6,9 @@
 #include "UI/WorldMap/WorldMapHUD.h"
 #include "UI/Loading/LoadingWidget.h"
 #include "Kismet/GameplayStatics.h"
+#include "Sound/SoundBase.h" 
+#include "Global/Data/OC2GlobalData.h"
+#include "Components/AudioComponent.h"
 
 void UWorldMapUserWidget::NativeConstruct()
 {
@@ -36,6 +39,12 @@ void UWorldMapUserWidget::PlayZoomInAnimation(TFunction<void()> Func)
     float AnimationDuration = 20.0f;
     float TimeStep = 0.01f;
     float CurrentTime = 0.0f;
+
+    if (USoundBase* Sound = UOC2GlobalData::GetUIBaseSound(GetWorld(), "ScreenIn"))
+    {
+        UGameplayStatics::PlaySound2D(this, Sound);
+    }
+
 
     GetWorld()->GetTimerManager().ClearTimer(AnimationTimer);
 
@@ -83,6 +92,12 @@ void UWorldMapUserWidget::PlayZoomOutAnimation()
     float AnimationDuration = 10.0f;
     float TimeStep = 0.01f;
     float CurrentTime = AnimationDuration;
+
+    if (USoundBase* Sound = UOC2GlobalData::GetUIBaseSound(GetWorld(), "ScreenOut"))
+    {
+        UGameplayStatics::PlaySound2D(this, Sound);
+    }
+
 
     GetWorld()->GetTimerManager().ClearTimer(AnimationTimer);
 

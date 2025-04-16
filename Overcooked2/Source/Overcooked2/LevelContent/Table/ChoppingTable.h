@@ -38,6 +38,7 @@ public:
 	void ChoppingIsDone();
 	void ChoppingIsDone_Implementation();
 
+	void InitProgressBar();
 
 	bool IsChoppingDone()
 	{
@@ -68,6 +69,11 @@ public:
 		return CurTime;
 	}
 
+	//bool CheckChoppingIngredeint()
+	//{
+	//	return bChopping;
+	//}
+
 	void CheckChefIsChopping();
 
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking")
@@ -84,6 +90,7 @@ public:
 	void HideKnife();
 	void HideKnife_Implementation();
 
+
 protected:
 
 private:
@@ -91,8 +98,12 @@ private:
 	float Timer = 0.0f;
 
 	float CurTime = 0.0f;
+
 	UPROPERTY(Replicated)
 	bool bTimerActivated = false;
+
+	UPROPERTY(Replicated)
+	bool bChopping = false;
 
 	UPROPERTY(Replicated)
 	bool bChoppingDone = false;

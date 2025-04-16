@@ -74,14 +74,14 @@ void UTitleMenuWidget::HoverSubButton()
 
             if (USoundBase* Sound = UOC2GlobalData::GetUIBaseSound(GetWorld(), "TitleSubMenuButtonSound"))
             {
-                UGameplayStatics::SpawnSound2D(this, Sound);
+                UGameplayStatics::PlaySound2D(this, Sound);
             }
         }
         else if (!bIsCurButton)
         {
             if (USoundBase* Sound = UOC2GlobalData::GetUIBaseSound(GetWorld(), "TitleSubMenuButtonSound"))
             {
-                UGameplayStatics::SpawnSound2D(this, Sound);
+                UGameplayStatics::PlaySound2D(this, Sound);
             }
 
             bIsCurButton = true;
@@ -122,7 +122,7 @@ void UTitleMenuWidget::HoverButton()
 
                     if (USoundBase* Sound = UOC2GlobalData::GetUIBaseSound(GetWorld(), "TitleMenuButtonSound"))
                     {
-                        UGameplayStatics::SpawnSound2D(this, Sound);
+                        UGameplayStatics::PlaySound2D(this, Sound);
                     }
 
                     GetWorld()->GetTimerManager().ClearTimer(MenuMoveTimerHandle);

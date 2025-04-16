@@ -92,10 +92,13 @@ public:
 	void Interact();
 
 	UFUNCTION(Reliable, Server)
-	void Grab(ACooking* Cook);
+	void ServerGrab(ACooking* Cook);
+	void ServerGrab_Implementation(ACooking* Cook);
+
 
 	UFUNCTION(Reliable, Server)
-	void Drop();
+	void ServerDrop();
+	void ServerDrop_Implementation();
 
 	// 캐릭터의 행동(요리하기, 던지기 등)
 	UFUNCTION(BlueprintCallable, Reliable, Server)
@@ -109,6 +112,7 @@ public:
 
 	UFUNCTION(Reliable, Server)
 	void Chopping(bool State);
+	void Chopping_Implementation(bool State);
 
 	UFUNCTION(Reliable, Server)
 	void Washing(bool State);
@@ -125,11 +129,11 @@ public:
 	UFUNCTION()
 	void OnDashInput();
 
-	//UFUNCTION()
-	//void OnGrabInput();
+	UFUNCTION()
+	void Grab(ACooking* Cook);
 
-	//UFUNCTION()
-	//void OnDropInput();
+	UFUNCTION()
+	void Drop();
 
 	UFUNCTION(Reliable, Server)
 	void Dash();

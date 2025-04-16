@@ -259,7 +259,7 @@ void AIngredient::CheckPlacement()
 				AOC2Character* Chef = Cast<AOC2Character>(Result.GetActor());
 				if (Chef != Thrower && false == Chef->IsHolding())
 				{
-					Chef->Grab(this);
+					Chef->ServerGrab(this);
 					bIsThrowing = false;
 					ThrownTime = 0.0f;
 					break;

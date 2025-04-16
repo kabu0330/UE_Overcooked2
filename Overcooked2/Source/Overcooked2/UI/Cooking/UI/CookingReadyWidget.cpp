@@ -4,6 +4,11 @@
 #include "UI/Cooking/UI/CookingReadyWidget.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
+#include "Kismet/GameplayStatics.h"
+
+#include "Sound/SoundBase.h" 
+#include "Global/Data/OC2GlobalData.h"
+#include "Components/AudioComponent.h"
 
 void UCookingReadyWidget::NativeConstruct()
 {
@@ -81,6 +86,12 @@ void UCookingReadyWidget::PlayZoomOutAnimation()
     float AnimationDuration = 10.0f;
     float TimeStep = 0.01f;
     float CurrentTime = AnimationDuration;
+
+
+    if (USoundBase* Sound = UOC2GlobalData::GetUIBaseSound(GetWorld(), "ScreenOut"))
+    {
+        UGameplayStatics::PlaySound2D(this, Sound);
+    }
 
     GetWorld()->GetTimerManager().ClearTimer(AnimationTimer);
 

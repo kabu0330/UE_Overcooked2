@@ -57,29 +57,7 @@ public:
 	void RepeatWashing();
 	void RepeatWashing_Implementation();
 
-	//UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
-	//void SetPlateVisibility(int Index);
-	//void SetPlateVisibility_Implementation(int Index);
-
-	//void SetAllPlateVisibility();
-
 	void InitProgressBar();
-	
-	//UFUNCTION(Reliable, Server)
-	//void AddDirtyPlateNum(int Value);
-	//void AddDirtyPlateNum_Implementation(int Value);
-
-	//UFUNCTION(Reliable, Server)
-	//void AddCleanPlateNum(int Value);
-	//void AddCleanPlateNum_Implementation(int Value);
-
-	//UFUNCTION(Reliable, NetMulticast)
-	//void SetCleanPlateMesh();
-	//void SetCleanPlateMesh_Implementation();
-
-	//void InitDirtyPlateMesh();
-	//void InitCleanPlateMesh();
-
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking")
 	USceneComponent* ComponentForProgressBar = nullptr;
@@ -91,11 +69,6 @@ public:
 	class AOC2Character* ChefPtr = nullptr;
 
 protected:
-	//UFUNCTION()
-	//void OnRep_SetCleanPlateMesh();
-	
-	//UFUNCTION()
-	//void OnRep_SetDirtyPlateMesh();
 
 	void SetAttachToDirtyPlate();
 
@@ -115,12 +88,6 @@ protected:
 	UPROPERTY(ReplicatedUsing = OnRep_ChangeProgress)
 	float Ratio = 0.0f;
 
-	//UPROPERTY(ReplicatedUsing = OnRep_SetDirtyPlateMesh)
-	//int DirtyPlateNum = 0;
-
-	//UPROPERTY(ReplicatedUsing = OnRep_SetCleanPlateMesh)
-	//int CleanPlateNum = 0;
-
 	UPROPERTY(Replicated)
 	class UWidgetComponent* ProgressBarComponent = nullptr;
 
@@ -138,13 +105,9 @@ protected:
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Table", meta = (AllowPrivateAccess = "true"))
 	TArray<USceneComponent*> DirtyPlateComponents;
-
-	//UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "Table", meta = (AllowPrivateAccess = "true"))
-	//UStaticMeshComponent* CleanPlateMeshComponent = nullptr;
 																	  
 	TArray<APlate*> DirtyPlates;
 	TArray<APlate*> CleanPlates;
-
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Table", meta = (AllowprivateAccess = "true"))
 	TSubclassOf<UUserWidget> TSubClassWidget = nullptr;
