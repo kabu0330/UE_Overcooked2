@@ -598,10 +598,10 @@ void AOC2Character::Chopping_Implementation(bool State)
 {
 	bIsChopping = State;
 	OnRep_KnifeSet();
-	if (State == false)
-	{
-		Cast<AChoppingTable>(SelectedOC2Actor)->TimerSwitch(false);
-	}
+	//if (State == false)
+	//{
+	//	//Cast<AChoppingTable>(SelectedOC2Actor)->TimerSwitch(false);
+	//}
 }
 
 void AOC2Character::CheckInteract()
