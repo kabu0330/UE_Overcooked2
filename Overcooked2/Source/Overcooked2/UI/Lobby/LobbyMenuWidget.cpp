@@ -15,35 +15,35 @@ void ULobbyMenuWidget::NativeOnInitialized()
 {
     Super::NativeOnInitialized();
 
-    Buttons = { StoryButton, ArcadeButton, BattleButton, ChefButton, OptionButton };
+    //Buttons = { StoryButton, ArcadeButton, BattleButton, ChefButton, OptionButton };
 
-    CurPanel = FindSiblingWidget<UCanvasPanel>(StoryButton);
-    CurButtonNomalBrush = StoryButton->GetStyle().Normal;
+    //CurPanel = FindSiblingWidget<UCanvasPanel>(StoryButton);
+    //CurButtonNomalBrush = StoryButton->GetStyle().Normal;
 
-    FButtonStyle NewStyle = StoryButton->GetStyle();
-    NewStyle.Normal = NewStyle.Hovered;
-    StoryButton->SetStyle(NewStyle);
-    CurMainButton = StoryButton;
+    //FButtonStyle NewStyle = StoryButton->GetStyle();
+    //NewStyle.Normal = NewStyle.Hovered;
+    //StoryButton->SetStyle(NewStyle);
+    //CurMainButton = StoryButton;
 
-    for (int i = 0; i < Buttons.Num(); i++)
-    {
-        if (Buttons[i])
-        {
-            Buttons[i]->OnHovered.AddDynamic(this, &ULobbyMenuWidget::HoverButton);
+    //for (int i = 0; i < Buttons.Num(); i++)
+    //{
+    //    if (Buttons[i])
+    //    {
+    //        Buttons[i]->OnHovered.AddDynamic(this, &ULobbyMenuWidget::HoverButton);
 
-            if (UCanvasPanel* Panel = FindSiblingWidget<UCanvasPanel>(Buttons[i]))
-            {
-                TArray<UButton*> AllButtons = FindAllChildWidgets<UButton>(Panel);
-                for (UButton* SubButton : AllButtons)
-                {
-                    if (SubButton)
-                    {
-                        SubButton->OnHovered.AddDynamic(this, &ULobbyMenuWidget::HoverSubButton);
-                    }
-                }
-            }
-        }
-    }
+    //        if (UCanvasPanel* Panel = FindSiblingWidget<UCanvasPanel>(Buttons[i]))
+    //        {
+    //            TArray<UButton*> AllButtons = FindAllChildWidgets<UButton>(Panel);
+    //            for (UButton* SubButton : AllButtons)
+    //            {
+    //                if (SubButton)
+    //                {
+    //                    SubButton->OnHovered.AddDynamic(this, &ULobbyMenuWidget::HoverSubButton);
+    //                }
+    //            }
+    //        }
+    //    }
+    //}
 }
 
 void ULobbyMenuWidget::NativeDestruct()
@@ -90,7 +90,7 @@ void ULobbyMenuWidget::HoverButton()
                     // 사운드 안전 체크
                     if (USoundBase* MenuButtonSound = UOC2GlobalData::GetUIBaseSound(GetWorld(), "TitleMenuButtonSound"))
                     {
-                        UGameplayStatics::SpawnSound2D(this, MenuButtonSound);
+                        UGameplayStatics::PlaySound2D(this, MenuButtonSound);
                     }
 
                     GetWorld()->GetTimerManager().ClearTimer(MenuMoveTimerHandle);
@@ -125,14 +125,14 @@ void ULobbyMenuWidget::HoverSubButton()
 
             if (USoundBase* SubMenuButtonSound = UOC2GlobalData::GetUIBaseSound(GetWorld(), "TitleSubMenuButtonSound"))
             {
-                UGameplayStatics::SpawnSound2D(this, SubMenuButtonSound);
+                UGameplayStatics::PlaySound2D(this, SubMenuButtonSound);
             }
         }
         else if (!bIsCurButton)
         {
             if (USoundBase* SubMenuButtonSound = UOC2GlobalData::GetUIBaseSound(GetWorld(), "TitleSubMenuButtonSound"))
             {
-                UGameplayStatics::SpawnSound2D(this, SubMenuButtonSound);
+                UGameplayStatics::PlaySound2D(this, SubMenuButtonSound);
             }
 
             bIsCurButton = true;

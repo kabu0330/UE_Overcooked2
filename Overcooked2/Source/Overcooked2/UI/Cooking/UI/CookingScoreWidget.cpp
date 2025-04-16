@@ -4,6 +4,8 @@
 #include "UI/Cooking/UI/CookingScoreWidget.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
+#include "Global/Data/OC2GlobalData.h"
+
 
 void UCookingScoreWidget::NativeConstruct()
 {
@@ -65,16 +67,21 @@ void UCookingScoreWidget::NativeTick(const FGeometry& MyGeometry, float DeltaTim
 
 void UCookingScoreWidget::SetTipCount(int TipCount)
 {
-
-    FString TexturePath = TEXT("/Game/Resources/UI/Cooking/Coin/coin_banner_bar.coin_banner_bar");
+   
+    UTexture2D* Texture = nullptr;
+    FName TextureName = "NONE";
     FString Tip = TEXT("");
+
+
     if (TipCount < 1)
     {
+        TextureName = "coinbar0";
+
         TipText->SetVisibility(ESlateVisibility::Hidden);
     }
     else if (TipCount == 1)
     {
-        TexturePath = TEXT("/Game/Resources/UI/Cooking/Coin/coin_banner_bar.coin_banner_bar");
+        TextureName = "coinbar0";
 
         TipText->SetVisibility(ESlateVisibility::Visible);
         Tip = TEXT("TIP X 1");
@@ -82,7 +89,7 @@ void UCookingScoreWidget::SetTipCount(int TipCount)
     }
     else if (TipCount == 2)
     {
-        TexturePath = TEXT("/Game/Resources/UI/Cooking/Coin/coin_banner_bar_01.coin_banner_bar_01");
+        TextureName = "coinbar1";
 
         TipText->SetVisibility(ESlateVisibility::Visible);
         Tip = TEXT("TIP X 2");
@@ -90,7 +97,7 @@ void UCookingScoreWidget::SetTipCount(int TipCount)
     }
     else if (TipCount == 3)
     {
-        TexturePath = TEXT("/Game/Resources/UI/Cooking/Coin/coin_banner_bar_02.coin_banner_bar_02");
+        TextureName = "coinbar2";
 
         TipText->SetVisibility(ESlateVisibility::Visible);
         Tip = TEXT("TIP X 3");
@@ -98,14 +105,13 @@ void UCookingScoreWidget::SetTipCount(int TipCount)
     }
     else if (TipCount == 4)
     {
-        TexturePath = TEXT("/Game/Resources/UI/Cooking/Coin/coin_banner_bar_03.coin_banner_bar_03");
+        TextureName = "coinbar3";
 
         TipText->SetVisibility(ESlateVisibility::Visible);
         Tip = TEXT("TIP X 4");
 
     }
-
-    class UTexture2D* Texture = Cast<UTexture2D>(StaticLoadObject(UTexture2D::StaticClass(), nullptr, *TexturePath));
+    Texture = Cast<UTexture2D>(UOC2GlobalData::GetResourceTexture(GetWorld(),TextureName));
     CoinBannerBar->SetBrushFromTexture(Texture);
     TipText->SetText(FText::FromString(Tip));
 }
