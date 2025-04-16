@@ -133,14 +133,13 @@ void AChoppingTable::ChopIngredient(AActor* ChefActor)
 			{
 				ChefPtr->Chopping(true);
 
-
 				if (false == bTimerActivated)
 				{
 					Timer = 0.0f;
 				}
 
-				bChopping = true;
 				bTimerActivated = true;
+				bChopping = true;
 
 				HideProgressBar(false);
 			}
@@ -167,7 +166,7 @@ void AChoppingTable::ChoppingIsDone_Implementation()
 	PlacedIngredient->ChangeState(EIngredientState::EIS_CHOPPED);
 
 	CookingPtr = Cast<ACooking>(PlacedIngredient);
-	
+
 	HideProgressBar(true);
 
 	ChefPtr->Chopping(false);
@@ -207,5 +206,6 @@ void AChoppingTable::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 	DOREPLIFETIME(AChoppingTable, bTimerActivated);
 	DOREPLIFETIME(AChoppingTable, bChopping);
 	DOREPLIFETIME(AChoppingTable, bChoppingDone);
+	DOREPLIFETIME(AChoppingTable, bChopping);
 	DOREPLIFETIME(AChoppingTable, ChefPtr);
 }
