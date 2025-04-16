@@ -65,10 +65,10 @@ void AOC2Character::MoveCharacter(const FInputActionValue& Value)
 	if (bIsChopping == true)
 	{
 		Chopping(false);
-		if (CurrentTable != nullptr)
-		{
-			Cast<AChoppingTable>(CurrentTable)->TimerSwitch(false);
-		}
+		//if (CurrentTable != nullptr)
+		//{
+		//	Cast<AChoppingTable>(CurrentTable)->TimerSwitch(false);
+		//}
 
 	}
 
@@ -234,7 +234,10 @@ void AOC2Character::Interact_Implementation()
 	// 만약 지금 상호작용을 시도할 수 있는 개체가 있으면
 	if (!SelectedOC2Actor)
 	{
-		Drop();
+		if (GrabbedObject != nullptr)
+		{
+			Drop();
+		}
 		return;
 	}
 
@@ -457,7 +460,7 @@ void AOC2Character::Interact_Implementation()
 	}
 }
 
-void AOC2Character::Grab_Implementation(ACooking* Cook)
+void AOC2Character::ServerGrab_Implementation(ACooking* Cook)
 {
 	GrabbedObject = Cook;
 	GrabbedObject->AttachToChef(this);
@@ -470,7 +473,7 @@ void AOC2Character::Grab_Implementation(ACooking* Cook)
 	}
 }
 
-void AOC2Character::Drop_Implementation()
+void AOC2Character::ServerDrop_Implementation()
 {
 	// 내가 들고 있는 물건이 있을때
 	if (GrabbedObject != nullptr)
@@ -510,7 +513,8 @@ void AOC2Character::DoActionPress_Implementation()
 		ACookingTable* Table = Cast<ACookingTable>(SelectedOC2Actor);
 		if (Table != nullptr)
 		{
-			if (Table->IsA<AChoppingTable>())
+			AChoppingTable* Chop = Cast<AChoppingTable>(Table);
+			if (Chop != nullptr && bIsChopping == false)
 			{
 				Cast<AChoppingTable>(Table)->ChopIngredient(this);
 				CurrentTable = Table;
@@ -657,8 +661,6 @@ void AOC2Character::CheckInteract()
 
 void AOC2Character::Dash_Implementation()
 {
-
-
 	bIsDashing = true;
 	DashTimer = 0.0f;
 
@@ -710,6 +712,18 @@ void AOC2Character::OnDashInput()
 		if (IsLocallyControlled()) UGameplayStatics::PlaySound2D(GetWorld(), UOC2GlobalData::GetCharacterBaseSound(GetWorld(), "Dash"));
 		Dash();
 	}
+}
+
+void AOC2Character::Grab(ACooking* Cook)
+{
+	UGameplayStatics::PlaySound2D(GetWorld(), UOC2GlobalData::GetCharacterBaseSound(GetWorld(), "Pickup"));
+	ServerGrab(Cook);
+}
+
+void AOC2Character::Drop()
+{
+	UGameplayStatics::PlaySound2D(GetWorld(), UOC2GlobalData::GetCharacterBaseSound(GetWorld(), "Putdown"));
+	ServerDrop();
 }
 
 
