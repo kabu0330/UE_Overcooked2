@@ -28,14 +28,14 @@ void UTitleWidget::PlaySelectSound()
 {
 
 	USoundBase* SelectButtonSound = UOC2GlobalData::GetUIBaseSound(GetWorld(), "SelectSound");
-	UAudioComponent* SelectAudioComp = UGameplayStatics::SpawnSound2D(this, SelectButtonSound, 0.5f);
+	UGameplayStatics::PlaySound2D(this, SelectButtonSound, 0.5f);
 	
 }
 
 void UTitleWidget::PlaySubMenuSound()
 {
 	USoundBase* SubmenuSound = UOC2GlobalData::GetUIBaseSound(GetWorld(), "SubmenuSound");
-	UAudioComponent* SubmenuSoundAudioComp = UGameplayStatics::SpawnSound2D(this, SubmenuSound, 0.5f);
+	UGameplayStatics::PlaySound2D(this, SubmenuSound, 0.5f);
 }
 
 void UTitleWidget::StartServer()
@@ -52,8 +52,8 @@ void UTitleWidget::Connect()
 void UTitleWidget::PlayOpenSound()
 {
 	USoundBase* ShutterSound = UOC2GlobalData::GetUIBaseSound(GetWorld(), "TitleShutterSound");
-	UAudioComponent* AudioComp = UGameplayStatics::SpawnSound2D(this, ShutterSound);
+	UGameplayStatics::PlaySound2D(this, ShutterSound);
 
 	USoundBase* StartSound = UOC2GlobalData::GetUIBaseSound(GetWorld(), "TitleStartSound");
-	UAudioComponent* AudioComp2 = UGameplayStatics::SpawnSound2D(this, StartSound);
+	UGameplayStatics::PlaySound2D(this, StartSound);
 }

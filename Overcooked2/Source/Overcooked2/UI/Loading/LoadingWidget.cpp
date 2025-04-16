@@ -6,6 +6,13 @@
 #include "Components/CanvasPanel.h" 
 #include "Components/Image.h" 
 
+#include "Kismet/GameplayStatics.h"
+
+#include "Sound/SoundBase.h" 
+#include "Global/Data/OC2GlobalData.h"
+#include "Components/AudioComponent.h"
+
+
 void ULoadingWidget::NativeConstruct()
 {
     Super::NativeConstruct();
@@ -152,6 +159,11 @@ void ULoadingWidget::PlayZoomOutAnimation()
     float TimeStep = 0.01f;
     float CurrentTime = AnimationDuration;
 
+    if (USoundBase* Sound = UOC2GlobalData::GetUIBaseSound(GetWorld(), "ScreenOut"))
+    {
+        UGameplayStatics::PlaySound2D(this, Sound);
+    }
+
     GetWorld()->GetTimerManager().ClearTimer(AnimationTimer);
 
     GetWorld()->GetTimerManager().SetTimer(AnimationTimer, [this, AnimationDuration, TimeStep, CurrentTime]() mutable
@@ -186,6 +198,12 @@ void ULoadingWidget::PlayZoomInAnimation()
     float TimeStep = 0.01f;
     float CurrentTime = 0.0f;
 
+    if (USoundBase* Sound = UOC2GlobalData::GetUIBaseSound(GetWorld(), "ScreenIn"))
+    {
+        UGameplayStatics::PlaySound2D(this, Sound);
+    }
+
+
     GetWorld()->GetTimerManager().ClearTimer(AnimationTimer);
 
     GetWorld()->GetTimerManager().SetTimer(AnimationTimer, [this, AnimationDuration, TimeStep, CurrentTime]() mutable
@@ -194,12 +212,7 @@ void ULoadingWidget::PlayZoomInAnimation()
             {
                 GetWorld()->GetTimerManager().ClearTimer(AnimationTimer);
                 ConnectingCanvas->SetVisibility(ESlateVisibility::Visible);
-                bIsConnecting = true;
-                
-
-
-
-
+                bIsConnecting = true;      
 
                 Function();
                 return;

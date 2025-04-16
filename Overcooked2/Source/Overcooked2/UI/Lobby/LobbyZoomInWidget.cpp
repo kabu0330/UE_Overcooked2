@@ -8,6 +8,10 @@
 #include "UI/Loading/LoadingWidget.h"
 #include "Kismet/GameplayStatics.h"
 
+#include "Sound/SoundBase.h" 
+#include "Global/Data/OC2GlobalData.h"
+#include "Components/AudioComponent.h"
+
 void ULobbyZoomInWidget::NativeConstruct()
 {
     Super::NativeConstruct();
@@ -37,6 +41,12 @@ void ULobbyZoomInWidget::PlayZoomInAnimation(TFunction<void()> Func)
     float AnimationDuration = 20.0f;
     float TimeStep = 0.01f;
     float CurrentTime = 0.0f;
+
+    if (USoundBase* Sound = UOC2GlobalData::GetUIBaseSound(GetWorld(), "ScreenIn"))
+    {
+        UGameplayStatics::PlaySound2D(this, Sound);
+    }
+
 
     GetWorld()->GetTimerManager().ClearTimer(AnimationTimer);
 

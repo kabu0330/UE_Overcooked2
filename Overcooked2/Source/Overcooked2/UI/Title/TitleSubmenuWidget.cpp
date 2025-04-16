@@ -41,11 +41,11 @@ void UTitleSubmenuWidget::MoveBanner()
 void UTitleSubmenuWidget::PlayHoverSound()
 {
     USoundBase* TitleSubMenuButtonSound = UOC2GlobalData::GetUIBaseSound(GetWorld(), "TitleSubMenuButtonSound");
-    UAudioComponent* AudioComp = UGameplayStatics::SpawnSound2D(this, TitleSubMenuButtonSound);
+    UGameplayStatics::PlaySound2D(this, TitleSubMenuButtonSound);
 }
 
 void UTitleSubmenuWidget::PlayPressSound()
 {
     USoundBase* TitleSubMenuButtonSound = UOC2GlobalData::GetUIBaseSound(GetWorld(), "TitleSubMenuButtonSound");
-    UAudioComponent* AudioComp = UGameplayStatics::SpawnSound2D(this, TitleSubMenuButtonSound);
+    UGameplayStatics::PlaySound2D(this, TitleSubMenuButtonSound);
 }
