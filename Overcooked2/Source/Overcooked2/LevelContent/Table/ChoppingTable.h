@@ -108,9 +108,6 @@ private:
 	bool bChoppingDone = false;
 
 	UPROPERTY(Replicated)
-	bool bChopping = false;
-
-	UPROPERTY(Replicated)
 	float Ratio = 0.0f;
 
 	UPROPERTY(Replicated)
