@@ -45,7 +45,7 @@ void APlate::PostInitializeComponents()
 
 void APlate::Multicast_SubmitPlate_Implementation()
 {
-	//SetActorLocation(UOC2Const::PlateSubmitLocation);
+	SetActorLocation(UOC2Const::PlateSubmitLocation);
 	CleanPlate();
 	SetPlateState(EPlateState::DIRTY);
 	
@@ -62,7 +62,6 @@ void APlate::Multicast_SubmitPlate_Implementation()
 
 	FTimerHandle TimerHandle;
 
-	// ?
 	GetWorld()->GetTimerManager().SetTimer(
 		TimerHandle,
 		this,
@@ -83,6 +82,7 @@ void APlate::SpawnPlate()
 
 void APlate::BaseFromSelf_Implementation()
 {
+	Plates.Empty();
 	Plates.Add(this);
 }
 
@@ -95,6 +95,7 @@ void APlate::BeginPlay()
 
 	FindPlateSpawner();
 	FindSinkTable();
+
 	if (true == HasAuthority())
 	{
 		BaseFromSelf();
@@ -125,7 +126,6 @@ void APlate::InitWidgetComponent()
 void APlate::FindPlateSpawner()
 {
 	// TActorIterator를 사용하여 월드 내 모든 APrepTable 액터를 순회
-
 	for (TActorIterator<ACookingTable> It(GetWorld()); It; ++It)
 	{
 		ACookingTable* PrepTableActor = *It;
@@ -240,13 +240,9 @@ void APlate::SetMaterialTexture()
 
 void APlate::SetMaterialTexture(UTexture* Texture)
 {
-	// 1. 스태틱 메시의 머티리얼을 바꿀건데
-
-	// 2. 이미 동적으로 생성한 머티리얼 인스턴스 다이나믹이 존재하면 
 	UMaterialInstanceDynamic* MaterialInstanceDynamic = Cast<UMaterialInstanceDynamic>(StaticMeshComponent->GetMaterial(0));
 	if (nullptr != MaterialInstanceDynamic)
 	{
-		// 3. 기존 머티리얼 인스턴스 다이나믹을 그대로 사용하고
 		MaterialInstanceDynamic->SetTextureParameterValue(FName(TEXT("DiffuseColorMap")), Texture);
 		StaticMeshComponent->SetMaterial(0, MaterialInstanceDynamic);
 		return;
@@ -501,21 +497,6 @@ void APlate::Multicast_SpawnWashPlate_Implementation()
 		1.0f,   // 3초 뒤 실행
 		false   // 반복 여부(false면 1회 실행)
 	);
-}
-
-void APlate::RestorePlateToWorld()
-{
-	// 월드로 다시 편입시키고
-	SetActorHiddenInGame(false); // 렌더
-	SetActorEnableCollision(true);
-	SetActorTickEnabled(true);
-}
-
-void APlate::HiddenPlateToWorld()
-{
-	SetActorHiddenInGame(true);		// 렌더 끄고
-	SetActorEnableCollision(false);	// 충돌 끄고
-	SetActorTickEnabled(false);		// Tick 끄고
 }
 
 void APlate::SubmitPlate_Implementation()

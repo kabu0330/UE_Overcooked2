@@ -62,7 +62,6 @@ public:
 	}
 
 
-
 	// 템플릿은 BP에서 호출할 수 없다.
 	template<typename T>
 	T* GetChild(T* Cooking)
