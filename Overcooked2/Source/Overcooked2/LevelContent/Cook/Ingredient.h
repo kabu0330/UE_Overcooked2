@@ -38,13 +38,6 @@ public:
 		return CurIngredientState == EIngredientState::EIS_CHOPPABLE;
 	}
 
-	// 프라이팬에 구워야 하는 재료야?
-	UFUNCTION(BlueprintCallable)
-	bool IsGrillable() const
-	{
-		return CurIngredientState == EIngredientState::EIS_GRILLABLE;
-	}
-
 	// 솥에서 밥을 지을 수 있어?
 	UFUNCTION(BlueprintCallable)
 	bool IsBoilable() const
