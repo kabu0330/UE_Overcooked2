@@ -161,6 +161,7 @@ void ASinkTable::PlacePlates_Implementation(ACooking* ReceivedCooking)
 			DirtyPlates[i]->AttachToComponent(DirtyPlateComponents[i], FAttachmentTransformRules::KeepRelativeTransform);
 			DirtyPlates[i]->SetActorLocation(DirtyPlateComponents[i]->GetComponentLocation());
 			DirtyPlates[i]->SetActorRotation(DirtyPlateComponents[i]->GetComponentRotation());
+			DirtyPlates[i]->SetActorScale3D(PlateSize * 0.6);
 		}
 	}
 
@@ -275,6 +276,7 @@ void ASinkTable::WashingIsDone_Implementation()
 	CleanPlates.Last()->AttachToComponent(CleanPlateComponent, FAttachmentTransformRules::KeepRelativeTransform);
 	CleanPlates.Last()->SetActorLocation(CleanPlateComponent->GetComponentLocation());
 	CleanPlates.Last()->AddActorWorldOffset(FVector::UnitZ()* 10.0f * (CleanPlates.Num() - 1));
+	CleanPlates.Last()->SetActorScale3D(PlateSize);
 
 }
 
