@@ -19,7 +19,6 @@ AChoppingTable::AChoppingTable()
 
 	KnifeMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>("Knife");
 	KnifeMeshComponent->SetupAttachment(RootComponent);
-	//KnifeMeshComponent->SetIsReplicated(true);
 }
 
 void AChoppingTable::BeginPlay()

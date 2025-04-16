@@ -201,14 +201,6 @@ void ASinkTable::UpdateProgressBar/*_Implementation*/(float DeltaTime)
 
 		if (Timer > 2.0f)
 		{
-			/*if (true == HasAuthority())
-			{
-				GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, FString::Printf(TEXT("Server Update Progress Bar Is Done")));
-			}
-			if (false == HasAuthority())
-			{
-				GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, FString::Printf(TEXT("Client Update Progress Bar Is Done")));
-			}*/
 			// 트리거 변수
 			FinishWashing();
 		}
