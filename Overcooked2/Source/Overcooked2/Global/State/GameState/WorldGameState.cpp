@@ -11,6 +11,7 @@
 
 #include "Global/OC2Global.h"
 #include "Global/OC2GameInstance.h"
+#include "LevelContent/WorldMap/WorldGameMode.h"
 
 AWorldGameState::AWorldGameState()
 {
@@ -29,26 +30,33 @@ void AWorldGameState::Tick(float DeltaTime)
 
 }
 
+void AWorldGameState::CheckClinetLoadingComplete()
+{
+	if (true == HasAuthority())
+	{
+		AWorldGameMode* GameMode = Cast<AWorldGameMode>(UGameplayStatics::GetGameMode(this));
+
+		if (nullptr != GameMode)
+		{
+			CompleteArray.Add(0);
+
+			int Test = GameMode->GetUserCount();
+
+			if (CompleteArray.Num() == GameMode->GetUserCount())
+			{
+				UOC2Global::GetOC2GameInstance(GetWorld())->StartCookingStage();
+			}
+		}
+	}
+}
+
 void AWorldGameState::Multicast_PlayZoomInAnmationUI_Implementation()
 {
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
 	AWorldMapHUD* WorldMapHUD = Cast<AWorldMapHUD>(PlayerController->GetHUD());
 
-	if (true == HasAuthority())
+	if (WorldMapHUD->WorldMapUserWidget != nullptr && WorldMapHUD != nullptr)
 	{
-		if (WorldMapHUD->WorldMapUserWidget != nullptr && WorldMapHUD != nullptr)
-		{
-			WorldMapHUD->WorldMapUserWidget->PlayZoomInAnimation([this]()
-				{
-					UOC2Global::GetOC2GameInstance(GetWorld())->StartCookingStage();
-				});
-		}
-	}
-	else
-	{
-		if (WorldMapHUD->WorldMapUserWidget != nullptr && WorldMapHUD != nullptr)
-		{
-			WorldMapHUD->WorldMapUserWidget->PlayZoomInAnimation([](){});
-		}
+		WorldMapHUD->WorldMapUserWidget->PlayZoomInAnimation();
 	}
 }

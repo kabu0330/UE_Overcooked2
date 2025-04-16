@@ -33,8 +33,8 @@ public:
 	void HideProgressBar(bool Value);
 	void HideProgressBar_Implementation(bool Value);
 
-	//UFUNCTION(Server, Reliable)
-	UFUNCTION(NetMulticast, Reliable)
+	//UFUNCTION(NetMulticast, Reliable)
+	UFUNCTION(Server, Reliable)
 	void ChoppingIsDone();
 	void ChoppingIsDone_Implementation();
 

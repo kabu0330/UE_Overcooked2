@@ -10,6 +10,8 @@
 #include "LevelContent/Table/CookingTable.h"
 #include "Global/Component/TimeEventComponent.h"
 #include "Components/SphereComponent.h"
+#include "NiagaraSystem.h"
+#include "NiagaraFunctionLibrary.h"
 #include "OC2Character.generated.h"
 
 class UCaptureComponent2D;
@@ -231,6 +233,10 @@ private :
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UserInput", meta = (AllowPrivateAccess = "true"))
 	float CharacterSpeed = 10.0f;
+
+	float EffectSpawnInterval = 0.4f;
+	float EffectSpawnElapsed = 0.0f;
+
 	/// Dash Variables
 	UPROPERTY(EditAnywhere, Replicated, BlueprintReadWrite, Category = "Dash", meta = (AllowPrivateAccess = "true"))
 	bool bIsDashing = false;
@@ -242,5 +248,8 @@ private :
 	float DashTimer = 0.0f;
 
 	bool bIsMoveEnabled = true;
+
+	UPROPERTY(EditAnywhere, Category = "Dash")
+	UNiagaraSystem* DashEffect;
 
 };
