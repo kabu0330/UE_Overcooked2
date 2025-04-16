@@ -40,11 +40,7 @@ ASinkTable::ASinkTable()
 		DirtyPlateComponents.Add(ComponentForDishes4);
 	}
 
-	//CleanPlateMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CleanPlateNeshComponent"));
-	//CleanPlateMeshComponent->SetupAttachment(RootComponent);
-
 	TimeEventComponent = CreateDefaultSubobject<UTimeEventComponent>(TEXT("TimeEventComponent"));
-
 }
 
 void ASinkTable::BeginPlay()
@@ -52,10 +48,6 @@ void ASinkTable::BeginPlay()
 	Super::BeginPlay();
 
 	InitProgressBar();
-
-	//InitDirtyPlateMesh();
-	//InitCleanPlateMesh();
-
 }
 
 void ASinkTable::InitProgressBar()
@@ -78,24 +70,6 @@ void ASinkTable::InitProgressBar()
 	ProgressBarComponent->SetTickWhenOffscreen(true);
 	ProgressBarComponent->SetWorldLocation(this->GetActorLocation());
 }
-
-//void ASinkTable::InitDirtyPlateMesh()
-//{
-//	for (int32 i = 0; i < DirtyPlateComponents.Num(); i++)
-//	{
-//		DirtyPlateComponents[i]->SetIsReplicated(true);
-//	}
-//
-//	SetAllPlateVisibility();
-//}
-
-//void ASinkTable::InitCleanPlateMesh()
-//{
-//	CleanPlateMeshComponent->AttachToComponent(CleanPlateComponent, FAttachmentTransformRules::KeepRelativeTransform);
-//	CleanPlateMeshComponent->SetRelativeLocation(FVector(0, 10, 60));
-//	//CleanPlateMeshComponent->SetRelativeScale3D(FVector(2, 2, 2));
-//	SetCleanPlateMesh();
-//}
 
 ACooking* ASinkTable::Interact(AActor* ChefActor)
 {
@@ -145,8 +119,6 @@ void ASinkTable::PlacePlates_Implementation(ACooking* ReceivedCooking)
 		// 1. 더티 플레이트만 들어올 수 있다.
 		if (true == TempPlate->IsDirtyPlate())
 		{
-			// TempPlate->AttachToComponent(DirtyPlateComponents)
-
 			for (int32 i = 0; i < TempPlate->Plates.Num(); i++)
 			{
 				TempPlate->Plates[i]->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
@@ -223,7 +195,7 @@ void ASinkTable::FinishWashing_Implementation()
 
 void ASinkTable::UpdateProgressBar/*_Implementation*/(float DeltaTime)
 {
-	if (true == bTimerActivated /*&& true == KeepWashing*/)
+	if (true == bTimerActivated)
 	{
 		Timer += DeltaTime;
 
@@ -303,125 +275,6 @@ void ASinkTable::RepeatWashing_Implementation()
 	}
 }
 
-//void ASinkTable::SetPlateVisibility/*_Implementation*/(int Index)
-//{
-//	//SetAllPlateHidden();
-//	//for (size_t i = 0; i < Index; i++)
-//	//{
-//	//	DirtyPlateComponents[i]->SetHiddenInGame(false);
-//	//	DirtyPlateComponents[i]->SetVisibility(true);
-//	//}
-//}
-
-//void ASinkTable::SetAllPlateVisibility()
-//{
-//	for (int32 i = 0; i < DirtyPlateComponents.Num(); i++)
-//	{
-//		DirtyPlateComponents[i]->SetVisibility(true);
-//		DirtyPlateComponents[i]->SetHiddenInGame(false);
-//	}
-//}
-
-//void ASinkTable::AddDirtyPlateNum_Implementation(int Value)
-//{
-//	if (true == HasAuthority())
-//	{
-//		DirtyPlateNum += Value;
-//		if (4 < DirtyPlateNum)
-//		{
-//			DirtyPlateNum = 4;
-//		}
-//		else if (0 > DirtyPlateNum)
-//		{
-//			DirtyPlateNum = 0;
-//		}
-//		SetPlateVisibility(DirtyPlateNum);
-//	}
-//}
-
-//void ASinkTable::AddCleanPlateNum_Implementation(int Value)
-//{
-//	if (true == HasAuthority())
-//	{
-//		CleanPlateNum += Value;
-//
-//		if (4 < CleanPlateNum)
-//		{
-//			CleanPlateNum = 4;
-//		}
-//		else if (0 > CleanPlateNum)
-//		{
-//			CleanPlateNum = 0;
-//		}
-//		SetCleanPlateMesh();
-//	}
-//}
-
-//void ASinkTable::SetCleanPlateMesh/*_Implementation*/()
-//{
-//	switch (CleanPlateNum)
-//	{
-//	case 0:
-//	{
-//		CleanPlateMeshComponent->SetStaticMesh(nullptr);
-//		break;
-//	}
-//	case 1:
-//	{
-//		UStaticMesh* NewMesh = UOC2GlobalData::GetResourceStaticMesh(GetWorld(), TEXT("SinglePlate"));
-//		CleanPlateMeshComponent->SetStaticMesh(NewMesh);
-//
-//		CleanPlateMeshComponent->SetRelativeLocation(FVector(0, 10, 0));
-//		break;
-//	}
-//	case 2:
-//	{
-//		UStaticMesh* NewMesh = UOC2GlobalData::GetResourceStaticMesh(GetWorld(), TEXT("DoublePlate"));
-//		CleanPlateMeshComponent->SetStaticMesh(NewMesh);
-//
-//		CleanPlateMeshComponent->SetRelativeLocation(FVector(0, 10, 20));
-//		break;
-//	}
-//	case 3:
-//	{
-//		UStaticMesh* NewMesh = UOC2GlobalData::GetResourceStaticMesh(GetWorld(), TEXT("TriplePlate"));
-//		CleanPlateMeshComponent->SetStaticMesh(NewMesh);
-//
-//		CleanPlateMeshComponent->SetRelativeLocation(FVector(0, 10, 0));
-//		break;
-//	}
-//	case 4:
-//	{
-//		UStaticMesh* NewMesh = UOC2GlobalData::GetResourceStaticMesh(GetWorld(), TEXT("FullPlate"));
-//		CleanPlateMeshComponent->SetStaticMesh(NewMesh);
-//
-//		CleanPlateMeshComponent->SetRelativeLocation(FVector(0, 10, 60));
-//		break;
-//	}
-//	default:
-//		break;
-//	}
-//}
-
-//void ASinkTable::OnRep_SetCleanPlateMesh()
-//{
-//	SetCleanPlateMesh();
-//}
-
-//void ASinkTable::OnRep_SetDirtyPlateMesh()
-//{
-//	if (true == HasAuthority())
-//	{
-//		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, FString::Printf(TEXT("Sever SetPlate : %d"), DirtyPlateNum));
-//	}
-//	if (false == HasAuthority())
-//	{
-//		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, FString::Printf(TEXT("Client SetPlate : %d"), DirtyPlateNum));
-//	}
-//	SetPlateVisibility(DirtyPlateNum);
-//	SetAttachToDirtyPlate();
-//}
-
 void ASinkTable::SetAttachToDirtyPlate()
 {
 	for (size_t i = 0; i < DirtyPlates.Num(); i++)
@@ -431,14 +284,6 @@ void ASinkTable::SetAttachToDirtyPlate()
 		DirtyPlates[i]->AttachToComponent(DirtyPlateComponents[i], FAttachmentTransformRules::KeepRelativeTransform);
 		DirtyPlates[i]->SetActorLocation(DirtyPlateComponents[i]->GetComponentLocation());
 	}
-	//for (int i = 0; i < PlateNum; i++)
-	//{
-	//	DirtyPlates.Add(TempPlate->GetAnotherPlatesRef()[i]);
-	//	DirtyPlates[i + CurPlateNum]->SetCookingTable_Implementation(this);
-	//	DirtyPlates[i + CurPlateNum]->AttachToComponent(DirtyPlateComponents[i + CurPlateNum], FAttachmentTransformRules::KeepRelativeTransform);
-	//	DirtyPlates[i + CurPlateNum]->SetActorLocation(DirtyPlateComponents[i + CurPlateNum]->GetComponentLocation());
-	//}
-
 }
 
 void ASinkTable::OnRep_ChangeProgress()
@@ -460,11 +305,5 @@ void ASinkTable::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifeti
 	DOREPLIFETIME(ASinkTable, ComponentForDishes3);
 	DOREPLIFETIME(ASinkTable, ComponentForDishes4);
 	DOREPLIFETIME(ASinkTable, DirtyPlateComponents);
-	//DOREPLIFETIME(ASinkTable, CleanPlateMeshComponent);
-	//DOREPLIFETIME(ASinkTable, DirtyPlateNum);
-	//DOREPLIFETIME(ASinkTable, CleanPlateNum);
 	DOREPLIFETIME(ASinkTable, ProgressBarComponent);
-	//DOREPLIFETIME(ASinkTable, bIsFirstPlateWashed);
-	//DOREPLIFETIME(ASinkTable, bCallGetMoveFunction);
-
 }
