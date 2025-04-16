@@ -10,6 +10,7 @@
 #include <Net/UnrealNetwork.h>
 #include <Global/OC2Global.h>
 #include <Global/Data/OC2GlobalData.h>
+#include "Kismet/GameplayStatics.h"
 
 ASinkTable::ASinkTable()
 {
@@ -48,6 +49,8 @@ void ASinkTable::BeginPlay()
 	Super::BeginPlay();
 
 	InitProgressBar();
+
+	SoundEffect = UOC2GlobalData::GetTableBaseSound(GetWorld(), "Washing");
 }
 
 void ASinkTable::InitProgressBar()
@@ -153,6 +156,11 @@ void ASinkTable::DoTheDishes(AOC2Character* ChefActor)
 
 		HideProgressBar(false);
 	}
+
+	/*if (nullptr != SoundEffect)
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), SoundEffect);
+	}*/
 }
 
 void ASinkTable::Tick(float DeltaTime)

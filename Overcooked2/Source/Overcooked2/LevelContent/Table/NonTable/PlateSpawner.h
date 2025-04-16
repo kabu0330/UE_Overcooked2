@@ -43,6 +43,10 @@ private:
 	UFUNCTION()
 	void OnRep_SetPlateMesh();
 
+	UFUNCTION(NetMulticast, Reliable)
+	void PlaySoundEffect();
+	void PlaySoundEffect_Implementation();
+
 private:
 
 	void SetMaterialTextrue();

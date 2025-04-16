@@ -118,4 +118,5 @@ protected:
 
 	FVector PlateSize = { 2.0f, 2.0f, 2.0f};
 
+	USoundBase* SoundEffect = nullptr;
 };

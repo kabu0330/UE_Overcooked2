@@ -61,10 +61,7 @@ void AServingTable::PlaceItem(ACooking* ReceivedCooking)
 	UOC2Global::SubmitPlate(GetWorld(), ReceivedCooking);
 
 	//È¿°úÀ½
-	if (nullptr != SoundEffect)
-	{
-		UGameplayStatics::PlaySound2D(GetWorld(), SoundEffect);
-	}
+	PlaySoundEffect();
 
 	//Server_SpawnPlateInPlateSpawner();
 
@@ -84,4 +81,12 @@ void AServingTable::Server_SpawnPlateInPlateSpawner_Implementation()
 	//PlateSpawner->SetPlate(Plate);
 	Plate->Multicast_SubmitPlate();
 	//PlateSpawner->AddPlate(int Num1);
+}
+
+void AServingTable::PlaySoundEffect_Implementation()
+{
+	if (nullptr != SoundEffect)
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), SoundEffect);
+	}
 }

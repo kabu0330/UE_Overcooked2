@@ -44,10 +44,7 @@ void APlateSpawner::SetPlate(class APlate* Plate)
 		Plate->SetActorRelativeLocation(FVector::ZeroVector);
 	}
 
-	if (nullptr != SoundEffect)
-	{
-		UGameplayStatics::PlaySound2D(GetWorld(), SoundEffect);
-	}
+	PlaySoundEffect();
 }
 
 ACooking* APlateSpawner::Interact(AActor* ChefActor)
@@ -156,6 +153,14 @@ void APlateSpawner::SetMaterialTextrue()
 			PlateMeshComponent->SetMaterial(i, MaterialInstanceDynamic);
 			return;
 		}
+	}
+}
+
+void APlateSpawner::PlaySoundEffect_Implementation()
+{
+	if (nullptr != SoundEffect)
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), SoundEffect);
 	}
 }
 

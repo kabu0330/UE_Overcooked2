@@ -34,10 +34,15 @@ public:
 
 	void DestroyIngredient();
 
+	UFUNCTION(NetMulticast, Reliable)
+	void PlaySoundEffect();
+	void PlaySoundEffect_Implementation();
+
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TimeSetting", meta = (AllowPrivateAccess = "true"))
 	float Timer = 0.0f;
 	bool bDestroyGarbage = false;
 
+	//UPROPERTY(Replicated)
 	USoundBase* SoundEffect = nullptr;
 };
