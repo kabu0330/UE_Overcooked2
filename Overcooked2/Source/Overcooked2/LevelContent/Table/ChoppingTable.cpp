@@ -52,9 +52,12 @@ void AChoppingTable::Tick(float DeltaTime)
 	Ratio = (Timer / 0.4f) * 0.2f;
 	WidgetPtr->SetProgressTimeRatio(Ratio);
 
-	if (bChoppingDone == true)
+	if (HasAuthority())
 	{
-		ChoppingIsDone();
+		if (bChoppingDone == true)
+		{
+			ChoppingIsDone();
+		}
 	}
 
 	HideKnife();
