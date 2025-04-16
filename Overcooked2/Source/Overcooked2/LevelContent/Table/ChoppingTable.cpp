@@ -27,27 +27,13 @@ void AChoppingTable::BeginPlay()
 	Super::BeginPlay();
 
 	// 위젯 클래스 지정
-	ProgressBarComponent->SetWidgetClass(TSubClassWidget); // WBP 위젯으로 설정
-	UUserWidget* UserWidget = ProgressBarComponent->GetUserWidgetObject();
-	if (nullptr != UserWidget)
-	{
-		WidgetPtr = Cast<UGaugeTextureWidget>(UserWidget);
-		WidgetPtr->SetPosition(FVector2D{ 5.0f, 10.0f });
-	}
-	ProgressBarComponent->SetDrawAtDesiredSize(true);   // 위젯의 실제 크기로 렌더
-	ProgressBarComponent->SetPivot(FVector2D(0.5f, 0.5f)); // 중심 정렬
-	ProgressBarComponent->SetWidgetSpace(EWidgetSpace::Screen); // 월드 공간에서 3D처럼 보이게
-	ProgressBarComponent->bHiddenInGame = true;
-
-	// 카메라를 향하도록 설정
-	ProgressBarComponent->SetTwoSided(true); 
-	ProgressBarComponent->SetTickWhenOffscreen(true);
-	ProgressBarComponent->SetWorldLocation(this->GetActorLocation());
+	InitProgressBar();
 }
 
 void AChoppingTable::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
 	CheckChefIsChopping();
 
 	if (true == bTimerActivated)
@@ -188,10 +174,28 @@ void AChoppingTable::CheckChefIsChopping()
 		{
 			bChopping = false;
 			ChefPtr = nullptr;
-
-			//HideProgressBar(true);
 		}
 	}
+}
+
+void AChoppingTable::InitProgressBar()
+{
+	ProgressBarComponent->SetWidgetClass(TSubClassWidget); // WBP 위젯으로 설정
+	UUserWidget* UserWidget = ProgressBarComponent->GetUserWidgetObject();
+	if (nullptr != UserWidget)
+	{
+		WidgetPtr = Cast<UGaugeTextureWidget>(UserWidget);
+		WidgetPtr->SetPosition(FVector2D{ 5.0f, 10.0f });
+	}
+	ProgressBarComponent->SetDrawAtDesiredSize(true);   // 위젯의 실제 크기로 렌더
+	ProgressBarComponent->SetPivot(FVector2D(0.5f, 0.5f)); // 중심 정렬
+	ProgressBarComponent->SetWidgetSpace(EWidgetSpace::Screen); // 월드 공간에서 3D처럼 보이게
+	ProgressBarComponent->bHiddenInGame = true;
+
+	// 카메라를 향하도록 설정
+	ProgressBarComponent->SetTwoSided(true);
+	ProgressBarComponent->SetTickWhenOffscreen(true);
+	ProgressBarComponent->SetWorldLocation(this->GetActorLocation());
 }
 
 void AChoppingTable::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

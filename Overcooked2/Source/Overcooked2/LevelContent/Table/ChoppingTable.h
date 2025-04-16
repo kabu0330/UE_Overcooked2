@@ -38,6 +38,7 @@ public:
 	void ChoppingIsDone();
 	void ChoppingIsDone_Implementation();
 
+	void InitProgressBar();
 
 	bool IsChoppingDone()
 	{

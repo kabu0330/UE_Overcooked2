@@ -57,24 +57,6 @@ void ACookingTable::PlaceItem(ACooking* ReceivedCooking)
 		CookingPtr->GetStaticMeshComponent()->SetRelativeScale3D(IngreScale);
 		CookingPtr->SetActorRelativeLocation(IngreLocation);
 	}
-
-	//APlate* TempPlate = Cast<APlate>(CookingPtr);
-	//if (nullptr != TempPlate)
-	//{
-	//	if (true == TempPlate->IsDirtyPlate())
-	//	{
-	//		int PlateStackCount = TempPlate->GetPlateStackCount();
-	//		if (1 == PlateStackCount)
-	//		{
-	//			TempPlate->AddActorLocalOffset(FVector(0, 0, 20));
-	//		}
-	//		if (3 == PlateStackCount)
-	//		{
-	//			TempPlate->AddActorLocalOffset(FVector(0, 0, 50));
-	//		}
-	//	}
-	//}
-	//bIsOccupied = true;
 }
 
 void ACookingTable::SetIngredientOffset(AIngredient* Ingredient)
