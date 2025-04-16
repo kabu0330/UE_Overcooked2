@@ -146,8 +146,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
 	UDataTable* IngredientDataTable = nullptr;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
-	UDataTable* OrderDataTable = nullptr;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
+	//UDataTable* OrderDataTable = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
 	TMap<EOC2Stage, UDataTable*> OrderDataTableMap;
