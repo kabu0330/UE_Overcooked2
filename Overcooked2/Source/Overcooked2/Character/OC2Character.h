@@ -233,6 +233,10 @@ private :
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UserInput", meta = (AllowPrivateAccess = "true"))
 	float CharacterSpeed = 10.0f;
+
+	float EffectSpawnInterval = 0.4f;
+	float EffectSpawnElapsed = 0.0f;
+
 	/// Dash Variables
 	UPROPERTY(EditAnywhere, Replicated, BlueprintReadWrite, Category = "Dash", meta = (AllowPrivateAccess = "true"))
 	bool bIsDashing = false;
