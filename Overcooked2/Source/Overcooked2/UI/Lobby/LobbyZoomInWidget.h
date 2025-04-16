@@ -15,7 +15,7 @@ class OVERCOOKED2_API ULobbyZoomInWidget : public UUserWidget
 	GENERATED_BODY()
 public:
 
-	void PlayZoomInAnimation(TFunction<void()> Func);
+	void PlayZoomInAnimation();
 
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")

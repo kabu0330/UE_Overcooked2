@@ -24,14 +24,6 @@ void ALobbyGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
-	//UOC2GameInstance* GameInstance = Cast<UOC2GameInstance>(GetGameInstance());
-
-	//if (GameInstance != nullptr)
-	//{
-	//	GameInstance->SetChefHeadName(ChefHeadNames[CurIdx]);
-	//	CurIdx++;
-	//}
-
 }
 
 void ALobbyGameMode::Tick(float DeltaTime)
@@ -50,8 +42,6 @@ void ALobbyGameMode::InitGameState()
 		UE_LOG(OVERCOOKED_LOG, Log, TEXT("LobbyGameState가 nullptr입니다."));
 		return;
 	}
-
-	//LobbyGameState->LobbyManager = GetWorld()->SpawnActor<ALobbyManager>(LobbyGameState->LobbyManagerClass);
 }
 
 void ALobbyGameMode::PostLogin(APlayerController* NewPlayerController)

@@ -36,4 +36,6 @@ void AWorldGameMode::PostLogin(APlayerController* NewPlayerController)
 
 	NewPlayerController->SetInputMode(Mode);
 	NewPlayerController->SetShowMouseCursor(false);
+
+	CurUserCount++;
 }

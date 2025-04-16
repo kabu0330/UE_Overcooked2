@@ -127,7 +127,7 @@ void ULoadingWidget::PlayLoadingAnimation(TFunction<void()> Func, ELevelChangTyp
 
 
     PlayZoomOutAnimation();
-    Function = Func;
+    //Function = Func;
 
     GetWorld()->GetTimerManager().ClearTimer(LoadingAnimationTimer);
 
@@ -214,7 +214,7 @@ void ULoadingWidget::PlayZoomInAnimation()
                 ConnectingCanvas->SetVisibility(ESlateVisibility::Visible);
                 bIsConnecting = true;      
 
-                Function();
+                //Function();
                 return;
             }
 

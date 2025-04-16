@@ -12,6 +12,11 @@
 #include "EnhancedInputSubsystems.h"
 #include "Net/UnrealNetwork.h"
 
+#include "UI/Lobby/LobbyZoomInWidget.h"
+#include "UI/Loading/LoadingWidget.h"
+#include "UI/Lobby/LobbyChalkBoard.h"
+#include "Lobby/LobbyHUD.h"
+
 
 void ALobbyPlayerController::BeginPlay()
 {
@@ -30,6 +35,36 @@ void ALobbyPlayerController::BeginPlay()
 		{
 			LobbyGameState->Multicast_UpdateUserPanelUI(i);
 		}
+	}
+}
+
+void ALobbyPlayerController::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	ALobbyHUD* LobbyHUD = Cast<ALobbyHUD>(GetHUD());
+
+	if (LobbyHUD != nullptr)
+	{
+		if (LobbyHUD->LobbyZoomInWidget != nullptr)
+		{
+			if (true == LobbyHUD->LoadingWidget->GetIsConnecting() &&
+				false == bReported)
+			{
+				bReported = true;
+				Server_NotifyLoadingComplete();
+			}
+		}
+	}
+}
+
+void ALobbyPlayerController::Server_NotifyLoadingComplete_Implementation()
+{
+	ALobbyGameState* LobbyGameState = GetWorld()->GetGameState<ALobbyGameState>();
+
+	if (nullptr != LobbyGameState)
+	{
+		LobbyGameState->CheckClinetLoadingComplete();
 	}
 }
 

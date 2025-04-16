@@ -22,6 +22,15 @@ protected:
 	virtual void Tick(float DeltaTime) override;
 	virtual void PostLogin(APlayerController* NewPlayerController) override;
 
+public:
+	int GetUserCount()
+	{
+		return CurUserCount;
+	}
+
 private:
 	TObjectPtr<class AWorldManager> WorldManager = nullptr;
+
+	UPROPERTY()
+	int CurUserCount = 0;
 };

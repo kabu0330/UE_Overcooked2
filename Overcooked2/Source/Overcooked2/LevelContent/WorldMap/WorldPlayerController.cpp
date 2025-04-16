@@ -4,8 +4,39 @@
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 
+#include "Global/State/GameState/WorldGameState.h"
+
+#include "UI/WorldMap/WorldMapHUD.h"
+#include "UI/WorldMap/UI/WorldMapUserWidget.h"
+#include "UI/Loading/LoadingWidget.h"
+
 AWorldPlayerController::AWorldPlayerController()
 {
+}
+
+void AWorldPlayerController::BeginPlay()
+{
+	Super::BeginPlay();
+}
+
+void AWorldPlayerController::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	AWorldMapHUD* WorldMapHUD = Cast<AWorldMapHUD>(GetHUD());
+
+	if (nullptr != WorldMapHUD)
+	{
+		if (nullptr != WorldMapHUD->LoadingWidget)
+		{
+			if (true == WorldMapHUD->LoadingWidget->GetIsConnecting() &&
+				false == bReported)
+			{
+				bReported = true;
+				Server_NotifyLoadingComplete();
+			}
+		}
+	}
 }
 
 void AWorldPlayerController::AddInputMappingContext(UInputMappingContext* _Context)
@@ -31,4 +62,14 @@ void AWorldPlayerController::Server_SetViewTarget_Implementation(AActor* NewCame
 void AWorldPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+}
+
+void AWorldPlayerController::Server_NotifyLoadingComplete_Implementation()
+{
+	AWorldGameState* WorldGameState = GetWorld()->GetGameState<AWorldGameState>();
+
+	if (nullptr != WorldGameState)
+	{
+		WorldGameState->CheckClinetLoadingComplete();
+	}
 }

@@ -59,6 +59,16 @@ public:
 
 	void PlayZoomInAnimation();
 
+	bool GetIsConnecting()
+	{
+		return bIsConnecting;
+	}
+
+	void SetIsConnecting(bool Value)
+	{
+		bIsConnecting = Value;
+	}
+
 
 protected:
 	virtual void NativeConstruct() override;
@@ -82,6 +92,6 @@ private:
 
 	ELevelChangType CurPanelType = ELevelChangType::WorldMapToSushi;
 
-	TFunction<void()> Function;
+	//TFunction<void()> Function;
 };
 
