@@ -20,8 +20,8 @@ void AWorldMapHUD::BeginPlay()
 		UE_LOG(OVERCOOKED_LOG, Error, TEXT("¿ùµå¸Ê À§Á¬ È¤Àº ·Îµù À§Á¬ÀÌ nullptr ÀÔ´Ï´Ù!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"));
 	}
 
-	WorldMapUserWidget->AddToViewport();
 	LoadingWidget->AddToViewport();
+	WorldMapUserWidget->AddToViewport();
 	LoadingWidget->SetVisibility(ESlateVisibility::Hidden);
 
 	LoadingWidget->SetIsConnecting(false);

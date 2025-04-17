@@ -3,6 +3,7 @@
 
 #include "UI/WorldMap/UI/WorldMapUserWidget.h"
 #include "Components/Image.h" 
+#include "Components/TextBlock.h" 
 #include "UI/WorldMap/WorldMapHUD.h"
 #include "UI/Loading/LoadingWidget.h"
 #include "Kismet/GameplayStatics.h"
@@ -26,8 +27,34 @@ void UWorldMapUserWidget::NativeConstruct()
     }
     PlayZoomOutAnimation();
 
+    if ( GetWorld()->GetAuthGameMode())
+    {
+        TestTxt->SetVisibility(ESlateVisibility::Visible);
+    }
+    else
+    {
+        TestTxt->SetVisibility(ESlateVisibility::Hidden);
+
+    }
+
+}
+void UWorldMapUserWidget::NativeTick(const FGeometry& MyGeometry, float DeltaTime)
+{
+    Super::NativeTick(MyGeometry, DeltaTime);
+
 }
 
+void UWorldMapUserWidget::SettingDebugMessage(FString DebugText)
+{
+    // 새로운 텍스트 + 기존 텍스트 한 줄 (원한다면 2~3줄까지도 가능)
+    FString CombinedText = DebugText + LINE_TERMINATOR + PreviousText;
+
+    // UI에 표시
+    TestTxt->SetText(FText::FromString(CombinedText));
+
+    // 이번 텍스트를 이전 텍스트로 저장
+    PreviousText = CombinedText;
+}
 
 void UWorldMapUserWidget::PlayZoomInAnimation()
 {
@@ -60,7 +87,11 @@ void UWorldMapUserWidget::PlayZoomInAnimation()
                 if (WorldMapHUD != nullptr && WorldMapHUD->LoadingWidget != nullptr)
                 {
                     WorldMapHUD->LoadingWidget->SetVisibility(ESlateVisibility::Visible);
-                    WorldMapHUD->LoadingWidget->PlayLoadingAnimation(AnimFinishFuction, ELevelChangType::WorldMapToSushi);
+                    { // Test
+                        WorldMapHUD->WorldMapUserWidget->SetVisibility(ESlateVisibility::Visible);
+                        WorldMapHUD->WorldMapUserWidget->TransitionImg->SetVisibility(ESlateVisibility::Hidden);
+                    }
+                    WorldMapHUD->LoadingWidget->PlayLoadingAnimation( ELevelChangType::WorldMapToSushi);
                 }
                 return;
             }
