@@ -79,6 +79,7 @@ void ALobbyPlayerController::Client_SetUserIndex_Implementation(int InUserIndex)
 	if (GameInstance)
 	{
 		GameInstance->SetUserIndex(InUserIndex);
+		GameInstance->SetUserCount(InUserIndex + 1);
 	}
 }
 
