@@ -27,11 +27,11 @@ void UWorldMapUserWidget::NativeConstruct()
     }
     PlayZoomOutAnimation();
 
-    if ( GetWorld()->GetAuthGameMode())
-    {
-        TestTxt->SetVisibility(ESlateVisibility::Visible);
-    }
-    else
+    //if ( GetWorld()->GetAuthGameMode())
+    //{
+    //    TestTxt->SetVisibility(ESlateVisibility::Visible);
+    //}
+    //else
     {
         TestTxt->SetVisibility(ESlateVisibility::Hidden);
 
