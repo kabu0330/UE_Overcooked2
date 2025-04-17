@@ -11,6 +11,9 @@
 #include <Global/Data/OC2GlobalData.h>
 #include "Kismet/GameplayStatics.h"
 #include "Components/AudioComponent.h"
+#include "NiagaraComponent.h"
+#include "NiagaraSystem.h"
+#include "NiagaraFunctionLibrary.h"
 
 AChoppingTable::AChoppingTable()
 {
@@ -25,6 +28,15 @@ AChoppingTable::AChoppingTable()
 
 	AudioComponent = CreateDefaultSubobject<UAudioComponent>("SoundFx");
 	AudioComponent->SetupAttachment(RootComponent);
+
+	NiagaraComponent0 = CreateDefaultSubobject<UNiagaraComponent>("Niagara0");
+	NiagaraComponent0->SetupAttachment(RootComponent);
+	NiagaraComponent0->SetAutoActivate(false);
+
+	NiagaraComponent1 = CreateDefaultSubobject<UNiagaraComponent>("Niagara1");
+	NiagaraComponent1->SetupAttachment(RootComponent);
+	NiagaraComponent1->SetAutoActivate(false);
+
 }
 
 void AChoppingTable::BeginPlay()
@@ -36,6 +48,11 @@ void AChoppingTable::BeginPlay()
 
 	SoundEffect = UOC2GlobalData::GetTableBaseSound(GetWorld(), "KnifeChop");
 	AudioComponent->SetSound(SoundEffect);
+
+	InitNiagara();
+
+	NiagaraComponent0->SetActive(true);
+	NiagaraComponent1->SetActive(true);
 }
 
 void AChoppingTable::Tick(float DeltaTime)
@@ -204,6 +221,37 @@ void AChoppingTable::StopSoundEffect_Implementation()
 	if (nullptr != AudioComponent && nullptr != SoundEffect)
 	{
 		AudioComponent->Stop();
+	}
+}
+
+void AChoppingTable::InitNiagara()
+{
+	if (nullptr != NiagaraComponent0)
+	{
+		FString DataTableRow = TEXT("ChoppingFx0");
+		FResourceNiagaraDataRow NiagaraDataRow = UOC2GlobalData::GetResourceNiagaraDataRow(GetWorld(), *DataTableRow);
+		if (nullptr != NiagaraDataRow.NiagaraSystem)
+		{
+			UNiagaraSystem* FX = NiagaraDataRow.NiagaraSystem;
+			NiagaraComponent0->SetAsset(FX);
+
+			NiagaraComponent0->SetRelativeLocation(NiagaraDataRow.Location);
+			NiagaraComponent0->SetRelativeRotation(NiagaraDataRow.Rotation);
+		}
+	}
+
+	if (nullptr != NiagaraComponent1)
+	{
+		FString DataTableRow = TEXT("ChoppingFx1");
+		FResourceNiagaraDataRow NiagaraDataRow = UOC2GlobalData::GetResourceNiagaraDataRow(GetWorld(), *DataTableRow);
+		if (nullptr != NiagaraDataRow.NiagaraSystem)
+		{
+			UNiagaraSystem* FX = NiagaraDataRow.NiagaraSystem;
+			NiagaraComponent1->SetAsset(FX);
+
+			NiagaraComponent1->SetRelativeLocation(NiagaraDataRow.Location);
+			NiagaraComponent1->SetRelativeRotation(NiagaraDataRow.Rotation);
+		}
 	}
 }
 
