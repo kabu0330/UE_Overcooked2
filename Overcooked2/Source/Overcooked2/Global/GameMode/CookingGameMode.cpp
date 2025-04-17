@@ -247,7 +247,7 @@ void ACookingGameMode::Stage(float DeltaTime)
 		CookingGameState->Multicast_SettingTimer(GameTime);
 	}
 
-	if (GameTime <= -2.0f)
+	if (GameTime <= -3.0f)
 	{
 		CookingGameState->Multicast_ShowScorePanemUI();
 		ChangeState(ECookingGameModeState::ECS_Score);

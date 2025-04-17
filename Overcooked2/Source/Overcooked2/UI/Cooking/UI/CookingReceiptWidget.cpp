@@ -30,6 +30,8 @@ void UCookingReceiptWidget::NativeTick(const FGeometry& MyGeometry, float DeltaT
 
 void UCookingReceiptWidget::CheckStar()
 {
+    //this;
+    //UWorld* World = GetWorld();
 
     TotalStartScore = UOC2Global::GetTotalScore(GetWorld());
 
