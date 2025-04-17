@@ -98,6 +98,8 @@ public:
 	void StopSoundEffect();
 	void StopSoundEffect_Implementation();
 
+	void InitNiagara();
+
 protected:
 
 private:
@@ -134,4 +136,7 @@ private:
 	class UAudioComponent* AudioComponent = nullptr;
 
 	USoundBase* SoundEffect = nullptr;
+
+	class UNiagaraComponent* NiagaraComponent0 = nullptr;
+	class UNiagaraComponent* NiagaraComponent1 = nullptr;
 };
