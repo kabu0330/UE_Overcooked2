@@ -132,11 +132,18 @@ public:
 	UFUNCTION()
 	void OnDashInput();
 
-	UFUNCTION()
-	void Grab(ACooking* Cook);
+	UFUNCTION(Client, Reliable)
+	void PlayGrabSound();
+	void PlayGrabSound_Implementation();
 
-	UFUNCTION()
-	void Drop();
+	UFUNCTION(Client, Reliable)
+	void PlayDropSound();
+	void PlayDropSound_Implementation();
+	
+	UFUNCTION(Client, Reliable)
+	void PlayThrowSound();
+	void PlayThrowSound_Implementation();
+
 
 	UFUNCTION(Reliable, Server)
 	void Dash();
