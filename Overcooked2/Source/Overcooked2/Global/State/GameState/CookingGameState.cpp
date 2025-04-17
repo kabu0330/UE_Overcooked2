@@ -293,16 +293,16 @@ void ACookingGameState::Multicast_SettingTimer_Implementation(float DeltaTime)
 		{
 			CookingHUD->CookWidget->StartTimerTick(DeltaTime);
 
-			if (true == CookingHUD->CookWidget->IsShowScoreWidget())
-			{
-				ULightComponent* BaseLightComp = DirectionalLight->GetLightComponent();
+			//if (true == CookingHUD->CookWidget->IsShowScoreWidget())
+			//{
+			//	ULightComponent* BaseLightComp = DirectionalLight->GetLightComponent();
 
-				// DirectionalLightComponent로 캐스팅
-				if (UDirectionalLightComponent* DirLightComp = Cast<UDirectionalLightComponent>(BaseLightComp))
-				{
-					DirLightComp->SetIntensity(5.0f); // 강도 줄이기
-				}
-			}
+			//	// DirectionalLightComponent로 캐스팅
+			//	if (UDirectionalLightComponent* DirLightComp = Cast<UDirectionalLightComponent>(BaseLightComp))
+			//	{
+			//		DirLightComp->SetIntensity(5.0f); // 강도 줄이기
+			//	}
+			//}
 		}
 	}
 }
