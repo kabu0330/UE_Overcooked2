@@ -63,7 +63,7 @@ void AWorldGameState::CheckClinetLoadingComplete()
 #if UE_BUILD_SHIPPING
 			UE_LOG(LogTemp, Warning, TEXT("CurUserCount: %d"), CurUserCount); // Shipping ºôµå¿¡¼­´Â ifdef·Î °¨½Î±â
 #endif
-			if (CompleteArray.Num() == CurUserCount)
+			if (CompleteArray.Num() == UOC2Global::GetOC2GameInstance(GetWorld())->GetUserCount())
 			{
 				UOC2Global::GetOC2GameInstance(GetWorld())->StartCookingStage();
 			}
