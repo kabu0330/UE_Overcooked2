@@ -16,6 +16,7 @@ class APlate;
 class ACooking;
 class ADirectionalLight;
 class AOC2Map;
+class AOC2CameraActor;
 
 /**
  * 
@@ -112,6 +113,7 @@ private:
 	int FeverCount = 0;
 	ADirectionalLight* DirectionalLight = nullptr;
 	AOC2Map* OC2Map = nullptr;
+	AOC2CameraActor* CameraActor = nullptr;
 
 	UPROPERTY(Replicated)
 	int OrderScore = 0;

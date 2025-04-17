@@ -22,6 +22,8 @@
 #include "Global/OC2GameInstance.h"
 #include "Global/Manager/StageManager.h"
 
+#include "Character/OC2CameraActor.h"
+
 ACookingGameState::ACookingGameState()
 {
 }
@@ -50,6 +52,23 @@ void ACookingGameState::BeginPlay()
 	for (TActorIterator<AOC2Map> It(GetWorld()); It; ++It)
 	{
 		OC2Map = *It;
+	}
+
+	TArray<AActor*> FoundActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AOC2CameraActor::StaticClass(), FoundActors);
+
+	if (FoundActors.Num() > 0)
+	{
+		CameraActor = Cast<AOC2CameraActor>(FoundActors[0]);
+		if (CameraActor)
+		{
+			// 이제 CameraActor를 사용할 수 있음
+			UE_LOG(LogTemp, Log, TEXT("Found AOC2CameraActor: %s"), *CameraActor->GetName());
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No AOC2CameraActor found in level"));
 	}
 }
 
@@ -467,11 +486,36 @@ void ACookingGameState::Multicast_PlayGameMapSound_Implementation()
 void ACookingGameState::Multicast_ShowTimesUpUI_Implementation()
 {
 	// TODO : Times Up UI를 띄우는 함수
+	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
+	if (nullptr != PlayerController)
+	{
+		ACookingHUD* CookingHUD = Cast<ACookingHUD>(PlayerController->GetHUD());
+
+		if (nullptr != CookingHUD && nullptr != CookingHUD->CookWidget)
+		{
+			CookingHUD->CookWidget->ShowTimesUPAnim();
+		}
+	}
 }
 
 void ACookingGameState::Multicast_ShowScorePanemUI_Implementation()
 {
 	// TODO : Score Panel UI를 띄우는 함수
+	if (nullptr != CameraActor)
+	{
+		CameraActor->SetCameraScoreLocation();
+	}
+	
+	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
+	if (nullptr != PlayerController)
+	{
+		ACookingHUD* CookingHUD = Cast<ACookingHUD>(PlayerController->GetHUD());
+
+		if (nullptr != CookingHUD && nullptr != CookingHUD->CookWidget)
+		{
+			CookingHUD->CookWidget->ShowReceiptWidget();
+		}
+	}
 }
 
 void ACookingGameState::OnRep_MatchState()
