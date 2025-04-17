@@ -15,6 +15,8 @@
 #include <LevelContent/Table/NonTable/SinkTable.h>
 #include <Global/State/GameState/CookingGameState.h>
 #include <Global/OC2Global.h>
+#include <Global/Component/TimeEventComponent.h>
+
 
 // Sets default values
 APlate::APlate()
@@ -34,6 +36,8 @@ APlate::APlate()
 	WidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
 	WidgetComponent->SetupAttachment(RootComponent);
 
+	TimeEventComponent = CreateDefaultSubobject<UTimeEventComponent>(TEXT("TimeEventComponent"));
+
 }
 
 void APlate::PostInitializeComponents()
@@ -45,30 +49,34 @@ void APlate::PostInitializeComponents()
 
 void APlate::Multicast_SubmitPlate_Implementation()
 {
-	SetActorLocation(UOC2Const::PlateSubmitLocation);
-	CleanPlate();
-	SetPlateState(EPlateState::DIRTY);
-	
-	if (true == HasAuthority())
-	{
-		ACookingGameState* GameState = Cast<ACookingGameState>(UGameplayStatics::GetGameState(GetWorld()));
-
-		if (nullptr != GameState)
+	TimeEventComponent->AddEndEvent(0.4f, [this]()
 		{
-			GameState->AddPlate(this);
-		}
-		SetMaterialTexture();
-	}
+			SetActorLocation(UOC2Const::PlateSubmitLocation);
+			CleanPlate();
+			SetPlateState(EPlateState::DIRTY);
 
-	FTimerHandle TimerHandle;
+			if (true == HasAuthority())
+			{
+				ACookingGameState* GameState = Cast<ACookingGameState>(UGameplayStatics::GetGameState(GetWorld()));
 
-	GetWorld()->GetTimerManager().SetTimer(
-		TimerHandle,
-		this,
-		&APlate::SpawnPlate,
-		3.0f,   // 3초 뒤 실행
-		false   // 반복 여부(false면 1회 실행)
-	);
+				if (nullptr != GameState)
+				{
+					GameState->AddPlate(this);
+				}
+				SetMaterialTexture();
+			}
+
+			FTimerHandle TimerHandle;
+
+			GetWorld()->GetTimerManager().SetTimer(
+				TimerHandle,
+				this,
+				&APlate::SpawnPlate,
+				5.0f,   // 3초 뒤 실행
+				false   // 반복 여부(false면 1회 실행)
+			);
+		});
+
 }
 
 void APlate::SpawnPlate()
