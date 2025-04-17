@@ -260,7 +260,8 @@ void AOC2Character::Interact_Implementation()
 	{
 		if (GrabbedObject != nullptr)
 		{
-			Drop();
+			PlayDropSound();
+			ServerDrop();
 		}
 		return;
 	}
@@ -275,7 +276,8 @@ void AOC2Character::Interact_Implementation()
 		if (GrabbedObject == nullptr)
 		{
 			UE_LOG(LogTemp, Log, TEXT("Hold"));
-			Grab(Cast<ACooking>(SelectedOC2Actor));
+			PlayGrabSound();
+			ServerGrab(Cast<ACooking>(SelectedOC2Actor));
 			GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Cyan, SelectedOC2Actor->GetName());
 		}
 		// 잡고 있는게 있으면
@@ -288,7 +290,8 @@ void AOC2Character::Interact_Implementation()
 				UE_LOG(LogTemp, Log, TEXT("This is an ingredient!"));
 				if (GrabbedObject != nullptr)
 				{
-					Drop();
+					PlayDropSound();
+					ServerDrop();
 				}
 			}
 			// 상호작용을 접시랑 할때
@@ -338,7 +341,8 @@ void AOC2Character::Interact_Implementation()
 			else
 			{
 				// 기본적으로 그냥 내려놓기
-				Drop();
+				PlayDropSound();
+				ServerDrop();
 			}
 		}
 	}
@@ -379,7 +383,8 @@ void AOC2Character::Interact_Implementation()
 				ACooking* Cook = Table->Interact(this);
 				if (Cook != nullptr)
 				{
-					Grab(Cook);
+					PlayGrabSound();
+					ServerGrab(Cook);
 				}
 			}
 		}
@@ -392,7 +397,8 @@ void AOC2Character::Interact_Implementation()
 			// 잡고있는 물건이 없고, 테이블에 올려진 물체가 있는 경우
 			if (GrabbedObject == nullptr && Cook != nullptr)
 			{
-				Grab(Cook);
+				PlayGrabSound();
+				ServerGrab(Cook);
 				//GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Cyan, Cook->GetName());
 			}
 			// 잡은 물건이 있는데 테이블이 비어있으면
@@ -507,7 +513,7 @@ void AOC2Character::ServerDrop_Implementation()
 	// 내가 들고 있는 물건이 있을때
 	if (GrabbedObject != nullptr)
 	{
-		UE_LOG(LogTemp, Log, TEXT("Drop"));
+		UE_LOG(LogTemp, Log, TEXT("ServerDrop"));
 		// 들고 있는 물체에 대해 상호작용을 실행한다. 바닥에 내려놓는다는 뜻.
 		GrabbedObject->DetachFromChef(this);
 
@@ -561,7 +567,8 @@ void AOC2Character::DoActionRelease_Implementation()
 {
 	if (bCanThrowing == true)
 	{
-		Throw();
+		PlayThrowSound();
+		ServerThrow();
 		OnRep_ShowDir();
 	}
 }
@@ -751,23 +758,20 @@ void AOC2Character::OnDashInput()
 	}
 }
 
-void AOC2Character::Grab(ACooking* Cook)
+void AOC2Character::PlayGrabSound_Implementation()
 {
 	UGameplayStatics::PlaySound2D(GetWorld(), UOC2GlobalData::GetCharacterBaseSound(GetWorld(), "Pickup"));
-	ServerGrab(Cook);
 }
 
-void AOC2Character::Drop()
+void AOC2Character::PlayDropSound_Implementation()
 {
 	UGameplayStatics::PlaySound2D(GetWorld(), UOC2GlobalData::GetCharacterBaseSound(GetWorld(), "Putdown"));
-	ServerDrop();
 }
 
 
-void AOC2Character::Throw()
+void AOC2Character::PlayThrowSound_Implementation()
 {
 	UGameplayStatics::PlaySound2D(GetWorld(), UOC2GlobalData::GetCharacterBaseSound(GetWorld(), "Throw"));
-	ServerThrow();
 }
 
 void AOC2Character::StopDash()
