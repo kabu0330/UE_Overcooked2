@@ -39,11 +39,12 @@ class OVERCOOKED2_API UOC2GameInstance : public UGameInstance
 public:
 	UOC2GameInstance();
 	~UOC2GameInstance();
-
 public: /** 네트워크 관련 메소드 */
 	void CreateRoom();
 	void JoinRoom(FString IP, APlayerController* Controller);
+	UFUNCTION()
 	void StartGame();
+	UFUNCTION()
 	void StartCookingStage();
 
 public:
@@ -129,6 +130,9 @@ public:
 	int GetUserIndex() const;
 	void SetUserIndex(int InUserIndex);
 
+	int GetUserCount() const;
+	void SetUserCount(int UserCount);
+
 public:
 	UPROPERTY(EditAnywhere, Category = "Global|Level")
 	TSoftObjectPtr<UWorld> TitleLevel;
@@ -197,5 +201,5 @@ private:
 	TArray<FString> ChefHeadNames;
 
 	int UserIndex = -1;
-
+	int CurUserCount = 0;
 };

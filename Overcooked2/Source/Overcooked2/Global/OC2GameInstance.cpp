@@ -609,3 +609,13 @@ void UOC2GameInstance::SetUserIndex(int InUserIndex)
 {
 	UserIndex = InUserIndex;
 }
+
+int UOC2GameInstance::GetUserCount() const
+{
+	return CurUserCount;
+}
+
+void UOC2GameInstance::SetUserCount(int UserCount)
+{
+	CurUserCount = UserCount;
+}

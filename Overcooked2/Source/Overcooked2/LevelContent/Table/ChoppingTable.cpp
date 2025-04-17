@@ -8,6 +8,9 @@
 #include "Components/WidgetComponent.h"
 #include <LevelContent/Cook/Widget/GaugeTextureWidget.h>
 #include <Net/UnrealNetwork.h>
+#include <Global/Data/OC2GlobalData.h>
+#include "Kismet/GameplayStatics.h"
+#include "Components/AudioComponent.h"
 
 AChoppingTable::AChoppingTable()
 {
@@ -19,6 +22,9 @@ AChoppingTable::AChoppingTable()
 
 	KnifeMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>("Knife");
 	KnifeMeshComponent->SetupAttachment(RootComponent);
+
+	AudioComponent = CreateDefaultSubobject<UAudioComponent>("SoundFx");
+	AudioComponent->SetupAttachment(RootComponent);
 }
 
 void AChoppingTable::BeginPlay()
@@ -27,6 +33,9 @@ void AChoppingTable::BeginPlay()
 
 	// 위젯 클래스 지정
 	InitProgressBar();
+
+	SoundEffect = UOC2GlobalData::GetTableBaseSound(GetWorld(), "KnifeChop");
+	AudioComponent->SetSound(SoundEffect);
 }
 
 void AChoppingTable::Tick(float DeltaTime)
@@ -128,7 +137,7 @@ void AChoppingTable::ChopIngredient(AActor* ChefActor)
 
 				bTimerActivated = true;
 				bChopping = true;
-
+				PlaySoundEffect();
 				HideProgressBar(false);
 			}
 		}
@@ -156,6 +165,7 @@ void AChoppingTable::ChoppingIsDone_Implementation()
 	CookingPtr = Cast<ACooking>(PlacedIngredient);
 
 	HideProgressBar(true);
+	StopSoundEffect();
 
 	ChefPtr->Chopping(false);
 	ChefPtr = nullptr;
@@ -176,9 +186,27 @@ void AChoppingTable::CheckChefIsChopping()
 		{
 			bChopping = false;
 			ChefPtr = nullptr;
+			StopSoundEffect();
 		}
 	}
 }
+
+void AChoppingTable::PlaySoundEffect_Implementation()
+{
+	if (nullptr != AudioComponent && nullptr != SoundEffect)
+	{
+		AudioComponent->Play();
+	}
+}
+
+void AChoppingTable::StopSoundEffect_Implementation()
+{
+	if (nullptr != AudioComponent && nullptr != SoundEffect)
+	{
+		AudioComponent->Stop();
+	}
+}
+
 
 void AChoppingTable::InitProgressBar()
 {
@@ -214,4 +242,5 @@ void AChoppingTable::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 	DOREPLIFETIME(AChoppingTable, bChoppingDone);
 	DOREPLIFETIME(AChoppingTable, bChopping);
 	DOREPLIFETIME(AChoppingTable, ChefPtr);
+	DOREPLIFETIME(AChoppingTable, AudioComponent);
 }

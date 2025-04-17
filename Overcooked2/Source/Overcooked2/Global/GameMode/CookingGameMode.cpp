@@ -47,6 +47,9 @@ void ACookingGameMode::BeginPlay()
 		StageManager = GetWorld()->SpawnActor<AStageManager>(StageManagerSpawner);
 	}
 
+	ChangeState(ECookingGameModeState::ECS_Stay);
+
+
 	CurIdx = 0;
 }
 
@@ -74,12 +77,12 @@ void ACookingGameMode::PostLogin(APlayerController* NewPlayerController)
 {
 	Super::PostLogin(NewPlayerController);
 
-	PlayerControllerArray.Add(NewPlayerController);
+	//PlayerControllerArray.Add(NewPlayerController);
 
-	if (PlayerControllerArray.Num() == 1)
-	{
-		ChangeState(ECookingGameModeState::ECS_Stay);
-	}
+	//if (PlayerControllerArray.Num() == 1)
+	//{
+	//	ChangeState(ECookingGameModeState::ECS_Stay);
+	//}
 }
 
 void ACookingGameMode::AddPlate(APlate* Plate)
