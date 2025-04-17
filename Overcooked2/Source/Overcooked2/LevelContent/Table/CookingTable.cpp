@@ -58,7 +58,7 @@ void ACookingTable::PlaceItem(ACooking* ReceivedCooking)
 		CookingPtr->SetActorRelativeLocation(IngreLocation);
 	}
 
-	UGameplayStatics::PlaySound2D(GetWorld(), UOC2GlobalData::GetCharacterBaseSound(GetWorld(), "Putdown"));
+	PlacingSoundEffect();
 }
 
 void ACookingTable::SetIngredientOffset(AIngredient* Ingredient)
@@ -71,6 +71,11 @@ void ACookingTable::SetIngredientOffset(AIngredient* Ingredient)
 	IngreRotation = IngredientDataTable->Rotation;
 	IngreLocation = IngredientDataTable->Location;
 	IngreScale = IngredientDataTable->Scale;
+}
+
+void ACookingTable::PlacingSoundEffect_Implementation()
+{
+	UGameplayStatics::PlaySound2D(GetWorld(), UOC2GlobalData::GetCharacterBaseSound(GetWorld(), "Putdown"));
 }
 
 void ACookingTable::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

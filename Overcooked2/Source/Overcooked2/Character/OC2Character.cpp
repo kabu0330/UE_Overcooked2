@@ -254,7 +254,7 @@ void AOC2Character::ClearMaterials()
 //상호작용 : Space Key
 void AOC2Character::Interact_Implementation()
 {
-	if (bIsMoveEnabled == false) return;
+	if (bIsMoveEnabled == false || bIsChopping == true) return;
 	// 만약 지금 상호작용을 시도할 수 있는 개체가 있으면
 	if (!SelectedOC2Actor)
 	{
@@ -265,7 +265,7 @@ void AOC2Character::Interact_Implementation()
 		return;
 	}
 
-	if (bIsChopping) Chopping(false);
+	
 	ACooking* Cooking = Cast<ACooking>(SelectedOC2Actor);
 	ACookingTable* Table = Cast<ACookingTable>(SelectedOC2Actor);
 
@@ -495,6 +495,11 @@ void AOC2Character::ServerGrab_Implementation(ACooking* Cook)
 		GrabbedObject->SetActorRelativeRotation(DataTable->Rotation);
 		GrabbedObject->SetActorLocation(GrabComponent->GetComponentTransform().TransformPosition(DataTable->Location));
 	}
+	else
+	{
+		GrabbedObject->SetActorRotation(FVector(0,0,0).Rotation());
+		GrabbedObject->SetActorLocation(GrabComponent->GetComponentTransform().TransformPosition(FVector(0,0,0)));
+	}
 }
 
 void AOC2Character::ServerDrop_Implementation()
@@ -556,12 +561,12 @@ void AOC2Character::DoActionRelease_Implementation()
 {
 	if (bCanThrowing == true)
 	{
-		Throwing();
+		Throw();
 		OnRep_ShowDir();
 	}
 }
 
-void AOC2Character::Throwing_Implementation()
+void AOC2Character::ServerThrow_Implementation()
 {
 	AIngredient* ThrowingObject = Cast<AIngredient>(GrabbedObject);
 	if (GrabbedObject && ThrowingObject)
@@ -758,6 +763,12 @@ void AOC2Character::Drop()
 	ServerDrop();
 }
 
+
+void AOC2Character::Throw()
+{
+	UGameplayStatics::PlaySound2D(GetWorld(), UOC2GlobalData::GetCharacterBaseSound(GetWorld(), "Throw"));
+	ServerThrow();
+}
 
 void AOC2Character::StopDash()
 {
