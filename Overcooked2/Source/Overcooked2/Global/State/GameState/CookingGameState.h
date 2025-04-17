@@ -86,6 +86,12 @@ public:
 	UFUNCTION(Server, Reliable)
 	void Server_MovePlate(ACooking* Cooking);
 
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_ShowTimesUpUI();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_ShowScorePanemUI();
+
 	virtual void OnRep_MatchState() override;
 
 private:
