@@ -245,6 +245,21 @@ void ACookingGameMode::Stage(float DeltaTime)
 	{
 		CookingGameState->Multicast_SettingTimer(DeltaTime);
 	}
+
+	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
+
+	if (nullptr != PlayerController)
+	{
+		ACookingHUD* CookingHUD = Cast<ACookingHUD>(PlayerController->GetHUD());
+
+		if (nullptr != CookingHUD && nullptr != CookingHUD->CookWidget)
+		{
+			if (true == CookingHUD->CookWidget->IsShowScoreWidget())
+			{
+				ChangeState(ECookingGameModeState::ECS_Score);
+			}
+		}
+	}
 }
 
 void ACookingGameMode::EntryScore()
