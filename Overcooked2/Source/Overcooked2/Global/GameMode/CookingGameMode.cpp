@@ -49,7 +49,6 @@ void ACookingGameMode::BeginPlay()
 
 	ChangeState(ECookingGameModeState::ECS_Stay);
 
-
 	CurIdx = 0;
 }
 
@@ -77,12 +76,12 @@ void ACookingGameMode::PostLogin(APlayerController* NewPlayerController)
 {
 	Super::PostLogin(NewPlayerController);
 
-	//PlayerControllerArray.Add(NewPlayerController);
+	PlayerControllerArray.Add(NewPlayerController);
 
-	//if (PlayerControllerArray.Num() == 1)
-	//{
-	//	ChangeState(ECookingGameModeState::ECS_Stay);
-	//}
+	if (PlayerControllerArray.Num() == 2)
+	{ 
+	  ChangeState(ECookingGameModeState::ECS_Stay);
+	}
 }
 
 void ACookingGameMode::AddPlate(APlate* Plate)
@@ -241,9 +240,21 @@ void ACookingGameMode::EntryStage()
 
 void ACookingGameMode::Stage(float DeltaTime)
 {
+	GameTime -= DeltaTime;
+
 	if (nullptr != CookingGameState)
 	{
-		CookingGameState->Multicast_SettingTimer(DeltaTime);
+		CookingGameState->Multicast_SettingTimer(GameTime);
+	}
+
+	if (GameTime <= -2.0f)
+	{
+		CookingGameState->Multicast_ShowScorePanemUI();
+		ChangeState(ECookingGameModeState::ECS_Score);
+	}
+	else if (GameTime <= 0.0f)
+	{
+		CookingGameState->Multicast_ShowTimesUpUI();
 	}
 
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
@@ -264,6 +275,7 @@ void ACookingGameMode::Stage(float DeltaTime)
 
 void ACookingGameMode::EntryScore()
 {
+	StageManager->bProgress = false;
 }
 
 void ACookingGameMode::Score(float DeltaTime)

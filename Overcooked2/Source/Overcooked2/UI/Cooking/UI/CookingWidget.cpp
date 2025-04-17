@@ -15,6 +15,7 @@
 #include "UI/Cooking/UI/CookingReceiptWidget.h"
 #include "UI/Cooking/UI/CookingReadyWidget.h"
 
+#include "Overcooked2.h"
 
 
 void UCookingWidget::NativeOnInitialized()
@@ -48,9 +49,10 @@ void UCookingWidget::NativeOnInitialized()
         CookingFinalScoreWidget = Cast<UCookingFinalScoreWidget>(CreateWidget(GetWorld(), FinalScoreSubWidget));
         CookingTimerWidget = Cast<UCookingTimeWidget>(CreateWidget(GetWorld(), TimeSubWidget));
         CookingReadyWidget = Cast<UCookingReadyWidget>(CreateWidget(GetWorld(), ReadySubWidget));
+        CookingReceiptWidget = Cast<UCookingReceiptWidget>(CreateWidget(GetWorld(), ReceiptWidget));
 
 
-        if (CookingScoreWidget != nullptr && CookingTimerWidget != nullptr && CookingFinalScoreWidget != nullptr && CookingReadyWidget != nullptr)
+        if (CookingScoreWidget != nullptr && CookingTimerWidget != nullptr && CookingFinalScoreWidget != nullptr && CookingReadyWidget != nullptr && CookingReceiptWidget != nullptr)
         {
             CookingFinalScoreWidget->SetVisibility(ESlateVisibility::Hidden);
             CookingScoreWidget->SetVisibility(ESlateVisibility::Hidden);
@@ -61,6 +63,11 @@ void UCookingWidget::NativeOnInitialized()
             CookingTimerWidget->AddToViewport();
             CookingFinalScoreWidget->AddToViewport();
             CookingReadyWidget->AddToViewport();
+
+        }
+        else
+        {
+            //UE_LOG(OVERCOOKED_LOG, Error, TEXT("ÄîÀ§Á¬ÀÌ nullptr ÀÔ´Ï´Ù!!!"));
 
         }
     }
@@ -77,12 +84,12 @@ void UCookingWidget::NativeTick(const FGeometry& MyGeometry, float DeltaTime)
         UpdateOrderTime(i, DeltaTime);
     }
 
-    if (CookingTimerWidget->GetIsTimesUP() == true)
-    {
-        ShowTimesUPAnim();
-        CookingTimerWidget->SetIsTimesUP(false);
-        CookingTimerWidget->SetStartTimer(false);
-    }
+    //if (CookingTimerWidget->GetIsTimesUP() == true)
+    //{
+    //    ShowTimesUPAnim();
+    //    CookingTimerWidget->SetIsTimesUP(false);
+    //    CookingTimerWidget->SetStartTimer(false);
+    //}
 
 }
 
@@ -118,7 +125,9 @@ void UCookingWidget::StartGame()
     CookingTimerWidget->SetVisibility(ESlateVisibility::Visible);
     CookingReadyWidget->SetVisibility(ESlateVisibility::Hidden);
     SetVisibility(ESlateVisibility::Visible);
+
     ShowReadyImageAnim();
+
     CookingReadyWidget->bIsReady = false;
 }
 
@@ -176,35 +185,36 @@ void UCookingWidget::PlayTimesUPAnim()
 {
     if (TimesUpTimeElapsed >= 2.0f)
     {
-        TimesUpCanvas->SetVisibility(ESlateVisibility::Collapsed);
         GetWorld()->GetTimerManager().ClearTimer(TimesUPTimerHandle);
-        PlayTimeoutWidget();
-        bShowScoreWidget = true;
         return;
     }
-
-    if (TimesUpCanvas->GetRenderTransform().Scale.X < 1.0f && TimesUpTimeElapsed < 2.0f)
+    if (nullptr != TimesUpCanvas)
     {
-        TimesUpCanvas->SetRenderScale({ TimesUpCanvas->GetRenderTransform().Scale.X + TimesUpOffset, TimesUpCanvas->GetRenderTransform().Scale.Y + TimesUpOffset });
+        if (TimesUpCanvas->GetRenderTransform().Scale.X < 1.0f && TimesUpTimeElapsed < 2.0f)
+        {
+            TimesUpCanvas->SetRenderScale({ TimesUpCanvas->GetRenderTransform().Scale.X + TimesUpOffset, TimesUpCanvas->GetRenderTransform().Scale.Y + TimesUpOffset });
+        }
     }
-
 
     TimesUpTimeElapsed += 0.01;
     TimesUpOffset += 0.01;
 }
 
 
-
-
-void UCookingWidget::PlayTimeoutWidget()
+void UCookingWidget::ShowReceiptWidget()
 {
-    bIsFinish = true;
+
     for (int i = 0; i < Orders.Num(); i++)
     {
         Orders[i]->SetVisibility(ESlateVisibility::Hidden);
     }
+    bShowScoreWidget = true;
+    TimesUpCanvas->SetVisibility(ESlateVisibility::Collapsed);
     CookingFinalScoreWidget->SetVisibility(ESlateVisibility::Visible);
     CookingFinalScoreWidget->ShowCapturePlayers();
+    CookingReceiptWidget->CheckStar();
+    CookingReceiptWidget->ShowScoreText();
+
     //SetVisibility(ESlateVisibility::Hidden);
 }
 
