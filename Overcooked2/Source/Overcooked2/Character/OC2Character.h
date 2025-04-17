@@ -110,7 +110,8 @@ public:
 	void DoActionRelease();
 
 	UFUNCTION(Reliable, Server)
-	void Throwing();
+	void ServerThrow();
+	void ServerThrow_Implementation();
 
 	UFUNCTION(Reliable, Server)
 	void Chopping(bool State);
@@ -139,6 +140,8 @@ public:
 
 	UFUNCTION(Reliable, Server)
 	void Dash();
+
+	void Throw();
 
 	UFUNCTION(BlueprintCallable)
 	void StopDash();
