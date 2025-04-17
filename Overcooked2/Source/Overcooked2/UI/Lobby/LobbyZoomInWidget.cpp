@@ -60,7 +60,7 @@ void ULobbyZoomInWidget::PlayZoomInAnimation()
                 if (LobbyHUD != nullptr && LobbyHUD->LoadingWidget != nullptr)
                 {
                     LobbyHUD->LoadingWidget->SetVisibility(ESlateVisibility::Visible);
-                    LobbyHUD->LoadingWidget->PlayLoadingAnimation(AnimFinishFuction, ELevelChangType::LobbyToWorldMap);
+                    LobbyHUD->LoadingWidget->PlayLoadingAnimation( ELevelChangType::LobbyToWorldMap);
                 }
                 return;
             }

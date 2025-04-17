@@ -86,7 +86,7 @@ void ULoadingWidget::SetProgress(float Value)
 }
 
 
-void ULoadingWidget::PlayLoadingAnimation(TFunction<void()> Func, ELevelChangType LevelEnum)
+void ULoadingWidget::PlayLoadingAnimation( ELevelChangType LevelEnum)
 {
 
     float CurrentTime = 0.0f;
@@ -122,8 +122,6 @@ void ULoadingWidget::PlayLoadingAnimation(TFunction<void()> Func, ELevelChangTyp
             ConnectingImage->SetBrush(Brush);
         }
     }
-
-
 
 
     PlayZoomOutAnimation();

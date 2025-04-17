@@ -30,6 +30,6 @@ private:
 	class UMaterialInstanceDynamic* TransitionMaterial = nullptr;
 	FTimerHandle AnimationTimer;
 
-	TFunction<void()> AnimFinishFuction;
+	//TFunction<void()> AnimFinishFuction;
 
 };
