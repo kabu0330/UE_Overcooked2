@@ -11,6 +11,7 @@
 #include <Global/OC2Global.h>
 #include <Global/Data/OC2GlobalData.h>
 #include "Kismet/GameplayStatics.h"
+#include "Components/AudioComponent.h"
 
 ASinkTable::ASinkTable()
 {
@@ -42,6 +43,9 @@ ASinkTable::ASinkTable()
 	}
 
 	TimeEventComponent = CreateDefaultSubobject<UTimeEventComponent>(TEXT("TimeEventComponent"));
+
+	AudioComponent = CreateDefaultSubobject<UAudioComponent>("SoundFx");
+	AudioComponent->SetupAttachment(RootComponent);
 }
 
 void ASinkTable::BeginPlay()
@@ -50,7 +54,9 @@ void ASinkTable::BeginPlay()
 
 	InitProgressBar();
 
-	SoundEffect = UOC2GlobalData::GetTableBaseSound(GetWorld(), "Washing");
+	SoundEffectPlate = UOC2GlobalData::GetTableBaseSound(GetWorld(), "PlatePlaced");
+	SoundEffectWashing = UOC2GlobalData::GetTableBaseSound(GetWorld(), "Washing");
+	AudioComponent->SetSound(SoundEffectWashing);
 }
 
 void ASinkTable::InitProgressBar()
@@ -157,10 +163,10 @@ void ASinkTable::DoTheDishes(AOC2Character* ChefActor)
 		HideProgressBar(false);
 	}
 
-	/*if (nullptr != SoundEffect)
+	if (nullptr != AudioComponent && nullptr != SoundEffectWashing)
 	{
-		UGameplayStatics::PlaySound2D(GetWorld(), SoundEffect);
-	}*/
+		AudioComponent->Play();
+	}
 }
 
 void ASinkTable::Tick(float DeltaTime)
@@ -234,6 +240,11 @@ void ASinkTable::WashingIsDone_Implementation()
 
 	bTimerActivated = false; // Å¸ÀÌ¸Ó ²ô°í
 
+	if (nullptr != AudioComponent && nullptr != SoundEffectWashing)
+	{
+		AudioComponent->Stop();
+	}
+
 	if (false == DirtyPlates.IsEmpty())
 	{
 		CleanPlates.Add(DirtyPlates.Pop());
@@ -249,6 +260,11 @@ void ASinkTable::WashingIsDone_Implementation()
 	CleanPlates.Last()->SetActorLocation(CleanPlateComponent->GetComponentLocation());
 	CleanPlates.Last()->AddActorWorldOffset(FVector::UnitZ()* 10.0f * (CleanPlates.Num() - 1));
 	CleanPlates.Last()->SetActorScale3D(PlateSize);
+
+	if (nullptr != SoundEffectPlate)
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), SoundEffectPlate);
+	}
 
 }
 
