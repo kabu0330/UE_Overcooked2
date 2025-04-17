@@ -8,6 +8,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 #include "LevelContent/Cook/Plate.h"
+#include "Global/Data/OC2GlobalData.h"
+#include "Kismet/GameplayStatics.h"
 
 //#include "Global/Component/TimeEventComponent.h"
 
@@ -27,8 +29,6 @@ ACookingTable::ACookingTable()
 void ACookingTable::BeginPlay()
 {
 	Super::BeginPlay();
-
-
 }
 
 // Called every frame
@@ -57,6 +57,8 @@ void ACookingTable::PlaceItem(ACooking* ReceivedCooking)
 		CookingPtr->GetStaticMeshComponent()->SetRelativeScale3D(IngreScale);
 		CookingPtr->SetActorRelativeLocation(IngreLocation);
 	}
+
+	UGameplayStatics::PlaySound2D(GetWorld(), UOC2GlobalData::GetCharacterBaseSound(GetWorld(), "Putdown"));
 }
 
 void ACookingTable::SetIngredientOffset(AIngredient* Ingredient)

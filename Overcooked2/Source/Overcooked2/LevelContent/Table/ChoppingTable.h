@@ -90,6 +90,13 @@ public:
 	void HideKnife();
 	void HideKnife_Implementation();
 
+	UFUNCTION(NetMulticast, Reliable)
+	void PlaySoundEffect();
+	void PlaySoundEffect_Implementation();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void StopSoundEffect();
+	void StopSoundEffect_Implementation();
 
 protected:
 
@@ -123,6 +130,8 @@ private:
 	class UGaugeTextureWidget* WidgetPtr = nullptr;
 	//class ATableProgressBar* ProgressBar = nullptr;
 
-	
+	UPROPERTY(Replicated)
+	class UAudioComponent* AudioComponent = nullptr;
 
+	USoundBase* SoundEffect = nullptr;
 };
