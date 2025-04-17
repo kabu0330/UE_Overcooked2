@@ -118,5 +118,9 @@ protected:
 
 	FVector PlateSize = { 2.0f, 2.0f, 2.0f};
 
-	USoundBase* SoundEffect = nullptr;
+	UPROPERTY(Replicated)
+	class UAudioComponent* AudioComponent = nullptr;
+
+	USoundBase* SoundEffectPlate = nullptr;
+	USoundBase* SoundEffectWashing = nullptr;
 };
