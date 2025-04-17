@@ -65,6 +65,8 @@ void ALobbyGameMode::PostLogin(APlayerController* NewPlayerController)
 		CurIdx++;
 	}
 
+	UOC2Global::GetOC2GameInstance(GetWorld())->SetUserCount(CurUserCount);
+
 	ALobbyGameState* LobbyGameState = GetGameState<ALobbyGameState>();
 
 	if (nullptr != LobbyGameState)
