@@ -17,13 +17,18 @@ class OVERCOOKED2_API AWorldGameState : public AOC2GameState
 public:
 	AWorldGameState();
 
-protected:
+public:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 
 public:
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_PlayZoomInAnmationUI();
+
+	UFUNCTION(Server, Reliable)
+	void Server_AddUserCount();
 
 public:
 	UFUNCTION()
@@ -32,5 +37,8 @@ public:
 private:
 	UPROPERTY()
 	TArray<int> CompleteArray;
+
+	UPROPERTY(Replicated)
+	int CurUserCount = 0;
 	
 };
