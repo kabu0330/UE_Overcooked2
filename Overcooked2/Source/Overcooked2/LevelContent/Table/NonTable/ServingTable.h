@@ -48,7 +48,28 @@ public:
 	void PlaySoundEffect();
 	void PlaySoundEffect_Implementation();
 
+	void InitNiagara();
+	void SetNiagara(class UNiagaraComponent* NiagaraComponent, bool IsActivate);
+	void ShowServingEffet();
+
+	UFUNCTION(Server, Reliable)
+	void ShowEffect();
+	void ShowEffect_Implementation();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void NetMuticast_ShowEffect();
+	void NetMuticast_ShowEffect_Implementation();
+
+	UFUNCTION()
+	void HandleNiagaraFinished(UNiagaraComponent* NiagaraComponent);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void NetMulticast_CanEffect();
+	void NetMulticast_CanEffect_Implementation();
+
 private:
+	//void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CookingCheck", meta = (AllowPrivateAccess = "true"))
 	bool bCookingRight = false;
 
@@ -59,4 +80,15 @@ private:
 	APlateSpawner* PlateSpawner = nullptr;
 
 	USoundBase* SoundEffect = nullptr;
+
+
+	class UNiagaraComponent* RingNiagaraComponent = nullptr;
+	class UNiagaraComponent* FlashNiagaraComponent = nullptr;
+	class UNiagaraComponent* ConfettiNiagaraComponent = nullptr;
+
+	class UTimeEventComponent* TimeEventComponent = nullptr;
+
+	UPROPERTY()
+	bool bCanEffet = false;
 };
+

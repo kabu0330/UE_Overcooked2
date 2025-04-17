@@ -33,11 +33,11 @@ float UCookingTimeWidget::StartTimerTick(float CurTimeValue)
 	{
 		curtime = StartTimer(CurTimeValue);
 	}
-	else if (true == bIsStart && CurTime <= 0.0f)
-	{
-		//bIsTimesUP = true;
-		TimerTextTimeline.SetLooping(false);
-	}
+	//else if (true == bIsStart && CurTime <= 0.0f)
+	//{
+	//	//bIsTimesUP = true;
+	//	TimerTextTimeline.SetLooping(false);
+	//}
 
 	if (CurTime <= 10.f  && TimerImgTimeline.IsPlaying() == false)
 	{

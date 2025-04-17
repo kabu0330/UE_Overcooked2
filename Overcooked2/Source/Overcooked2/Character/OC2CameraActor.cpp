@@ -26,5 +26,5 @@ void AOC2CameraActor::Tick(float DeltaTime)
 void AOC2CameraActor::SetCameraScoreLocation()
 {
 	SetActorLocation({ -10250.0, -1820.0 , 255.0 });
-	SetActorRotation({ 0, 0, 90 });
+	SetActorRotation({ 0, 90, 0 });
 }

@@ -165,6 +165,6 @@ private:
 	UPROPERTY()
 	ASinkTable* SinkTable = nullptr;
 
-
+	class UTimeEventComponent* TimeEventComponent = nullptr;
 
 };

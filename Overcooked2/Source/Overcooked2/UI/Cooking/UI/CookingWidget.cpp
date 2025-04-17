@@ -63,6 +63,9 @@ void UCookingWidget::NativeOnInitialized()
             CookingTimerWidget->AddToViewport();
             CookingFinalScoreWidget->AddToViewport();
             CookingReadyWidget->AddToViewport();
+            CookingReceiptWidget->AddToViewport();
+
+            CookingReceiptWidget->SetVisibility(ESlateVisibility::Hidden);
 
         }
         else

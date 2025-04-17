@@ -1,3 +1,5 @@
+
+
 #pragma once
 
 #include "CoreMinimal.h"
@@ -68,6 +70,7 @@ public:
 
 
     float StartTimerTick(float DeltaTime);
+    void ShowTimesUPAnim();
 
 protected:
     virtual void NativeOnInitialized() override;
@@ -148,7 +151,6 @@ private:
 
     void FindOrderImgRecursive(class UWidget* Widget, const FLinearColor& Color);
 
-    void ShowTimesUPAnim();
     void PlayTimesUPAnim();
 
 
