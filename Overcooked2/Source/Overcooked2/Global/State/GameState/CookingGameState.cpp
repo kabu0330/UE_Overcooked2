@@ -464,6 +464,16 @@ void ACookingGameState::Multicast_PlayGameMapSound_Implementation()
 	OC2Map->PlaySound();
 }
 
+void ACookingGameState::Multicast_ShowTimesUpUI_Implementation()
+{
+	// TODO : Times Up UI를 띄우는 함수
+}
+
+void ACookingGameState::Multicast_ShowScorePanemUI_Implementation()
+{
+	// TODO : Score Panel UI를 띄우는 함수
+}
+
 void ACookingGameState::OnRep_MatchState()
 {
 	Super::OnRep_MatchState();
