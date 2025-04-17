@@ -3,12 +3,19 @@
 
 #include "LevelContent/WorldMap/WorldGameMode.h"
 #include "Overcooked2.h"
+#include "Kismet/GameplayStatics.h"
 
 #include "Global/State/GameState/WorldGameState.h"
+#include "Global/OC2Global.h"
+#include "Global/OC2GameInstance.h"
 
 #include "LevelContent/WorldMap/WorldManager.h"
 #include "LevelContent/WorldMap/WorldPlayer.h"
-#include "Kismet/GameplayStatics.h"
+#include "LevelContent/WorldMap/WorldGameMode.h"
+
+#include "UI/WorldMap/WorldMapHUD.h"
+#include "UI/WorldMap/UI/WorldMapUserWidget.h"
+#include "UI/Loading/LoadingWidget.h"
 
 AWorldGameMode::AWorldGameMode()
 {
@@ -30,6 +37,13 @@ void AWorldGameMode::BeginPlay()
 void AWorldGameMode::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	AWorldMapHUD* WorldMapHUD = Cast<AWorldMapHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
+
+	if (WorldMapHUD->WorldMapUserWidget != nullptr && WorldMapHUD != nullptr)
+	{
+		WorldMapHUD->WorldMapUserWidget->SettingDebugMessage(TEXT("World GameMode Tick"));
+	}
 
 }
 
