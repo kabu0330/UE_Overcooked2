@@ -38,7 +38,7 @@ private:
 	class UMaterialInstanceDynamic* ProgressMaterial = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OC2UI", meta = (AllowPrivateAccess = "true"))
-	bool bIsHoldingSpace = false;
+	bool bHoldingSpace = false;
 
 
 	float ProgressTime = 0.f;

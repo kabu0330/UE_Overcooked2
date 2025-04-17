@@ -16,6 +16,7 @@ class OVERCOOKED2_API AOC2CameraActor : public ACameraActor
 public:	
 	// Sets default values for this actor's properties
 	AOC2CameraActor();
+	void SetCameraScoreLocation();
 
 protected:
 	// Called when the game starts or when spawned
