@@ -15,8 +15,8 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "UI/Cooking/CaptureComponent2D.h"
 #include "Global/Data/OC2GlobalData.h"
-#include "Net/UnrealNetwork.h"
 #include "Kismet/GameplayStatics.h"
+#include "Net/UnrealNetwork.h"
 
 
 // Sets default values
@@ -79,19 +79,19 @@ void AOC2Character::MoveCharacter(const FInputActionValue& Value)
 
 	if (bIsDashing == false && bCanThrowing == false)
 	{
-		EffectSpawnElapsed += GetWorld()->GetDeltaSeconds();
+		//EffectSpawnElapsed += GetWorld()->GetDeltaSeconds();
 
-		if (EffectSpawnElapsed >= EffectSpawnInterval)
+		//if (EffectSpawnElapsed >= EffectSpawnInterval)
 		{
 			UNiagaraFunctionLibrary::SpawnSystemAtLocation(
 				GetWorld(),
-				UOC2GlobalData::GetResourceNiagaraSystem(GetWorld(), "RunningPuff"),
+				UOC2GlobalData::GetResourceNiagaraSystem(GetWorld(), "WalkingPuff"),
 				GetActorLocation() - GetActorForwardVector() * 50.0f,                   // 캐릭터 위치
 				GetActorRotation(),                   // 회전도 전달 가능 (속도선 같은 경우)
 				FVector(1.0f),                        // 스케일
 				true                                  // bAutoDestroy
 			);
-			EffectSpawnElapsed = 0.0f;
+			//EffectSpawnElapsed = 0.0f;
 		}
 
 		AddMovementInput(MovementInput);
@@ -734,6 +734,14 @@ void AOC2Character::OnDashInput()
 	if (bIsDashing == false)
 	{
 		if (IsLocallyControlled()) UGameplayStatics::PlaySound2D(GetWorld(), UOC2GlobalData::GetCharacterBaseSound(GetWorld(), "Dash"));
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+			GetWorld(),
+			UOC2GlobalData::GetResourceNiagaraSystem(GetWorld(), "RunningPuff2"),
+			GetActorLocation() - GetActorForwardVector() * 50.0f,                   // 캐릭터 위치
+			GetActorRotation(),                   // 회전도 전달 가능 (속도선 같은 경우)
+			FVector(1.0f),                        // 스케일
+			true                                  // bAutoDestroy
+		);
 		Dash();
 	}
 }
