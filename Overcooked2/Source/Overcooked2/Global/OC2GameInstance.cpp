@@ -66,7 +66,10 @@ void UOC2GameInstance::StartCookingStage()
 {
 	FString OpenLevelPath = CookingLevel.GetLongPackageName();
 
-	GetWorld()->ServerTravel(OpenLevelPath + TEXT("?listen"));
+	if (false == GetWorld()->ServerTravel(OpenLevelPath + TEXT("?listen")))
+	{
+		UE_LOG(OVERCOOKED_LOG, Fatal, TEXT("Server travel failed!!!!"));
+	}
 }
 
 EIngredientType UOC2GameInstance::GetIngredientType(const FString& RowName)

@@ -17,6 +17,12 @@ class OVERCOOKED2_API AWorldPlayerController : public APlayerController
 public:
 	AWorldPlayerController();
 
+protected:
+	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
+
+public:
+
 	UFUNCTION(BlueprintCallable)
 	void AddInputMappingContext(UInputMappingContext* _Context);
 
@@ -25,7 +31,13 @@ public:
 
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
 
+	UFUNCTION(Server, Reliable)
+	void Server_NotifyLoadingComplete();
+
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadwrite, Category="Controller", meta=(AllowPrivateAccess=true))
 	UInputMappingContext* MappingContext = nullptr;
+
+private:
+	bool bReported = false;
 };

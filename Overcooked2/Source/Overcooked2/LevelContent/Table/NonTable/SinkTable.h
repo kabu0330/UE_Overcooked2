@@ -62,7 +62,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cooking")
 	USceneComponent* ComponentForProgressBar = nullptr;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CleanPlate")
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "CleanPlate")
 	USceneComponent* CleanPlateComponent = nullptr;
 
 	UPROPERTY(Replicated)
@@ -118,4 +118,5 @@ protected:
 
 	FVector PlateSize = { 2.0f, 2.0f, 2.0f};
 
+	USoundBase* SoundEffect = nullptr;
 };

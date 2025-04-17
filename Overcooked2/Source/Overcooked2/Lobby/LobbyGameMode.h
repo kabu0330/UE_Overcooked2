@@ -35,6 +35,11 @@ public:
 	void EntryStay();
 	void Stay(float DeltaTime);
 
+	int GetUserCount()
+	{
+		return CurUserCount;
+	}
+
 private:
 	ELobbyGameModeState CurState = ELobbyGameModeState::ELS_None;
 	TArray<APlayerController*> PlayerControllers;

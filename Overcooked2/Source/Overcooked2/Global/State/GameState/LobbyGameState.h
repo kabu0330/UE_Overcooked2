@@ -37,9 +37,13 @@ public:
 	UFUNCTION(Server, Reliable)
 	void Server_SpawnClientCharacter(FVector SpawnLocation, const FString& ChefHeadName);
 
+	UFUNCTION(Server, Reliable)
+	void Server_NotifyLoadingComplete();
+
 public:
 	void InitCharacter();
 	void UpdateChefTexture(int Index);
+	void CheckClinetLoadingComplete();
 
 public:
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
@@ -56,5 +60,9 @@ public:
 
 	const FString LOBBY_LEVEL = "LobbyDevLevel";
 	const FString PLAY_LEVEL = "Sushi1-3StageLevel";
+
+	TArray<int> CompleteArray;
+
+	bool bChecked = false;
 
 };

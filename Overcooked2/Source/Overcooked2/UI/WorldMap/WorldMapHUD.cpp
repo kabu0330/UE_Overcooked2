@@ -23,6 +23,8 @@ void AWorldMapHUD::BeginPlay()
 	WorldMapUserWidget->AddToViewport();
 	LoadingWidget->AddToViewport();
 	LoadingWidget->SetVisibility(ESlateVisibility::Hidden);
+
+	LoadingWidget->SetIsConnecting(false);
 }
 
 
