@@ -43,7 +43,9 @@ public:
 public: /** 네트워크 관련 메소드 */
 	void CreateRoom();
 	void JoinRoom(FString IP, APlayerController* Controller);
+	UFUNCTION()
 	void StartGame();
+	UFUNCTION()
 	void StartCookingStage();
 
 public:

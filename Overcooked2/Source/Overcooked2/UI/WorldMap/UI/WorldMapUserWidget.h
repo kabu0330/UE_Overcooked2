@@ -20,20 +20,27 @@ public:
 	void PlayZoomInAnimation();
 	void PlayZoomOutAnimation();
 
+	UFUNCTION(BlueprintCallable, Category = "OC2UI")
+	void SettingDebugMessage(FString Text);
+
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
 	class UImage* TransitionImg = nullptr;
 
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
+	class UTextBlock* TestTxt = nullptr;
+
 
 protected:
 	virtual void NativeConstruct() override;
+	virtual void NativeTick(const FGeometry& MyGeometry, float DeltaTime) override;
 
 
 private:
 	class UMaterialInstanceDynamic* TransitionMaterial = nullptr;
 	FTimerHandle AnimationTimer;
-
-	TFunction<void()> AnimFinishFuction;
+	FString PreviousText = "";
+	//TFunction<void()> AnimFinishFuction;
 
 
 

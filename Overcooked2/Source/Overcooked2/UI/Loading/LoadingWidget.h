@@ -53,7 +53,7 @@ public:
 
 
 
-	void PlayLoadingAnimation(TFunction<void()> Func , ELevelChangType LevelEnum = ELevelChangType::LobbyToWorldMap);
+	void PlayLoadingAnimation(ELevelChangType LevelEnum = ELevelChangType::LobbyToWorldMap);
 
 	void PlayZoomOutAnimation();
 
