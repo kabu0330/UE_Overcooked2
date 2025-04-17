@@ -14,8 +14,10 @@
 #include "UI/Cooking/UI/CookingTimeWidget.h"
 #include "UI/Cooking/UI/CookingReceiptWidget.h"
 #include "UI/Cooking/UI/CookingReadyWidget.h"
+#include "UI/Cooking/ReceiptWidgetActor.h"
 
 #include "Overcooked2.h"
+#include "Kismet/GameplayStatics.h"
 
 
 void UCookingWidget::NativeOnInitialized()
@@ -49,10 +51,10 @@ void UCookingWidget::NativeOnInitialized()
         CookingFinalScoreWidget = Cast<UCookingFinalScoreWidget>(CreateWidget(GetWorld(), FinalScoreSubWidget));
         CookingTimerWidget = Cast<UCookingTimeWidget>(CreateWidget(GetWorld(), TimeSubWidget));
         CookingReadyWidget = Cast<UCookingReadyWidget>(CreateWidget(GetWorld(), ReadySubWidget));
-        CookingReceiptWidget = Cast<UCookingReceiptWidget>(CreateWidget(GetWorld(), ReceiptWidget));
+        //CookingReceiptWidget = Cast<UCookingReceiptWidget>(CreateWidget(GetWorld(), ReceiptWidget));
 
 
-        if (CookingScoreWidget != nullptr && CookingTimerWidget != nullptr && CookingFinalScoreWidget != nullptr && CookingReadyWidget != nullptr && CookingReceiptWidget != nullptr)
+        if (CookingScoreWidget != nullptr && CookingTimerWidget != nullptr && CookingFinalScoreWidget != nullptr && CookingReadyWidget != nullptr )
         {
             CookingFinalScoreWidget->SetVisibility(ESlateVisibility::Hidden);
             CookingScoreWidget->SetVisibility(ESlateVisibility::Hidden);
@@ -63,9 +65,9 @@ void UCookingWidget::NativeOnInitialized()
             CookingTimerWidget->AddToViewport();
             CookingFinalScoreWidget->AddToViewport();
             CookingReadyWidget->AddToViewport();
-            CookingReceiptWidget->AddToViewport();
+            //CookingReceiptWidget->AddToViewport();
 
-            CookingReceiptWidget->SetVisibility(ESlateVisibility::Hidden);
+            //CookingReceiptWidget->SetVisibility(ESlateVisibility::Hidden);
 
         }
         else
@@ -215,10 +217,22 @@ void UCookingWidget::ShowReceiptWidget()
     TimesUpCanvas->SetVisibility(ESlateVisibility::Collapsed);
     CookingFinalScoreWidget->SetVisibility(ESlateVisibility::Visible);
     CookingFinalScoreWidget->ShowCapturePlayers();
-    CookingReceiptWidget->CheckStar();
-    CookingReceiptWidget->ShowScoreText();
+    //CookingReceiptWidget->CheckStar();
+    //CookingReceiptWidget->ShowScoreText();
 
     //SetVisibility(ESlateVisibility::Hidden);
+
+    TArray<AActor*> FoundActors;
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(), AReceiptWidgetActor::StaticClass(), FoundActors);
+
+    if (FoundActors.Num() > 0)
+    {
+        AReceiptWidgetActor* TargetActor = Cast<AReceiptWidgetActor>(FoundActors[0]);
+        if (nullptr != TargetActor)
+        {
+            TargetActor->ShowTotalScoreAnim();
+        }
+    }
 }
 
 
