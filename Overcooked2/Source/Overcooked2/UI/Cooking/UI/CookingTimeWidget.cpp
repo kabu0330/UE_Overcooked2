@@ -25,17 +25,17 @@ void UCookingTimeWidget::NativeTick(const FGeometry& MyGeometry, float DeltaTime
 
 }
 
-float UCookingTimeWidget::StartTimerTick(float DeltaTime)
+float UCookingTimeWidget::StartTimerTick(float CurTimeValue)
 {
 	float curtime = 0.0f;
 
 	if (true == bIsStart && CurTime > 0.0f)
 	{
-		curtime = StartTimer(DeltaTime);
+		curtime = StartTimer(CurTimeValue);
 	}
 	else if (true == bIsStart && CurTime <= 0.0f)
 	{
-		bIsTimesUP = true;
+		//bIsTimesUP = true;
 		TimerTextTimeline.SetLooping(false);
 	}
 
@@ -116,6 +116,10 @@ void UCookingTimeWidget::SetStartTimer(bool IsStart)
 
 float UCookingTimeWidget::StartTimer(float DeltaTime)
 {
+	float PrevTime = CurTime;
+
+	CurTime = DeltaTime;
+
 
 	int Min = static_cast<int>(CurTime / 60);
 	int Sec = static_cast<int>(CurTime) % 60;
@@ -164,15 +168,15 @@ float UCookingTimeWidget::StartTimer(float DeltaTime)
 	}	
 	else if (CurTime > TimeLimit / 3)
 	{
-		TimeProgressBar->SetFillColorAndOpacity({ Color.R + DeltaTime * 0.01f, Color.G + DeltaTime * 0.01f, 0.0f });
+		TimeProgressBar->SetFillColorAndOpacity({ Color.R + (PrevTime - CurTime) * 0.01f, Color.G + (PrevTime - CurTime) * 0.01f, 0.0f });
 	}
 	else 
 	{
-		TimeProgressBar->SetFillColorAndOpacity({ Color.R + DeltaTime * 0.01f, Color.G - DeltaTime * 0.02f, 0.0f });
+		TimeProgressBar->SetFillColorAndOpacity({ Color.R + (PrevTime - CurTime) * 0.01f, Color.G - (PrevTime - CurTime) * 0.02f, 0.0f });
 	}
 
 
-	CurTime -= DeltaTime;
+
 
 	return CurTime;
 }

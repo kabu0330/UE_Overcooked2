@@ -21,7 +21,7 @@ public:
     //void SubmitWrongOrder();
 
     UFUNCTION(BlueprintCallable, Category = "OC2UI")
-    void PlayTimeoutWidget();
+    void ShowReceiptWidget();
 
     void CheckFeverTime(int TipCount);
 
@@ -86,11 +86,15 @@ protected:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OC2UI")
     TSubclassOf<UUserWidget> ReadySubWidget;
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OC2UI")
+    TSubclassOf<UUserWidget> ReceiptWidget;
+
 private:
     class UCookingScoreWidget* CookingScoreWidget = nullptr;
     class UCookingFinalScoreWidget* CookingFinalScoreWidget = nullptr;
     class UCookingReadyWidget* CookingReadyWidget = nullptr;
     class UCookingTimeWidget* CookingTimerWidget = nullptr;
+    class UCookingReceiptWidget* CookingReceiptWidget = nullptr;
 
     // 주문 관련 변수
     int CompleteOrderNum = 0;

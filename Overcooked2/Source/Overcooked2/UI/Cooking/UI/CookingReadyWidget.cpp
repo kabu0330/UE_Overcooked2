@@ -17,11 +17,6 @@ void UCookingReadyWidget::NativeConstruct()
     if (ReadyProgress != nullptr)
     {
         ProgressMaterial = ReadyProgress->GetDynamicMaterial();
-
-        if (!ProgressMaterial)
-        {
-            ProgressMaterial = ReadyProgress->GetDynamicMaterial();
-        }
     }
 
     if (GetWorld()->GetAuthGameMode())
@@ -41,11 +36,6 @@ void UCookingReadyWidget::NativeConstruct()
     if (TransitionImg != nullptr)
     {
         TransitionMaterial = TransitionImg->GetDynamicMaterial();
-
-        if (!TransitionMaterial)
-        {
-            TransitionMaterial = TransitionImg->GetDynamicMaterial();
-        }
     }
     TransitionImg->SetVisibility(ESlateVisibility::Hidden);
 
@@ -64,11 +54,11 @@ void UCookingReadyWidget::NativeTick(const FGeometry& MyGeometry, float DeltaTim
         bIsReady = true;
     }
 
-    if (bIsHoldingSpace == true )
+    if (bHoldingSpace == true )
     {
         ProgressTime = FMath::Clamp(ProgressTime + DeltaTime * HoldSpeed, 0.f, 1.f);
     }
-    else if(bIsHoldingSpace == false && ProgressTime < 1.0f)
+    else if(bHoldingSpace == false && ProgressTime < 1.0f)
     {
         ProgressTime = 0.0f;
     }
@@ -100,7 +90,7 @@ void UCookingReadyWidget::PlayZoomOutAnimation()
             if (CurrentTime <= 0.0f)
             {
                 GetWorld()->GetTimerManager().ClearTimer(AnimationTimer);
-                TransitionImg->SetVisibility(ESlateVisibility::Hidden);
+                //TransitionImg->SetVisibility(ESlateVisibility::Hidden);
 
                 return;
             }
@@ -108,8 +98,12 @@ void UCookingReadyWidget::PlayZoomOutAnimation()
             float Value1 = CurrentTime;
             float Value2 = (Value1 - 1.0f) / 2.0f;
 
-            TransitionMaterial->SetScalarParameterValue(TEXT("Value1"), Value1);
-            TransitionMaterial->SetScalarParameterValue(TEXT("Value2"), Value2);
+            if (nullptr != TransitionMaterial)
+            {
+                TransitionMaterial->SetScalarParameterValue(TEXT("Value1"), Value1);
+                TransitionMaterial->SetScalarParameterValue(TEXT("Value2"), Value2);
+            }
+
 
             CurrentTime -= TimeStep * 15.0f;
 
