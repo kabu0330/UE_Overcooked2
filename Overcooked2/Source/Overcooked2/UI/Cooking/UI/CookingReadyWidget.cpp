@@ -20,18 +20,18 @@ void UCookingReadyWidget::NativeConstruct()
         ProgressMaterial = ReadyProgress->GetDynamicMaterial();
     }
 
-    if (GetWorld()->GetAuthGameMode())
-    {
-        ReadyProgress->SetVisibility(ESlateVisibility::Visible);
-        SpaceBarImg->SetVisibility(ESlateVisibility::Visible);
-        SkipText->SetVisibility(ESlateVisibility::Visible);
-    }
-    else
-    {
-        ReadyProgress->SetVisibility(ESlateVisibility::Collapsed);
-        SpaceBarImg->SetVisibility(ESlateVisibility::Collapsed);
-        SkipText->SetVisibility(ESlateVisibility::Collapsed);
-    }
+    //if (GetWorld()->GetAuthGameMode())
+    //{
+    //    ReadyProgress->SetVisibility(ESlateVisibility::Visible);
+    //    SpaceBarImg->SetVisibility(ESlateVisibility::Visible);
+    //    SkipText->SetVisibility(ESlateVisibility::Visible);
+    //}
+    //else
+    //{
+    //    ReadyProgress->SetVisibility(ESlateVisibility::Collapsed);
+    //    SpaceBarImg->SetVisibility(ESlateVisibility::Collapsed);
+    //    SkipText->SetVisibility(ESlateVisibility::Collapsed);
+    //}
 
 
     if (TransitionImg != nullptr)
