@@ -4,6 +4,7 @@
 #include "UI/Cooking/UI/CookingReadyWidget.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
+#include "Components/CanvasPanel.h"
 #include "Kismet/GameplayStatics.h"
 
 #include "Sound/SoundBase.h" 
@@ -36,33 +37,45 @@ void UCookingReadyWidget::NativeConstruct()
     if (TransitionImg != nullptr)
     {
         TransitionMaterial = TransitionImg->GetDynamicMaterial();
+        TransitionImg->SetVisibility(ESlateVisibility::Hidden);
     }
-    TransitionImg->SetVisibility(ESlateVisibility::Hidden);
 
+    if (HoldCanvas != nullptr)
+    {
+        HoldCanvas->SetVisibility(ESlateVisibility::Hidden);
+    }
+    //bIsReady = true;
     PlayZoomOutAnimation();
 }
 
 void UCookingReadyWidget::NativeTick(const FGeometry& MyGeometry, float DeltaTime)
 {
     Super::NativeTick(MyGeometry, DeltaTime);
-    
-    APlayerController* PC = GetOwningPlayer();
-    if (!PC || !PC->HasAuthority()) return;
+    //if (HoldCanvas->GetVisibility() == ESlateVisibility::Hidden) return;
 
-    if (ProgressTime >= 1.0f)
-    {
-        bIsReady = true;
-    }
+    //APlayerController* PC = GetOwningPlayer();
+    //if (!PC || !PC->HasAuthority()) return;
 
-    if (bHoldingSpace == true )
-    {
-        ProgressTime = FMath::Clamp(ProgressTime + DeltaTime * HoldSpeed, 0.f, 1.f);
-    }
-    else if(bHoldingSpace == false && ProgressTime < 1.0f)
-    {
-        ProgressTime = 0.0f;
-    }
+    //if (ProgressTime >= 1.0f)
+    //{
+    //    bIsReady = true;
+    //}
 
+    //if (bHoldingSpace == true )
+    //{
+    //    //ProgressTime = FMath::Clamp(ProgressTime + DeltaTime * HoldSpeed, 0.f, 1.f);
+    //}
+    //else if(bHoldingSpace == false && ProgressTime < 1.0f)
+    //{
+    //    ProgressTime = 0.0f;
+    //}
+
+   
+}
+
+void UCookingReadyWidget::SetHoldProgress(int Progress)
+{
+    ProgressTime = FMath::Clamp(Progress / 100.f, 0.f, 1.f);
     ProgressMaterial->SetScalarParameterValue(TEXT("Percent"), ProgressTime);
 }
 
@@ -98,7 +111,7 @@ void UCookingReadyWidget::PlayZoomOutAnimation()
             float Value1 = CurrentTime;
             float Value2 = (Value1 - 1.0f) / 2.0f;
 
-            if (nullptr != TransitionMaterial)
+            if (IsValid( TransitionMaterial))
             {
                 TransitionMaterial->SetScalarParameterValue(TEXT("Value1"), Value1);
                 TransitionMaterial->SetScalarParameterValue(TEXT("Value2"), Value2);

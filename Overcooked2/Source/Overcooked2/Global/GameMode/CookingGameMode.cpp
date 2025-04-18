@@ -20,6 +20,8 @@
 #include "Character/OC2Character.h"
 
 #include "Kismet/GameplayStatics.h"
+#include "Net/UnrealNetwork.h"
+#include "EngineUtils.h"
 
 
 ACookingGameMode::ACookingGameMode()
@@ -47,9 +49,17 @@ void ACookingGameMode::BeginPlay()
 		StageManager = GetWorld()->SpawnActor<AStageManager>(StageManagerSpawner);
 	}
 
-	ChangeState(ECookingGameModeState::ECS_Stay);
-
 	CurIdx = 0;
+
+	FTimerHandle TimerHandle;
+
+	GetWorld()->GetTimerManager().SetTimer(
+		TimerHandle,
+		this,
+		&ACookingGameMode::StartStage,
+		3.0f,   // 3초 뒤 실행
+		false   // 반복 여부(false면 1회 실행)
+	);
 }
 
 void ACookingGameMode::Tick(float DeltaTime)
@@ -64,6 +74,9 @@ void ACookingGameMode::Tick(float DeltaTime)
 	case ECookingGameModeState::ECS_Stage:
 		Stage(DeltaTime);
 		break;
+	case ECookingGameModeState::ECS_TimeUp:
+		TimeUp(DeltaTime);
+		break;
 	case ECookingGameModeState::ECS_Score:
 		Score(DeltaTime);
 		break;
@@ -75,13 +88,6 @@ void ACookingGameMode::Tick(float DeltaTime)
 void ACookingGameMode::PostLogin(APlayerController* NewPlayerController)
 {
 	Super::PostLogin(NewPlayerController);
-
-	PlayerControllerArray.Add(NewPlayerController);
-
-	if (PlayerControllerArray.Num() == 2)
-	{ 
-	  ChangeState(ECookingGameModeState::ECS_Stay);
-	}
 }
 
 void ACookingGameMode::AddPlate(APlate* Plate)
@@ -140,32 +146,7 @@ void ACookingGameMode::EntryStay()
 {
 	CheckTime = 0.0f;
 
-	UWorld* World = GetWorld();
-
-	if (nullptr == World)
-	{
-		return;
-	}
-
-	for (FConstPlayerControllerIterator Iterator = World->GetPlayerControllerIterator(); Iterator; ++Iterator)
-	{
-		APlayerController* PlayerController = Iterator->Get();
-
-		if (nullptr != PlayerController)
-		{
-			ACharacter* DefaultCharacter = PlayerController->GetCharacter();
-
-			if (nullptr != DefaultCharacter)
-			{
-				AOC2Character* OC2Character = Cast<AOC2Character>(DefaultCharacter);
-
-				if (nullptr != OC2Character)
-				{
-					OC2Character->SetMoveEnabled(false); // 이동 불가
-				}
-			}
-		}
-	}
+	CookingGameState->Multicast_SetCharacterActive(false);
 }
 
 void ACookingGameMode::Stay(float DeltaTime)
@@ -180,15 +161,11 @@ void ACookingGameMode::Stay(float DeltaTime)
 
 		if (nullptr != CookingHUD && nullptr != CookingHUD->CookWidget)
 		{
-			if (true == CookingHUD->CookWidget->GetIsReady())
+			if (nullptr != CookingGameState)
 			{
-				ChangeState(ECookingGameModeState::ECS_Stage);
-
-				if (nullptr != CookingGameState)
-				{
-					CookingGameState->Multicast_StartGame();
-				}
+				CookingGameState->Multicast_StartGame();
 			}
+			ChangeState(ECookingGameModeState::ECS_Stage);
 		}
 	}
 }
@@ -208,32 +185,7 @@ void ACookingGameMode::EntryStage()
 		false   // 반복 여부(false면 1회 실행)
 	);
 
-	UWorld* World = GetWorld();
-
-	if (nullptr == World)
-	{
-		return;
-	}
-
-	for (FConstPlayerControllerIterator Iterator = World->GetPlayerControllerIterator(); Iterator; ++Iterator)
-	{
-		APlayerController* PlayerController = Iterator->Get();
-
-		if (nullptr != PlayerController)
-		{
-			ACharacter* DefaultCharacter = PlayerController->GetCharacter();
-
-			if (nullptr != DefaultCharacter)
-			{
-				AOC2Character* OC2Character = Cast<AOC2Character>(DefaultCharacter);
-
-				if (nullptr != OC2Character)
-				{
-					OC2Character->SetMoveEnabled(true); // 이동 불가
-				}
-			}
-		}
-	}
+	CookingGameState->Multicast_SetCharacterActive(true);
 
 	CheckTime = 0.0f;
 }
@@ -247,36 +199,60 @@ void ACookingGameMode::Stage(float DeltaTime)
 		CookingGameState->Multicast_SettingTimer(GameTime);
 	}
 
-	if (GameTime <= -3.0f)
+	if (false == bShowTimesUpUI && GameTime <= 0.0f)
+	{
+		CookingGameState->Multicast_ShowTimesUpUI();
+		bShowTimesUpUI = true;
+		ChangeState(ECookingGameModeState::ECS_TimeUp);
+	}
+
+	//APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
+
+	//if (nullptr != PlayerController)
+	//{
+	//	ACookingHUD* CookingHUD = Cast<ACookingHUD>(PlayerController->GetHUD());
+
+	//	if (nullptr != CookingHUD && nullptr != CookingHUD->CookWidget)
+	//	{
+	//		if (true == CookingHUD->CookWidget->IsShowScoreWidget())
+	//		{
+	//			ChangeState(ECookingGameModeState::ECS_Score);
+	//		}
+	//	}
+	//}
+}
+
+void ACookingGameMode::TimeUp(float DeltaTime)
+{
+	CheckTime += DeltaTime;
+	
+	if (CheckTime > 1.5f)
 	{
 		CookingGameState->Multicast_ShowScorePanemUI();
 		ChangeState(ECookingGameModeState::ECS_Score);
 	}
-	else if (GameTime <= 0.0f)
+}
+
+void ACookingGameMode::EntryTimeUp()
+{
+	StageManager->bProgress = false;
+	CheckTime = 0.0f;
+
+	UWorld* World = GetWorld();
+
+	if (nullptr == World)
 	{
-		CookingGameState->Multicast_ShowTimesUpUI();
+		return;
 	}
 
-	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
-
-	if (nullptr != PlayerController)
-	{
-		ACookingHUD* CookingHUD = Cast<ACookingHUD>(PlayerController->GetHUD());
-
-		if (nullptr != CookingHUD && nullptr != CookingHUD->CookWidget)
-		{
-			if (true == CookingHUD->CookWidget->IsShowScoreWidget())
-			{
-				ChangeState(ECookingGameModeState::ECS_Score);
-			}
-		}
-	}
+	CookingGameState->Multicast_SetCharacterActive(false);
 }
 
 void ACookingGameMode::EntryScore()
 {
-	StageManager->bProgress = false;
+	CookingGameState->Muticast_EndGame();
 }
+
 
 void ACookingGameMode::Score(float DeltaTime)
 {
@@ -293,6 +269,9 @@ void ACookingGameMode::ChangeState(ECookingGameModeState State)
 		break;
 	case ECookingGameModeState::ECS_Stage:
 		EntryStage();
+		break;
+	case ECookingGameModeState::ECS_TimeUp:
+		EntryTimeUp();
 		break;
 	case ECookingGameModeState::ECS_Score:
 		EntryScore();
@@ -322,5 +301,11 @@ void ACookingGameMode::PrintDebugMessage()
 
 void ACookingGameMode::PlayBackgroundSound()
 {
-	CookingGameState->Multicast_PlayGameMapSound();
+	//CookingGameState->Multicast_PlayGameMapSound();
 }
+
+void ACookingGameMode::StartStage()
+{
+	ChangeState(ECookingGameModeState::ECS_Stay);
+}
+ 

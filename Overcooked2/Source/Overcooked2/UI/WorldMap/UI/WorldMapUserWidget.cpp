@@ -137,16 +137,23 @@ void UWorldMapUserWidget::PlayZoomOutAnimation()
             if (CurrentTime <= 0.0f)
             {
                 GetWorld()->GetTimerManager().ClearTimer(AnimationTimer);
-                TransitionImg->SetVisibility(ESlateVisibility::Hidden);
-
+                if (IsValid(TransitionMaterial))
+                {
+                    TransitionImg->SetVisibility(ESlateVisibility::Hidden);
+                }
                 return;
             }
 
             float Value1 = CurrentTime;
             float Value2 = (Value1 - 1.0f) / 2.0f;
 
-            TransitionMaterial->SetScalarParameterValue(TEXT("Value1"), Value1);
-            TransitionMaterial->SetScalarParameterValue(TEXT("Value2"), Value2);
+            if (IsValid(TransitionMaterial))
+            {
+                TransitionMaterial->SetScalarParameterValue(TEXT("Value1"), Value1);
+                TransitionMaterial->SetScalarParameterValue(TEXT("Value2"), Value2);
+            }
+
+
 
             CurrentTime -= TimeStep * 20.0f;
 
