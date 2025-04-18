@@ -50,12 +50,6 @@ protected:
 	 */
 	virtual void Tick(float DeltaTime) override;
 
-	/**
-	 * 플레이어가 로그인(게임에 접속)했을 때 호출되는 함수
-	 * @param NewPlayerController 새롭게 접속한 플레이어 컨트롤러
-	 */
-	virtual void PostLogin(APlayerController* NewPlayerController) override;
-
 public:
 	void AddPlate(APlate* Plate);
 	APlate* GetPlate();
@@ -128,6 +122,6 @@ private:
 
 	TArray<APlate*> PlateArray;
 
-	float GameTime = 20.0f;
+	float GameTime = 180.0f;
 
 };
