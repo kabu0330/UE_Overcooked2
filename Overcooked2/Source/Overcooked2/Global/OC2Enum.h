@@ -12,6 +12,7 @@ enum class ECookingGameModeState : uint8
 	ECS_None	UMETA(DisplayName = "None"),
 	ECS_Stay    UMETA(DisplayName = "Stay"),
 	ECS_Stage   UMETA(DisplayName = "Stage"),
+	ECS_TimeUp   UMETA(DisplayName = "TimeUp"),
 	ECS_Score   UMETA(DisplayName = "Score"),
 };
 

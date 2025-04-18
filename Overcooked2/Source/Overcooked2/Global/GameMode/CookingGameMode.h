@@ -67,6 +67,8 @@ public:
 	void EntryStage();
 	void Stage(float DeltaTime);
 	void EntryScore();
+	void TimeUp(float DeltaTime);
+	void EntryTimeUp();
 	void Score(float DeltaTime);
 	void ChangeState(ECookingGameModeState State);
 
@@ -78,6 +80,7 @@ public:
 
 	void PlayBackgroundSound();
 
+	void StartStage();
 public:
 	/** 현재 게임에 접속한 플레이어 컨트롤러 목록 */
 	TArray<APlayerController*> PlayerControllers;
@@ -119,11 +122,12 @@ private:
 
 	/** 상태 변경 체크 시간 */
 	float CheckTime = 0.0f;
+	bool bShowTimesUpUI = false;
 
 	TArray<APlayerController*> PlayerControllerArray;
 
 	TArray<APlate*> PlateArray;
 
-	float GameTime = 10.0f;
+	float GameTime = 20.0f;
 
 };

@@ -22,6 +22,7 @@
 #include "Global/OC2GameInstance.h"
 #include "Global/Manager/StageManager.h"
 
+#include "Character/OC2Character.h"
 #include "Character/OC2CameraActor.h"
 
 ACookingGameState::ACookingGameState()
@@ -69,6 +70,28 @@ void ACookingGameState::BeginPlay()
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("No AOC2CameraActor found in level"));
+	}
+
+	if (true == HasAuthority())
+	{
+		int a = 0;
+	}
+	else
+	{
+		int a = 0;
+	}
+
+	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
+
+	if (nullptr != PlayerController)
+	{
+		ACookingHUD* CookingHUD = Cast<ACookingHUD>(PlayerController->GetHUD());
+		CookingHUD->InitCookWidget();
+
+		if (nullptr != CookingHUD && nullptr != CookingHUD->CookWidget)
+		{
+			CookingHUD->CookWidget->ShowHoldCanvas();
+		}
 	}
 }
 
@@ -516,6 +539,23 @@ void ACookingGameState::Multicast_ShowScorePanemUI_Implementation()
 			CookingHUD->CookWidget->ShowReceiptWidget();
 		}
 	}
+}
+
+void ACookingGameState::Multicast_SetCharacterActive_Implementation(bool bActive)
+{
+	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+	AOC2Character* PlayerCharacter = Cast<AOC2Character>(PlayerController->GetPawn());
+
+	PlayerCharacter->SetMoveEnabled(bActive);
+}
+
+void ACookingGameState::Muticast_EndGame_Implementation()
+{
+	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+
+	FInputModeUIOnly Mode;
+	PlayerController->SetInputMode(Mode);
+	PlayerController->SetShowMouseCursor(false);
 }
 
 void ACookingGameState::OnRep_MatchState()

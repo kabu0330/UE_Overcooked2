@@ -20,13 +20,23 @@ public:
 	class UImage* SpaceBarImg = nullptr;
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
 	class UTextBlock* SkipText = nullptr;
-	
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
+	class UCanvasPanel* HoldCanvas = nullptr;
 
-	bool bIsReady = false;
+	void SetReady(bool IsReady)
+	{
+		bIsReady = IsReady;
+	}
 
+	bool GetReady()
+	{
+		return bIsReady;
+	}
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
 	class UImage* TransitionImg = nullptr;
+
+	void SetHoldProgress(int Progress);
 
 protected:
 	void NativeConstruct();
@@ -40,6 +50,7 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OC2UI", meta = (AllowPrivateAccess = "true"))
 	bool bHoldingSpace = false;
 
+	bool bIsReady = false;
 
 	float ProgressTime = 0.f;
 	float HoldSpeed = 1.f; // 초당 1.0까지 (1초에 가득참)
