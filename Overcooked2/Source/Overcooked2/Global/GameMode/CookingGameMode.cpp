@@ -85,11 +85,6 @@ void ACookingGameMode::Tick(float DeltaTime)
 	}
 }
 
-void ACookingGameMode::PostLogin(APlayerController* NewPlayerController)
-{
-	Super::PostLogin(NewPlayerController);
-}
-
 void ACookingGameMode::AddPlate(APlate* Plate)
 {
 	PlateArray.Add(Plate);
@@ -147,11 +142,6 @@ void ACookingGameMode::EntryStay()
 	CheckTime = 0.0f;
 
 	CookingGameState->Multicast_SetCharacterActive(false);
-}
-
-void ACookingGameMode::Stay(float DeltaTime)
-{
-	CheckTime += DeltaTime;
 
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
 
@@ -165,25 +155,27 @@ void ACookingGameMode::Stay(float DeltaTime)
 			{
 				CookingGameState->Multicast_StartGame();
 			}
-			ChangeState(ECookingGameModeState::ECS_Stage);
 		}
+	}
+}
+
+void ACookingGameMode::Stay(float DeltaTime)
+{
+	CheckTime += DeltaTime;
+
+	if (CheckTime >= 3.5f)
+	{
+		ChangeState(ECookingGameModeState::ECS_Stage);
 	}
 }
 
 void ACookingGameMode::EntryStage()
 {
 	InitChef();
+
 	StageManager->bProgress = true;
 
-	FTimerHandle TimerHandle;
-
-	GetWorld()->GetTimerManager().SetTimer(
-		TimerHandle,
-		this,
-		&ACookingGameMode::PlayBackgroundSound,
-		3.0f,   // 3초 뒤 실행
-		false   // 반복 여부(false면 1회 실행)
-	);
+	PlayBackgroundSound();
 
 	CookingGameState->Multicast_SetCharacterActive(true);
 
@@ -205,21 +197,6 @@ void ACookingGameMode::Stage(float DeltaTime)
 		bShowTimesUpUI = true;
 		ChangeState(ECookingGameModeState::ECS_TimeUp);
 	}
-
-	//APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
-
-	//if (nullptr != PlayerController)
-	//{
-	//	ACookingHUD* CookingHUD = Cast<ACookingHUD>(PlayerController->GetHUD());
-
-	//	if (nullptr != CookingHUD && nullptr != CookingHUD->CookWidget)
-	//	{
-	//		if (true == CookingHUD->CookWidget->IsShowScoreWidget())
-	//		{
-	//			ChangeState(ECookingGameModeState::ECS_Score);
-	//		}
-	//	}
-	//}
 }
 
 void ACookingGameMode::TimeUp(float DeltaTime)
@@ -301,7 +278,7 @@ void ACookingGameMode::PrintDebugMessage()
 
 void ACookingGameMode::PlayBackgroundSound()
 {
-	//CookingGameState->Multicast_PlayGameMapSound();
+	CookingGameState->Multicast_PlayGameMapSound();
 }
 
 void ACookingGameMode::StartStage()
