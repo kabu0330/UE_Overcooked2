@@ -31,9 +31,14 @@ public:
     void StartTimer();
 
     bool GetIsReady();
+    void SetIsReady(bool IsReady);
 
     bool IsTimesUp();
     bool IsShowScoreWidget();
+
+    void SetHoldProgress(int Progress);
+
+    void ShowHoldCanvas();
 
     // UI 바인딩 (총 5개의 주문 슬롯)
     UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")

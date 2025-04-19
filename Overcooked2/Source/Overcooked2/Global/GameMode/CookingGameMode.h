@@ -50,12 +50,6 @@ protected:
 	 */
 	virtual void Tick(float DeltaTime) override;
 
-	/**
-	 * 플레이어가 로그인(게임에 접속)했을 때 호출되는 함수
-	 * @param NewPlayerController 새롭게 접속한 플레이어 컨트롤러
-	 */
-	virtual void PostLogin(APlayerController* NewPlayerController) override;
-
 public:
 	void AddPlate(APlate* Plate);
 	APlate* GetPlate();
@@ -67,6 +61,8 @@ public:
 	void EntryStage();
 	void Stage(float DeltaTime);
 	void EntryScore();
+	void TimeUp(float DeltaTime);
+	void EntryTimeUp();
 	void Score(float DeltaTime);
 	void ChangeState(ECookingGameModeState State);
 
@@ -78,6 +74,7 @@ public:
 
 	void PlayBackgroundSound();
 
+	void StartStage();
 public:
 	/** 현재 게임에 접속한 플레이어 컨트롤러 목록 */
 	TArray<APlayerController*> PlayerControllers;
@@ -119,6 +116,7 @@ private:
 
 	/** 상태 변경 체크 시간 */
 	float CheckTime = 0.0f;
+	bool bShowTimesUpUI = false;
 
 	TArray<APlayerController*> PlayerControllerArray;
 

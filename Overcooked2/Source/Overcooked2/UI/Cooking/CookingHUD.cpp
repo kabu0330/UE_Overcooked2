@@ -8,7 +8,10 @@
 void ACookingHUD::BeginPlay()
 {
 	Super::BeginPlay();
+}
 
+void ACookingHUD::InitCookWidget()
+{
 	CookWidget = Cast<UCookingWidget>(CreateWidget(GetWorld(), CookWidgetObject));
 
 	if (CookWidget == nullptr)

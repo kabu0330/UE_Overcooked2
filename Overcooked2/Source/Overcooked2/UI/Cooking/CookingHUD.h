@@ -20,6 +20,9 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
+	void InitCookWidget();
+
+public:
 	UPROPERTY(EditAnywhere, Category = "UI|Cooking")
 	UCookingWidget* CookWidget = nullptr;
 	

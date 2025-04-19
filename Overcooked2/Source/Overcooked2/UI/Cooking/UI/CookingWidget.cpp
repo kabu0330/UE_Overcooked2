@@ -109,10 +109,27 @@ void UCookingWidget::StartTimer()
 }
 
 
+void UCookingWidget::SetHoldProgress(int Progress)
+{
+    CookingReadyWidget->SetHoldProgress(Progress);
+}
+
 bool UCookingWidget::GetIsReady()
 {
-    return CookingReadyWidget->bIsReady;
+    return CookingReadyWidget->GetReady();
 }
+
+void UCookingWidget::SetIsReady(bool IsReady)
+{
+    return CookingReadyWidget->SetReady(IsReady);
+}
+
+
+void UCookingWidget::ShowHoldCanvas()
+{
+    CookingReadyWidget->HoldCanvas->SetVisibility(ESlateVisibility::Visible);
+}
+
 
 bool UCookingWidget::IsTimesUp()
 {
@@ -133,7 +150,7 @@ void UCookingWidget::StartGame()
 
     ShowReadyImageAnim();
 
-    CookingReadyWidget->bIsReady = false;
+    CookingReadyWidget->SetReady(false);
 }
 
 void UCookingWidget::ShowReadyImageAnim()

@@ -91,7 +91,13 @@ public:
 	void Multicast_ShowTimesUpUI();
 
 	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_SetCharacterActive(bool bActive);
+
+	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_ShowScorePanemUI();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Muticast_EndGame();
 
 	virtual void OnRep_MatchState() override;
 
