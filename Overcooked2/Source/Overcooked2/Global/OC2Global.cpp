@@ -156,34 +156,6 @@ void UOC2Global::CheckPlateToRecipe(UWorld* World, APlate* Plate)
 
 	static FPlateInitData EmptyArray;
 	TArray<FRecipeDataRow*> FindRecipes;
-
-	//TArray<FName> RowNames = RecipeDataTable->GetRowNames();
-
-	//for (const FName& RowName : RowNames)
-	//{
-	//	// 현재 행을 가져오기
-	//	FRecipeDataRow* RecipeData = RecipeDataTable->FindRow<FRecipeDataRow>(RowName, nullptr);
-
-	//	if (RecipeData->RequireIngredients.Num() == Recipes.Num()
-	//		&& true == FindRecipe(RecipeData, Recipes))
-	//	{
-	//		FPlateInitData PlateInitData;
-	//		PlateInitData.StaticMesh = RecipeData->FoodMesh;
-	//		PlateInitData.OffsetLocation = RecipeData->OffsetLocation;
-	//		PlateInitData.OffsetRotation = RecipeData->OffsetRotation;
-	//		PlateInitData.OffsetScale = RecipeData->OffsetScale;
-
-	//		for (int j = 0; j < RecipeData->RequireIngredients.Num(); j++)
-	//		{
-	//			PlateInitData.IngredientTextures.Push(RecipeData->RequireIngredients[j].IngredientTexture);
-	//		}
-
-	//		return PlateInitData;
-	//	}
-	//}
-
-	//return EmptyArray;
-
 }
 
 int UOC2Global::GetOrderScore(UWorld* World)

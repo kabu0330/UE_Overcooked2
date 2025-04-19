@@ -43,8 +43,6 @@ void ACookingGameState::BeginPlay()
 	OrderNumberArray.Add(1);
 	OrderNumberArray.Add(0);
 
-	ChangeState(ECookingStageState::ESS_WAITING_TO_START);
-
 	for (TActorIterator<ADirectionalLight> It(GetWorld()); It; ++It)
 	{
 		DirectionalLight = *It;
@@ -99,19 +97,6 @@ void ACookingGameState::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	switch (CurStatgeState)
-	{
-	case ECookingStageState::ESS_WAITING_TO_START:
-		WaitingToStart(DeltaTime);
-		break;
-	case ECookingStageState::ESS_IN_PROGRESS:
-		InProgress(DeltaTime);
-		break;
-	case ECookingStageState::ESS_WAITING_POST_MATCH:
-		WaitingPostMatch(DeltaTime);
-		break;
-	}
-
 }
 
 void ACookingGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -123,48 +108,6 @@ void ACookingGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 	DOREPLIFETIME(ACookingGameState, FeverScore);
 	DOREPLIFETIME(ACookingGameState, FailScore);
 	DOREPLIFETIME(ACookingGameState, TotalScore);
-}
-
-void ACookingGameState::ChangeState(ECookingStageState ChangeState)
-{
-	if (true == HasAuthority())
-	{
-		CurStatgeState = ChangeState;
-		switch (CurStatgeState)
-		{
-		case ECookingStageState::ESS_WAITING_TO_START:
-			EntryWaitingToStart();
-			break;
-		case ECookingStageState::ESS_IN_PROGRESS:
-			EntryInProgress();
-			break;
-		case ECookingStageState::ESS_WAITING_POST_MATCH:
-			EntryWaitingPostMatch();
-			break;
-		}
-	}
-}
-
-void ACookingGameState::EntryWaitingToStart()
-{
-	SetMatchState(MatchState::WaitingToStart);
-}
-
-void ACookingGameState::WaitingToStart(float DeltaTime)
-{
-}
-
-void ACookingGameState::EntryInProgress()
-{
-}
-
-void ACookingGameState::InProgress(float DeltaTime)
-{
-	
-}
-
-void ACookingGameState::EntryWaitingPostMatch()
-{
 }
 
 void ACookingGameState::AddPlate(APlate* Plate)
@@ -250,10 +193,15 @@ int ACookingGameState::GetPlateArrayNum()
 	return -1;
 }
 
-void ACookingGameState::WaitingPostMatch(float DeltaTime)
+void ACookingGameState::OnPlayerCookingWidgetReady()
 {
-}
+	ReadyPlayer.Add(0);
 
+	if (ReadyPlayer.Num() == UOC2Global::GetOC2GameInstance(GetWorld())->GetUserCount())
+	{
+		//TODO: 게임모드 상태 변경
+	}
+}
 
 void ACookingGameState::Multicast_CompleteOrder_Implementation(int OrderIndex, int InScore)
 {
@@ -432,7 +380,6 @@ void ACookingGameState::Server_SubmitPlate_Implementation(ACooking* Cooking)
 		}
 
 		Plate->Multicast_SubmitPlate();
-		//Plate->Destroy();
 	}
 }
 
@@ -558,11 +505,20 @@ void ACookingGameState::Muticast_EndGame_Implementation()
 	PlayerController->SetShowMouseCursor(false);
 }
 
+void ACookingGameState::Multicast_SetCharacterHead_Implementation()
+{
+	UOC2GameInstance* OC2GameInstance = UOC2Global::GetOC2GameInstance(GetWorld());
+
+	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+	AOC2Character* PlayerCharacter = Cast<AOC2Character>(PlayerController->GetPawn());
+
+	PlayerCharacter->SetCharacterName(OC2GameInstance->GetChefHeadName());
+
+}
+
 void ACookingGameState::OnRep_MatchState()
 {
 	Super::OnRep_MatchState();
-
-
 }
 
 int ACookingGameState::FindOrderIndex(FOrder& Order)

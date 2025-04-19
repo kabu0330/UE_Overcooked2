@@ -7,13 +7,6 @@
 #include "Global/GameMode/OC2GameMode.h"
 #include "LobbyGameMode.generated.h"
 
-UENUM(BlueprintType)
-enum class ELobbyGameModeState : uint8
-{
-	ELS_None	UMETA(DisplayName = "None"),
-	ELS_Stay    UMETA(DisplayName = "Stay"),
-};
-
 /**
  * 
  */
@@ -32,16 +25,12 @@ protected:
 	virtual void PostLogin(APlayerController* NewPlayerController) override;
 	
 public:
-	void EntryStay();
-	void Stay(float DeltaTime);
-
 	int GetUserCount()
 	{
 		return CurUserCount;
 	}
 
 private:
-	ELobbyGameModeState CurState = ELobbyGameModeState::ELS_None;
 	TArray<APlayerController*> PlayerControllers;
 	TArray<FString> ChefHeadNames;
 	int CurIdx = 0;

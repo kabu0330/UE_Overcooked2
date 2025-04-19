@@ -6,6 +6,8 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 
+#include "Global/State/GameState/CookingGameState.h"
+
 
 ACookingPlayerController::ACookingPlayerController()
 {
@@ -45,4 +47,14 @@ void ACookingPlayerController::OnPossess(APawn* InPawn)
 	Super::OnPossess(InPawn);
 
 
+}
+
+void ACookingPlayerController::Server_NotifyCookingWidgetReady_Implementation()
+{
+	ACookingGameState* CookingGameState = GetWorld()->GetGameState<ACookingGameState>();
+
+	if (nullptr != CookingGameState)
+	{
+		CookingGameState->OnPlayerCookingWidgetReady();
+	}
 }

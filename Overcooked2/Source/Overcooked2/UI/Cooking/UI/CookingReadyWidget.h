@@ -45,6 +45,8 @@ protected:
 	
 private:
 	void PlayZoomOutAnimation();
+	void NotifyServerWidgetReady();
+
 	class UMaterialInstanceDynamic* ProgressMaterial = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OC2UI", meta = (AllowPrivateAccess = "true"))
