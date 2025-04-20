@@ -15,6 +15,13 @@
 
 #include "Global/Controller/CookingPlayerController.h"
 
+void UCookingReadyWidget::NativeOnInitialized()
+{
+    Super::NativeOnInitialized();
+
+    NotifyServerWidgetReady();
+}
+
 void UCookingReadyWidget::NativeConstruct()
 {
     Super::NativeConstruct();

@@ -46,15 +46,15 @@ void ACookingGameMode::BeginPlay()
 
 	CurIdx = 0;
 
-	FTimerHandle TimerHandle;
+	//FTimerHandle TimerHandle;
 
-	GetWorld()->GetTimerManager().SetTimer(
-		TimerHandle,
-		this,
-		&ACookingGameMode::StartStage,
-		3.0f,   // 3초 뒤 실행
-		false   // 반복 여부(false면 1회 실행)
-	);
+	//GetWorld()->GetTimerManager().SetTimer(
+	//	TimerHandle,
+	//	this,
+	//	&ACookingGameMode::StartStage,
+	//	3.0f,   // 3초 뒤 실행
+	//	false   // 반복 여부(false면 1회 실행)
+	//);
 }
 
 void ACookingGameMode::Tick(float DeltaTime)

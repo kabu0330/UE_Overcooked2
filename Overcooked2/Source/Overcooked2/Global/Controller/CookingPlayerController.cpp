@@ -51,10 +51,13 @@ void ACookingPlayerController::OnPossess(APawn* InPawn)
 
 void ACookingPlayerController::Server_NotifyCookingWidgetReady_Implementation()
 {
-	ACookingGameState* CookingGameState = GetWorld()->GetGameState<ACookingGameState>();
-
-	if (nullptr != CookingGameState)
+	if (true == HasAuthority())
 	{
-		CookingGameState->OnPlayerCookingWidgetReady();
+		ACookingGameState* CookingGameState = GetWorld()->GetGameState<ACookingGameState>();
+
+		if (nullptr != CookingGameState)
+		{
+			CookingGameState->OnPlayerCookingWidgetReady();
+		}
 	}
 }

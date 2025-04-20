@@ -39,7 +39,8 @@ public:
 	void SetHoldProgress(int Progress);
 
 protected:
-	void NativeConstruct();
+	virtual void NativeOnInitialized() override;
+	virtual void NativeConstruct() override;
 	void NativeTick(const FGeometry& MyGeometry, float DeltaTime);
 	
 	

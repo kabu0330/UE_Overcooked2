@@ -195,11 +195,19 @@ int ACookingGameState::GetPlateArrayNum()
 
 void ACookingGameState::OnPlayerCookingWidgetReady()
 {
-	ReadyPlayer.Add(0);
-
-	if (ReadyPlayer.Num() == UOC2Global::GetOC2GameInstance(GetWorld())->GetUserCount())
+	if (true == HasAuthority())
 	{
-		//TODO: 게임모드 상태 변경
+		ReadyPlayer.Add(0);
+
+		if (ReadyPlayer.Num() == UOC2Global::GetOC2GameInstance(GetWorld())->GetUserCount())
+		{
+			//TODO: 게임모드 상태 변경
+			ACookingGameMode* CookingGameMode = Cast<ACookingGameMode>(GetWorld()->GetAuthGameMode());
+			if (nullptr != CookingGameMode)
+			{
+				CookingGameMode->ChangeState(ECookingGameModeState::ECS_Stay);
+			}
+		}
 	}
 }
 
