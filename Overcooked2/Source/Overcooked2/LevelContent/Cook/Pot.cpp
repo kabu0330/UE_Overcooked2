@@ -215,7 +215,7 @@ void APot::InitSound()
 		}
 	}
 	{
-		FString NewSound = TEXT("ImCooked");
+		FString NewSound = TEXT("CookingWarning");
 		USoundBase* SoundBase = UOC2GlobalData::GetCookingBaseSound(GetWorld(), *NewSound);
 		if (nullptr != SoundBase && nullptr != BeepAudioComponent)
 		{

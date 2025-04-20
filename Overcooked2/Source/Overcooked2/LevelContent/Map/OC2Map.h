@@ -25,8 +25,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void StopSound();
 
-	UFUNCTION()
-	void ReplaySound(UAudioComponent* AudioComponent);
+	//UFUNCTION()
+	//void ReplaySound(class UAudioComponent* AudioComponent);
 
 protected:
 	virtual void BeginPlay() override;
@@ -37,9 +37,9 @@ private:
 	UStaticMeshComponent* StaticMeshComponent = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	UAudioComponent* AudioComponent = nullptr;
+	class UAudioComponent* AudioComponent = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	UAudioComponent* AmbienceAudioComponent = nullptr;
+	class UAudioComponent* AmbienceAudioComponent = nullptr;
 
 };
