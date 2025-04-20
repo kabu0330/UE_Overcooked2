@@ -2,6 +2,8 @@
 
 
 #include "UI/Cooking/UI/CookingReadyWidget.h"
+#include "Overcooked2.h"
+
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 #include "Components/CanvasPanel.h"
@@ -10,6 +12,15 @@
 #include "Sound/SoundBase.h" 
 #include "Global/Data/OC2GlobalData.h"
 #include "Components/AudioComponent.h"
+
+#include "Global/Controller/CookingPlayerController.h"
+
+void UCookingReadyWidget::NativeOnInitialized()
+{
+    Super::NativeOnInitialized();
+
+    NotifyServerWidgetReady();
+}
 
 void UCookingReadyWidget::NativeConstruct()
 {
@@ -70,7 +81,7 @@ void UCookingReadyWidget::NativeTick(const FGeometry& MyGeometry, float DeltaTim
     //    ProgressTime = 0.0f;
     //}
 
-   
+    UE_LOG(OVERCOOKED_LOG, Log, TEXT("CookingReadWidget is Ready"));
 }
 
 void UCookingReadyWidget::SetHoldProgress(int Progress)
@@ -122,4 +133,13 @@ void UCookingReadyWidget::PlayZoomOutAnimation()
 
         }, TimeStep, true);
 
+}
+
+void UCookingReadyWidget::NotifyServerWidgetReady()
+{
+    APlayerController* PlayerController = GetOwningPlayer();
+    if (ACookingPlayerController* CookingPlayerController = Cast<ACookingPlayerController>(PlayerController))
+    {
+        CookingPlayerController->Server_NotifyCookingWidgetReady(); // 서버에게 전달
+    }
 }

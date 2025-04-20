@@ -28,6 +28,10 @@ protected:
 	virtual void OnPossess(APawn* InPawn) override;
 
 public:
+	UFUNCTION(Server, Reliable)
+	void Server_NotifyCookingWidgetReady();
+
+public:
 	FOnChefInitialized OnChefInitialized;
 
 private:
