@@ -35,18 +35,7 @@ protected:
 
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
-protected:
-	void WaitingToStart(float DeltaTime);
-	void InProgress(float DeltaTime);
-	void WaitingPostMatch(float DeltaTime);
-
-
 public:
-	void ChangeState(ECookingStageState ChangeState);
-	void EntryWaitingToStart();
-	void EntryInProgress();
-	void EntryWaitingPostMatch();
-
 	void AddPlate(APlate* Plate);
 	APlate* GetPlate(int Index);
 
@@ -55,6 +44,7 @@ public:
 	int GetFailScore();
 	int GetTotalScore();
 	int GetPlateArrayNum();
+	void OnPlayerCookingWidgetReady();
 
 public:
 	UFUNCTION(NetMulticast, Reliable)
@@ -94,6 +84,9 @@ public:
 	void Multicast_SetCharacterActive(bool bActive);
 
 	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_SetCharacterHead();
+
+	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_ShowScorePanemUI();
 
 	UFUNCTION(NetMulticast, Reliable)
@@ -115,6 +108,7 @@ private:
 	TArray<int> OrderNumberArray;
 	TArray<FOrder> OrderArray;
 	TArray<APlate*> PlateArray;
+	TArray<int> ReadyPlayer;
 	int CurOrderIndex = 0;
 	int FeverCount = 0;
 	ADirectionalLight* DirectionalLight = nullptr;

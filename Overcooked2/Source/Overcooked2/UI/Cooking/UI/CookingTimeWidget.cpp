@@ -2,6 +2,8 @@
 
 
 #include "UI/Cooking/UI/CookingTimeWidget.h"
+#include "Overcooked2.h"
+
 #include "Components/TextBlock.h"
 #include "Components/ProgressBar.h"
 #include "Components/Image.h"
@@ -13,6 +15,9 @@ void UCookingTimeWidget::NativeConstruct()
 	CurTime = TotalTime;
 
 	OriginalFontSize = Time->GetFont().Size;
+
+	UE_LOG(OVERCOOKED_LOG, Log, TEXT("CookingTimeWidget is Ready"));
+
 
 }
 
