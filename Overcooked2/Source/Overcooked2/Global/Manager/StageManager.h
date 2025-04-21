@@ -38,8 +38,13 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Global|CookingStage")
 	int CompleteOrder(FOrder Order, int Score);
 
-private:
+	UFUNCTION(BlueprintCallable, Category = "Global|CookingStage")
+	int CompleteOrderByIndex(int OrderIndex, int Score);
+
+	UFUNCTION(BlueprintCallable, Category = "Global|CookingStage")
 	int FindOrderIndex(FOrder& Order);
+
+private:
 
 public:
 	ACookingGameState* CookingGameState = nullptr;
