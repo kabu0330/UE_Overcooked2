@@ -324,7 +324,7 @@ void UCookingWidget::CheckFeverTime(int TipCount)
     CookingScoreWidget->SetTipCount(TipCount);
 }
 
-void UCookingWidget::CreateNewOrder(FOrder& Order)
+void UCookingWidget::CreateNewOrder(FOrder Order)
 {
 
     if (CurOrderCount >= Orders.Num()) return;

@@ -57,7 +57,11 @@ void AStageManager::Tick(float DeltaTime)
 		{
 			if (OrderArray.Num() < UOC2Const::MaxOrderCount)
 			{
-				FOrder Order = UOC2GlobalData::GetOrderByStageAndIndex(GetWorld(), UOC2Global::GetOC2GameInstance(GetWorld())->GetCurStage(), OrderNumberArray[CurOrderIndex++]);
+				FOrder Order = UOC2GlobalData::GetOrderByStageAndIndex(
+					GetWorld(), 
+					UOC2Global::GetOC2GameInstance(GetWorld())->GetCurStage(), 
+					OrderNumberArray[CurOrderIndex++]);
+
 				CookingGameState->Multicast_CreateNewOrder(Order);
 				OrderArray.Add(Order);
 
@@ -68,6 +72,8 @@ void AStageManager::Tick(float DeltaTime)
 			}
 
 			CurTime = 0.0f;
+
+			UE_LOG(OVERCOOKED_LOG, Log, TEXT("CurOrderIndex : %d"), CurOrderIndex);
 		}
 
 	}
@@ -84,6 +90,7 @@ int AStageManager::CompleteOrder(FOrder Order, int InScore)
 	if (OrderIndex != -1)
 	{
 		CookingGameState->Multicast_CompleteOrder(OrderIndex, InScore);
+		OrderArray.RemoveAt(OrderIndex);
 		return OrderIndex;
 	}
 	else
@@ -93,16 +100,56 @@ int AStageManager::CompleteOrder(FOrder Order, int InScore)
 	}
 }
 
+int AStageManager::CompleteOrderByIndex(int OrderIndex, int InScore)
+{
+	CookingGameState->Multicast_CompleteOrder(OrderIndex, InScore);
+	OrderArray.RemoveAt(OrderIndex);
+	return OrderIndex;
+}
+
 int AStageManager::FindOrderIndex(FOrder& Order)
 {
 	for (int i = 0; i < OrderArray.Num(); i++)
 	{
-		if (Order.OrderTexutre == OrderArray[i].OrderTexutre)
+		const TArray<FCookableIngredient>& A = OrderArray[i].RequireIngredients;
+		const TArray<FCookableIngredient>& B = Order.RequireIngredients;
+
+		// 개수가 다르면 비교할 필요 없음
+		if (A.Num() != B.Num())
 		{
-			OrderArray.RemoveAt(i);
-			return i;
+			continue;
+		}
+
+		TArray<FCookableIngredient> TempB = B; // 매칭된 재료 제거용
+		bool bAllMatch = true;
+
+		for (const FCookableIngredient& IngredientA : A)
+		{
+			bool bFound = false;
+
+			for (int j = 0; j < TempB.Num(); j++)
+			{
+				if (TempB[j].IngredientType == IngredientA.IngredientType &&
+					TempB[j].IngredientState == IngredientA.IngredientState)
+				{
+					TempB.RemoveAt(j);
+					bFound = true;
+					break;
+				}
+			}
+
+			if (!bFound)
+			{
+				bAllMatch = false;
+				break;
+			}
+		}
+
+		if (bAllMatch)
+		{
+			return i; // 완전 매칭!
 		}
 	}
 
-	return -1;
+	return -1; // 매칭된 오더 없음
 }

@@ -17,6 +17,9 @@
 #include "NiagaraComponent.h"
 #include "NiagaraSystem.h"
 #include "NiagaraFunctionLibrary.h"
+#include "Kismet/GameplayStatics.h"
+#include "CoreMinimal.h"
+#include "Delegates/DelegateCombinations.h"
 
 APot::APot()
 {
@@ -31,6 +34,7 @@ APot::APot()
 	SoupSkeletalMeshComponent->SetupAttachment(StaticMeshComponent);
 	SoupSkeletalMeshComponent->SetIsReplicated(true);
 
+
 	GaugeWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
 	GaugeWidgetComponent->SetupAttachment(RootComponent);
 
@@ -40,12 +44,26 @@ APot::APot()
 	IconWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("IconWidgetComponent"));
 	IconWidgetComponent->SetupAttachment(RootComponent);
 
+
 	NiagaraComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NiagaraComponent"));
 	NiagaraComponent->SetupAttachment(RootComponent);
 	NiagaraComponent->SetAutoActivate(false); // 자동 이펙트 시작 방지
 
+
 	TimeEventComponent = CreateDefaultSubobject<UTimeEventComponent>(TEXT("TimeEventComponent"));
 
+
+	BoilAudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("BoilAudioComponent"));
+	BoilAudioComponent->SetupAttachment(RootComponent);
+	BoilAudioComponent->bAutoActivate = false; // 자동재생 끄기
+
+	ImCookedEffectAudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("ImCookedEffectAudioComponent"));
+	ImCookedEffectAudioComponent->SetupAttachment(RootComponent);
+	ImCookedEffectAudioComponent->bAutoActivate = false; // 자동재생 끄기
+
+	BeepAudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("BeepAudioComponent"));
+	BeepAudioComponent->SetupAttachment(RootComponent);
+	BeepAudioComponent->bAutoActivate = false; // 자동재생 끄기
 }
 
 void APot::BeginPlay()
@@ -64,6 +82,7 @@ void APot::BeginPlay()
 	InitIconWidget();
 
 	InitNiagara();
+	InitSound();
 }
 
 UMaterialInstanceDynamic* APot::LoadNoneMaterial()
@@ -169,6 +188,40 @@ void APot::InitNiagara()
 
 			NiagaraComponent->SetRelativeLocation(NiagaraDataRow.Location);
 			NiagaraComponent->SetRelativeRotation(NiagaraDataRow.Rotation);
+		}
+	}
+}
+
+void APot::InitSound()
+{
+	{
+		FString NewSound = TEXT("HotPotBubble");
+		USoundBase* SoundBase = UOC2GlobalData::GetCookingBaseSound(GetWorld(), *NewSound);
+		if (nullptr != SoundBase && nullptr != BoilAudioComponent)
+		{
+			BoilAudioComponent->SetSound(SoundBase); // 사운드 지정
+			BoilAudioComponent->bIsUISound = true; // 위치 무시하고 2D처럼 재생
+			BoilAudioComponent->SetVolumeMultiplier(UOC2Const::EffectVolume);
+		}
+	}
+	{
+		FString NewSound = TEXT("ImCooked");
+		USoundBase* SoundBase = UOC2GlobalData::GetCookingBaseSound(GetWorld(), *NewSound);
+		if (nullptr != SoundBase && nullptr != ImCookedEffectAudioComponent)
+		{
+			ImCookedEffectAudioComponent->SetSound(SoundBase); // 사운드 지정
+			ImCookedEffectAudioComponent->bIsUISound = true; // 위치 무시하고 2D처럼 재생
+			ImCookedEffectAudioComponent->SetVolumeMultiplier(UOC2Const::EffectVolume);
+		}
+	}
+	{
+		FString NewSound = TEXT("CookingWarning");
+		USoundBase* SoundBase = UOC2GlobalData::GetCookingBaseSound(GetWorld(), *NewSound);
+		if (nullptr != SoundBase && nullptr != BeepAudioComponent)
+		{
+			BeepAudioComponent->SetSound(SoundBase); // 사운드 지정
+			BeepAudioComponent->bIsUISound = true; // 위치 무시하고 2D처럼 재생
+			BeepAudioComponent->SetVolumeMultiplier(UOC2Const::EffectVolume);
 		}
 	}
 }
@@ -351,6 +404,7 @@ void APot::SetAction_Implementation()
 		bCanColorChange = true;
 		TargetColor = FLinearColor(0.6f, 0.6f, 0.6f, 1.0f);
 
+		PlaySound(BoilAudioComponent, true);
 
 		SetIcon(TEXT("RiceIcon"));
 		break;
@@ -377,6 +431,8 @@ void APot::SetAction_Implementation()
 			});
 
 		SetNiagaraAsset(TEXT("Steam"));
+
+		PlaySound(ImCookedEffectAudioComponent, false);
 		break;
 	}
 	case EPotState::COOKED_WARNING:
@@ -486,6 +542,7 @@ void APot::BlinkTexture(float DeltaTime)
 	{
 		StatusWidgetComponent->bHiddenInGame = true; // 다시 텍스처 끄고
 		BlinkTimeElapsed = 0.0f;
+		PlaySound(BeepAudioComponent, false);
 
 		TimeEventComponent->AddEndEvent(BlinkTime, [this]() 
 			{
@@ -579,6 +636,8 @@ void APot::ResetPot_Implementation()
 	SetIcon(TEXT("MissingIngredient"));
 	IconWidgetComponent->bHiddenInGame = false;
 
+	StopSound(BoilAudioComponent);
+
 	ChangeNoneMaterial();
 
 	SetNiagara(false);
@@ -665,5 +724,39 @@ void APot::SetNiagaraAsset(const FString& Name)
 			NiagaraComponent->SetRelativeRotation(NiagaraDataRow.Rotation);
 			SetNiagara(true);
 		}
+	}
+}
+
+void APot::PlaySound(UAudioComponent* AudioComponent, bool IsLoop)
+{
+	if (nullptr != AudioComponent)
+	{
+		AudioComponent->Play();
+
+		if (true == IsLoop)
+		{
+			// 사운드 끝나는 시점에 호출될 콜백 바인딩
+			AudioComponent->OnAudioFinishedNative.AddUObject(
+				this,				// 콜백 대상
+				&APot::ReplaySound	// 콜백 함수
+			);
+		}
+	}
+}
+
+void APot::StopSound(UAudioComponent* AudioComponent)
+{
+	if (nullptr != AudioComponent)
+	{
+		AudioComponent->OnAudioFinishedNative.Clear();
+		AudioComponent->Stop();
+	}
+}
+
+void APot::ReplaySound(UAudioComponent* AudioComponent)
+{
+	if (nullptr != AudioComponent)
+	{
+		PlaySound(AudioComponent, true);
 	}
 }

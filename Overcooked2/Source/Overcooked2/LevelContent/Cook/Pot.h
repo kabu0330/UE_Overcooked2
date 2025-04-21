@@ -7,6 +7,7 @@
 #include "Global/OC2Const.h"
 #include "Global/OC2Struct.h"
 #include "Global/OC2Enum.h"
+#include "Components/AudioComponent.h"
 #include "Pot.generated.h"
 
 /**
@@ -114,6 +115,15 @@ protected:
 	void SetNiagara(bool IsActivate);
 	void SetNiagaraAsset(const FString& Name);
 
+	void InitSound();
+
+	UFUNCTION()
+	void PlaySound(class UAudioComponent* AudioComponent, bool IsLoop);
+	void StopSound(class UAudioComponent* AudioComponent);
+
+	UFUNCTION()
+	void ReplaySound(class UAudioComponent* AudioComponent);
+
 private:
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowprivateAccess = "true"))
 	USkeletalMeshComponent* SoupSkeletalMeshComponent = nullptr; // 쌀이 들어오면 렌더링될 메시
@@ -219,5 +229,14 @@ private:
 	class UTimeEventComponent* TimeEventComponent = nullptr;
 
 	FVector InitPos = FVector(249, 1452, 60);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	class UAudioComponent* BoilAudioComponent = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	class UAudioComponent* ImCookedEffectAudioComponent = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	class UAudioComponent* BeepAudioComponent = nullptr;
 
 };

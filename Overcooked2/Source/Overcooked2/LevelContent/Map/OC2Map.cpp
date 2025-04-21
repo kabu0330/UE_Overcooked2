@@ -52,6 +52,11 @@ void AOC2Map::StopSound()
 	}
 }
 
+//void AOC2Map::ReplaySound(UAudioComponent* AudioComponent)
+//{
+//	AudioComponent->Play();
+//}
+
 void AOC2Map::BeginPlay()
 {
 	Super::BeginPlay();
