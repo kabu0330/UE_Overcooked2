@@ -2,6 +2,8 @@
 
 
 #include "UI/Cooking/UI/CookingScoreWidget.h"
+#include "Overcooked2.h"
+
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 #include "Global/Data/OC2GlobalData.h"
@@ -52,6 +54,9 @@ void UCookingScoreWidget::NativeConstruct()
     AddScoreTimeline.SetTimelineFinishedFunc(FinishEvent1);
 
     AddText->SetVisibility(ESlateVisibility::Hidden);
+
+    UE_LOG(OVERCOOKED_LOG, Log, TEXT("CookingTimeWidget is Ready"));
+
 }
 
 

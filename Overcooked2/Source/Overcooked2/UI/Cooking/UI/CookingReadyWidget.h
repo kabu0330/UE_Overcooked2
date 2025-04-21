@@ -39,12 +39,15 @@ public:
 	void SetHoldProgress(int Progress);
 
 protected:
-	void NativeConstruct();
+	virtual void NativeOnInitialized() override;
+	virtual void NativeConstruct() override;
 	void NativeTick(const FGeometry& MyGeometry, float DeltaTime);
 	
 	
 private:
 	void PlayZoomOutAnimation();
+	void NotifyServerWidgetReady();
+
 	class UMaterialInstanceDynamic* ProgressMaterial = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OC2UI", meta = (AllowPrivateAccess = "true"))

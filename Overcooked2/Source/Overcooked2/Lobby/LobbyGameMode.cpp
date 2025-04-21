@@ -80,11 +80,3 @@ void ALobbyGameMode::PostLogin(APlayerController* NewPlayerController)
 			ChefHeadNames[UserIndex]);
 	}
 }
-
-void ALobbyGameMode::EntryStay()
-{
-}
-
-void ALobbyGameMode::Stay(float DeltaTime)
-{
-}

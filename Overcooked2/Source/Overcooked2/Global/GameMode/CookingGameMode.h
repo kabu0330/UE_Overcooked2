@@ -66,9 +66,6 @@ public:
 	void Score(float DeltaTime);
 	void ChangeState(ECookingGameModeState State);
 
-	/** 셰프(플레이어 캐릭터)를 초기화하는 함수 */
-	void InitChef();
-
 	/** 디버그 메시지를 출력하는 함수 (테스트 및 로그 확인 용도) */
 	void PrintDebugMessage();
 
@@ -105,11 +102,6 @@ private:
 	/** 현재 게임 모드의 상태 */
 	ECookingGameModeState CurState = ECookingGameModeState::ECS_None;
 
-	/** 셰프의 머리 모델 이름 목록 */
-	TArray<FString> ChefHeadNames;
-
-	/** 현재 게임에 참여한 캐릭터 목록 */
-	TArray<class AOC2Character*> Characters;
 
 	/** 현재 선택된 플레이어 인덱스 */
 	int CurIdx = 0;
@@ -117,8 +109,6 @@ private:
 	/** 상태 변경 체크 시간 */
 	float CheckTime = 0.0f;
 	bool bShowTimesUpUI = false;
-
-	TArray<APlayerController*> PlayerControllerArray;
 
 	TArray<APlate*> PlateArray;
 

@@ -27,11 +27,6 @@
 ACookingGameMode::ACookingGameMode()
 {
 	OrderManager = CreateDefaultSubobject<UOrderManageComponent>(TEXT("OrderManager"));
-
-	ChefHeadNames.Add(UOC2Const::ChefEagleHeadName);
-	ChefHeadNames.Add(UOC2Const::ChefMouseHeadName);
-	ChefHeadNames.Add(UOC2Const::ChefPandaHeadName);
-	ChefHeadNames.Add(UOC2Const::ChefPigHeadName);
 }
 
 void ACookingGameMode::BeginPlay()
@@ -51,15 +46,15 @@ void ACookingGameMode::BeginPlay()
 
 	CurIdx = 0;
 
-	FTimerHandle TimerHandle;
+	//FTimerHandle TimerHandle;
 
-	GetWorld()->GetTimerManager().SetTimer(
-		TimerHandle,
-		this,
-		&ACookingGameMode::StartStage,
-		3.0f,   // 3초 뒤 실행
-		false   // 반복 여부(false면 1회 실행)
-	);
+	//GetWorld()->GetTimerManager().SetTimer(
+	//	TimerHandle,
+	//	this,
+	//	&ACookingGameMode::StartStage,
+	//	3.0f,   // 3초 뒤 실행
+	//	false   // 반복 여부(false면 1회 실행)
+	//);
 }
 
 void ACookingGameMode::Tick(float DeltaTime)
@@ -106,42 +101,12 @@ APlate* ACookingGameMode::GetPlate()
 	}
 }
 
-void ACookingGameMode::InitChef()
-{
-	UWorld* World = GetWorld();
-
-	if (nullptr == World)
-	{
-		return;
-	}
-
-	for (FConstPlayerControllerIterator Iterator = World->GetPlayerControllerIterator(); Iterator; ++Iterator)
-	{
-		APlayerController* PlayerController = Iterator->Get();
-
-		if (nullptr != PlayerController)
-		{
-			ACharacter* DefaultCharacter = PlayerController->GetCharacter();
-
-			if (nullptr != DefaultCharacter)
-			{
-				AOC2Character* OC2Character = Cast<AOC2Character>(DefaultCharacter);
-
-				if (nullptr != OC2Character)
-				{
-					OC2Character->SetCharacterName(ChefHeadNames[CurIdx]);
-					CurIdx++;
-				}
-			}
-		}
-	}
-}
-
 void ACookingGameMode::EntryStay()
 {
 	CheckTime = 0.0f;
 
 	CookingGameState->Multicast_SetCharacterActive(false);
+	CookingGameState->Multicast_SetCharacterHead();
 
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
 
@@ -171,8 +136,6 @@ void ACookingGameMode::Stay(float DeltaTime)
 
 void ACookingGameMode::EntryStage()
 {
-	InitChef();
-
 	StageManager->bProgress = true;
 
 	PlayBackgroundSound();
