@@ -317,67 +317,51 @@ void ACookingGameState::Server_SubmitPlate_Implementation(ACooking* Cooking)
 			return;
 		}
 
-		UOC2GameInstance* GameInstance = UOC2Global::GetOC2GameInstance(GetWorld());
-
-		if (nullptr == GameInstance)
-		{
-			UE_LOG(OVERCOOKED_LOG, Error, TEXT("GameInstance is nullptr"));
-			return;
-		}
-
-		TArray<FRecipe> Recipes;
+		FOrder CheckOrder;
 
 		for (int i = 0; i < Plate->GetIngredients().Num(); i++)
 		{
-			FRecipe Recipe;
+			FCookableIngredient CookableIngredient;
 
-			Recipe.IngredientState = Plate->GetIngredient(i).IngredientState;
-			Recipe.IngredientType = Plate->GetIngredient(i).IngredientType;
+			CookableIngredient.IngredientState = Plate->GetIngredient(i).IngredientState;
+			CookableIngredient.IngredientType = Plate->GetIngredient(i).IngredientType;
 
-			Recipes.Add(Recipe);
+			CheckOrder.RequireIngredients.Add(CookableIngredient);
 		}
 
-		if (true == GameInstance->CompareOrderWithRecipe(Recipes, EOC2Stage::EOS_Sushi_1_3))
+		int FindIndex = AStageManager::Get(GetWorld())->FindOrderIndex(CheckOrder);
+
+		if(-1 != FindIndex)
 		{
-			ACookingGameMode* GameMode = Cast<ACookingGameMode>(UGameplayStatics::GetGameMode(this));
+			int InScore = CheckOrder.RequireIngredients.Num() * UOC2Const::ScoreValue;
 
-			if (nullptr != GameMode)
+			OrderScore += InScore;
+
+			if (FeverCount == 0)
 			{
-				FOrder Order;
-
-				Order = UOC2GlobalData::GetOrderByIngredients(GetWorld(), Plate);
-
-				int InScore = Order.RequireIngredients.Num() * UOC2Const::ScoreValue;
-
-				OrderScore += InScore;
-
-				if (FeverCount == 0)
-				{
-					InScore += UOC2Const::TipValue;
-					FeverScore += UOC2Const::TipValue;
-
-				}
-				else
-				{
-					InScore += UOC2Const::TipValue * FeverCount;
-					FeverScore += UOC2Const::TipValue * FeverCount;
-				}
-
-				TotalScore += InScore;
-
-				int OrderIndex = GameMode->StageManager->CompleteOrder(Order, InScore);
-
-				if (0 == OrderIndex)
-				{
-					FeverCount++;
-				}
-				else
-				{
-					FeverCount = 0;
-				}
-
-				Multicast_SetFeverUI(FeverCount);
+				InScore += UOC2Const::TipValue;
+				FeverScore += UOC2Const::TipValue;
 			}
+			else
+			{
+				InScore += UOC2Const::TipValue * FeverCount;
+				FeverScore += UOC2Const::TipValue * FeverCount;
+			}
+
+			TotalScore += InScore;
+
+			AStageManager::Get(GetWorld())->CompleteOrderByIndex(FindIndex, InScore);
+
+			if (0 == FindIndex)
+			{
+				FeverCount++;
+			}
+			else
+			{
+				FeverCount = 0;
+			}
+
+			Multicast_SetFeverUI(FeverCount);
 		}
 		else
 		{

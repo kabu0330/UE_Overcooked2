@@ -17,7 +17,7 @@ public:
     void OrderComplete(int Index, int Score = 10);
 
     // 货肺款 林巩 积己
-    void CreateNewOrder(struct FOrder& Order);
+    void CreateNewOrder(struct FOrder Order);
 
     void WrongOrder();
     //void SubmitWrongOrder();
