@@ -100,6 +100,14 @@ public:
 
 	void InitNiagara();
 
+	UFUNCTION(/*NetMulticast, Reliable*/)
+	void OnRep_SetNiagaraActive(/*bool Active*/);
+	//void SetNiagaraActive_Implementation(/*bool Active*/);
+
+	UFUNCTION(/*Server, Reliable*/)
+	void SetNiagaraActive(/*bool Active*/);
+
+
 protected:
 
 private:
@@ -116,6 +124,9 @@ private:
 
 	UPROPERTY(Replicated)
 	bool bChoppingDone = false;
+
+	UPROPERTY(ReplicatedUsing = OnRep_SetNiagaraActive)
+	bool bNiagaraActive = false;
 
 	UPROPERTY(Replicated)
 	float Ratio = 0.0f;

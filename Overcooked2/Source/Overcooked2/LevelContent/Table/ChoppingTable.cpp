@@ -50,9 +50,6 @@ void AChoppingTable::BeginPlay()
 	AudioComponent->SetSound(SoundEffect);
 
 	InitNiagara();
-
-	NiagaraComponent0->SetActive(true);
-	NiagaraComponent1->SetActive(true);
 }
 
 void AChoppingTable::Tick(float DeltaTime)
@@ -133,6 +130,19 @@ void AChoppingTable::HideKnife_Implementation()
 	}
 }
 
+void AChoppingTable::SetNiagaraActive/*_Implementation*/(/*bool Active*/)
+{
+	NiagaraComponent0->SetActive(bNiagaraActive);
+	NiagaraComponent1->SetActive(bNiagaraActive);
+}
+
+void AChoppingTable::OnRep_SetNiagaraActive/*_Implementation*/(/*bool Active*/)
+{
+	NiagaraComponent0->SetActive(bNiagaraActive);
+	NiagaraComponent1->SetActive(bNiagaraActive);
+}
+
+
 void AChoppingTable::ChopIngredient(AActor* ChefActor)
 {
 	ChefPtr = Cast<AOC2Character>(ChefActor);
@@ -151,6 +161,9 @@ void AChoppingTable::ChopIngredient(AActor* ChefActor)
 				{
 					Timer = 0.0f;
 				}
+
+				bNiagaraActive = true;
+				SetNiagaraActive();
 
 				bTimerActivated = true;
 				bChopping = true;
@@ -175,6 +188,8 @@ void AChoppingTable::ChoppingIsDone_Implementation()
 
 	bTimerActivated = false;
 	bChopping = false;
+	bNiagaraActive = false;
+	SetNiagaraActive();
 
 	AIngredient* PlacedIngredient = Cast<AIngredient>(CookingPtr);
 	PlacedIngredient->ChangeState(EIngredientState::EIS_CHOPPED);
@@ -204,6 +219,9 @@ void AChoppingTable::CheckChefIsChopping()
 			bChopping = false;
 			ChefPtr = nullptr;
 			StopSoundEffect();
+			
+			bNiagaraActive = false;
+			SetNiagaraActive();
 		}
 	}
 }
@@ -281,6 +299,7 @@ void AChoppingTable::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AChoppingTable, bCheckHidden);
+	DOREPLIFETIME(AChoppingTable, bNiagaraActive);
 	DOREPLIFETIME(AChoppingTable, ProgressBarComponent);
 	DOREPLIFETIME(AChoppingTable, KnifeMeshComponent);
 	DOREPLIFETIME(AChoppingTable, Ratio);
