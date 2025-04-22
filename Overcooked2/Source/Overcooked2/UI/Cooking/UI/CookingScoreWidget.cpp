@@ -116,6 +116,13 @@ void UCookingScoreWidget::SetTipCount(int TipCount)
         Tip = TEXT("TIP X 4");
 
     }
+    else
+    {
+        TextureName = "coinbar0";
+
+        TipText->SetVisibility(ESlateVisibility::Hidden);
+    }
+
     Texture = Cast<UTexture2D>(UOC2GlobalData::GetResourceTexture(GetWorld(),TextureName));
     CoinBannerBar->SetBrushFromTexture(Texture);
     TipText->SetText(FText::FromString(Tip));

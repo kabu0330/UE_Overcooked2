@@ -163,6 +163,7 @@ void ASinkTable::DoTheDishes(AOC2Character* ChefActor)
 		HideProgressBar(false);
 	}
 
+	bAudioActive = true;
 	if (nullptr != AudioComponent && nullptr != SoundEffectWashing)
 	{
 		AudioComponent->Play();
@@ -196,6 +197,12 @@ void ASinkTable::CheckChefIsWashing_Implementation()
 		if (false == ChefPtr->IsWashing())
 		{
 			bTimerActivated = false;
+			bAudioActive = false;
+			if (nullptr != AudioComponent && nullptr != SoundEffectWashing)
+			{
+				AudioComponent->Stop();
+			}
+
 			ChefPtr = nullptr;
 			HideProgressBar(true);
 		}
@@ -240,6 +247,7 @@ void ASinkTable::WashingIsDone_Implementation()
 
 	bTimerActivated = false; // Å¸ÀÌ¸Ó ²ô°í
 
+	bAudioActive = false;
 	if (nullptr != AudioComponent && nullptr != SoundEffectWashing)
 	{
 		AudioComponent->Stop();
@@ -307,6 +315,21 @@ void ASinkTable::OnRep_ChangeProgress()
 	WidgetPtr->SetProgressTimeRatio(Ratio);
 }
 
+void ASinkTable::OnRep_ControlAudioComponent()
+{
+	if (nullptr != AudioComponent && nullptr != SoundEffectWashing)
+	{
+		if (true == bAudioActive)
+		{
+			AudioComponent->Play();
+		}
+		else
+		{
+			AudioComponent->Stop();
+		}
+	}
+}
+
 void ASinkTable::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
@@ -323,4 +346,5 @@ void ASinkTable::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifeti
 	DOREPLIFETIME(ASinkTable, CleanPlateComponent);
 	DOREPLIFETIME(ASinkTable, DirtyPlateComponents);
 	DOREPLIFETIME(ASinkTable, ProgressBarComponent);
+	DOREPLIFETIME(ASinkTable, bAudioActive);
 }

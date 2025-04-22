@@ -75,6 +75,13 @@ protected:
 	UFUNCTION()
 	void OnRep_ChangeProgress();
 
+	//void ControlAudioComponent();
+
+	UFUNCTION()
+	void OnRep_ControlAudioComponent();
+
+	UPROPERTY(ReplicatedUsing = OnRep_ControlAudioComponent)
+	bool bAudioActive = false;
 
 	UPROPERTY(Replicated)
 	float Timer = 0.0f;
