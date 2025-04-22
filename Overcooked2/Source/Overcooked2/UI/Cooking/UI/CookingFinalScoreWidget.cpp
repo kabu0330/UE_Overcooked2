@@ -16,7 +16,7 @@ void UCookingFinalScoreWidget::NativeOnInitialized()
 
     CurPlayerCount = 4;
 
-    RenderTargets = { RenderTarget0, RenderTarget1, RenderTarget2, RenderTarget3 };
+    //RenderTargets = { RenderTarget0, RenderTarget1, RenderTarget2, RenderTarget3 };
     PlayerImgs = { PlayerImg_0, PlayerImg_1, PlayerImg_2, PlayerImg_3 };
 
 }
@@ -30,6 +30,9 @@ void UCookingFinalScoreWidget::NativeTick(const FGeometry& MyGeometry, float Del
 
 void UCookingFinalScoreWidget::ShowCapturePlayers()
 {
+    PlayerCharacters.Empty();
+
+    // 플레이어 캐릭터 검색
     TArray<AActor*> FoundCharacters;
     UGameplayStatics::GetAllActorsOfClass(GetWorld(), AOC2Character::StaticClass(), FoundCharacters);
 
@@ -48,35 +51,53 @@ void UCookingFinalScoreWidget::ShowCapturePlayers()
         ShowPlayers(i);
     }
 
+    //for (int32 i = 0; i < PlayerCharacters.Num() && i < RenderTargets.Num() && i < PlayerImgs.Num(); ++i)
+    //{
+    //    AOC2Character* PlayerCharacter = PlayerCharacters[i];
+    //    if (!IsValid(PlayerCharacter)) continue;
 
-    for (int32 i = 0; i < PlayerCharacters.Num() && i < RenderTargets.Num() && i < PlayerImgs.Num(); ++i)
-    {
-        AOC2Character* PlayerCharacter = PlayerCharacters[i];
-        if (!PlayerCharacter) continue;
+    //    UCaptureComponent2D* CaptureComponent = PlayerCharacter->FindComponentByClass<UCaptureComponent2D>();
+    //    if (!IsValid(CaptureComponent)) continue;
 
-        UCaptureComponent2D* CaptureComponent = PlayerCharacter->FindComponentByClass<UCaptureComponent2D>();
-        if (!CaptureComponent) continue;
+    //    if (!IsValid(RenderTargets[i]))
+    //    {
+    //        UE_LOG(LogTemp, Warning, TEXT("RenderTarget[%d] is not valid!"), i);
+    //        continue;
+    //    }
 
+    //    // 렌더 타겟 설정
+    //    CaptureComponent->TextureTarget = RenderTargets[i];
+    //    CaptureComponent->bAlwaysPersistRenderingState = true;
+    //    CaptureComponent->MarkRenderStateDirty();
+    //    CaptureComponent->CaptureScene();
 
-        CaptureComponent->TextureTarget = nullptr;
-        CaptureComponent->TextureTarget = RenderTargets[i];
+    //    // 렌더 타겟이 유효한지 체크
+    //    UTextureRenderTarget2D* RenderedTexture = CaptureComponent->TextureTarget;
+    //    if (!IsValid(RenderedTexture)) continue;
 
-        CaptureComponent->bAlwaysPersistRenderingState = true;
-        CaptureComponent->MarkRenderStateDirty();
-        CaptureComponent->CaptureScene();
+    //    if (!IsValid(PlayerImgs[i])) continue;
 
-        UTextureRenderTarget2D* RenderedTexture = CaptureComponent->TextureTarget;
-        if (!RenderedTexture || !RenderedTexture->IsValidLowLevelFast()) continue;
+    //    // 기존 머티리얼이 없으면 새로 생성
+    //    UMaterialInstanceDynamic* DynamicMaterial = PlayerImgs[i]->GetDynamicMaterial();
+    //    //if (!DynamicMaterial)
+    //    //{
+    //    //    UMaterialInterface* BaseMaterial = PlayerImgs[i]->GetBrush().GetResourceObject()
+    //    //        ? Cast<UMaterialInterface>(PlayerImgs[i]->GetBrush().GetResourceObject())
+    //    //        : nullptr;
 
-        UMaterialInstanceDynamic* DynamicMaterial = PlayerImgs[i]->GetDynamicMaterial();
-        if (!DynamicMaterial) continue;
+    //    //    if (BaseMaterial)
+    //    //    {
+    //    //        DynamicMaterial = UMaterialInstanceDynamic::Create(BaseMaterial, this);
+    //    //    }
+    //    //}
 
-        DynamicMaterial->SetTextureParameterValue(FName("TextureParam"), RenderedTexture);
-        PlayerImgs[i]->SetBrushFromMaterial(DynamicMaterial);
-        PlayerImgs[i]->SynchronizeProperties();
-    }
+    //    if (!DynamicMaterial) continue;
+
+    //    DynamicMaterial->SetTextureParameterValue(FName("TextureParam"), RenderedTexture);
+    //    PlayerImgs[i]->SetBrushFromMaterial(DynamicMaterial);
+    //    PlayerImgs[i]->SynchronizeProperties();
+    //}
 }
-
 
 
 

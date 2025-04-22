@@ -5,6 +5,7 @@
 
 #include "Components/Image.h" 
 #include "Lobby/LobbyHUD.h"
+#include "UI/Lobby/LobbyMenuActor.h"
 #include "UI/Loading/LoadingWidget.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -39,6 +40,21 @@ void ULobbyZoomInWidget::PlayZoomInAnimation()
     float AnimationDuration = 20.0f;
     float TimeStep = 0.01f;
     float CurrentTime = 0.0f;
+
+    {
+        TArray<AActor*> FoundActors;
+        UGameplayStatics::GetAllActorsOfClass(GetWorld(), ALobbyMenuActor::StaticClass(), FoundActors);
+
+        if (FoundActors.Num() > 0)
+        {
+            ALobbyMenuActor* TargetActor = Cast<ALobbyMenuActor>(FoundActors[0]);
+            if (nullptr != TargetActor)
+            {
+                TargetActor->RemoveHoverEvent();
+            }
+        }
+
+    }
 
     if (USoundBase* Sound = UOC2GlobalData::GetUIBaseSound(GetWorld(), "ScreenIn"))
     {

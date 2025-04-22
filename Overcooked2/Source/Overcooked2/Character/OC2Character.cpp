@@ -34,10 +34,10 @@ AOC2Character::AOC2Character()
 	GrabComponent = CreateDefaultSubobject<USceneComponent>("GrabPosition");
 	GrabComponent->SetupAttachment(RootComponent);
 
-	CaptureComponent = CreateDefaultSubobject<UCaptureComponent2D>("CaptureComponent");
-	CaptureComponent->SetupAttachment(RootComponent);
-	CaptureComponent->SetRelativeLocation({ 400.f,250.0f,-30.0f });
-	CaptureComponent->SetRelativeRotation({ 0.0f, 210.0f, 0.0f });
+	//CaptureComponent = CreateDefaultSubobject<UCaptureComponent2D>("CaptureComponent");
+	//CaptureComponent->SetupAttachment(RootComponent);
+	//CaptureComponent->SetRelativeLocation({ 400.f,250.0f,-30.0f });
+	//CaptureComponent->SetRelativeRotation({ 0.0f, 210.0f, 0.0f });
 
 	CheckOverlap = CreateDefaultSubobject<USphereComponent>("CheckOverlap");
 	CheckOverlap->SetupAttachment(RootComponent);
@@ -128,7 +128,7 @@ void AOC2Character::BeginPlay()
 	Plane->SetVisibility(IsLocallyControlled());
 	ThrowDir->SetVisibility(false);
 
-	CaptureComponent->ShowOnlyActor(this);
+	//CaptureComponent->ShowOnlyActor(this);
 
 	// 임시 :
 	//SetCharacterHead("Alien_Green");

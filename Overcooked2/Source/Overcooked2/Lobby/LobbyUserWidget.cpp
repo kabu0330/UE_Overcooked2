@@ -16,6 +16,7 @@
 #include "Components/CanvasPanelSlot.h"
 #include "Lobby/LobbyHUD.h"
 #include "UI/Lobby/LobbyZoomInWidget.h"
+
 #include "UI/Loading/LoadingWidget.h"
 #include "Sound/SoundBase.h" 
 #include "Kismet/GameplayStatics.h"
@@ -85,6 +86,8 @@ void ULobbyUserWidget::MoveToPlayLevel()
 
 
                 LobbyGameState->Multicast_PlayZoomInAnmationUI();
+
+
             }
         }
     }

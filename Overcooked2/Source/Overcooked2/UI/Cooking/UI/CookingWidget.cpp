@@ -233,7 +233,7 @@ void UCookingWidget::ShowReceiptWidget()
     bShowScoreWidget = true;
     TimesUpCanvas->SetVisibility(ESlateVisibility::Collapsed);
     CookingFinalScoreWidget->SetVisibility(ESlateVisibility::Visible);
-    CookingFinalScoreWidget->ShowCapturePlayers();
+    //CookingFinalScoreWidget->ShowCapturePlayers();
     //CookingReceiptWidget->CheckStar();
     //CookingReceiptWidget->ShowScoreText();
 
