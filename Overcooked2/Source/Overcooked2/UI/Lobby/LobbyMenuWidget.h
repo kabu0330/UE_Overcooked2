@@ -19,6 +19,8 @@ public:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget), Category = "OC2UI")
 	class UCanvasPanel* StoryPanel = nullptr;
 
+	void RemoveHoverButton();
+
 protected:
 	virtual void NativeOnInitialized() override;
 	virtual void NativeDestruct() override;

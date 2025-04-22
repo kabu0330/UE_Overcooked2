@@ -15,35 +15,35 @@ void ULobbyMenuWidget::NativeOnInitialized()
 {
     Super::NativeOnInitialized();
 
-    //Buttons = { StoryButton, ArcadeButton, BattleButton, ChefButton, OptionButton };
+    Buttons = { StoryButton, ArcadeButton, BattleButton, ChefButton, OptionButton };
 
-    //CurPanel = FindSiblingWidget<UCanvasPanel>(StoryButton);
-    //CurButtonNomalBrush = StoryButton->GetStyle().Normal;
+    CurPanel = FindSiblingWidget<UCanvasPanel>(StoryButton);
+    CurButtonNomalBrush = StoryButton->GetStyle().Normal;
 
-    //FButtonStyle NewStyle = StoryButton->GetStyle();
-    //NewStyle.Normal = NewStyle.Hovered;
-    //StoryButton->SetStyle(NewStyle);
-    //CurMainButton = StoryButton;
+    FButtonStyle NewStyle = StoryButton->GetStyle();
+    NewStyle.Normal = NewStyle.Hovered;
+    StoryButton->SetStyle(NewStyle);
+    CurMainButton = StoryButton;
 
-    //for (int i = 0; i < Buttons.Num(); i++)
-    //{
-    //    if (Buttons[i])
-    //    {
-    //        Buttons[i]->OnHovered.AddDynamic(this, &ULobbyMenuWidget::HoverButton);
+    for (int i = 0; i < Buttons.Num(); i++)
+    {
+        if (Buttons[i])
+        {
+            Buttons[i]->OnHovered.AddDynamic(this, &ULobbyMenuWidget::HoverButton);
 
-    //        if (UCanvasPanel* Panel = FindSiblingWidget<UCanvasPanel>(Buttons[i]))
-    //        {
-    //            TArray<UButton*> AllButtons = FindAllChildWidgets<UButton>(Panel);
-    //            for (UButton* SubButton : AllButtons)
-    //            {
-    //                if (SubButton)
-    //                {
-    //                    SubButton->OnHovered.AddDynamic(this, &ULobbyMenuWidget::HoverSubButton);
-    //                }
-    //            }
-    //        }
-    //    }
-    //}
+            if (UCanvasPanel* Panel = FindSiblingWidget<UCanvasPanel>(Buttons[i]))
+            {
+                TArray<UButton*> AllButtons = FindAllChildWidgets<UButton>(Panel);
+                for (UButton* SubButton : AllButtons)
+                {
+                    if (SubButton)
+                    {
+                        SubButton->OnHovered.AddDynamic(this, &ULobbyMenuWidget::HoverSubButton);
+                    }
+                }
+            }
+        }
+    }
 }
 
 void ULobbyMenuWidget::NativeDestruct()
@@ -54,6 +54,31 @@ void ULobbyMenuWidget::NativeDestruct()
     }
     Super::NativeDestruct();
 }
+
+void ULobbyMenuWidget::RemoveHoverButton()
+{
+    for (int i = 0; i < Buttons.Num(); i++)
+    {
+        if (Buttons[i])
+        {
+            Buttons[i]->OnHovered.RemoveDynamic(this, &ULobbyMenuWidget::HoverButton);
+
+            if (UCanvasPanel* Panel = FindSiblingWidget<UCanvasPanel>(Buttons[i]))
+            {
+                TArray<UButton*> AllButtons = FindAllChildWidgets<UButton>(Panel);
+                for (UButton* SubButton : AllButtons)
+                {
+                    if (SubButton)
+                    {
+                        SubButton->OnHovered.RemoveDynamic(this, &ULobbyMenuWidget::HoverSubButton);
+                    }
+                }
+            }
+        }
+    }
+}
+
+
 
 void ULobbyMenuWidget::HoverButton()
 {

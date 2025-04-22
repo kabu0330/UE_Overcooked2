@@ -32,17 +32,17 @@ public:
 	class UImage* PlayerImg_3 = nullptr;
 
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RenderTarget")
-	UTextureRenderTarget2D* RenderTarget0;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RenderTarget")
+	//UTextureRenderTarget2D* RenderTarget0;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RenderTarget")
-	UTextureRenderTarget2D* RenderTarget1;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RenderTarget")
+	//UTextureRenderTarget2D* RenderTarget1;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RenderTarget")
-	UTextureRenderTarget2D* RenderTarget2;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RenderTarget")
+	//UTextureRenderTarget2D* RenderTarget2;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RenderTarget")
-	UTextureRenderTarget2D* RenderTarget3;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RenderTarget")
+	//UTextureRenderTarget2D* RenderTarget3;
 
 
 	UFUNCTION(BlueprintCallable, Category = "OC2UI")
@@ -57,7 +57,7 @@ private:
 
 	int CurPlayerCount = 0;
 
-	TArray<class UTextureRenderTarget2D*> RenderTargets;
+//	TArray<class UTextureRenderTarget2D*> RenderTargets;
 	TArray<class UImage*> PlayerImgs;
 	TArray<class UCaptureComponent2D*> CachedCaptureComponents;
 	TArray<class AOC2Character*> PlayerCharacters;
