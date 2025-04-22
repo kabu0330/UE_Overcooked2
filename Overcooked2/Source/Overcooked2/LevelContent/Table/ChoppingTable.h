@@ -100,12 +100,11 @@ public:
 
 	void InitNiagara();
 
-	UFUNCTION(/*NetMulticast, Reliable*/)
-	void OnRep_SetNiagaraActive(/*bool Active*/);
-	//void SetNiagaraActive_Implementation(/*bool Active*/);
+	UFUNCTION()
+	void OnRep_SetNiagaraActive();
 
-	UFUNCTION(/*Server, Reliable*/)
-	void SetNiagaraActive(/*bool Active*/);
+	UFUNCTION()
+	void SetNiagaraActive();
 
 
 protected:
