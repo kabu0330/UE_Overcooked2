@@ -90,15 +90,28 @@ public:
 	void HideKnife();
 	void HideKnife_Implementation();
 
-	UFUNCTION(NetMulticast, Reliable)
-	void PlaySoundEffect();
-	void PlaySoundEffect_Implementation();
+	//UFUNCTION(NetMulticast, Reliable)
+	//void PlaySoundEffect();
+	//void PlaySoundEffect_Implementation();
 
-	UFUNCTION(NetMulticast, Reliable)
-	void StopSoundEffect();
-	void StopSoundEffect_Implementation();
+	//UFUNCTION(NetMulticast, Reliable)
+	//void StopSoundEffect();
+	//void StopSoundEffect_Implementation();
 
 	void InitNiagara();
+
+	UFUNCTION()
+	void OnRep_SetSoundFxActive();
+
+	UFUNCTION()
+	void SetSoundFxActive();
+
+	UFUNCTION()
+	void OnRep_SetNiagaraActive();
+
+	UFUNCTION()
+	void SetNiagaraActive();
+
 
 protected:
 
@@ -116,6 +129,12 @@ private:
 
 	UPROPERTY(Replicated)
 	bool bChoppingDone = false;
+
+	UPROPERTY(ReplicatedUsing = OnRep_SetNiagaraActive)
+	bool bNiagaraActive = false;
+
+	UPROPERTY(ReplicatedUsing = OnRep_SetSoundFxActive)
+	bool bSoundFxActive = false;
 
 	UPROPERTY(Replicated)
 	float Ratio = 0.0f;
