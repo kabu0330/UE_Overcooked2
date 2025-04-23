@@ -8,6 +8,7 @@
 #include "WorldPlayer.generated.h"
 
 class AWorldGameState;
+class UAudioComponent;
 
 UCLASS()
 class OVERCOOKED2_API AWorldPlayer : public ACharacter
@@ -55,4 +56,7 @@ private:
 	static FVector WorldPlayerLocation;
 
 	AWorldGameState* WorldGameState = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	UAudioComponent* AudioComponent = nullptr;
 };

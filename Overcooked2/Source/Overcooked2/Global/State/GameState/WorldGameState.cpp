@@ -38,12 +38,12 @@ void AWorldGameState::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (GEngine)
-	{
-		int32 UserCount = UOC2Global::GetOC2GameInstance(GetWorld())->GetUserCount();
-		FString DebugMessage = FString::Printf(TEXT("UserCount: %d"), UserCount);
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, DebugMessage);
-	}
+	//if (GEngine)
+	//{
+	//	int32 UserCount = UOC2Global::GetOC2GameInstance(GetWorld())->GetUserCount();
+	//	FString DebugMessage = FString::Printf(TEXT("UserCount: %d"), UserCount);
+	//	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, DebugMessage);
+	//}
 
 }
 
