@@ -153,7 +153,7 @@ void AOC2Character::Tick(float DeltaTime)
 
 	CheckInteract();
 
-	DrawDebugSphere(GetWorld(), GrabComponent->GetComponentLocation(), TraceRadius, 20, FColor::Green, false, 0.0f);
+	//DrawDebugSphere(GetWorld(), GrabComponent->GetComponentLocation(), TraceRadius, 20, FColor::Green, false, 0.0f);
 }
 
 void AOC2Character::CheckDash(float DeltaTime)
