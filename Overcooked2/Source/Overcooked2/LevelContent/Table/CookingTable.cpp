@@ -56,6 +56,11 @@ void ACookingTable::PlaceItem(ACooking* ReceivedCooking)
 		CookingPtr->GetStaticMeshComponent()->SetRelativeRotation(IngreRotation);
 		CookingPtr->GetStaticMeshComponent()->SetRelativeScale3D(IngreScale);
 		CookingPtr->SetActorRelativeLocation(IngreLocation);
+
+		if (EIngredientType::EIT_CUCUMBER == TempIngredient->GetIngredientType())
+		{
+			CookingPtr->AddActorWorldRotation(FRotator(0.0f, 90.0f, 0.0f));
+		}
 	}
 
 	PlacingSoundEffect();
