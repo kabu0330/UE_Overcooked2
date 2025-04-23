@@ -58,6 +58,8 @@ public:
 	/** 상태 함수 */
 	void EntryStay();
 	void Stay(float DeltaTime);
+	void EntryStart();
+	void Start(float DeltaTime);
 	void EntryStage();
 	void Stage(float DeltaTime);
 	void EntryScore();

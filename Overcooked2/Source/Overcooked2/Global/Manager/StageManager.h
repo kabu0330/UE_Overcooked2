@@ -49,9 +49,10 @@ private:
 public:
 	ACookingGameState* CookingGameState = nullptr;
 	int Score = 0;
-	float CurTime = 0.0f;
+	float CurTime = UOC2Const::OrderSpawnDelay;
 	TArray<int> OrderNumberArray;
 	TArray<FOrder> OrderArray;
 	int CurOrderIndex = 0;
 	bool bProgress = false;
+	bool bFirstOrder = false;
 };

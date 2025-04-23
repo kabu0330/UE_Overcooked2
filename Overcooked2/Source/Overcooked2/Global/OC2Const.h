@@ -39,5 +39,9 @@ public:
 	static FRotator TitleCharacterSpawnRotation;
 
 	static FVector PlateSubmitLocation;
+	static FVector StageLevelPlayerSpawnLocation1;
+	static FVector StageLevelPlayerSpawnLocation2;
+	static FVector StageLevelPlayerSpawnLocation3;
+	static FVector StageLevelPlayerSpawnLocation4;
 	
 };

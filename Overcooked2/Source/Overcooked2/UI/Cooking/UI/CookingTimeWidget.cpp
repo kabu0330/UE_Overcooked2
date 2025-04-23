@@ -8,6 +8,11 @@
 #include "Components/ProgressBar.h"
 #include "Components/Image.h"
 
+#include "Sound/SoundBase.h" 
+#include "Global/Data/OC2GlobalData.h"
+#include "Components/AudioComponent.h"
+#include "Kismet/GameplayStatics.h"
+
 void UCookingTimeWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
@@ -73,7 +78,16 @@ float UCookingTimeWidget::StartTimerTick(float CurTimeValue)
 
 void UCookingTimeWidget::PlayTimerTextAnimation(float Value)
 {
-
+	if (Value <= 0)
+	{
+		if (USoundBase* Sound = UOC2GlobalData::GetUIBaseSound(GetWorld(), "CookingTimerBeep"))
+		{
+			if(CurTime > 0.0f)
+			{
+				UGameplayStatics::PlaySound2D(this, Sound);
+			}
+		}
+	}
 	FLinearColor TargetColor(45.f / 255.f, 25.f / 255.f, 15.f / 255.f);
 	FLinearColor CurColor = FMath::Lerp(FLinearColor::White, TargetColor, Value);
 

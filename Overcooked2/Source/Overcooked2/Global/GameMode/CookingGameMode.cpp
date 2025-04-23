@@ -45,16 +45,6 @@ void ACookingGameMode::BeginPlay()
 	}
 
 	CurIdx = 0;
-
-	//FTimerHandle TimerHandle;
-
-	//GetWorld()->GetTimerManager().SetTimer(
-	//	TimerHandle,
-	//	this,
-	//	&ACookingGameMode::StartStage,
-	//	3.0f,   // 3초 뒤 실행
-	//	false   // 반복 여부(false면 1회 실행)
-	//);
 }
 
 void ACookingGameMode::Tick(float DeltaTime)
@@ -65,6 +55,9 @@ void ACookingGameMode::Tick(float DeltaTime)
 	{
 	case ECookingGameModeState::ECS_Stay:
 		Stay(DeltaTime);
+		break;
+	case ECookingGameModeState::ECS_Start:
+		Start(DeltaTime);
 		break;
 	case ECookingGameModeState::ECS_Stage:
 		Stage(DeltaTime);
@@ -108,20 +101,6 @@ void ACookingGameMode::EntryStay()
 	CookingGameState->Multicast_SetCharacterActive(false);
 	CookingGameState->Multicast_SetCharacterHead();
 
-	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
-
-	if (nullptr != PlayerController)
-	{
-		ACookingHUD* CookingHUD = Cast<ACookingHUD>(PlayerController->GetHUD());
-
-		if (nullptr != CookingHUD && nullptr != CookingHUD->CookWidget)
-		{
-			if (nullptr != CookingGameState)
-			{
-				CookingGameState->Multicast_StartGame();
-			}
-		}
-	}
 }
 
 void ACookingGameMode::Stay(float DeltaTime)
@@ -129,6 +108,22 @@ void ACookingGameMode::Stay(float DeltaTime)
 	CheckTime += DeltaTime;
 
 	if (CheckTime >= 3.5f)
+	{
+		ChangeState(ECookingGameModeState::ECS_Start);
+	}
+}
+
+void ACookingGameMode::EntryStart()
+{
+	CheckTime = 0.0f;
+	CookingGameState->Multicast_StartGame();
+}
+
+void ACookingGameMode::Start(float DeltaTime)
+{
+	CheckTime += DeltaTime;
+
+	if (CheckTime >= 3.0f)
 	{
 		ChangeState(ECookingGameModeState::ECS_Stage);
 	}
@@ -162,17 +157,6 @@ void ACookingGameMode::Stage(float DeltaTime)
 	}
 }
 
-void ACookingGameMode::TimeUp(float DeltaTime)
-{
-	CheckTime += DeltaTime;
-	
-	if (CheckTime > 1.5f)
-	{
-		CookingGameState->Multicast_ShowScorePanemUI();
-		ChangeState(ECookingGameModeState::ECS_Score);
-	}
-}
-
 void ACookingGameMode::EntryTimeUp()
 {
 	StageManager->bProgress = false;
@@ -186,6 +170,18 @@ void ACookingGameMode::EntryTimeUp()
 	}
 
 	CookingGameState->Multicast_SetCharacterActive(false);
+}
+
+
+void ACookingGameMode::TimeUp(float DeltaTime)
+{
+	CheckTime += DeltaTime;
+	
+	if (CheckTime > 1.5f)
+	{
+		CookingGameState->Multicast_ShowScorePanemUI();
+		ChangeState(ECookingGameModeState::ECS_Score);
+	}
 }
 
 void ACookingGameMode::EntryScore()
@@ -207,8 +203,12 @@ void ACookingGameMode::ChangeState(ECookingGameModeState State)
 	case ECookingGameModeState::ECS_Stay:
 		EntryStay();
 		break;
+		break;
 	case ECookingGameModeState::ECS_Stage:
 		EntryStage();
+		break;
+	case ECookingGameModeState::ECS_Start:
+		EntryStart();
 		break;
 	case ECookingGameModeState::ECS_TimeUp:
 		EntryTimeUp();

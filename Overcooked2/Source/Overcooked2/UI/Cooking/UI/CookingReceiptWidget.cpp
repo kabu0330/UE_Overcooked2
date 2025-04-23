@@ -7,6 +7,12 @@
 #include "Components/CanvasPanel.h"
 #include "Global/OC2Global.h"
 
+#include "Kismet/GameplayStatics.h"
+
+#include "Sound/SoundBase.h" 
+#include "Global/Data/OC2GlobalData.h"
+#include "Components/AudioComponent.h"
+
 void UCookingReceiptWidget::NativeConstruct()
 {
     Super::NativeConstruct();
@@ -37,19 +43,30 @@ void UCookingReceiptWidget::CheckStar()
 
     if (TotalStartScore < FistStartScore)
     {
+        if (USoundBase* Sound = UOC2GlobalData::GetUIBaseSound(GetWorld(), "ResultSound"))
+        {
+            UGameplayStatics::PlaySound2D(this, Sound, 0.5f);
+        }
+
         return;
     }
     else if (TotalStartScore >= FistStartScore && TotalStartScore < SecondStartScore)
     {
         TotalStar = 1;
+
+
     }
     else if (TotalStartScore >= SecondStartScore && TotalStartScore < ThirdStartScore)
     {
         TotalStar = 2;
+
+
+
     }
     else if (TotalStartScore >= ThirdStartScore)
     {
         TotalStar = 3;
+
     }
 
 
@@ -75,6 +92,11 @@ void UCookingReceiptWidget::PlayScoreTextAnimation()
 
         DeliveredTxt->SetVisibility(ESlateVisibility::Visible);
         DeliveredCount->SetVisibility(ESlateVisibility::Visible);
+
+        if (USoundBase* Sound = UOC2GlobalData::GetUIBaseSound(GetWorld(), "ResultDes0"))
+        {
+            UGameplayStatics::PlaySound2D(this, Sound, 0.5f);
+        }
     }
     else if (CurTime == 1)
     {
@@ -84,11 +106,21 @@ void UCookingReceiptWidget::PlayScoreTextAnimation()
         
         DeliveredScore->SetText(FText::FromString(Score));
         DeliveredScore->SetVisibility(ESlateVisibility::Visible);
+
+        if (USoundBase* Sound = UOC2GlobalData::GetUIBaseSound(GetWorld(), "ResultDesScore"))
+        {
+            UGameplayStatics::PlaySound2D(this, Sound);
+        }
     }
     else if (CurTime == 2)
     {
         UTextBlock* TipsTxt = FindChildWidget<UTextBlock>("TipsTxt", TxtCanvas);
         TipsTxt->SetVisibility(ESlateVisibility::Visible);
+
+        if (USoundBase* Sound = UOC2GlobalData::GetUIBaseSound(GetWorld(), "ResultDes1"))
+        {
+            UGameplayStatics::PlaySound2D(this, Sound);
+        }
     }
     else if (CurTime == 3)
     {
@@ -97,6 +129,11 @@ void UCookingReceiptWidget::PlayScoreTextAnimation()
 
         TipScore->SetText(FText::FromString(Score));
         TipScore->SetVisibility(ESlateVisibility::Visible);
+
+        if (USoundBase* Sound = UOC2GlobalData::GetUIBaseSound(GetWorld(), "ResultDesScore"))
+        {
+            UGameplayStatics::PlaySound2D(this, Sound);
+        }
     }
     else if (CurTime == 4)
     {
@@ -105,6 +142,11 @@ void UCookingReceiptWidget::PlayScoreTextAnimation()
 
         FailedTxt->SetVisibility(ESlateVisibility::Visible);
         FailedCount->SetVisibility(ESlateVisibility::Visible);
+
+        if (USoundBase* Sound = UOC2GlobalData::GetUIBaseSound(GetWorld(), "ResultDes2"))
+        {
+            UGameplayStatics::PlaySound2D(this, Sound);
+        }
     }
     else if (CurTime == 5)
     {
@@ -113,6 +155,11 @@ void UCookingReceiptWidget::PlayScoreTextAnimation()
 
         FailedScore->SetText(FText::FromString(Score));
         FailedScore->SetVisibility(ESlateVisibility::Visible);
+
+        if (USoundBase* Sound = UOC2GlobalData::GetUIBaseSound(GetWorld(), "ResultDesScore"))
+        {
+            UGameplayStatics::PlaySound2D(this, Sound);
+        }
     }
     else if (CurTime == 6)
     {
@@ -122,11 +169,18 @@ void UCookingReceiptWidget::PlayScoreTextAnimation()
         UTextBlock* TotalScore = FindChildWidget<UTextBlock>("TotalScore", TxtCanvas);
         FString Score = FString::FromInt(UOC2Global::GetTotalScore(GetWorld()));
 
-        TotalScore->SetText(FText::FromString(Score));
+        TotalScore->SetText(FText::FromString(Score)); 
         TotalScore->SetVisibility(ESlateVisibility::Visible);
+
+        if (USoundBase* Sound = UOC2GlobalData::GetUIBaseSound(GetWorld(), "ResultFinalScore"))
+        {
+            UGameplayStatics::PlaySound2D(this, Sound);
+        }
     }
     else
     {
+
+
         GetWorld()->GetTimerManager().ClearTimer(ScoreTextTimerHandle);
     }
 
@@ -154,7 +208,13 @@ void UCookingReceiptWidget::UpdateStar(int Count, FVector2D Size)
 
 void UCookingReceiptWidget::ResetSize()
 {
-    CurImg->SetRenderScale(FVector2D(1.0f, 1.0f));
+    FString Str = FString::FromInt(CurIndex);
+    FName Name = FName("ResultStar" + Str);
+
+    if (USoundBase* Sound = UOC2GlobalData::GetUIBaseSound(GetWorld(), Name))
+    {
+        UGameplayStatics::PlaySound2D(this, Sound);
+    }
     CurIndex += 1;
 
     if(CurIndex < TotalStar)
@@ -164,8 +224,13 @@ void UCookingReceiptWidget::ResetSize()
     }
     else if (CurIndex == TotalStar)
     {
-        CurIndex = 0;
+        if (USoundBase* Sound = UOC2GlobalData::GetUIBaseSound(GetWorld(), "ResultSound"))
+        {
+            UGameplayStatics::PlaySound2D(this, Sound);
+        }
     }
+    CurImg->SetRenderScale(FVector2D(1.0f, 1.0f));
+
 
 }
 

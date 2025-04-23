@@ -338,6 +338,18 @@ USoundBase* UOC2GlobalData::GetUIBaseSound(UWorld* World, const FName& RowName)
 	return nullptr;
 }
 
+USoundBase* UOC2GlobalData::GetWorldBaseSound(UWorld* World, const FName& RowName)
+{
+	UOC2GameInstance* GameInstance = UOC2Global::GetOC2GameInstance(World);
+
+	if (nullptr != GameInstance)
+	{
+		return GameInstance->GetResourceWorldSoundWaveDataRow(RowName).SoundBase;
+	}
+
+	return nullptr;
+}
+
 FOrder UOC2GlobalData::GetOrderByIngredients(UWorld* World, ACooking* Cooking)
 {
 	FOrder Result;

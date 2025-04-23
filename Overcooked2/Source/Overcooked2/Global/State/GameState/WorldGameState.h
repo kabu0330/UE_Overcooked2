@@ -6,6 +6,8 @@
 #include "Global/State/OC2GameState.h"
 #include "WorldGameState.generated.h"
 
+class AWorldMapActor;
+
 /**
  * 
  */
@@ -34,11 +36,16 @@ public:
 	UFUNCTION()
 	void CheckClinetLoadingComplete();
 
+	UFUNCTION()
+	void PlayBackgroundSound();
+
 private:
 	UPROPERTY()
 	TArray<int> CompleteArray;
 
 	UPROPERTY(Replicated)
 	int CurUserCount = 0;
+
+	AWorldMapActor* WorldMapActor = nullptr;
 	
 };

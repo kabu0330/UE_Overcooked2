@@ -150,9 +150,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	static USoundBase* GetUIBaseSound(UWorld* World, const FName& RowName);
 
+	UFUNCTION(BlueprintCallable)
+	static USoundBase* GetWorldBaseSound(UWorld* World, const FName& RowName);
+
 public:
 	static FOrder GetOrderByIngredients(UWorld* World, ACooking* Cooking);
-
-
 
 };

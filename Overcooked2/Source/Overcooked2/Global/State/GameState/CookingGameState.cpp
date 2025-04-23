@@ -506,6 +506,24 @@ void ACookingGameState::Multicast_SetCharacterHead_Implementation()
 
 	PlayerCharacter->SetCharacterName(OC2GameInstance->GetChefHeadName());
 
+	switch (UOC2Global::GetOC2GameInstance(GetWorld())->GetUserIndex())
+	{
+	case 0:
+		PlayerCharacter->SetActorLocation(UOC2Const::StageLevelPlayerSpawnLocation1);
+		break;
+	case 1:
+		PlayerCharacter->SetActorLocation(UOC2Const::StageLevelPlayerSpawnLocation2);
+		break;
+	case 2:
+		PlayerCharacter->SetActorLocation(UOC2Const::StageLevelPlayerSpawnLocation3);
+		break;
+	case 3:
+		PlayerCharacter->SetActorLocation(UOC2Const::StageLevelPlayerSpawnLocation4);
+		break;
+	default:
+		break;
+	}
+
 }
 
 void ACookingGameState::OnRep_MatchState()
