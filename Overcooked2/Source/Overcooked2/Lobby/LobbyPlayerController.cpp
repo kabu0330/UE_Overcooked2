@@ -60,12 +60,7 @@ void ALobbyPlayerController::Tick(float DeltaTime)
 
 void ALobbyPlayerController::Multicast_SetUserCount_Implementation(int InUserCount)
 {
-	ALobbyGameState* LobbyGameState = GetWorld()->GetGameState<ALobbyGameState>();
 
-	if (nullptr != LobbyGameState)
-	{
-		LobbyGameState->SetUserCount(InUserCount);
-	}
 }
 
 void ALobbyPlayerController::Server_NotifyLoadingComplete_Implementation()

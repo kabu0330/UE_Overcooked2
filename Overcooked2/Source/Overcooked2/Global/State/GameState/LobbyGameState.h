@@ -34,6 +34,9 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_UpdateUserPanelUI(int UserIndex);
 
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_SetUserCount(int IntUserCount);
+
 	UFUNCTION(Server, Reliable)
 	void Server_SpawnClientCharacter(FVector SpawnLocation, const FString& ChefHeadName);
 
@@ -44,7 +47,6 @@ public:
 	void InitCharacter();
 	void UpdateChefTexture(int Index);
 	void CheckClinetLoadingComplete();
-	void SetUserCount(int IntUserCount);
 
 public:
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
