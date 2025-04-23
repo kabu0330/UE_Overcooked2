@@ -17,6 +17,7 @@
 #include "Global/Data/ResourceCharacterSoundWaveTable.h"
 #include "Global/Data/ResourceTableSoundWaveTable.h"
 #include "Global/Data/ResourceUISoundWaveTable.h"
+#include "Global/Data/ResourceWorldSoundWaveTable.h"
 
 #include "Global/OC2Struct.h"
 #include "Global/OC2Enum.h"
@@ -105,6 +106,7 @@ public:
 	const FResourceCharacterSoundWaveDataRow& GetResourceCharacterSoundWaveDataRow(const FName& RowName);
 	const FResourceTableSoundWaveDataRow& GetResourceTableSoundWaveDataRow(const FName& RowName);
 	const FResourceUISoundWaveDataRow& GetResourceUISoundWaveDataRow(const FName& RowName);
+	const FResourceWorldSoundWaveDataRow& GetResourceWorldSoundWaveDataRow(const FName& RowName);
 
 
 	FPlateInitData GetPlateMesh(TArray<FRecipe>& Recipes);
@@ -186,6 +188,9 @@ public: // Sound Wave Data Table
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
 	UDataTable* ResourceUISoundWaveDataTable = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Global|Data")
+	UDataTable* ResourceWorldSoundWaveDataTable = nullptr;
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Global|Data")

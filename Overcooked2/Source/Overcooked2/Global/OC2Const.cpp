@@ -27,3 +27,9 @@ FVector UOC2Const::TitleCharacterSpawnLocation = FVector(80.0f, 20.0f, 300.0f);
 FRotator UOC2Const::TitleCharacterSpawnRotation = FRotator(360.0f, -180.0f, 0.0f);
 
 FVector UOC2Const::PlateSubmitLocation = FVector(-2200.0f, 1700.0f, 20.0f);
+
+FVector UOC2Const::StageLevelPlayerSpawnLocation1 = FVector(70.0f, 490.0f, 210.0f);
+FVector UOC2Const::StageLevelPlayerSpawnLocation2 = FVector(70.0f, 220.0f, 210.0f);
+FVector UOC2Const::StageLevelPlayerSpawnLocation3 = FVector(-1070.0f, 490.0f, 210.0f);
+FVector UOC2Const::StageLevelPlayerSpawnLocation4 = FVector(-1070.0f, 220.0f, 210.0f);
+

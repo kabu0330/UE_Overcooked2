@@ -5,6 +5,7 @@
 
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
+#include "EngineUtils.h"
 
 #include "UI/WorldMap/WorldMapHUD.h"
 #include "UI/WorldMap/UI/WorldMapUserWidget.h"
@@ -13,6 +14,7 @@
 #include "Global/OC2Global.h"
 #include "Global/OC2GameInstance.h"
 #include "LevelContent/WorldMap/WorldGameMode.h"
+#include "LevelContent/WorldMap/WorldMapActor.h"
 
 AWorldGameState::AWorldGameState()
 {
@@ -24,18 +26,24 @@ void AWorldGameState::BeginPlay()
 {
 	Super::BeginPlay();
 
+	for (TActorIterator<AWorldMapActor> It(GetWorld()); It; ++It)
+	{
+		WorldMapActor = *It;
+	}
+
+	PlayBackgroundSound();
 }
 
 void AWorldGameState::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (GEngine)
-	{
-		int32 UserCount = UOC2Global::GetOC2GameInstance(GetWorld())->GetUserCount();
-		FString DebugMessage = FString::Printf(TEXT("UserCount: %d"), UserCount);
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, DebugMessage);
-	}
+	//if (GEngine)
+	//{
+	//	int32 UserCount = UOC2Global::GetOC2GameInstance(GetWorld())->GetUserCount();
+	//	FString DebugMessage = FString::Printf(TEXT("UserCount: %d"), UserCount);
+	//	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, DebugMessage);
+	//}
 
 }
 
@@ -74,6 +82,14 @@ void AWorldGameState::CheckClinetLoadingComplete()
 				UOC2Global::GetOC2GameInstance(GetWorld())->StartCookingStage();
 			}
 		}
+	}
+}
+
+void AWorldGameState::PlayBackgroundSound()
+{
+	if (nullptr != WorldMapActor)
+	{
+		WorldMapActor->PlaySound();
 	}
 }
 
