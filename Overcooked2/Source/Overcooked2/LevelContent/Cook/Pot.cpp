@@ -201,7 +201,7 @@ void APot::InitSound()
 		{
 			BoilAudioComponent->SetSound(SoundBase); // 사운드 지정
 			BoilAudioComponent->bIsUISound = true; // 위치 무시하고 2D처럼 재생
-			BoilAudioComponent->SetVolumeMultiplier(UOC2Const::EffectVolume);
+			BoilAudioComponent->SetVolumeMultiplier(UOC2Const::AmbienceVolume);
 		}
 	}
 	{
@@ -293,6 +293,8 @@ void APot::Add_Implementation(AIngredient* Ingredient)
 	bIsRiceInPot = true; // bool 값으로 재료가 들어왔는지 체크할 것임
 	bIsCombinationSuccessful = true;
 	PotState = EPotState::HEATING;
+
+	PlayPutRiceInThePotSound();
 }
 
 // 조리 시간 타이머 트리거
@@ -528,6 +530,11 @@ void APot::BlinkTexture(float DeltaTime)
 {
 	if (false == bIsBlinking)
 	{
+		// 간헐적으로 OVercooked 상태 이후 텍스처가 숨김처리 되지 않아서 확실하게 꺼준다.
+		if (EPotState::OVERCOOKED == PotState && false == StatusWidgetComponent->bHiddenInGame)
+		{
+			StatusWidgetComponent->bHiddenInGame = true;
+		}
 		return;
 	}
 	
@@ -760,3 +767,9 @@ void APot::ReplaySound(UAudioComponent* AudioComponent)
 		PlaySound(AudioComponent, true);
 	}
 }
+
+void APot::PlayPutRiceInThePotSound_Implementation()
+{
+	UGameplayStatics::PlaySound2D(GetWorld(), UOC2GlobalData::GetCharacterBaseSound(GetWorld(), "Putdown"));
+}
+

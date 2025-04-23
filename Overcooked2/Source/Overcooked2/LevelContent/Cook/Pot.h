@@ -124,6 +124,10 @@ protected:
 	UFUNCTION()
 	void ReplaySound(class UAudioComponent* AudioComponent);
 
+	UFUNCTION(Client, Reliable)
+	void PlayPutRiceInThePotSound();
+	void PlayPutRiceInThePotSound_Implementation();
+
 private:
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Cooking", meta = (AllowprivateAccess = "true"))
 	USkeletalMeshComponent* SoupSkeletalMeshComponent = nullptr; // 쌀이 들어오면 렌더링될 메시
