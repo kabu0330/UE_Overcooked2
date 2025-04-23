@@ -30,6 +30,9 @@ public:
 	void Client_SetUserIndex(int InUserIndex);
 
 	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_SetUserCount(int InUserCount);
+
+	UFUNCTION(NetMulticast, Reliable)
 	void UpdateChefTexture(int Index);
 
 	UFUNCTION(Server, Reliable)

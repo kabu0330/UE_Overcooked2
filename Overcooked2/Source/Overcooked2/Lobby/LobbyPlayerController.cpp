@@ -58,6 +58,16 @@ void ALobbyPlayerController::Tick(float DeltaTime)
 	}
 }
 
+void ALobbyPlayerController::Multicast_SetUserCount_Implementation(int InUserCount)
+{
+	ALobbyGameState* LobbyGameState = GetWorld()->GetGameState<ALobbyGameState>();
+
+	if (nullptr != LobbyGameState)
+	{
+		LobbyGameState->SetUserCount(InUserCount);
+	}
+}
+
 void ALobbyPlayerController::Server_NotifyLoadingComplete_Implementation()
 {
 	ALobbyGameState* LobbyGameState = GetWorld()->GetGameState<ALobbyGameState>();
@@ -82,7 +92,7 @@ void ALobbyPlayerController::Client_SetUserIndex_Implementation(int InUserIndex)
 		GameInstance->SetUserCount(InUserIndex + 1);
 	}
 }
-
+	
 // ALobbyPlayerController.cpp
 void ALobbyPlayerController::Client_SetChefHeadName_Implementation(const FString& NewChefHeadName)
 {
