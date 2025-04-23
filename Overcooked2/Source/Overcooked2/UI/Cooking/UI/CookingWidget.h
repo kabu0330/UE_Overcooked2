@@ -142,7 +142,7 @@ private:
     FTimerHandle IngredientTimerHandle;
     FTimerHandle ReadyTimerHandle;
     FTimerHandle TimesUPTimerHandle;
-
+    FTimerHandle DelayedScoreHandle;
 
     // 내부 함수
     void ShowReadyImageAnim();
@@ -159,6 +159,7 @@ private:
 
     void PlayTimesUPAnim();
 
+    void PlayScoreAnim();
 
 
     FTimeline WrongOrderTimeline;

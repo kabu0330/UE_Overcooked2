@@ -7,7 +7,7 @@
 #include "UI/Cooking/CaptureComponent2D.h"
 #include "Character/OC2Character.h"
 #include "Engine/TextureRenderTarget2D.h"
-
+#include "Global/Data/OC2GlobalData.h"
 #include "Kismet/GameplayStatics.h"
 
 void UCookingFinalScoreWidget::NativeOnInitialized()
@@ -101,10 +101,9 @@ void UCookingFinalScoreWidget::ShowCapturePlayers()
 
 void UCookingFinalScoreWidget::ShowTexturePlayers()
 {
-
     for (int i = 0; i < UOC2Global::GetOC2GameInstance(GetWorld())->GetUserCount(); i++)
     {
-        //PlayerImgs[i]->SetBrushFromTexture((UOC2GlobalData::GetUserTextueByIndex(i)));
+        PlayerImgs[i]->SetBrushFromTexture((UOC2GlobalData::GetChefTextureByIndex(GetWorld(), i)));
         ShowPlayers(i);
     }
 
