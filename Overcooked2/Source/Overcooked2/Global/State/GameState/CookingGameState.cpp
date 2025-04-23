@@ -88,6 +88,7 @@ void ACookingGameState::BeginPlay()
 
 		if (nullptr != CookingHUD && nullptr != CookingHUD->CookWidget)
 		{
+			CookingHUD->CookWidget->PlayZoomOutAnimation();
 			CookingHUD->CookWidget->ShowHoldCanvas();
 		}
 	}
