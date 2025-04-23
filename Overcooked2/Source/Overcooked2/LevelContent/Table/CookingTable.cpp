@@ -62,6 +62,12 @@ void ACookingTable::PlaceItem(ACooking* ReceivedCooking)
 			CookingPtr->AddActorWorldOffset(FVector::UnitZ() * 10.0f);
 			CookingPtr->AddActorWorldRotation(FRotator(0.0f, 90.0f, 0.0f));
 		}
+
+		if (EIngredientType::EIT_PRAWN == TempIngredient->GetIngredientType() && EIngredientState::EIS_CHOPPED ==TempIngredient->GetCurIngredientState())
+		{
+			CookingPtr->AddActorWorldOffset(FVector::UnitZ() * (-40.0f));
+			CookingPtr->AddActorWorldRotation(FRotator(135.0f, 0.0f, 0.0f));
+		}
 	}
 
 	PlacingSoundEffect();
