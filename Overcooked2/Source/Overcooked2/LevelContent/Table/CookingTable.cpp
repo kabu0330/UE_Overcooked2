@@ -59,6 +59,7 @@ void ACookingTable::PlaceItem(ACooking* ReceivedCooking)
 
 		if (EIngredientType::EIT_CUCUMBER == TempIngredient->GetIngredientType())
 		{
+			CookingPtr->AddActorWorldOffset(FVector::UnitZ() * 10.0f);
 			CookingPtr->AddActorWorldRotation(FRotator(0.0f, 90.0f, 0.0f));
 		}
 	}
