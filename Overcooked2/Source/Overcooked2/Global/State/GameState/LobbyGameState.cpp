@@ -161,7 +161,7 @@ void ALobbyGameState::CheckClinetLoadingComplete()
 	}
 }
 
-void ALobbyGameState::SetUserCount(int IntUserCount)
+void ALobbyGameState::Multicast_SetUserCount_Implementation(int IntUserCount)
 {
 	UOC2Global::GetOC2GameInstance(GetWorld())->SetUserCount(IntUserCount);
 }

@@ -61,7 +61,6 @@ void ALobbyGameMode::PostLogin(APlayerController* NewPlayerController)
 	{
 		LobbyPlayerController->Client_SetChefHeadName(ChefHeadNames[CurIdx]);
 		LobbyPlayerController->Client_SetUserIndex(CurUserCount);
-		LobbyPlayerController->Multicast_SetUserCount(CurUserCount + 1);
 		CurUserCount++;
 		CurIdx++;
 	}
@@ -73,6 +72,7 @@ void ALobbyGameMode::PostLogin(APlayerController* NewPlayerController)
 	if (nullptr != LobbyGameState)
 	{
 		LobbyGameState->Multicast_UpdateUserPanelUI(CurUserCount - 1);
+		LobbyGameState->Multicast_SetUserCount(CurUserCount);
 
 		int UserIndex = CurUserCount - 1;
 
