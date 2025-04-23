@@ -233,11 +233,10 @@ void UCookingWidget::ShowReceiptWidget()
     bShowScoreWidget = true;
     TimesUpCanvas->SetVisibility(ESlateVisibility::Collapsed);
     CookingFinalScoreWidget->SetVisibility(ESlateVisibility::Visible);
-    //CookingFinalScoreWidget->ShowCapturePlayers();
-    //CookingReceiptWidget->CheckStar();
-    //CookingReceiptWidget->ShowScoreText();
 
-    //SetVisibility(ESlateVisibility::Hidden);
+    CookingFinalScoreWidget->ShowTexturePlayers();
+    //CookingFinalScoreWidget->ShowCapturePlayers();
+
 
     TArray<AActor*> FoundActors;
     UGameplayStatics::GetAllActorsOfClass(GetWorld(), AReceiptWidgetActor::StaticClass(), FoundActors);
