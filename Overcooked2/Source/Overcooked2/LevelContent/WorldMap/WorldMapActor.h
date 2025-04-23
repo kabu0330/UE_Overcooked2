@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+
 #include "WorldMapActor.generated.h"
 
 UCLASS()
@@ -12,15 +13,20 @@ class OVERCOOKED2_API AWorldMapActor : public AActor
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
 	AWorldMapActor();
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-public:	
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+public:
+	UFUNCTION(BlueprintCallable)
+	void PlaySound();
+
+	UFUNCTION(BlueprintCallable)
+	void StopSound();
+
+private:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	class UAudioComponent* AudioComponent = nullptr;
 };
