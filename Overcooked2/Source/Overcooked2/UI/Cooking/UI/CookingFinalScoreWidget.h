@@ -47,6 +47,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "OC2UI")
 	void ShowCapturePlayers();
+
+	void ShowTexturePlayers();
 		
 protected:
 	virtual void NativeOnInitialized() override;
@@ -60,7 +62,7 @@ private:
 //	TArray<class UTextureRenderTarget2D*> RenderTargets;
 	TArray<class UImage*> PlayerImgs;
 	TArray<class UCaptureComponent2D*> CachedCaptureComponents;
-	TArray<class AOC2Character*> PlayerCharacters;
+	//TArray<class AOC2Character*> PlayerCharacters;
 	template <typename T>
 	T* FindChildWidget(const FString& name, UCanvasPanel* canvas);
 };
