@@ -20,7 +20,7 @@ void UCookingReadyWidget::NativeOnInitialized()
     Super::NativeOnInitialized();
 
     NotifyServerWidgetReady();
-    PlayZoomOutAnimation();
+    //PlayZoomOutAnimation();
 }
 
 void UCookingReadyWidget::NativeConstruct()

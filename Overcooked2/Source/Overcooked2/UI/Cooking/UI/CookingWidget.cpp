@@ -112,6 +112,12 @@ void UCookingWidget::StartTimer()
     CookingTimerWidget->SetStartTimer(true);
 }
 
+void UCookingWidget::PlayZoomOutAnimation()
+{
+    CookingReadyWidget->PlayZoomOutAnimation();
+}
+
+
 
 void UCookingWidget::SetHoldProgress(int Progress)
 {

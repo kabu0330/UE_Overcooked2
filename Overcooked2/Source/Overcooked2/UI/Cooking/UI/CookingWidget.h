@@ -77,6 +77,7 @@ public:
     float StartTimerTick(float DeltaTime);
     void ShowTimesUPAnim();
     void NotifyServerWidgetReady();
+    void PlayZoomOutAnimation();
 
 protected:
     virtual void NativeOnInitialized() override;
