@@ -44,6 +44,7 @@ public:
 	void InitCharacter();
 	void UpdateChefTexture(int Index);
 	void CheckClinetLoadingComplete();
+	void SetUserCount(int IntUserCount);
 
 public:
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;

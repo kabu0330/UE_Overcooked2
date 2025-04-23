@@ -14,7 +14,7 @@ void UCookingFinalScoreWidget::NativeOnInitialized()
 {
     Super::NativeOnInitialized();
 
-    CurPlayerCount = 4;
+    //CurPlayerCount = 4;
 
     //RenderTargets = { RenderTarget0, RenderTarget1, RenderTarget2, RenderTarget3 };
     PlayerImgs = { PlayerImg_0, PlayerImg_1, PlayerImg_2, PlayerImg_3 };
@@ -30,23 +30,23 @@ void UCookingFinalScoreWidget::NativeTick(const FGeometry& MyGeometry, float Del
 
 void UCookingFinalScoreWidget::ShowCapturePlayers()
 {
-    PlayerCharacters.Empty();
+    //PlayerCharacters.Empty();
 
-    // 플레이어 캐릭터 검색
-    TArray<AActor*> FoundCharacters;
-    UGameplayStatics::GetAllActorsOfClass(GetWorld(), AOC2Character::StaticClass(), FoundCharacters);
+    //// 플레이어 캐릭터 검색
+    //TArray<AActor*> FoundCharacters;
+    //UGameplayStatics::GetAllActorsOfClass(GetWorld(), AOC2Character::StaticClass(), FoundCharacters);
 
-    for (AActor* Actor : FoundCharacters)
-    {
-        if (AOC2Character* Character = Cast<AOC2Character>(Actor))
-        {
-            PlayerCharacters.Add(Character);
-        }
-    }
+    //for (AActor* Actor : FoundCharacters)
+    //{
+    //    if (AOC2Character* Character = Cast<AOC2Character>(Actor))
+    //    {
+    //        PlayerCharacters.Add(Character);
+    //    }
+    //}
 
-    CurPlayerCount = PlayerCharacters.Num();
+    //CurPlayerCount = PlayerCharacters.Num();
 
-    for (int i = 0; i < CurPlayerCount; i++)
+    for (int i = 0; i < UOC2Global::GetOC2GameInstance(GetWorld())->GetUserCount(); i++)
     {
         ShowPlayers(i);
     }
@@ -99,6 +99,17 @@ void UCookingFinalScoreWidget::ShowCapturePlayers()
     //}
 }
 
+void UCookingFinalScoreWidget::ShowTexturePlayers()
+{
+
+    for (int i = 0; i < UOC2Global::GetOC2GameInstance(GetWorld())->GetUserCount(); i++)
+    {
+        //PlayerImgs[i]->SetBrushFromTexture((UOC2GlobalData::GetUserTextueByIndex(i)));
+        ShowPlayers(i);
+    }
+
+}
+
 
 
 void UCookingFinalScoreWidget::ShowPlayers(int Index)
@@ -120,9 +131,9 @@ void UCookingFinalScoreWidget::ShowPlayers(int Index)
 
         float XOffset = 0.0f;
 
-        if (XOffsetsMap.Contains(CurPlayerCount))
+        if (XOffsetsMap.Contains(UOC2Global::GetOC2GameInstance(GetWorld())->GetUserCount()))
         {
-            TArray<float> XOffsetArray = XOffsetsMap[CurPlayerCount]; 
+            TArray<float> XOffsetArray = XOffsetsMap[UOC2Global::GetOC2GameInstance(GetWorld())->GetUserCount()];
 
             if (XOffsetArray.IsValidIndex(Index))
             {

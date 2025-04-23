@@ -161,6 +161,11 @@ void ALobbyGameState::CheckClinetLoadingComplete()
 	}
 }
 
+void ALobbyGameState::SetUserCount(int IntUserCount)
+{
+	UOC2Global::GetOC2GameInstance(GetWorld())->SetUserCount(IntUserCount);
+}
+
 void ALobbyGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);

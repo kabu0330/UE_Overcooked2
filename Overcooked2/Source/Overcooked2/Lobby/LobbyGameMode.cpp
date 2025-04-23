@@ -61,6 +61,7 @@ void ALobbyGameMode::PostLogin(APlayerController* NewPlayerController)
 	{
 		LobbyPlayerController->Client_SetChefHeadName(ChefHeadNames[CurIdx]);
 		LobbyPlayerController->Client_SetUserIndex(CurUserCount);
+		LobbyPlayerController->Multicast_SetUserCount(CurUserCount + 1);
 		CurUserCount++;
 		CurIdx++;
 	}
