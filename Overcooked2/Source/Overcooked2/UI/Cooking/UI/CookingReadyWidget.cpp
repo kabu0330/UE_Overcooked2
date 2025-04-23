@@ -20,6 +20,7 @@ void UCookingReadyWidget::NativeOnInitialized()
     Super::NativeOnInitialized();
 
     NotifyServerWidgetReady();
+    //PlayZoomOutAnimation();
 }
 
 void UCookingReadyWidget::NativeConstruct()
@@ -56,7 +57,7 @@ void UCookingReadyWidget::NativeConstruct()
         HoldCanvas->SetVisibility(ESlateVisibility::Hidden);
     }
     //bIsReady = true;
-    PlayZoomOutAnimation();
+
 }
 
 void UCookingReadyWidget::NativeTick(const FGeometry& MyGeometry, float DeltaTime)

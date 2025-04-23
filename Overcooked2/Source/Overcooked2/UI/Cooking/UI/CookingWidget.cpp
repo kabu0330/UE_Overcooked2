@@ -7,8 +7,10 @@
 #include "Components/ProgressBar.h"
 #include "Components/CanvasPanel.h"
 #include "Components/CanvasPanelSlot.h"
+#include "Components/AudioComponent.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Global/Data/OrderDataTable.h"
+#include "Global/Data/OC2GlobalData.h"
 #include "UI/Cooking/UI/CookingScoreWidget.h"
 #include "UI/Cooking/UI/CookingFinalScoreWidget.h"
 #include "UI/Cooking/UI/CookingTimeWidget.h"
@@ -18,6 +20,8 @@
 
 #include "Overcooked2.h"
 #include "Kismet/GameplayStatics.h"
+#include "Sound/SoundBase.h" 
+
 
 
 void UCookingWidget::NativeOnInitialized()
@@ -108,6 +112,12 @@ void UCookingWidget::StartTimer()
     CookingTimerWidget->SetStartTimer(true);
 }
 
+void UCookingWidget::PlayZoomOutAnimation()
+{
+    CookingReadyWidget->PlayZoomOutAnimation();
+}
+
+
 
 void UCookingWidget::SetHoldProgress(int Progress)
 {
@@ -158,6 +168,11 @@ void UCookingWidget::ShowReadyImageAnim()
     ReadyCanvas->SetRenderScale({ 0.0f, 0.0f });
     ReadyCanvas->SetVisibility(ESlateVisibility::Visible);
 
+    if (USoundBase* Sound = UOC2GlobalData::GetUIBaseSound(GetWorld(), "CookingReady"))
+    {
+        UGameplayStatics::PlaySound2D(this, Sound);
+    }
+
     GetWorld()->GetTimerManager().SetTimer(ReadyTimerHandle, this, &UCookingWidget::PlayReadyImageAnim, 0.01f, true);
 }
 
@@ -168,6 +183,8 @@ void UCookingWidget::PlayReadyImageAnim()
     {
         GoCanvas->SetVisibility(ESlateVisibility::Collapsed);
         StartTimer();
+
+
 
         GetWorld()->GetTimerManager().ClearTimer(ReadyTimerHandle);
         return;
@@ -183,7 +200,16 @@ void UCookingWidget::PlayReadyImageAnim()
         ReadyCanvas->SetVisibility(ESlateVisibility::Collapsed);
         ReadyOffset = 0.0f;
         GoCanvas->SetRenderScale({ 0.0f, 0.0f });
+
+        if (GoCanvas->GetVisibility() != ESlateVisibility::Visible)
+        {
+            if (USoundBase* Sound = UOC2GlobalData::GetUIBaseSound(GetWorld(), "CookingGo"))
+            {
+                UGameplayStatics::PlaySound2D(this, Sound);
+            }
+        }
         GoCanvas->SetVisibility(ESlateVisibility::Visible);
+
     }
     else if (GoCanvas->GetRenderTransform().Scale.X <= 1.0f && ReadyTimeElapsed < 3.0f)
     {
@@ -198,6 +224,12 @@ void UCookingWidget::ShowTimesUPAnim()
 {
     TimesUpCanvas->SetRenderScale({ 0.0f, 0.0f });
     TimesUpCanvas->SetVisibility(ESlateVisibility::Visible);
+
+    if (USoundBase* Sound = UOC2GlobalData::GetUIBaseSound(GetWorld(), "CookingTimesUp"))
+    {
+        UGameplayStatics::PlaySound2D(this, Sound);
+    }
+
 
     GetWorld()->GetTimerManager().SetTimer(TimesUPTimerHandle, this, &UCookingWidget::PlayTimesUPAnim, 0.01f, true);
 }
@@ -237,7 +269,17 @@ void UCookingWidget::ShowReceiptWidget()
     CookingFinalScoreWidget->ShowTexturePlayers();
     //CookingFinalScoreWidget->ShowCapturePlayers();
 
+    if (USoundBase* Sound = UOC2GlobalData::GetUIBaseSound(GetWorld(), "ResultVictory"))
+    {
+        UGameplayStatics::PlaySound2D(this, Sound);
+    }
 
+
+    GetWorld()->GetTimerManager().SetTimer(DelayedScoreHandle, this, &UCookingWidget::PlayScoreAnim, 2.0f, false);
+}
+
+void UCookingWidget::PlayScoreAnim()
+{
     TArray<AActor*> FoundActors;
     UGameplayStatics::GetAllActorsOfClass(GetWorld(), AReceiptWidgetActor::StaticClass(), FoundActors);
 
@@ -303,6 +345,11 @@ void UCookingWidget::OrderComplete(int Index, int Score)
         if (CookingScoreWidget != nullptr)
         {
             CookingScoreWidget->PlayOderCompleteAnimation(Score);
+        }
+
+        if (USoundBase* Sound = UOC2GlobalData::GetUIBaseSound(GetWorld(), "CookingOrderSuccess"))
+        {
+            UGameplayStatics::PlaySound2D(this, Sound);
         }
 
         GetWorld()->GetTimerManager().SetTimer(OpacityTimerHandle, this, &UCookingWidget::UpdateImageOpacity, 0.01f, true);

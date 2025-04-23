@@ -37,6 +37,7 @@ public:
 	class UImage* TransitionImg = nullptr;
 
 	void SetHoldProgress(int Progress);
+	void PlayZoomOutAnimation();
 
 protected:
 	virtual void NativeOnInitialized() override;
@@ -45,7 +46,6 @@ protected:
 	
 	
 private:
-	void PlayZoomOutAnimation();
 	void NotifyServerWidgetReady();
 
 	class UMaterialInstanceDynamic* ProgressMaterial = nullptr;
