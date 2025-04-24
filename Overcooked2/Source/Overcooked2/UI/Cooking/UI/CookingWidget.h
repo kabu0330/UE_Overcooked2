@@ -6,6 +6,17 @@
 #include "Blueprint/UserWidget.h"
 #include "Components/TimelineComponent.h"
 #include "CookingWidget.generated.h"
+
+USTRUCT()
+struct FCompleteOrderData
+{
+    GENERATED_BODY()
+
+    int32 Index;
+    int32 Score;
+};
+
+
 UCLASS()
 class OVERCOOKED2_API UCookingWidget : public UUserWidget
 {
@@ -126,7 +137,6 @@ private:
     float ReadyOffset = 0.0f;
     float TimesUpOffset = 0.0f;
 
-    bool bShowScoreWidget = false;
 
     FVector2D TargetOffset = FVector2D(50.0f, 0.0f);
     FVector2D IngredientTargetOffset = FVector2D(0.0f, 10.0f);
@@ -136,6 +146,14 @@ private:
     TArray<class UCanvasPanel*> Orders;
     TArray<float> OrderTime;
     TArray<struct FOrder> CurOrders;
+
+    TQueue<FOrder> NewOrders;
+    TQueue<FCompleteOrderData> CompleteOrders;
+
+
+    bool bAnimatingNewOrder = false;
+    bool bAnimatingCompleteOrder = false;
+    bool bShowScoreWidget = false;
 
     // 타이머 핸들
     FTimerHandle OpacityTimerHandle;
@@ -154,13 +172,13 @@ private:
     void UpdateOrderTime(int Index, float DeltaTime);
     void SettingIngredientImages(FOrder& order);
     void MoveNewOrder();
-    void PlayReadyImageAnim();
-
     void FindOrderImgRecursive(class UWidget* Widget, const FLinearColor& Color);
 
+    void PlayReadyImageAnim();
     void PlayTimesUPAnim();
-
     void PlayScoreAnim();
+    void ShowOrder(FOrder Order);
+    void ShowOrderComplete(int Index, int Score);
 
 
     FTimeline WrongOrderTimeline;
@@ -168,6 +186,7 @@ private:
 
     FLinearColor OriginalColor = FLinearColor::White;
     FLinearColor TargetColor = FLinearColor::White;
+
 
     UFUNCTION()
     void UpdateAllOrderColor(float Value);
