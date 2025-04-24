@@ -323,15 +323,17 @@ void APot::Cook(float DeltaTime)
 		return;
 	}
 
-#if WITH_EDITOR
-	// Debug
-	float TimeToBoil = 1.0f;
-	float TimeToCook = 4.0f;
-	float TimeToWarning = 7.0f;
-	float TimeToDanger = 10.0f;
-	float TimeToScorch = 13.0f;
-	float TimeToOvercook = 16.0f;
-#else
+//#if WITH_EDITOR
+//	// Debug
+//	float TimeToBoil = 1.0f;
+//	float TimeToCook = 4.0f;
+//	float TimeToWarning = 7.0f;
+//	float TimeToDanger = 10.0f;
+//	float TimeToScorch = 13.0f;
+//	float TimeToOvercook = 16.0f;
+//#else
+//
+//#endif
 	// Real Timme
 	float TimeToBoil = 4.0f;
 	float TimeToCook = 12.0f;
@@ -339,8 +341,6 @@ void APot::Cook(float DeltaTime)
 	float TimeToDanger = 19.0f;
 	float TimeToScorch = 22.0f;
 	float TimeToOvercook = 25.0f;
-#endif
-
 	if (TimeToOvercook < TimeElapsed) // 불필요한 연산 차단
 	{
 		return;
