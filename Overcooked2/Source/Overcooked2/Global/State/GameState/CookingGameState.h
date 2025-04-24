@@ -44,6 +44,8 @@ public:
 	int GetFailScore();
 	int GetTotalScore();
 	int GetPlateArrayNum();
+	int GetDeliveryCount();
+	int GetFailCount();
 	void OnPlayerCookingWidgetReady();
 
 public:
@@ -126,4 +128,10 @@ private:
 
 	UPROPERTY(Replicated)
 	int TotalScore = 0;
+
+	UPROPERTY(Replicated)
+	int DeliveryCount = 0;
+
+	UPROPERTY(Replicated)
+	int FailCount = 0;
 };
