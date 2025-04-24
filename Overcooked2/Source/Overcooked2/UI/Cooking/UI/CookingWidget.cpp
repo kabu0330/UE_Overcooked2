@@ -21,6 +21,7 @@
 #include "Overcooked2.h"
 #include "Kismet/GameplayStatics.h"
 #include "Sound/SoundBase.h" 
+#include "Containers/Queue.h"
 
 
 
@@ -299,10 +300,28 @@ void UCookingWidget::OrderComplete(int Index, int Score)
     if (!ColorCurve) return;
     if (Index >= Orders.Num()) return;
 
+
+    // if (GetWorld()->GetTimerManager().IsTimerActive(OpacityTimerHandle)) return;
+
+
+    // 애니메이션 중이면 큐에 저장
+    if (true == bAnimatingCompleteOrder)
+    {
+        CompleteOrders.Enqueue({ Index, Score });
+        return;
+    }
+
+    bAnimatingCompleteOrder = true;
+
+    // 주문 처리 본체 함수 분리
+    ShowOrderComplete(Index, Score);
+}
+
+void UCookingWidget::ShowOrderComplete(int Index, int Score)
+{
+
     CompleteOrderNum = Index;
     if (Orders[CompleteOrderNum] == nullptr) return;
-
-    if (GetWorld()->GetTimerManager().IsTimerActive(OpacityTimerHandle)) return;
 
     if (Orders[CompleteOrderNum]->GetVisibility() != ESlateVisibility::Collapsed)
     {
@@ -340,7 +359,7 @@ void UCookingWidget::OrderComplete(int Index, int Score)
             CompleteOrderTimeline.Stop();
             CompleteOrderTimeline.PlayFromStart();
         }
-        
+
 
         if (CookingScoreWidget != nullptr)
         {
@@ -372,12 +391,25 @@ void UCookingWidget::CheckFeverTime(int TipCount)
 
 void UCookingWidget::CreateNewOrder(FOrder Order)
 {
+    if (CurOrderCount >= Orders.Num())
+        return;
 
-    if (CurOrderCount >= Orders.Num()) return;
+    // 애니메이션 중이면 큐에 저장
+    if (true == bAnimatingNewOrder || true == bAnimatingCompleteOrder)
+    {
+        NewOrders.Enqueue(Order);
+        return;
+    }
 
-    if (GetWorld()->GetTimerManager().IsTimerActive(MoveTimerHandle)) return;
-    if (GetWorld()->GetTimerManager().IsTimerActive(OpacityTimerHandle)) return;
+    bAnimatingNewOrder = true;
 
+    // 주문 처리 본체 함수 분리
+    ShowOrder(Order);
+}
+
+
+void UCookingWidget::ShowOrder(FOrder Order)
+{
     NewOrderNum = CurOrderCount;
 
     FVector2D ScreenSize = UWidgetLayoutLibrary::GetViewportSize(this);
@@ -390,27 +422,22 @@ void UCookingWidget::CreateNewOrder(FOrder Order)
     OrderTime[NewOrderNum] = TimeLimit;
 
     UProgressBar* TimeImg = FindChildWidget<UProgressBar>("Time_", Orders[NewOrderNum]);
-    TimeImg->SetFillColorAndOpacity({ 0.1f,0.3f,0.0f });
+    TimeImg->SetFillColorAndOpacity({ 0.1f, 0.3f, 0.0f });
 
     CurOrderCount += 1;
 
+    UImage* DishImage = FindChildImage("Dish_", Orders[NewOrderNum]);
+    if (DishImage == nullptr) return;
+
+    if (Order.OrderTexutre != nullptr)
     {
-
-        UImage* DishImage = FindChildImage("Dish_", Orders[NewOrderNum]);
-        if (DishImage == nullptr) return;
-
-        if (Order.OrderTexutre != nullptr)
-        {
-            DishImage->SetBrushFromTexture(Order.OrderTexutre);
-        }
-        else
-        {
-            FString TexturePath = TEXT("/Game/Resources/UI/Order/Dish/ui_cheeseburger.ui_cheeseburger");
-            class UTexture2D* Texture = Cast<UTexture2D>(StaticLoadObject(UTexture2D::StaticClass(), nullptr, *TexturePath));
-
-            DishImage->SetBrushFromTexture(Texture);
-        }
-
+        DishImage->SetBrushFromTexture(Order.OrderTexutre);
+    }
+    else
+    {
+        FString TexturePath = TEXT("/Game/Resources/UI/Order/Dish/ui_cheeseburger.ui_cheeseburger");
+        UTexture2D* Texture = Cast<UTexture2D>(StaticLoadObject(UTexture2D::StaticClass(), nullptr, *TexturePath));
+        DishImage->SetBrushFromTexture(Texture);
     }
 
     SettingIngredientImages(Order);
@@ -502,7 +529,6 @@ void UCookingWidget::MoveNewOrder()
     if (Orders[NewOrderNum] == nullptr) return;
 
     FVector2D CurPos = Orders[NewOrderNum]->GetRenderTransform().Translation;
-
     float CurAngle = Orders[NewOrderNum]->GetRenderTransform().Angle;
 
     if (NewOrderNum != 0)
@@ -511,13 +537,11 @@ void UCookingWidget::MoveNewOrder()
         for (int i = 0; i < CurOrderCount - 1; i++)
         {
             UImage* Img = FindChildImage("OrderBackground_", Orders[i]);
-
             float scale = Img->GetRenderTransform().Scale.X;
             ArrivePos += ImageSize * scale + ImageOffset;
         }
-
     }
-    else if (NewOrderNum == 0)
+    else
     {
         ArrivePos = ImageOffset;
     }
@@ -525,26 +549,38 @@ void UCookingWidget::MoveNewOrder()
     if (CurPos.X <= ArrivePos && CurAngle >= 0.0f)
     {
         Orders[NewOrderNum]->SetRenderScale({ 1.0f, 1.0f });
-        Orders[NewOrderNum]->SetRenderTranslation({ ArrivePos,0.0f });
-        Orders[NewOrderNum]->SetRenderTransformAngle({ 0.0f });
+        Orders[NewOrderNum]->SetRenderTranslation({ ArrivePos, 0.0f });
+        Orders[NewOrderNum]->SetRenderTransformAngle(0.0f);
 
         MoveTimeElapsed = 0.0f;
         IngredientTimeElapsed = 0.0f;
 
-        if (GetWorld()->GetTimerManager().IsTimerActive(IngredientTimerHandle)) return;
+        GetWorld()->GetTimerManager().ClearTimer(MoveTimerHandle);
+        bAnimatingNewOrder = false;
 
-        GetWorld()->GetTimerManager().ClearTimer(IngredientTimerHandle);
-        GetWorld()->GetTimerManager().SetTimer(IngredientTimerHandle, this, &UCookingWidget::UpdateIngredientImagePosition, 0.01f, true);
+        // 다음 재료 이미지 이동 처리 시작
+        if (!GetWorld()->GetTimerManager().IsTimerActive(IngredientTimerHandle))
+        {
+            GetWorld()->GetTimerManager().SetTimer(IngredientTimerHandle, this, &UCookingWidget::UpdateIngredientImagePosition, 0.01f, true);
+        }
+
+        // 다음 주문이 큐에 있으면 꺼내서 바로 처리
+        FOrder NextOrder;
+        if (true == NewOrders.Dequeue(NextOrder))
+        {
+            CreateNewOrder(NextOrder);
+        }
 
         return;
     }
     else
     {
+        // 움직이는 중
         if (CurPos.X > ArrivePos)
         {
             Orders[NewOrderNum]->SetRenderTranslation(CurPos - FVector2D(TargetOffset.X + MoveTimeElapsed, 0));
-
         }
+
         if (CurAngle < 0.0f)
         {
             Orders[NewOrderNum]->SetRenderTransformAngle(CurAngle + 1.f);
@@ -553,6 +589,7 @@ void UCookingWidget::MoveNewOrder()
 
     MoveTimeElapsed += 0.1f;
 }
+
 
 void UCookingWidget::SettingIngredientImages(FOrder& Order)
 {
@@ -726,6 +763,20 @@ void UCookingWidget::UpdateImageOpacity()
         CompleteOrderTimeline.Stop();
         CurOrderCount -= 1;
         UpdateImagePosition();
+
+        bAnimatingCompleteOrder = false;
+
+        FCompleteOrderData CompleteOrder;
+        if (true == CompleteOrders.Dequeue(CompleteOrder))
+        {
+            OrderComplete(CompleteOrder.Index, CompleteOrder.Score);
+        }
+
+        FOrder NextOrder;
+        if (true == NewOrders.Dequeue(NextOrder))
+        {
+            CreateNewOrder(NextOrder);
+        }
 
 
         GetWorld()->GetTimerManager().ClearTimer(OpacityTimerHandle);
