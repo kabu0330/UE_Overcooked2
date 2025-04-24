@@ -231,6 +231,17 @@ void AChoppingTable::ChoppingIsDone_Implementation()
 
 	CookingPtr = Cast<ACooking>(PlacedIngredient);
 
+	if (EIngredientType::EIT_CUCUMBER == PlacedIngredient->GetIngredientType())
+	{
+		CookingPtr->AddActorWorldRotation(FRotator(0.0f, 90.0f, 0.0f));
+	}
+
+	if (EIngredientType::EIT_PRAWN == PlacedIngredient->GetIngredientType())
+	{
+		CookingPtr->AddActorWorldRotation(FRotator(0.0f, 90.0f, 0.0f));
+		CookingPtr->AddActorWorldOffset(FVector::UnitX() * 40.0f + FVector::UnitY() * 40.0f);
+	}
+
 	HideProgressBar(true);
 
 	ChefPtr->Chopping(false);

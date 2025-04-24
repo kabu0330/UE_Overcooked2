@@ -355,7 +355,10 @@ void ACookingGameState::Server_SubmitPlate_Implementation(ACooking* Cooking)
 
 			if (0 == FindIndex)
 			{
-				FeverCount++;
+				if(FeverCount < 4)
+				{
+					FeverCount++;
+				}
 			}
 			else
 			{
