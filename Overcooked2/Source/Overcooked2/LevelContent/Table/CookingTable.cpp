@@ -65,8 +65,8 @@ void ACookingTable::PlaceItem(ACooking* ReceivedCooking)
 
 		if (EIngredientType::EIT_PRAWN == TempIngredient->GetIngredientType() && EIngredientState::EIS_CHOPPED ==TempIngredient->GetCurIngredientState())
 		{
-			CookingPtr->AddActorWorldOffset(FVector::UnitX() * 15.0f + FVector::UnitY() * (-20.0f) + FVector::UnitZ() * (-50.0f));
-			CookingPtr->AddActorWorldRotation(FRotator(0.0f, 90.0f, 135.0f));
+			CookingPtr->SetActorRelativeLocation(FVector::UnitX() * 10.0f + FVector::UnitY() * (-10.0f) /*+ FVector::UnitZ() * (-50.0f)*/);//AddActorWorldOffset(/*FVector::UnitX() * 15.0f + FVector::UnitY() * (-20.0f) +*/ FVector::UnitZ() * (-50.0f));
+			CookingPtr->SetActorRelativeRotation(FRotator(0.0f, 90.0f, 100.0f));//SetActorWorldRotation(FRotator(0.0f, 90.0f, 135.0f));
 		}
 	}
 
