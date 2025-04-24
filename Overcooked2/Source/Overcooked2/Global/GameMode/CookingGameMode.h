@@ -114,6 +114,6 @@ private:
 
 	TArray<APlate*> PlateArray;
 
-	float GameTime = 20.0f;
+	float GameTime = 180.0f;
 
 };
