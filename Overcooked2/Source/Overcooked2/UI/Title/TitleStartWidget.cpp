@@ -38,7 +38,10 @@ void UTitleStartWidget::NativeConstruct()
 
 	//USoundBase* TitleSound = UOC2GlobalData::GetUIBaseSound(GetWorld(), "TitleSound");
 	//UAudioComponent* AudioComp = UGameplayStatics::SpawnSound2D(this, TitleSound);
-	
+	if (USoundBase* Sound = UOC2GlobalData::GetUIBaseSound(GetWorld(), "TitleSound"))
+	{
+		UGameplayStatics::PlaySound2D(this, Sound);
+	}
 }
 
 
