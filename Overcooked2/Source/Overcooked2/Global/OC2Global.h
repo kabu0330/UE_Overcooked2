@@ -72,4 +72,10 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	static int GetTotalScore(UWorld* World);
+
+	UFUNCTION(BlueprintCallable)
+	static int GetDeliveryCount(UWorld* World);
+
+	UFUNCTION(BlueprintCallable)
+	static int GetFailCount(UWorld* World);
 };
