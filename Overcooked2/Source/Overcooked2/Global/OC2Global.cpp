@@ -205,3 +205,27 @@ int UOC2Global::GetTotalScore(UWorld* World)
 
 	return 0;
 }
+
+int UOC2Global::GetDeliveryCount(UWorld* World)
+{
+	ACookingGameState* CookingGameState = World->GetGameState<ACookingGameState>();
+
+	if (nullptr != CookingGameState)
+	{
+		return CookingGameState->GetDeliveryCount();
+	}
+
+	return 0;
+}
+
+int UOC2Global::GetFailCount(UWorld* World)
+{
+	ACookingGameState* CookingGameState = World->GetGameState<ACookingGameState>();
+
+	if (nullptr != CookingGameState)
+	{
+		return CookingGameState->GetFailCount();
+	}
+
+	return 0;
+}

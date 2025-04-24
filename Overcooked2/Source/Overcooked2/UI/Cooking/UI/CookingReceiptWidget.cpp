@@ -90,6 +90,10 @@ void UCookingReceiptWidget::PlayScoreTextAnimation()
         UTextBlock* DeliveredTxt = FindChildWidget<UTextBlock>("DeliveredTxt", TxtCanvas);
         UTextBlock* DeliveredCount = FindChildWidget<UTextBlock>("DeliveredCount", TxtCanvas);
 
+        FString Count = FString::FromInt(UOC2Global::GetDeliveryCount(GetWorld()));
+
+        DeliveredCount->SetText(FText::FromString(Count));
+
         DeliveredTxt->SetVisibility(ESlateVisibility::Visible);
         DeliveredCount->SetVisibility(ESlateVisibility::Visible);
 
@@ -140,8 +144,14 @@ void UCookingReceiptWidget::PlayScoreTextAnimation()
         UTextBlock* FailedTxt = FindChildWidget<UTextBlock>("FailedTxt", TxtCanvas);
         UTextBlock* FailedCount = FindChildWidget<UTextBlock>("FailedCount", TxtCanvas);
 
+        FString Count = FString::FromInt(UOC2Global::GetFailCount(GetWorld()));
+
+        FailedCount->SetText(FText::FromString(Count));
+
+
         FailedTxt->SetVisibility(ESlateVisibility::Visible);
         FailedCount->SetVisibility(ESlateVisibility::Visible);
+
 
         if (USoundBase* Sound = UOC2GlobalData::GetUIBaseSound(GetWorld(), "ResultDes2"))
         {
