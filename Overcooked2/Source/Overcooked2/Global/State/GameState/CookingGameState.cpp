@@ -109,6 +109,8 @@ void ACookingGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 	DOREPLIFETIME(ACookingGameState, FeverScore);
 	DOREPLIFETIME(ACookingGameState, FailScore);
 	DOREPLIFETIME(ACookingGameState, TotalScore);
+	DOREPLIFETIME(ACookingGameState, DeliveryCount);
+	DOREPLIFETIME(ACookingGameState, FailCount);
 }
 
 void ACookingGameState::AddPlate(APlate* Plate)
@@ -192,6 +194,16 @@ int ACookingGameState::GetPlateArrayNum()
 	}
 
 	return -1;
+}
+
+int ACookingGameState::GetDeliveryCount()
+{
+	return DeliveryCount;
+}
+
+int ACookingGameState::GetFailCount()
+{
+	return FailCount;
 }
 
 void ACookingGameState::OnPlayerCookingWidgetReady()
@@ -335,6 +347,7 @@ void ACookingGameState::Server_SubmitPlate_Implementation(ACooking* Cooking)
 		if(-1 != FindIndex)
 		{
 			int InScore = CheckOrder.RequireIngredients.Num() * UOC2Const::ScoreValue;
+			DeliveryCount++;
 
 			OrderScore += InScore;
 
@@ -369,8 +382,9 @@ void ACookingGameState::Server_SubmitPlate_Implementation(ACooking* Cooking)
 		}
 		else
 		{
-			FailScore += 20;
-			TotalScore -= 20;
+			FailScore += 30;
+			TotalScore -= 30;
+			FailCount++;
 
 			Multicast_BlinkOrderUI();
 		}
