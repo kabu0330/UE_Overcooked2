@@ -312,6 +312,7 @@ void UCookingWidget::OrderComplete(int Index, int Score)
     }
 
     bAnimatingCompleteOrder = true;
+    // UE_LOG(OVERCOOKED_LOG, Log, TEXT("UI_CompleteOrder : %d"), Index);
 
     // 주문 처리 본체 함수 분리
     ShowOrderComplete(Index, Score);
@@ -391,8 +392,7 @@ void UCookingWidget::CheckFeverTime(int TipCount)
 
 void UCookingWidget::CreateNewOrder(FOrder Order)
 {
-    if (CurOrderCount >= Orders.Num())
-        return;
+    // UE_LOG(OVERCOOKED_LOG, Log, TEXT("UI"));
 
     // 애니메이션 중이면 큐에 저장
     if (true == bAnimatingNewOrder || true == bAnimatingCompleteOrder)
@@ -401,7 +401,17 @@ void UCookingWidget::CreateNewOrder(FOrder Order)
         return;
     }
 
+    if (CurOrderCount >= Orders.Num())
+    {
+        UE_LOG(OVERCOOKED_LOG, Error, TEXT("Order Count Over 5"));
+        return;
+    }
+
+
     bAnimatingNewOrder = true;
+    NewOrderNum = CurOrderCount;
+
+
 
     // 주문 처리 본체 함수 분리
     ShowOrder(Order);
