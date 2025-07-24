@@ -38,7 +38,7 @@ ____
 
 ## 주요 코드
 ### 1. 데이터 테이블 설정
-재료, 요리 조합, 주문을 구현하기 위하여 데이터 테이블을 활용했습니다. 컨텐츠 확장성 고려 및 패키징 시 리소스 누락을 방지했습니다.
+재료, 요리 조합, 주문을 구현하기 위하여 데이터 테이블을 활용했습니다.  
 ![Image](https://github.com/user-attachments/assets/74f843ae-52c3-4303-b75f-575836b661d1)
 
 
@@ -68,7 +68,166 @@ ex). 물고기(Type)를 손질하다(State). / 밥(Type)을 짓다(State).
 ![Image](https://github.com/user-attachments/assets/78cff9ec-8c5f-4485-b08f-91b6394fd21d)
 
 
+___
+
+### 2. 재료
+재료는 메시를 가지고 있지 않습니다.  
+재료는 타입(enum class)을 이용하여 데이터 테이블에 있는 메시를 로드하는 방식으로 구성되어 있습니다.  
+캐릭터의 상호작용으로 월드에 재료가 스폰될 때, 재료는 자신이 어떤 메시로 보여질 것인지를 알아야합니다.  
+그래서 SpawnActorDeferred<>()를 통해 지연 호출 전략을 사용하여  
+그 사이에 재료의 타입을 결정하고(SetType()) BeginPlay에서 메시를 세팅하는 방법을 사용했습니다.  
+
+```
+AIngredient* USpawnManageComponent::SpawnIngredientActor(TSubclassOf<AIngredient> IngredientToSpawn, EIngredientType IngredientType)
+{
+	FTransform IngredientTransform;
+	AIngredient* IngredientActor = GetWorld()->SpawnActorDeferred<AIngredient>(IngredientToSpawn, IngredientTransform);
+	
+	if (nullptr == IngredientActor)
+	{
+		UE_LOG(OVERCOOKED_LOG, Error, TEXT("Ingredient actor spawn failed"));
+
+		return nullptr;
+	}
+
+	IngredientActor->SetType(IngredientType); // 여기서 타입을 결정하고 BeginPlay 호출
+
+	FVector IngredientLocation = FVector(0.0f, 0.0f, 100.0f);
+	IngredientTransform.SetLocation(IngredientLocation);
+
+	IngredientActor->FinishSpawning(IngredientTransform);
+
+	return IngredientActor;
+}
+```
 
 
-### 2. 
+___
+
+
+### 3. 아이콘 
+
+요리마다 어떤 재료가 들어갔는지 아이콘으로 표시하기 위해서 위젯으로 아이콘을 표기했습니다.  
+일반 텍스처나 빌보드 텍스처를 이용해봤지만 위치, 간격, 카메라의 상대적 위치를 고려했을 때 가장 자연스럽게 위치할 수 있게 구현할 방법으로 위젯을 선택했습니다. 
+
+<img width="2380" height="1191" alt="image" src="https://github.com/user-attachments/assets/cf6e2ec7-9f5c-4596-8d10-0ac84195a843" />
+
+
+```
+void UPlateIconWidget::SetIngredientTextures(const TArray<UTexture2D*>& InTextures)
+{
+    TArray<UImage*> Slots = { ImageSlot1, ImageSlot2, ImageSlot3 };
+
+    for (int32 i = 0; i < Slots.Num(); ++i)
+    {
+        if (Slots[i])
+        {
+            if (i < InTextures.Num() && nullptr != InTextures[i])
+            {
+                Slots[i]->SetBrushFromTexture(InTextures[i]);
+                Slots[i]->SetVisibility(ESlateVisibility::Visible);
+            }
+            else
+            {
+                Slots[i]->SetVisibility(ESlateVisibility::Collapsed); // 없는 건 숨김
+            }
+        }
+    }
+
+	if (1 == InTextures.Num())
+	{
+		Slots[0]->SetRenderTranslation(FVector2D(0.0f, 0.0f));
+	}
+	else if (2 == InTextures.Num())
+	{
+		for (int32 i = 0; i < Slots.Num(); ++i)
+		{
+			if (Slots[i] && Slots[i]->GetVisibility() == ESlateVisibility::Visible)
+			{
+				Slots[i]->SetRenderTranslation(FVector2D::ZeroVector);
+			}
+		}
+	}
+	else
+	{
+		const FVector2D Offset(0.0f, -250.0f); // Y축 아래로
+		// 3개 다 있을 경우엔 위치 초기화 (위로 다시 올림)
+		for (int32 i = 0; i < Slots.Num(); ++i)
+		{
+			if (Slots[i])
+			{
+				Slots[i]->SetRenderTranslation(FVector2D::ZeroVector);
+				Slots[i]->SetRenderTranslation(Offset);
+			}
+		}
+	}
+}
+```
+
+___
+### 4. 머티리얼 인스턴스 다이나믹
+
+스테이지 레벨에 존재하는 대부분의 오브젝트는 모두 베이스 머티리얼을 상속받은 머티리얼 인스턴스로 구성했습니다.  
+제작 초기에는 머티리얼 인스턴스를 이용하여 작업하는 것이 업계에서 선호되는 방식으로만 알고 있었으나,   
+작업 중반부에 원작에서 캐릭터가 상호작용이 가능한 오브젝트가 근처에 있으면 강조되는 효과를 구현해야하는 요청을 받았을 때,  
+빠르게 해당 문제를 해결할 방법으로 쓰였습니다.  
+
+<img width="2413" height="1204" alt="image" src="https://github.com/user-attachments/assets/beb19f1a-7008-40b6-b365-01c877271383" />
+
+```
+	TArray<UMeshComponent*> MeshComponents;
+	GetComponents<UMeshComponent>(MeshComponents);
+
+	if (true == MeshComponents.IsEmpty())
+	{
+		return;
+	}
+
+	int Count = 0;
+
+	for (UMeshComponent* Mesh : MeshComponents)
+	{
+		if (nullptr == Mesh)
+		{
+			continue;
+		}
+		if (nullptr != Cast<UWidgetComponent>(Mesh))
+		{
+			continue;
+		}
+
+		for (int i = 0; i < Mesh->GetNumMaterials(); i++)
+		{
+			UMaterialInterface* Material = Mesh->GetMaterials()[i];
+			if (nullptr != Material)
+			{
+				UMaterialInstanceDynamic* DynamicMaterial = UMaterialInstanceDynamic::Create(Material, this);
+				if (nullptr != DynamicMaterial)
+				{
+					float Temp;
+					Mesh->GetMaterials()[i]->GetScalarParameterValue(FName("DiffuseAdd"), Temp);
+					DiffuseColorMapWeights.Add(Temp); // 원래 데이터로 되돌아가기 위해 저장
+					Mesh->SetMaterial(i, DynamicMaterial);
+				}
+			}
+		}
+	}
+```
+  비록 해당 클래스를 상속받는 모든 대상이 머티리얼 인스턴스 다이나믹을 만든다는 점에서 성능 저하의 아쉬움이 있습니다만
+  실제로 프레임 드랍이 발생할 수준은 아니었고 해당 기능 추가를 위해 별도의 작업이 추가로 발생하지 않고 해결했다는 점에 의의를 두었습니다.
+
+
+___
+
+### 5. 테스트 레벨 
+요리라는 컨텐츠를 구현하는데 있어 가장 어려웠던 부분 중 하나로 어떻게 기능을 테스트하는 것이 좋을지에 대한 고민이었습니다.  
+1인 개발을 할 때는 모든 권한이 저에게 있었기 때문에 캐릭터를 활용해서 테스트를 하면 되는 간단한 문제이지만,   
+캐릭터가 존재하지 않는 상황 혹은 캐릭터의 기능 구현이 완전하지 않은 상태에서 수동적으로 움직일 수 밖에 없는 대상을 어떻게 테스트하면 좋을지 생각했습니다.  
+그 방법 중 하나로, 함수의 호출만을 담당할 별도의 레벨과 위젯을 구현하는 것이었습니다.
+
+함수의 호출로 그 결과를 확인하고, PlayerState를 이용해 RPC Server함수를 호출하는 방식으로 캐릭터를 우회해서 동기화를 테스트했습니다.
+
+
+<img width="1705" height="747" alt="image" src="https://github.com/user-attachments/assets/a4b9b57a-67f5-491a-b49f-ad1646a5e99c" />
+
 
