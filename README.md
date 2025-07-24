@@ -2,6 +2,13 @@
 
 ![Image](https://github.com/user-attachments/assets/22a88ae9-27e3-47ae-b79f-86288e5b93b3)
 
+## 플레이 영상
+
+![bandicam 2025-07-24 20-29-53-831 (4)](https://github.com/user-attachments/assets/d293ccb3-4f28-499f-b0ea-0a6c2d93cfa4)
+
+____
+
+
 ## 📌 팀원 및 역할  
 
 | 👤 팀원   | 🎭 역할       | 🔗 GitHub 링크 |
