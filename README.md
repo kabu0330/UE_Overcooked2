@@ -47,7 +47,6 @@ Overcooked! 2는 최대 4명의 플레이어가 협력하여 재료를 손질하
 
 
 ## 주요 기능 구현 상세
-* 기술소개서에 작성된 내용은 제외했습니다.
 
 ### 1. 데이터 테이블 설정
 재료, 요리 조합, 주문을 구현하기 위하여 데이터 테이블을 활용했습니다.  
@@ -102,12 +101,12 @@ AIngredient* USpawnManageComponent::SpawnIngredientActor(TSubclassOf<AIngredient
 		return nullptr;
 	}
 
-	IngredientActor->SetType(IngredientType); // 여기서 타입을 결정하고 BeginPlay 호출
+	IngredientActor->SetType(IngredientType); // 여기서 타입을 결정
 
 	FVector IngredientLocation = FVector(0.0f, 0.0f, 100.0f);
 	IngredientTransform.SetLocation(IngredientLocation);
 
-	IngredientActor->FinishSpawning(IngredientTransform);
+	IngredientActor->FinishSpawning(IngredientTransform); // 이후 BeginPlay에서 서버/클라 동일한 메시 설정
 
 	return IngredientActor;
 }
