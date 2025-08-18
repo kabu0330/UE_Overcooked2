@@ -39,13 +39,6 @@ Overcooked! 2는 최대 4명의 플레이어가 협력하여 재료를 손질하
 
 
 
-
-## 컨텐츠 클래스 구조도
-![Image](https://github.com/user-attachments/assets/bdf0a910-126d-4fd8-9e2e-468cec602ddb)
-
-
-
-
 ## 주요 기능 구현 상세
 
 ### 1. 데이터 테이블 설정
