@@ -174,6 +174,11 @@ void AIngredient::ChangeState_Implementation(EIngredientState State)
  원작 게임의 "모든 요리는 접시 위에서 완성된다."는 규칙에 착안하여, 추상적인 '요리'의 개념을 물리적인 '접시'액터와 통합하여 기능을 구현했습니다.
 <br>
 
+<p align="center">
+<img alt="이미지" src="https://github.com/user-attachments/assets/7166f0f9-e4ee-4fee-914e-3d210d29d58c">
+</p>
+
+
 #### 동적 레시피 시스템
 * ```TArray<FRecipe>```에 현재 접시에 담긴 재료의 타입과 상태를 저장합니다.
 * 새로운 재료가 추가될 때 마다, 이 배열과 해당 스테이지의 레시피 데이터 테이블의 리스트를 비교하여 현재 재료 조합이 유효한 레시피인지 검사하여 결과를 적용합니다.
