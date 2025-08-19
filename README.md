@@ -231,7 +231,7 @@ void APlate::Add_Implementation(AIngredient* Ingredient)
 }
 ```
 
-#### 레시피 조회 프로세스
+#### 요리 구현 프로세스
 
 <p align="center">
 <img alt="이미지" src="https://github.com/user-attachments/assets/8a1d9802-6517-4e28-a894-3c11352708ab">
