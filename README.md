@@ -100,8 +100,11 @@ ___
 
 #### 데이터 기반 설계
 * 재료의 종류(```EIngredientType```), 상태(```EIngredientState```), 메시, 아이콘 등 모든 정보를 데이터 테이블로 관리했습니다.
-* 이를 통해 기획자가 디자이너가 코드를 직접 수정하지 않고 새로운 재료를 추가하거나 기존 데이터를 쉽게 수정할 수 있는 확장성 높은 구조로 설계했습니다. 
-![Adobe Express - bandicam 2025-08-19 09-26-31-297](https://github.com/user-attachments/assets/62c8f003-0377-45b3-91f5-72496d8ac4e7)
+* 이를 통해 기획자가 디자이너가 코드를 직접 수정하지 않고 새로운 재료를 추가하거나 기존 데이터를 쉽게 수정할 수 있는 확장성 높은 구조로 설계했습니다.
+
+<p align="center">
+<img alt="이미지" src="https://github.com/user-attachments/assets/62c8f003-0377-45b3-91f5-72496d8ac4e7">
+</p>
 
 <br>
 
@@ -133,7 +136,9 @@ void AIngredient::BeginPlay()
 <br>
 
 #### 재료 스폰 프로세스
-<img width="2387" height="1035" alt="image" src="https://github.com/user-attachments/assets/57730f8b-71fd-42c9-bf8f-65388d466436" />
+<p align="center">
+<img alt="이미지" src="https://github.com/user-attachments/assets/57730f8b-71fd-42c9-bf8f-65388d466436">
+</p>
 
 <br>
 
@@ -216,8 +221,9 @@ void APlate::Add_Implementation(AIngredient* Ingredient)
     }
 }
 ```
-
-![Adobe Express - bandicam 2025-08-19 09-23-50-071](https://github.com/user-attachments/assets/f63be4fa-bdf4-457d-9f48-dc5af267ce32)
+<p align="center">
+<img alt="이미지" src="https://github.com/user-attachments/assets/f63be4fa-bdf4-457d-9f48-dc5af267ce32">
+</p>
 
 <br>
 
@@ -290,6 +296,11 @@ void APot::SetAction_Implementation()
 3. UIngredientIconWidget : 냄비에 들어간 재료 아이콘 표시
 4. UNiagaraComponent     : 증기 및 연기 이펙트
 5. UAudioComponent       : 끓는 소리, 경고음 등 각종 효과음
-<br>
+
+<p align="center">
+<img alt="이미지" src="https://github.com/user-attachments/assets/7be87caa-59ef-4436-b114-c6a2eb9935c8">
+</p>
+
+
 
 
