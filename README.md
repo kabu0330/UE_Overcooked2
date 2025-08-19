@@ -183,6 +183,10 @@ void AIngredient::ChangeState_Implementation(EIngredientState State)
 * ```TArray<FRecipe>```에 현재 접시에 담긴 재료의 타입과 상태를 저장합니다.
 * 새로운 재료가 추가될 때 마다, 이 배열과 해당 스테이지의 레시피 데이터 테이블의 리스트를 비교하여 현재 재료 조합이 유효한 레시피인지 검사하여 결과를 적용합니다.
 * 이 과정을 통해 새로운 요리가 추가되어도 코드 수정 없이 데이터 테이블을 추가하는 것으로 콘텐츠를 확장할 수 있도록 설계했습니다.
+
+<p align="center">
+<img alt="이미지" src="https://github.com/user-attachments/assets/f63be4fa-bdf4-457d-9f48-dc5af267ce32">
+</p>
 <br>
 
 #### 캡슐화된 단일 함수 호출
@@ -226,9 +230,13 @@ void APlate::Add_Implementation(AIngredient* Ingredient)
     }
 }
 ```
+
+#### 레시피 조회 프로세스
+
 <p align="center">
-<img alt="이미지" src="https://github.com/user-attachments/assets/f63be4fa-bdf4-457d-9f48-dc5af267ce32">
+<img alt="이미지" src="https://github.com/user-attachments/assets/8a1d9802-6517-4e28-a894-3c11352708ab">
 </p>
+<br>
 
 <br>
 
